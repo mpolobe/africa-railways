@@ -1,0 +1,40 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create build directory
+        run: |
+          mkdir -p build
+          # Copy HTML files (required)
+          if ls *.html 1> /dev/null 2>&1; then
+            cp -r *.html build/
+          fi
+          # Copy optional assets if they exist
+          [ -d css ] && cp -r css build/
+          [ -d js ] && cp -r js build/
+          [ -d images ] && cp -r images build/
+          # Verify index.html exists in build
+          if [ ! -f build/index.html ]; then
+            echo "Error: index.html not found in build directory"
+            exit 1
+          fi
+
+      - name: Deploy to GitHub Pages
+        uses: crazy-max/ghaction-github-pages@v4
+        with:
+          target_branch: gh-pages
+          build_dir: build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
