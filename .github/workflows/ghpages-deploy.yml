@@ -1,0 +1,48 @@
+# Deploy static site to gh-pages branch
+name: Deploy to gh-pages
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare public directory
+        run: |
+          rm -rf public
+          mkdir -p public
+          # Copy index.html (required)
+          cp index.html public/
+          # Copy style.css if it exists in root
+          if [ -f style.css ]; then
+            cp style.css public/
+          fi
+          # Copy css/ folder if it exists
+          if [ -d css ]; then
+            cp -r css public/
+          fi
+          # Copy images/ folder if it exists
+          if [ -d images ]; then
+            cp -r images public/
+          fi
+          # Copy js/ folder if it exists
+          if [ -d js ]; then
+            cp -r js public/
+          fi
+
+      - name: Deploy to gh-pages
+        uses: crazy-max/ghaction-github-pages@v4
+        with:
+          target_branch: gh-pages
+          build_dir: public
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
