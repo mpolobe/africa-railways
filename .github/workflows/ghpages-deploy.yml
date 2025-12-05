@@ -21,6 +21,10 @@ jobs:
           rm -rf public
           mkdir -p public
           # Copy index.html (required)
+          if [ ! -f index.html ]; then
+            echo "Error: index.html not found in repository root"
+            exit 1
+          fi
           cp index.html public/
           # Copy style.css if it exists in root
           if [ -f style.css ]; then
