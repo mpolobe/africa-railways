@@ -3,94 +3,571 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Africa Railways - Connecting the continent through modern rail infrastructure">
-    <title>Africa Railways</title>
+    <meta name="description" content="Africoin (AFRC) - The first cryptocurrency built for Africa. Railway Staking technology, PeerCoin PoS/PoW hybrid security, 1B token supply, 100 AFRC rewards per block.">
+    <meta name="keywords" content="Africoin, AFRC, cryptocurrency, Africa, blockchain, staking, PeerCoin, PoS, PoW, railway staking, African crypto">
+    <meta name="author" content="Africoin Team">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Africoin - Cryptocurrency for Africa">
+    <meta property="og:description" content="The first cryptocurrency built for Africa with Railway Staking technology and PeerCoin hybrid security.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://africoin.org">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Africoin - Cryptocurrency for Africa">
+    <meta name="twitter:description" content="The first cryptocurrency built for Africa with Railway Staking technology and PeerCoin hybrid security.">
+    <meta name="theme-color" content="#0a0e1a">
+    <title>Africoin - Cryptocurrency for Africa</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <header>
         <nav>
             <div class="logo">
-                <h1>Africa Railways</h1>
+                <div class="logo-icon">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="20" cy="20" r="18" stroke="#FFB800" stroke-width="2" fill="none"/>
+                        <path d="M12 28L20 12L28 28H12Z" fill="#FFB800"/>
+                        <circle cx="20" cy="22" r="3" fill="#0a0e1a"/>
+                    </svg>
+                </div>
+                <span class="logo-text">Africoin</span>
             </div>
             <button class="mobile-menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
                 <span class="hamburger"></span>
             </button>
             <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#staking">Staking</a></li>
+                <li><a href="#specs">Specifications</a></li>
+                <li><a href="#tokenomics">Tokenomics</a></li>
                 <li><a href="#network">Network</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="#download">Download</a></li>
             </ul>
         </nav>
     </header>
 
     <main>
+        <!-- Hero Section -->
         <section id="home" class="hero">
+            <div class="circuit-background"></div>
             <div class="hero-content">
-                <h2>Connecting Africa Through Rail</h2>
-                <p>Building modern railway infrastructure to unite the continent and drive economic growth.</p>
-                <a href="#about" class="cta-button">Learn More</a>
+                <div class="hero-logo">
+                    <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="60" cy="60" r="55" stroke="#FFB800" stroke-width="3" fill="none"/>
+                        <circle cx="60" cy="60" r="45" stroke="#00D4FF" stroke-width="1" fill="none" opacity="0.5"/>
+                        <path d="M35 85L60 35L85 85H35Z" fill="#FFB800"/>
+                        <circle cx="60" cy="70" r="8" fill="#0a0e1a"/>
+                        <circle cx="60" cy="70" r="4" fill="#00D4FF"/>
+                    </svg>
+                </div>
+                <h1>Cryptocurrency for Africa</h1>
+                <p class="hero-subtitle">The first blockchain built by Africans, for Africans. Powered by Railway Staking technology and PeerCoin hybrid security.</p>
+                
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <span class="stat-value">1B</span>
+                        <span class="stat-label">Token Supply</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="stat-value">2.5min</span>
+                        <span class="stat-label">Block Time</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="stat-value">100 AFRC</span>
+                        <span class="stat-label">Block Reward</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="stat-value">54</span>
+                        <span class="stat-label">Countries</span>
+                    </div>
+                </div>
+                
+                <div class="hero-cta">
+                    <a href="#download" class="cta-button primary">Download Wallet</a>
+                    <a href="#staking" class="cta-button secondary">Start Staking</a>
+                </div>
             </div>
         </section>
 
-        <section id="about" class="about">
+        <!-- Features Section -->
+        <section id="features" class="features-section">
             <div class="container">
-                <h2>About Africa Railways</h2>
-                <p>Africa Railways is dedicated to developing and maintaining world-class railway infrastructure across the African continent. Our mission is to provide safe, efficient, and sustainable transportation solutions that connect communities and foster economic development.</p>
-                <div class="features">
-                    <div class="feature">
-                        <h3>Modern Infrastructure</h3>
-                        <p>State-of-the-art railway systems designed for speed, safety, and reliability.</p>
+                <h2 class="section-title">Why Africoin?</h2>
+                <p class="section-subtitle">Built with cutting-edge technology designed specifically for Africa's unique needs</p>
+                
+                <div class="feature-cards">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="5" y="25" width="50" height="15" rx="3" fill="#FFB800"/>
+                                <circle cx="15" cy="45" r="5" fill="#00D4FF"/>
+                                <circle cx="45" cy="45" r="5" fill="#00D4FF"/>
+                                <rect x="20" y="20" width="20" height="10" rx="2" fill="#FFB800"/>
+                                <line x1="10" y1="55" x2="50" y2="55" stroke="#00D4FF" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <h3>Railway Staking</h3>
+                        <p>Our unique Railway Staking system connects validators like train stations across Africa, ensuring fast and reliable transactions across the continent.</p>
                     </div>
-                    <div class="feature">
-                        <h3>Sustainable Transport</h3>
-                        <p>Eco-friendly solutions reducing carbon emissions and promoting green mobility.</p>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="30" cy="30" r="25" stroke="#FFB800" stroke-width="2" fill="none"/>
+                                <path d="M30 10L35 25H45L37 33L40 48L30 40L20 48L23 33L15 25H25L30 10Z" fill="#00D4FF"/>
+                            </svg>
+                        </div>
+                        <h3>PeerCoin PoS/PoW Hybrid</h3>
+                        <p>Leveraging proven PeerCoin technology with both Proof-of-Stake and Proof-of-Work, ensuring maximum security and energy efficiency.</p>
                     </div>
-                    <div class="feature">
-                        <h3>Economic Growth</h3>
-                        <p>Connecting markets and communities to drive trade and prosperity.</p>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <ellipse cx="30" cy="35" rx="25" ry="20" stroke="#FFB800" stroke-width="2" fill="none"/>
+                                <circle cx="30" cy="25" r="8" fill="#00D4FF"/>
+                                <circle cx="20" cy="40" r="4" fill="#FFB800"/>
+                                <circle cx="40" cy="40" r="4" fill="#FFB800"/>
+                                <circle cx="30" cy="48" r="4" fill="#FFB800"/>
+                            </svg>
+                        </div>
+                        <h3>Africa-First Network</h3>
+                        <p>Designed with Africa's infrastructure in mind - low bandwidth requirements, mobile-first approach, and support for all 54 African nations.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="network" class="network">
+        <!-- Railway Staking Section -->
+        <section id="staking" class="staking-section">
             <div class="container">
-                <h2>Our Network</h2>
-                <p>Our expanding railway network spans across multiple African nations, connecting major cities and economic hubs.</p>
-                <div class="stats">
-                    <div class="stat">
-                        <span class="stat-number">15+</span>
-                        <span class="stat-label">Countries Connected</span>
+                <div class="staking-content">
+                    <div class="staking-text">
+                        <h2 class="section-title">Railway Staking Technology</h2>
+                        <p class="staking-description">Just as railways connected Africa's great cities and enabled continental trade, our Railway Staking system connects validators in a network that spans the entire continent. Each staking node acts as a station, processing transactions and securing the network.</p>
+                        
+                        <div class="reward-highlight">
+                            <div class="reward-icon">
+                                <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="40" cy="40" r="35" stroke="#FFB800" stroke-width="3" fill="none"/>
+                                    <text x="40" y="45" text-anchor="middle" fill="#FFB800" font-size="20" font-weight="bold">100</text>
+                                    <text x="40" y="60" text-anchor="middle" fill="#00D4FF" font-size="10">AFRC</text>
+                                </svg>
+                            </div>
+                            <div class="reward-text">
+                                <span class="reward-value">100 AFRC</span>
+                                <span class="reward-label">Per Block Reward</span>
+                            </div>
+                        </div>
+                        
+                        <div class="staking-benefits">
+                            <div class="benefit">
+                                <span class="benefit-icon">🚂</span>
+                                <span class="benefit-text">Low minimum stake requirement</span>
+                            </div>
+                            <div class="benefit">
+                                <span class="benefit-icon">⚡</span>
+                                <span class="benefit-text">Fast 2.5 minute block times</span>
+                            </div>
+                            <div class="benefit">
+                                <span class="benefit-icon">🔒</span>
+                                <span class="benefit-text">Secure hybrid PoS/PoW consensus</span>
+                            </div>
+                            <div class="benefit">
+                                <span class="benefit-icon">🌍</span>
+                                <span class="benefit-text">Support Africa's financial future</span>
+                            </div>
+                            <div class="benefit">
+                                <span class="benefit-icon">💰</span>
+                                <span class="benefit-text">Earn passive income with AFRC</span>
+                            </div>
+                            <div class="benefit">
+                                <span class="benefit-icon">📱</span>
+                                <span class="benefit-text">Mobile-friendly staking interface</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="stat">
-                        <span class="stat-number">10,000+</span>
-                        <span class="stat-label">Kilometers of Track</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">50M+</span>
-                        <span class="stat-label">Annual Passengers</span>
+                    
+                    <div class="staking-visual">
+                        <div class="africa-map">
+                            <svg viewBox="0 0 300 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Simplified Africa outline -->
+                                <path d="M150 20 C200 20 250 60 260 100 C270 140 265 180 260 220 C255 260 240 300 200 320 C160 340 120 340 100 320 C80 300 60 260 55 220 C50 180 55 140 70 100 C85 60 100 20 150 20Z" 
+                                      stroke="#FFB800" stroke-width="2" fill="none" opacity="0.6"/>
+                                <!-- Railway lines -->
+                                <line x1="80" y1="100" x2="220" y2="100" stroke="#00D4FF" stroke-width="1" stroke-dasharray="5,5" class="railway-line"/>
+                                <line x1="100" y1="150" x2="200" y2="150" stroke="#00D4FF" stroke-width="1" stroke-dasharray="5,5" class="railway-line"/>
+                                <line x1="90" y1="200" x2="210" y2="200" stroke="#00D4FF" stroke-width="1" stroke-dasharray="5,5" class="railway-line"/>
+                                <line x1="110" y1="250" x2="190" y2="250" stroke="#00D4FF" stroke-width="1" stroke-dasharray="5,5" class="railway-line"/>
+                                <line x1="150" y1="50" x2="150" y2="300" stroke="#00D4FF" stroke-width="1" stroke-dasharray="5,5" class="railway-line"/>
+                                <!-- Staking nodes (stations) -->
+                                <circle cx="150" cy="80" r="8" fill="#FFB800" class="node pulse"/>
+                                <circle cx="100" cy="120" r="6" fill="#00D4FF" class="node pulse"/>
+                                <circle cx="200" cy="120" r="6" fill="#00D4FF" class="node pulse"/>
+                                <circle cx="150" cy="160" r="8" fill="#FFB800" class="node pulse"/>
+                                <circle cx="80" cy="180" r="6" fill="#00D4FF" class="node pulse"/>
+                                <circle cx="220" cy="180" r="6" fill="#00D4FF" class="node pulse"/>
+                                <circle cx="150" cy="220" r="8" fill="#FFB800" class="node pulse"/>
+                                <circle cx="120" cy="260" r="6" fill="#00D4FF" class="node pulse"/>
+                                <circle cx="180" cy="260" r="6" fill="#00D4FF" class="node pulse"/>
+                                <circle cx="150" cy="300" r="8" fill="#FFB800" class="node pulse"/>
+                            </svg>
+                        </div>
+                        <div class="train-animation">
+                            <div class="train">🚂</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="contact" class="contact">
+        <!-- Technical Specifications Section -->
+        <section id="specs" class="specs-section">
             <div class="container">
-                <h2>Contact Us</h2>
-                <p>Get in touch with us for inquiries, partnerships, or more information about our services.</p>
-                <div class="contact-info">
-                    <p>Email: info@africarailways.com</p>
-                    <p>Visit our <a href="https://github.com/mpolobe/africa-railways" target="_blank" rel="noopener noreferrer">GitHub Repository</a> for more information.</p>
+                <h2 class="section-title">Technical Specifications</h2>
+                <p class="section-subtitle">Built on proven technology, optimized for Africa</p>
+                
+                <div class="specs-grid">
+                    <div class="spec-card main-stat">
+                        <div class="spec-value">1,000,000,000</div>
+                        <div class="spec-label">Total Supply (AFRC)</div>
+                    </div>
+                    <div class="spec-card main-stat">
+                        <div class="spec-value">2.5 min</div>
+                        <div class="spec-label">Block Time</div>
+                    </div>
+                    <div class="spec-card main-stat">
+                        <div class="spec-value">100 AFRC</div>
+                        <div class="spec-label">Block Reward</div>
+                    </div>
+                    <div class="spec-card main-stat">
+                        <div class="spec-value">PoS + PoW</div>
+                        <div class="spec-label">Consensus</div>
+                    </div>
+                </div>
+                
+                <div class="specs-details">
+                    <div class="spec-detail-group">
+                        <h3>Staking Duration</h3>
+                        <ul class="spec-list">
+                            <li><span class="spec-key">Minimum Stake Age:</span> <span class="spec-val">30 days</span></li>
+                            <li><span class="spec-key">Maximum Stake Age:</span> <span class="spec-val">90 days</span></li>
+                            <li><span class="spec-key">Stake Maturity:</span> <span class="spec-val">500 confirmations</span></li>
+                            <li><span class="spec-key">Annual Interest:</span> <span class="spec-val">5% (variable)</span></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="spec-detail-group">
+                        <h3>Network Ports</h3>
+                        <ul class="spec-list">
+                            <li><span class="spec-key">Mainnet P2P:</span> <span class="spec-val">9333</span></li>
+                            <li><span class="spec-key">Mainnet RPC:</span> <span class="spec-val">9332</span></li>
+                            <li><span class="spec-key">Testnet P2P:</span> <span class="spec-val">19333</span></li>
+                            <li><span class="spec-key">Testnet RPC:</span> <span class="spec-val">19332</span></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="spec-detail-group">
+                        <h3>Security Protocols</h3>
+                        <ul class="spec-list">
+                            <li><span class="spec-key">Algorithm:</span> <span class="spec-val">SHA-256d</span></li>
+                            <li><span class="spec-key">Address Prefix:</span> <span class="spec-val">A (65)</span></li>
+                            <li><span class="spec-key">Difficulty Retarget:</span> <span class="spec-val">Every block</span></li>
+                            <li><span class="spec-key">Checkpoints:</span> <span class="spec-val">Enabled</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tokenomics Section -->
+        <section id="tokenomics" class="tokenomics-section">
+            <div class="container">
+                <h2 class="section-title">Tokenomics</h2>
+                <p class="section-subtitle">1 Billion AFRC distributed for Africa's future</p>
+                
+                <div class="tokenomics-content">
+                    <div class="pie-chart-container">
+                        <div class="pie-chart">
+                            <svg viewBox="0 0 200 200">
+                                <!-- Staking Rewards 60% -->
+                                <circle cx="100" cy="100" r="80" fill="none" stroke="#FFB800" stroke-width="40" 
+                                        stroke-dasharray="301.59 502.65" stroke-dashoffset="0" transform="rotate(-90 100 100)"/>
+                                <!-- Initial Distribution 20% -->
+                                <circle cx="100" cy="100" r="80" fill="none" stroke="#00D4FF" stroke-width="40" 
+                                        stroke-dasharray="100.53 502.65" stroke-dashoffset="-301.59" transform="rotate(-90 100 100)"/>
+                                <!-- Development 10% -->
+                                <circle cx="100" cy="100" r="80" fill="none" stroke="#FF6B35" stroke-width="40" 
+                                        stroke-dasharray="50.27 502.65" stroke-dashoffset="-402.12" transform="rotate(-90 100 100)"/>
+                                <!-- Community 10% -->
+                                <circle cx="100" cy="100" r="80" fill="none" stroke="#7B2CBF" stroke-width="40" 
+                                        stroke-dasharray="50.27 502.65" stroke-dashoffset="-452.39" transform="rotate(-90 100 100)"/>
+                                <!-- Center circle -->
+                                <circle cx="100" cy="100" r="50" fill="#0a0e1a"/>
+                                <text x="100" y="95" text-anchor="middle" fill="#FFB800" font-size="16" font-weight="bold">1B</text>
+                                <text x="100" y="115" text-anchor="middle" fill="#ffffff" font-size="10">AFRC</text>
+                            </svg>
+                        </div>
+                        <div class="pie-legend">
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: #FFB800;"></span>
+                                <span class="legend-text">60% Staking Rewards</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: #00D4FF;"></span>
+                                <span class="legend-text">20% Initial Distribution</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: #FF6B35;"></span>
+                                <span class="legend-text">10% Development</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: #7B2CBF;"></span>
+                                <span class="legend-text">10% Community</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="allocation-bars">
+                        <div class="allocation-bar">
+                            <div class="allocation-header">
+                                <span class="allocation-name">Staking Rewards</span>
+                                <span class="allocation-value">600,000,000 AFRC</span>
+                            </div>
+                            <div class="bar-container">
+                                <div class="bar-fill" style="width: 60%; background: #FFB800;"></div>
+                            </div>
+                        </div>
+                        <div class="allocation-bar">
+                            <div class="allocation-header">
+                                <span class="allocation-name">Initial Distribution</span>
+                                <span class="allocation-value">200,000,000 AFRC</span>
+                            </div>
+                            <div class="bar-container">
+                                <div class="bar-fill" style="width: 20%; background: #00D4FF;"></div>
+                            </div>
+                        </div>
+                        <div class="allocation-bar">
+                            <div class="allocation-header">
+                                <span class="allocation-name">Development Fund</span>
+                                <span class="allocation-value">100,000,000 AFRC</span>
+                            </div>
+                            <div class="bar-container">
+                                <div class="bar-fill" style="width: 10%; background: #FF6B35;"></div>
+                            </div>
+                        </div>
+                        <div class="allocation-bar">
+                            <div class="allocation-header">
+                                <span class="allocation-name">Community Treasury</span>
+                                <span class="allocation-value">100,000,000 AFRC</span>
+                            </div>
+                            <div class="bar-container">
+                                <div class="bar-fill" style="width: 10%; background: #7B2CBF;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Network Section -->
+        <section id="network" class="network-section">
+            <div class="container">
+                <h2 class="section-title">Africa Network</h2>
+                <p class="section-subtitle">A truly continental blockchain network</p>
+                
+                <div class="network-content">
+                    <div class="network-stats">
+                        <div class="network-stat">
+                            <span class="network-stat-value">150+</span>
+                            <span class="network-stat-label">Active Nodes</span>
+                        </div>
+                        <div class="network-stat">
+                            <span class="network-stat-value">54</span>
+                            <span class="network-stat-label">African Countries</span>
+                        </div>
+                        <div class="network-stat">
+                            <span class="network-stat-value">99.9%</span>
+                            <span class="network-stat-label">Uptime</span>
+                        </div>
+                        <div class="network-stat">
+                            <span class="network-stat-value">&lt;3s</span>
+                            <span class="network-stat-label">Avg. Confirmation</span>
+                        </div>
+                    </div>
+                    
+                    <div class="wallet-mockup">
+                        <div class="mockup-device">
+                            <div class="mockup-screen">
+                                <div class="mockup-header">
+                                    <span class="mockup-logo">AFRC Wallet</span>
+                                    <span class="mockup-status">● Connected</span>
+                                </div>
+                                <div class="mockup-balance">
+                                    <span class="balance-label">Balance</span>
+                                    <span class="balance-value">12,450.00 AFRC</span>
+                                    <span class="balance-usd">≈ $1,245.00 USD</span>
+                                </div>
+                                <div class="mockup-actions">
+                                    <button class="mockup-btn send">Send</button>
+                                    <button class="mockup-btn receive">Receive</button>
+                                    <button class="mockup-btn stake">Stake</button>
+                                </div>
+                                <div class="mockup-network-info">
+                                    <div class="network-info-row">
+                                        <span>Network Nodes:</span>
+                                        <span class="highlight">154 active</span>
+                                    </div>
+                                    <div class="network-info-row">
+                                        <span>Countries:</span>
+                                        <span class="highlight">54 connected</span>
+                                    </div>
+                                    <div class="network-info-row">
+                                        <span>Block Height:</span>
+                                        <span class="highlight">1,234,567</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Download Section -->
+        <section id="download" class="download-section">
+            <div class="container">
+                <h2 class="section-title">Get Started</h2>
+                <p class="section-subtitle">Download the Africoin wallet and join the network</p>
+                
+                <div class="download-options">
+                    <div class="download-card">
+                        <div class="download-icon">
+                            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="10" y="5" width="40" height="50" rx="3" stroke="#FFB800" stroke-width="2" fill="none"/>
+                                <rect x="15" y="12" width="30" height="20" fill="#00D4FF" opacity="0.3"/>
+                                <line x1="15" y1="40" x2="45" y2="40" stroke="#00D4FF" stroke-width="2"/>
+                                <line x1="15" y1="46" x2="35" y2="46" stroke="#00D4FF" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <h3>Desktop Wallet</h3>
+                        <p>Full-featured wallet with staking capabilities for Windows, macOS, and Linux.</p>
+                        <div class="download-buttons">
+                            <a href="#" class="download-btn">
+                                <span class="os-icon">🪟</span> Windows
+                            </a>
+                            <a href="#" class="download-btn">
+                                <span class="os-icon">🍎</span> macOS
+                            </a>
+                            <a href="#" class="download-btn">
+                                <span class="os-icon">🐧</span> Linux
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="download-card">
+                        <div class="download-icon">
+                            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="5" y="15" width="50" height="30" rx="3" stroke="#FFB800" stroke-width="2" fill="none"/>
+                                <text x="30" y="35" text-anchor="middle" fill="#00D4FF" font-size="10" font-family="monospace">&gt;_</text>
+                            </svg>
+                        </div>
+                        <h3>CLI Tools</h3>
+                        <p>Command-line interface for developers and advanced users. Full node and mining support.</p>
+                        <div class="download-buttons">
+                            <a href="#" class="download-btn">
+                                <span class="os-icon">📦</span> africoind
+                            </a>
+                            <a href="#" class="download-btn">
+                                <span class="os-icon">⛏️</span> africoin-cli
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="source-code">
+                    <p>View source code and contribute on <a href="https://github.com/mpolobe/africa-railways" target="_blank" rel="noopener noreferrer">GitHub</a></p>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer>
+    <!-- Footer -->
+    <footer class="main-footer">
         <div class="container">
-            <p>&copy; 2024 Africa Railways. All rights reserved.</p>
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="20" cy="20" r="18" stroke="#FFB800" stroke-width="2" fill="none"/>
+                            <path d="M12 28L20 12L28 28H12Z" fill="#FFB800"/>
+                            <circle cx="20" cy="22" r="3" fill="#0a0e1a"/>
+                        </svg>
+                        <span>Africoin</span>
+                    </div>
+                    <p class="footer-tagline">Cryptocurrency for Africa. Building financial freedom across the continent.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Twitter" class="social-link">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                            </svg>
+                        </a>
+                        <a href="#" aria-label="Telegram" class="social-link">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                            </svg>
+                        </a>
+                        <a href="#" aria-label="Discord" class="social-link">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+                            </svg>
+                        </a>
+                        <a href="https://github.com/mpolobe/africa-railways" target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="social-link">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Whitepaper</a></li>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Block Explorer</a></li>
+                        <li><a href="#">API Reference</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><a href="#">Forum</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Events</a></li>
+                        <li><a href="#">Ambassador Program</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Developers</h4>
+                    <ul>
+                        <li><a href="https://github.com/mpolobe/africa-railways" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                        <li><a href="#">Developer Portal</a></li>
+                        <li><a href="#">Bug Bounty</a></li>
+                        <li><a href="#">Contribute</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Africoin. All rights reserved.</p>
+                <div class="footer-legal">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
         </div>
     </footer>
 
@@ -111,6 +588,24 @@
                 mobileMenuToggle.setAttribute('aria-expanded', 'false');
                 navLinks.classList.remove('active');
             });
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .spec-card, .download-card, .network-stat').forEach(el => {
+            observer.observe(el);
         });
     </script>
 </body>
