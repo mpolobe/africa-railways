@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Africa Railways - Connecting the continent through modern rail infrastructure">
+    <title>Africa Railways</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <h1>Africa Railways</h1>
+            </div>
+            <button class="mobile-menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#network">Network</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h2>Connecting Africa Through Rail</h2>
+                <p>Building modern railway infrastructure to unite the continent and drive economic growth.</p>
+                <a href="#about" class="cta-button">Learn More</a>
+            </div>
+        </section>
+
+        <section id="about" class="about">
+            <div class="container">
+                <h2>About Africa Railways</h2>
+                <p>Africa Railways is dedicated to developing and maintaining world-class railway infrastructure across the African continent. Our mission is to provide safe, efficient, and sustainable transportation solutions that connect communities and foster economic development.</p>
+                <div class="features">
+                    <div class="feature">
+                        <h3>Modern Infrastructure</h3>
+                        <p>State-of-the-art railway systems designed for speed, safety, and reliability.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>Sustainable Transport</h3>
+                        <p>Eco-friendly solutions reducing carbon emissions and promoting green mobility.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>Economic Growth</h3>
+                        <p>Connecting markets and communities to drive trade and prosperity.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="network" class="network">
+            <div class="container">
+                <h2>Our Network</h2>
+                <p>Our expanding railway network spans across multiple African nations, connecting major cities and economic hubs.</p>
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-number">15+</span>
+                        <span class="stat-label">Countries Connected</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">10,000+</span>
+                        <span class="stat-label">Kilometers of Track</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">50M+</span>
+                        <span class="stat-label">Annual Passengers</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact">
+            <div class="container">
+                <h2>Contact Us</h2>
+                <p>Get in touch with us for inquiries, partnerships, or more information about our services.</p>
+                <div class="contact-info">
+                    <p>Email: info@africarailways.com</p>
+                    <p>Visit our <a href="https://github.com/mpolobe/africa-railways" target="_blank" rel="noopener noreferrer">GitHub Repository</a> for more information.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Africa Railways. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const navLinks = document.querySelector('.nav-links');
+
+        mobileMenuToggle.addEventListener('click', function() {
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            this.setAttribute('aria-expanded', !isExpanded);
+            navLinks.classList.toggle('active');
+        });
+
+        // Close menu when clicking on a link
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                navLinks.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>
