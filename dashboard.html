@@ -2,12 +2,24 @@
 <html>
 <head><link rel="stylesheet" href="css/style.css"><title>Dashboard</title></head>
 <body>
-    <nav><a href="/" class="logo">← Back to Home</a></nav>
-    <div style="padding: 50px; text-align: center;">
-        <h2>Digital Spine Visualizer</h2>
-        <div style="background: #1a1a1a; padding: 30px; border-radius: 8px; border: 1px solid #333;">
-            <p style="color: #00ffcc">● SYSTEM OPERATIONAL</p>
+    <nav><a href="/" class="logo">← Home</a><div class="logo" id="net-status">LOADING...</div></nav>
+    <div style="padding:50px; text-align:center;">
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px;">
+            <div class="card"><h3>Trains</h3><p id="trains" style="font-size:2rem; color:#00ffcc;">0</p></div>
+            <div class="card"><h3>Sui Height</h3><p id="blocks" style="font-size:2rem; color:#00ffcc;">0</p></div>
+            <div class="card"><h3>Throughput</h3><p id="cash" style="font-size:2rem; color:#00ffcc;">$0</p></div>
         </div>
     </div>
+    <script>
+        async function update() {
+            const r = await fetch('/data/telemetry.json');
+            const d = await r.json();
+            document.getElementById('net-status').innerText = "● SYSTEM " + d.network_status;
+            document.getElementById('trains').innerText = d.active_trains;
+            document.getElementById('blocks').innerText = d.last_block_height;
+            document.getElementById('cash').innerText = "$" + (d.throughput_usd/1000) + "K";
+        }
+        setInterval(update, 3000); update();
+    </script>
 </body>
 </html>
