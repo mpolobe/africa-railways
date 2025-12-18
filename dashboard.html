@@ -3,27 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spine Dashboard | Africoin</title>
+    <title>Sentinel Portal | Africoin Spine</title>
     <style>
         :root { --navy: #0a0e1a; --gold: #FFB800; --cyan: #00D4FF; --white: #ffffff; --surface: #16203a; }
-        body { margin: 0; font-family: sans-serif; background: var(--navy); color: var(--white); }
-        nav { display: flex; justify-content: space-between; padding: 20px 8%; border-bottom: 1px solid #222; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 40px 8%; }
+        body { margin: 0; font-family: sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; }
+        nav { display: flex; justify-content: space-between; padding: 20px 8%; border-bottom: 1px solid #222; background: #0d121f; }
+        .container { padding: 40px 8%; max-width: 1200px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
         .card { background: var(--surface); padding: 30px; border-radius: 12px; border: 1px solid #333; }
-        .val { font-size: 2.5rem; font-weight: 800; color: var(--cyan); display: block; margin: 10px 0; }
-        .label { color: var(--gold); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px; }
-        .status-dot { height: 10px; width: 10px; background: #00ff00; border-radius: 50%; display: inline-block; margin-right: 10px; box-shadow: 0 0 10px #00ff00; }
+        .val { font-size: 2rem; font-weight: 800; color: var(--cyan); display: block; margin: 5px 0; }
+        .label { color: var(--gold); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 2px; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; background: #0a0e1a; border: 1px solid #444; color: white; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: var(--gold); border: none; font-weight: bold; cursor: pointer; border-radius: 5px; }
+        #tx-log { margin-top: 20px; font-family: monospace; font-size: 0.8rem; max-height: 150px; overflow-y: auto; color: #888; border-top: 1px solid #222; padding-top: 10px; }
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <nav>
-        <div style="color:var(--gold); font-weight:800;">TELEMETRY DASHBOARD</div>
-        <a href="/" style="color:white; text-decoration:none;">&larr; Exit</a>
+        <div style="color:var(--gold); font-weight:800;">SENTINEL WORKER PORTAL</div>
+        <a href="/" style="color:white; text-decoration:none;">&larr; Exit System</a>
     </nav>
-    <div class="grid">
-        <div class="card"><span class="label"><span class="status-dot"></span>Network</span><span class="val">ACTIVE</span></div>
-        <div class="card"><span class="label">Sui Block</span><span class="val">8,942,231</span></div>
-        <div class="card"><span class="label">Sentinels</span><span class="val">2,142</span></div>
+    <div class="container">
+        <div class="grid">
+            <div class="card">
+                <span class="label">Sui Block Height</span>
+                <span class="val" id="block-height">8,942,231</span>
+                <span class="label">Total Safety Reports</span>
+                <span class="val" id="report-count">42,109</span>
+            </div>
+            <div class="card">
+                <span class="label">Submit Proof-of-Safety</span>
+                <input type="text" id="loco-id" placeholder="Locomotive ID (e.g. NRZ-402)">
+                <select id="track-status">
+                    <option value="CLEAR">Track Status: CLEAR</option>
+                    <option value="CAUTION">Track Status: CAUTION</option>
+                </select>
+                <button id="submit-btn">Sign & Broadcast to Sui</button>
+                <div id="tx-log"></div>
+            </div>
+        </div>
     </div>
 </body>
 </html>
