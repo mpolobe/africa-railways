@@ -1,12 +1,23 @@
-# Africoin: The Digital Spine of Africa
+# 🚂 Africoin (AFRC) - The Digital Spine
 
-Connecting 54 nations via high-speed rail and Sui blockchain technology.
+**Connecting 54 Nations via High-Speed Rail & Sui Blockchain Technology.**
 
-## Core Features
-- **AFRC Utility:** Gas for freight manifests and passenger tickets.
-- **Sentinel Rewards:** Incentivizing track safety through worker participation.
-- **Burn Flywheel:** 1% of every transaction is burned to maintain scarcity.
+The Digital Spine is the world's first integrated infrastructure project combining heavy rail logistics with the **Sui Move Ledger**. By digitizing every freight ton and passenger ticket, we ensure a transparent, secure, and hyper-efficient trade corridor for the African continent.
 
-## Deployment
-Live Site: [https://africa-railways.vercel.app](https://africa-railways.vercel.app)
-Dashboard: [/dashboard.html](/dashboard.html)
+## 📊 Project Ecosystem
+* **Core Ledger:** Built on Sui for sub-second finality and logic-based assets.
+* **Sentinel Network:** 2,000+ track workers incentivized via "Proof-of-Safety" rewards.
+* **Economic Model:** A 1% burn flywheel on all transit transactions.
+
+## 🛠️ Quick Links for Tech Staff
+- **[Architecture Specs](ARCHITECTURE.md)**: Deep dive into the Go Ingestion Engine.
+- **[Developer Onboarding](DEVELOPER_ONBOARDING.md)**: How to set up and contribute.
+- **[Sentinel Portal](/dashboard.html)**: Live telemetry and safety reporting dashboard.
+
+## 🗺️ 2026 Roadmap
+- **Q1:** SADC Mesh Deployment (Lusaka - Johannesburg).
+- **Q2:** Mainnet Launch of AFRC Token.
+- **Q4:** Saharan Quartz Corridor initialization.
+
+---
+*Developed for Africa, By Africa.* **Contact:** [ben.mpolokoso@gmail.com](mailto:ben.mpolokoso@gmail.com)
