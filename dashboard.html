@@ -15,7 +15,7 @@
         .label { color: var(--gold); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 2px; }
         input, select { width: 100%; padding: 12px; margin: 10px 0; background: #0a0e1a; border: 1px solid #444; color: white; border-radius: 5px; box-sizing: border-box; }
         button { width: 100%; padding: 15px; background: var(--gold); border: none; font-weight: bold; cursor: pointer; border-radius: 5px; }
-        #tx-log { margin-top: 20px; font-family: monospace; font-size: 0.8rem; max-height: 150px; overflow-y: auto; color: #888; border-top: 1px solid #222; padding-top: 10px; }
+        #tx-log { margin-top: 20px; font-family: monospace; font-size: 0.8rem; height: 120px; overflow-y: auto; color: #888; border-top: 1px solid #222; padding-top: 10px; }
         @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -34,7 +34,7 @@
             </div>
             <div class="card">
                 <span class="label">Submit Proof-of-Safety</span>
-                <input type="text" id="loco-id" placeholder="Locomotive ID (e.g. NRZ-402)">
+                <input type="text" id="loco-id" placeholder="Locomotive ID">
                 <select id="track-status">
                     <option value="CLEAR">Track Status: CLEAR</option>
                     <option value="CAUTION">Track Status: CAUTION</option>
@@ -45,44 +45,4 @@
         </div>
     </div>
 </body>
-<script>
-    let height = 8942231;
-    setInterval(() => {
-        height += Math.floor(Math.random() * 3) + 1;
-        let el = document.getElementById('block-height');
-        if(el) el.innerText = height.toLocaleString();
-    }, 3000);
-
-    document.getElementById('submit-btn').onclick = function() {
-        const loco = document.getElementById('loco-id').value || "SYS-AUTO";
-        const log = document.getElementById('tx-log');
-        const hash = '0x' + Math.random().toString(16).slice(2, 10);
-        const entry = document.createElement('div');
-        entry.innerHTML = `<span style="color:#00ff00">[SUCCESS]</span> ${loco} reported<br><small>${hash}</small><br>`;
-        log.prepend(entry);
-        let countEl = document.getElementById('report-count');
-        let count = parseInt(countEl.innerText.replace(',',''));
-        countEl.innerText = (count + 1).toLocaleString();
-    };
-</script>
-<script>
-    let height = 8942231;
-    setInterval(() => {
-        height += Math.floor(Math.random() * 3) + 1;
-        let el = document.getElementById('block-height');
-        if(el) el.innerText = height.toLocaleString();
-    }, 3000);
-
-    document.getElementById('submit-btn').onclick = function() {
-        const loco = document.getElementById('loco-id').value || "SYS-AUTO";
-        const log = document.getElementById('tx-log');
-        const hash = '0x' + Math.random().toString(16).slice(2, 10);
-        const entry = document.createElement('div');
-        entry.innerHTML = `<span style="color:#00ff00">[SUCCESS]</span> ${loco} reported<br><small>${hash}</small><br>`;
-        log.prepend(entry);
-        let countEl = document.getElementById('report-count');
-        let count = parseInt(countEl.innerText.replace(',',''));
-        countEl.innerText = (count + 1).toLocaleString();
-    };
-</script>
 </html>
