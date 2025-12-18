@@ -45,4 +45,24 @@
         </div>
     </div>
 </body>
+<script>
+    let height = 8942231;
+    setInterval(() => {
+        height += Math.floor(Math.random() * 3) + 1;
+        let el = document.getElementById('block-height');
+        if(el) el.innerText = height.toLocaleString();
+    }, 3000);
+
+    document.getElementById('submit-btn').onclick = function() {
+        const loco = document.getElementById('loco-id').value || "SYS-AUTO";
+        const log = document.getElementById('tx-log');
+        const hash = '0x' + Math.random().toString(16).slice(2, 10);
+        const entry = document.createElement('div');
+        entry.innerHTML = `<span style="color:#00ff00">[SUCCESS]</span> ${loco} reported<br><small>${hash}</small><br>`;
+        log.prepend(entry);
+        let countEl = document.getElementById('report-count');
+        let count = parseInt(countEl.innerText.replace(',',''));
+        countEl.innerText = (count + 1).toLocaleString();
+    };
+</script>
 </html>
