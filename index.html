@@ -6,29 +6,42 @@
     <title>Africoin - The Digital Spine</title>
     <style>
         :root { --navy: #0a0e1a; --gold: #FFB800; --cyan: #00D4FF; --white: #ffffff; --surface: #16203a; }
-        body { margin: 0; font-family: sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; }
         nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; border-bottom: 1px solid #222; }
         .hero { padding: 100px 8%; text-align: center; background: radial-gradient(circle at center, #16203a 0%, #0a0e1a 100%); }
-        h1 { font-size: 3.5rem; font-weight: 900; margin: 0; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 50px 8%; }
-        .card { background: var(--surface); padding: 25px; border-radius: 12px; border: 1px solid #222; }
-        .cta { padding: 15px 30px; background: var(--gold); color: var(--navy); text-decoration: none; font-weight: bold; border-radius: 5px; }
+        h1 { font-size: 3.5rem; font-weight: 900; margin-bottom: 10px; }
+        .hero-tag { color: var(--gold); font-weight: bold; letter-spacing: 4px; border: 1px solid var(--gold); padding: 5px 15px; display: inline-block; margin-bottom: 20px; font-size: 0.8rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 60px 8%; }
+        .card { background: var(--surface); padding: 30px; border-radius: 12px; border: 1px solid #333; transition: 0.3s; }
+        .card:hover { border-color: var(--gold); transform: translateY(-5px); }
+        .cta-button { padding: 18px 40px; background: var(--gold); color: var(--navy); text-decoration: none; font-weight: bold; border-radius: 8px; display: inline-block; margin-top: 20px; }
+        h3 { color: var(--gold); margin-top: 0; }
     </style>
 </head>
 <body>
     <nav>
-        <div style="color:var(--gold); font-weight:800;">Africoin Spine</div>
-        <div style="display:flex; gap:20px;"><a href="/dashboard.html" style="color:white; text-decoration:none;">Dashboard</a></div>
+        <div style="color:var(--gold); font-weight:800; font-size: 1.4rem;">Africoin Spine</div>
+        <a href="/dashboard.html" style="color:white; text-decoration:none; font-weight: bold; border: 1px solid #444; padding: 8px 16px; border-radius: 5px;">Open Dashboard</a>
     </nav>
     <section class="hero">
+        <div class="hero-tag">SUI MAINNET ENABLED</div>
         <h1>Built for Africa, By Africa</h1>
-        <p style="color:#aaa; margin: 20px 0 40px;">Connecting 54 Nations via High-Speed Rail & Blockchain.</p>
-        <a href="/dashboard.html" class="cta">Launch Dashboard</a>
+        <p style="color:#aaa; font-size: 1.2rem; max-width: 700px; margin: 0 auto;">Connecting 54 Nations via High-Speed Rail & Sovereign Blockchain Technology.</p>
+        <a href="/dashboard.html" class="cta-button">Launch Live Telemetry</a>
     </section>
     <section class="grid">
-        <div class="card"><h3>2026 Roadmap</h3><p>SADC Mesh Rollout.</p></div>
-        <div class="card"><h3>Sentinels</h3><p>2,000+ Track Workers.</p></div>
-        <div class="card"><h3>Tokenomics</h3><p>10B AFRC Supply.</p></div>
+        <div class="card">
+            <h3>2026 Roadmap</h3>
+            <p>Phase 1: SADC Mesh connecting Lusaka to Johannesburg with real-time freight ledgering.</p>
+        </div>
+        <div class="card">
+            <h3>Sentinel App</h3>
+            <p>Empowering 2,000 track workers with Proof-of-Safety reporting and AFRC rewards.</p>
+        </div>
+        <div class="card">
+            <h3>Tokenomics</h3>
+            <p>10B AFRC supply with a 1% burn mechanism on every freight transit and ticket sale.</p>
+        </div>
     </section>
 </body>
 </html>
