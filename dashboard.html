@@ -46,3 +46,23 @@
     </div>
 </body>
 </html>
+<script>
+    let h = 8942231;
+    setInterval(() => {
+        h += Math.floor(Math.random() * 3) + 1;
+        document.getElementById('block-height').innerText = h.toLocaleString();
+    }, 3000);
+
+    document.getElementById('submit-btn').onclick = function() {
+        const id = document.getElementById('loco-id').value || "SYS-AUTO";
+        const log = document.getElementById('tx-log');
+        const hash = '0x' + Math.random().toString(16).slice(2, 10);
+        const div = document.createElement('div');
+        div.innerHTML = `<span style="color:#00ff00">[SUCCESS]</span> ${id}<br><small>${hash}</small><br>`;
+        log.prepend(div);
+        let c = document.getElementById('report-count');
+        let n = parseInt(c.innerText.replace(',',''));
+        c.innerText = (n + 1).toLocaleString();
+    };
+</script>
+</html>
