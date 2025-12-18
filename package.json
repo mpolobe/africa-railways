@@ -1,0 +1,7 @@
+{
+  "name": "africa-railways",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "mkdir -p .vercel/output && cp -r * .vercel/output/ 2>/dev/null || true"
+  }
+}
