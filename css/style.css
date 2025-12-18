@@ -1,5 +1,5 @@
-:root { 
-    --navy: #0a0e1a; --gold: #FFB800; --cyan: #00D4FF; --white: #ffffff; 
+body { background: #0a0e1a; color: white; }
+0; --cyan: #00D4FF; --white: #ffffff; 
     --surface: #16203a; 
 }
 body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; overflow-x: hidden; }
