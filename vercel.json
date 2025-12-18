@@ -1,15 +1,8 @@
 {
   "version": 2,
+  "cleanUrls": true,
   "builds": [
-    {
-      "src": "backend/cmd/visualizer/app.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "backend/cmd/visualizer/app.py"
-    }
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "css/**", "use": "@vercel/static" }
   ]
 }
