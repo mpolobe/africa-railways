@@ -28,3 +28,7 @@
 - **Sentinel Chat:** WebSocket-based P2P messaging with Sui-hashed safety logs.
 - **Stakeholder Voting:** On-chain Move module for treaty-level decision making.
 - **Identity:** zkLogin integration for seamless worker authentication.
+
+## 🛰️ Data Bridge (Live)
+- **Mobile -> Go:** Reports ingested via /api/report.
+- **Go -> Digits:** JSON payload mapped to 'Operational Safety' credits.
