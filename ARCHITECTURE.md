@@ -18,3 +18,8 @@
 - **Worker Safety:** Acoustic and haptic alerts for train proximity.
 - **Blockchain Bridge:** Mobile signing of Sui objects (rail manifests).
 - **Backend:** Firebase + Go Ingestion Engine for sub-second latency.
+
+## 🗳️ Governance & Communication
+- **Sentinel Chat:** WebSocket-based P2P messaging with Sui-hashed safety logs.
+- **Stakeholder Voting:** On-chain Move module for treaty-level decision making.
+- **Identity:** zkLogin integration for seamless worker authentication.
