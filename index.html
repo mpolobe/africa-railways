@@ -2,23 +2,48 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Africa Railways | Digital Spine</title>
-    <style>
-        body { font-family: sans-serif; background: #0a0a0a; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { text-align: center; border: 1px solid #333; padding: 40px; border-radius: 8px; }
-        h1 { color: #00ffcc; letter-spacing: 2px; }
-        p { color: #888; }
-        .status { color: #00ff00; font-weight: bold; }
-    </style>
+    <title>Africa Railways | Digital Spine Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>AFRICA RAILWAYS</h1>
-        <p>Project Lead: Benjamin Mpolokoso</p>
-        <p class="status">● DIGITAL SPINE ACTIVE</p>
-        <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
-        <small>OpenAPI 3.0 Handshake: Verified</small>
+    <div class="sidebar">
+        <h2>🚂 Spine OS</h2>
+        <nav>
+            <p style="color: var(--primary)">● Dashboard</p>
+            <p>🛰️ Sentinel Nodes</p>
+            <p>📜 Smart Contracts</p>
+            <p>📊 Revenue Splits</p>
+        </nav>
+    </div>
+    <div class="main-content">
+        <header style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>Continental Overview</h1>
+            <div class="card" style="padding: 10px 20px;">
+                <span class="status-dot"></span> LIVE: WASHINGTON IAD-1
+            </div>
+        </header>
+        
+        <div class="map-container">
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #444; font-weight: bold;">[ AFRICA RAIL CORRIDOR MAP ]</div>
+        </div>
+
+        <div class="card-grid">
+            <div class="card">
+                <h3>Sentinel Report</h3>
+                <p style="font-size: 24px; color: var(--primary);">98.2%</p>
+                <small>Operational Uptime</small>
+            </div>
+            <div class="card">
+                <h3>Transit Volume</h3>
+                <p style="font-size: 24px;">1,240 <span style="font-size: 14px; color: #888;">tons/hr</span></p>
+                <small>Zambia-Tanzania Corridor</small>
+            </div>
+            <div class="card">
+                <h3>Settlement Status</h3>
+                <p style="font-size: 24px; color: #ffcc00;">PENDING</p>
+                <small>Sui Mainnet Synchronization</small>
+            </div>
+        </div>
     </div>
 </body>
 </html>
