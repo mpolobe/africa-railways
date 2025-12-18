@@ -4,8 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Africoin - The Digital Spine</title>
-    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background: #0a0e1a; color: white; }
+0; --cyan: #00D4FF; --white: #ffffff; 
+    --surface: #16203a; 
+}
+body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; overflow-x: hidden; }
+
+nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(10,14,26,0.95); border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; }
+.logo { font-size: 1.4rem; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 10px; }
+.nav-links { display: flex; list-style: none; gap: 30px; }
+.nav-links a { color: var(--white); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: 0.3s; }
+.nav-links a:hover { color: var(--gold); }
+
+.hero { padding: 140px 8%; text-align: center; background: radial-gradient(circle at center, #16203a 0%, #0a0e1a 100%); min-height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+.hero-tag { color: var(--gold); font-weight: bold; letter-spacing: 4px; font-size: 0.8rem; margin-bottom: 20px; text-transform: uppercase; }
+h1 { font-size: clamp(2.5rem, 5vw, 4.5rem); margin: 0 0 20px 0; letter-spacing: -2px; font-weight: 900; line-height: 1.1; }
+.hero-subtitle { color: #aaa; font-size: 1.2rem; max-width: 650px; margin: 0 auto 50px; }
+
+.hero-stats { display: flex; gap: 60px; margin-bottom: 60px; justify-content: center; }
+.hero-stat { display: flex; flex-direction: column; align-items: center; }
+.stat-value { font-size: 2.5rem; font-weight: 800; color: var(--white); }
+.stat-label { color: var(--gold); font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; margin-top: 5px; }
+
+.cta-button { padding: 18px 40px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: 0.3s; font-size: 0.95rem; }
+.primary { background: var(--gold); color: var(--navy); border: 2px solid var(--gold); box-shadow: 0 4px 15px rgba(255,184,0,0.3); }
+.secondary { border: 2px solid #333; color: var(--white); margin-left: 15px; }
+.primary:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(255,184,0,0.4); }
+.secondary:hover { background: #333; }
+        /* Extra visibility insurance */
+        .hero { display: block !important; visibility: visible !important; opacity: 1 !important; }
+    </style>
 </head>
 <body>
     <header>
