@@ -1,21 +1,13 @@
-:root { --navy: #0a0e1a; --gold: #FFB800; --cyan: #00D4FF; --white: #ffffff; }
-body { margin: 0; font-family: 'Inter', sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; }
-nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 5%; background: rgba(10,14,26,0.95); position: sticky; top: 0; z-index: 1000; }
-.logo { display: flex; align-items: center; gap: 10px; font-size: 1.5rem; font-weight: bold; }
-.nav-links { display: flex; list-style: none; gap: 30px; }
-.nav-links a { color: var(--white); text-decoration: none; font-size: 0.9rem; transition: 0.3s; }
-.nav-links a:hover { color: var(--cyan); }
-.hero { padding: 100px 5%; text-align: center; background: radial-gradient(circle at center, #16203a 0%, #0a0e1a 100%); }
-.hero-tag { color: var(--gold); font-weight: bold; letter-spacing: 2px; margin-bottom: 20px; }
-h1 { font-size: 3.5rem; margin-bottom: 20px; }
-.hero-subtitle { max-width: 800px; margin: 0 auto 40px; color: #a0a0a0; font-size: 1.2rem; }
-.hero-stats { display: flex; justify-content: center; gap: 50px; margin-bottom: 50px; }
-.hero-stat { display: flex; flex-direction: column; }
-.stat-value { font-size: 2.5rem; font-weight: bold; color: var(--cyan); }
-.stat-label { color: #888; font-size: 0.8rem; text-transform: uppercase; }
-.hero-cta { display: flex; justify-content: center; gap: 20px; }
-.cta-button { padding: 15px 35px; border-radius: 5px; text-decoration: none; font-weight: bold; transition: 0.3s; }
+:root { --navy: #0a0e1a; --gold: #FFB800; --cyan: #00D4FF; --white: #ffffff; --surface: #1a1a1a; }
+body { margin: 0; font-family: sans-serif; background: var(--navy); color: var(--white); }
+nav { display: flex; justify-content: space-between; padding: 20px 5%; background: #05070a; border-bottom: 1px solid #222; }
+.logo { display: flex; align-items: center; gap: 10px; font-weight: bold; text-decoration: none; color: white; }
+.nav-links { display: flex; list-style: none; gap: 20px; }
+.nav-links a { color: white; text-decoration: none; font-size: 0.9rem; }
+.hero { padding: 80px 5%; text-align: center; }
+.hero-stats { display: flex; justify-content: center; gap: 40px; margin: 30px 0; }
+.stat-value { font-size: 2rem; color: var(--cyan); font-weight: bold; }
+.cta-button { padding: 12px 30px; border-radius: 4px; text-decoration: none; font-weight: bold; margin: 0 10px; }
 .primary { background: var(--gold); color: var(--navy); }
 .secondary { border: 1px solid var(--cyan); color: var(--cyan); }
-.cta-button:hover { transform: translateY(-3px); opacity: 0.9; }
-.main-footer { padding: 50px 5%; border-top: 1px solid #222; margin-top: 50px; background: #05070a; }
+.main-footer { padding: 40px; text-align: center; background: #05070a; border-top: 1px solid #222; }
