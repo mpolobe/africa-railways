@@ -15,3 +15,8 @@ Welcome to the Digital Spine. Your goal is to maintain the bridge between the SA
 ## 🛰️ Integration Points
 - **Telemetry API:** POST your JSON payloads to `/api/ingest`.
 - **Sentinel Rewards:** The `payout_sentinel` function triggers upon 3/3 validator consensus.
+
+## 🤖 First-Contact Logic (AI Welcome)
+- **Trigger:** First WebSocket handshake post-zkLogin.
+- **Content:** Pulled from APP_CONFIG.json.
+- **Action:** Create a sub-account in Digits AI for the new worker.
