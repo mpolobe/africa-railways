@@ -7,3 +7,8 @@
 - **Integration:** Connect API via Development Keys.
 - **Mapping:** Sui Transaction Gas -> Operational Expense.
 - **Mapping:** 1% Burn Flywheel -> Treasury Revenue.
+
+## 💰 Finance Layer (Digits AI)
+- **Integration:** Connect API via Development Keys.
+- **Mapping:** Sui Transaction Gas -> Operational Expense.
+- **Mapping:** 1% Burn Flywheel -> Treasury Revenue.
