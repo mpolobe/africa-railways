@@ -32,3 +32,7 @@
 ## 🛰️ Data Bridge (Live)
 - **Mobile -> Go:** Reports ingested via /api/report.
 - **Go -> Digits:** JSON payload mapped to 'Operational Safety' credits.
+
+## 🗺️ System Site Map
+![Site Map](https://colab.google/static/images/diagrams/site_map_placeholder.png)
+*The above map illustrates the flow between the Sovereign Hub, Worker Portal, and the Digits AI Financial Brain.*
