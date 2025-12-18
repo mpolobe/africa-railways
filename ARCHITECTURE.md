@@ -12,3 +12,9 @@
 - **Integration:** Connect API via PRODUCTION Keys.
 - **Mapping:** Sui Transaction Gas -> Operational Expense.
 - **Mapping:** 1% Burn Flywheel -> Treasury Revenue.
+
+## 📱 Monitoring App (Sentinel Mobile)
+- **Engine Driver Interface:** Real-time location sharing via Google Maps API.
+- **Worker Safety:** Acoustic and haptic alerts for train proximity.
+- **Blockchain Bridge:** Mobile signing of Sui objects (rail manifests).
+- **Backend:** Firebase + Go Ingestion Engine for sub-second latency.
