@@ -12,7 +12,7 @@
     </div>
     <script>
         async function update() {
-            const r = await fetch('/data/telemetry.json');
+            const r = await fetch('/telemetry.json');
             const d = await r.json();
             document.getElementById('net-status').innerText = "● SYSTEM " + d.network_status;
             document.getElementById('trains').innerText = d.active_trains;
