@@ -1,17 +1,12 @@
-# 🌍 Africa Railways: The Digital Spine
-**Built for Africa, by Africa.** 🚂
+# Africoin: The Digital Spine of Africa
 
-The Digital Spine is an integrated high-speed rail and decentralized finance ecosystem connecting 54 nations.
+Connecting 54 nations via high-speed rail and Sui blockchain technology.
 
-## 🛠️ Core Components
-- **Sui Move Contracts:** Automated revenue sharing and ticket minting.
-- **Go Ingestion Engine:** Real-time telemetry and GPS tracking.
-- **React Native Mobile:** Sentinel "Proof-of-Safety" reporting suite.
-- **Python Dashboard:** Executive oversight and fleet visualization.
+## Core Features
+- **AFRC Utility:** Gas for freight manifests and passenger tickets.
+- **Sentinel Rewards:** Incentivizing track safety through worker participation.
+- **Burn Flywheel:** 1% of every transaction is burned to maintain scarcity.
 
-## 🤝 Governance
-Project Lead: **Benjamin Mpolokoso**
-Institutional Audit: Ready for AU Security Council Review (See /docs).
-
----
-© 2025 Benjamin Mpolokoso. All Rights Reserved.
+## Deployment
+Live Site: [https://africa-railways.vercel.app](https://africa-railways.vercel.app)
+Dashboard: [/dashboard.html](/dashboard.html)
