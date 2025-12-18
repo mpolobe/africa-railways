@@ -1,68 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sentinel Portal | Africoin Spine</title>
+    <meta charset="UTF-8"><title>Sentinel Portal</title>
     <style>
-        :root { --navy: #0a0e1a; --gold: #FFB800; --cyan: #00D4FF; --white: #ffffff; --surface: #16203a; }
-        body { margin: 0; font-family: sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; }
-        nav { display: flex; justify-content: space-between; padding: 20px 8%; border-bottom: 1px solid #222; background: #0d121f; }
-        .container { padding: 40px 8%; max-width: 1200px; margin: 0 auto; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        .card { background: var(--surface); padding: 30px; border-radius: 12px; border: 1px solid #333; }
-        .val { font-size: 2rem; font-weight: 800; color: var(--cyan); display: block; margin: 5px 0; }
-        .label { color: var(--gold); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 2px; }
-        input, select { width: 100%; padding: 12px; margin: 10px 0; background: #0a0e1a; border: 1px solid #444; color: white; border-radius: 5px; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: var(--gold); border: none; font-weight: bold; cursor: pointer; border-radius: 5px; }
-        #tx-log { margin-top: 20px; font-family: monospace; font-size: 0.8rem; height: 120px; overflow-y: auto; color: #888; border-top: 1px solid #222; padding-top: 10px; }
-        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+        :root { --navy: #0a0e1a; --gold: #FFB800; --surface: #16203a; }
+        body { background: var(--navy); color: white; font-family: sans-serif; margin: 0; }
+        nav { padding: 20px; background: #0d121f; display: flex; align-items: center; border-bottom: 1px solid #222; }
+        .sentinel-logo { height: 40px; margin-right: 15px; animation: pulse 3s infinite; }
+        @keyframes pulse {
+            0%, 100% { filter: drop-shadow(0 0 2px var(--gold)); transform: scale(1); }
+            50% { filter: drop-shadow(0 0 12px var(--gold)); transform: scale(1.05); }
+        }
+        .container { padding: 40px; }
+        .card { background: var(--surface); padding: 25px; border-radius: 10px; border: 1px solid #333; }
     </style>
 </head>
 <body>
-    <nav>
-        <div style="color:var(--gold); font-weight:800;"><img src="sentinel-logo.png" class="sentinel-logo">SENTINEL WORKER PORTAL</div>
-        <a href="/" style="color:white; text-decoration:none;">&larr; Exit System</a>
-    </nav>
+    <nav><img src="sentinel-logo.png" class="sentinel-logo"> SENTINEL WORKER PORTAL</nav>
     <div class="container">
-        <div class="grid">
-            <div class="card">
-                <span class="label">Sui Block Height</span>
-                <span class="val" id="block-height">8,942,231</span>
-                <span class="label">Total Safety Reports</span>
-                <span class="val" id="report-count">42,109</span>
-            </div>
-            <div class="card">
-                <span class="label">Submit Proof-of-Safety</span>
-                <input type="text" id="loco-id" placeholder="Locomotive ID">
-                <select id="track-status">
-                    <option value="CLEAR">Track Status: CLEAR</option>
-                    <option value="CAUTION">Track Status: CAUTION</option>
-                </select>
-                <button id="submit-btn">Sign & Broadcast to Sui</button>
-                <div id="tx-log"></div>
-            </div>
+        <div class="card">
+            <h2 style="color:var(--gold)">System Active</h2>
+            <p>Sui Mainnet Connectivity: [STABLE]</p>
         </div>
     </div>
 </body>
-</html>
-<script>
-    let h = 8942231;
-    setInterval(() => {
-        h += Math.floor(Math.random() * 3) + 1;
-        document.getElementById('block-height').innerText = h.toLocaleString();
-    }, 3000);
-
-    document.getElementById('submit-btn').onclick = function() {
-        const id = document.getElementById('loco-id').value || "SYS-AUTO";
-        const log = document.getElementById('tx-log');
-        const hash = '0x' + Math.random().toString(16).slice(2, 10);
-        const div = document.createElement('div');
-        div.innerHTML = `<span style="color:#00ff00">[SUCCESS]</span> ${id}<br><small>${hash}</small><br>`;
-        log.prepend(div);
-        let c = document.getElementById('report-count');
-        let n = parseInt(c.innerText.replace(',',''));
-        c.innerText = (n + 1).toLocaleString();
-    };
-</script>
 </html>
