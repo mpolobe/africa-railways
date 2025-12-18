@@ -3,6 +3,7 @@
   "cleanUrls": true,
   "builds": [
     { "src": "index.html", "use": "@vercel/static" },
+    { "src": "dashboard.html", "use": "@vercel/static" },
     { "src": "css/**", "use": "@vercel/static" }
   ]
 }
