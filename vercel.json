@@ -1,9 +1,4 @@
 {
-  "version": 2,
   "cleanUrls": true,
-  "builds": [
-    { "src": "index.html", "use": "@vercel/static" },
-    { "src": "dashboard.html", "use": "@vercel/static" },
-    { "src": "css/**", "use": "@vercel/static" }
-  ]
+  "trailingSlash": false
 }
