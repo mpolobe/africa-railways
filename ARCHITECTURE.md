@@ -23,3 +23,8 @@
 - **Sentinel Chat:** WebSocket-based P2P messaging with Sui-hashed safety logs.
 - **Stakeholder Voting:** On-chain Move module for treaty-level decision making.
 - **Identity:** zkLogin integration for seamless worker authentication.
+
+## 🗳️ Governance & Communication
+- **Sentinel Chat:** WebSocket-based P2P messaging with Sui-hashed safety logs.
+- **Stakeholder Voting:** On-chain Move module for treaty-level decision making.
+- **Identity:** zkLogin integration for seamless worker authentication.
