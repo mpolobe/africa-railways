@@ -1,1 +1,11 @@
-{"network_status": "Active", "active_trains": 124, "last_block_height": 8942231, "throughput_usd": 254000}
+{
+    "network_status": "Active",
+    "active_trains": 124,
+    "last_block_height": 8942231,
+    "throughput_usd": 254000,
+    "nodes": [
+        {"id": "LUSAKA_01", "status": "Online", "load": "42%"},
+        {"id": "LAGOS_04", "status": "Online", "load": "68%"},
+        {"id": "NAIROBI_02", "status": "Online", "load": "15%"}
+    ]
+}
