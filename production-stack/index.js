@@ -5,19 +5,31 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 
 app.post('/ussd', (req, res) => {
-    const phoneNumber = req.body.From;
-    
-    // Generate a deterministic wallet for this phone number
-    // In production, you would seed this with your SUI_MASTER_SECRET
-    const keypair = new Ed25519Keypair();
-    const address = keypair.getPublicKey().toSuiAddress();
+    // Africa's Talking standard parameters
+    const { sessionId, serviceCode, phoneNumber, text } = req.body;
 
-    console.log(`✅ Wallet created for ${phoneNumber}: ${address}`);
+    let response = "";
 
-    res.send(`CON Welcome to Africa Railways\nYour Invisible Wallet Address is:\n${address}`);
+    if (text === "") {
+        // This is the first menu
+        const keypair = new Ed25519Keypair();
+        const address = keypair.getPublicKey().toSuiAddress();
+        
+        response = `CON Welcome to Africa Railways\n`;
+        response += `Your New Sui Wallet:\n${address}\n`;
+        response += `1. View Balance\n`;
+        response += `2. Exit`;
+    } else if (text === "1") {
+        response = "END Your balance is 0 SUI. Safe travels!";
+    } else {
+        response = "END Thank you for using Africa Railways.";
+    }
+
+    res.set('Content-Type', 'text/plain');
+    res.send(response);
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`🚀 Bridge Online on Port ${PORT}`);
+    console.log(`🚀 AT Bridge Live on Port ${PORT}`);
 });
