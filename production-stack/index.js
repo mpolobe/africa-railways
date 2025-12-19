@@ -9,7 +9,6 @@ app.post('/ussd', (req, res) => {
     const { sessionId, serviceCode, phoneNumber, text } = req.body;
 
     // --- SECURE DETERMINISTIC WALLET ---
-    // We combine the phone number with a SECRET SALT from Railway Variables
     const salt = process.env.SUI_MASTER_SECRET || "default_fallback_salt";
     const hash = crypto.createHash('sha256').update(phoneNumber + salt).digest();
     const keypair = Ed25519Keypair.fromSecretKey(hash);
@@ -34,6 +33,6 @@ app.post('/ussd', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`🚀 Secure Bridge Live on Port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Bridge Live on Port ${PORT}`);
 });
