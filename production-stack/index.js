@@ -13,7 +13,6 @@ app.post('/ussd', (req, res) => {
     const hash = crypto.createHash('sha256').update(phoneNumber + salt).digest();
     const keypair = Ed25519Keypair.fromSecretKey(hash);
     const address = keypair.getPublicKey().toSuiAddress();
-    // ------------------------------------
 
     let response = "";
     if (text === "") {
