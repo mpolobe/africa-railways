@@ -15,7 +15,7 @@ const getWallet = (phoneNumber) => {
     };
 };
 
-// USSD Endpoint
+// 📟 USSD Endpoint
 app.post('/ussd', (req, res) => {
     const { phoneNumber, text } = req.body;
     const { address } = getWallet(phoneNumber);
@@ -23,13 +23,12 @@ app.post('/ussd', (req, res) => {
     res.set('Content-Type', 'text/plain').send(response);
 });
 
-// Smartphone API Endpoint (Using Query Param)
+// 📱 Smartphone API Endpoint
 app.get('/api/wallet', (req, res) => {
     const phoneNumber = req.query.phone;
     if (!phoneNumber) return res.status(400).json({ error: "Missing phone number" });
-    
     const { address } = getWallet(phoneNumber);
-    res.json({ address, phoneNumber, network: "Sui Mainnet" });
+    res.json({ address, phoneNumber, status: "Secure" });
 });
 
 const PORT = process.env.PORT || 3000;
