@@ -1,0 +1,113 @@
+image:
+  file: .gitpod.Dockerfile
+
+ports:
+  - port: 8080
+    onOpen: open-preview
+    description: "Backend API"
+    visibility: public
+  - port: 3000
+    onOpen: open-browser
+    description: "Frontend Dashboard"
+    visibility: public
+  - port: 5500
+    onOpen: ignore
+    description: "Live Server"
+    visibility: public
+
+tasks:
+  - name: 🚀 Initialize Environment
+    init: |
+      echo "=== Setting up Africa Railways Development Environment ==="
+      
+      # Update system
+      sudo apt-get update -qq
+      
+      # Install Go dependencies
+      echo "📦 Installing Go tools..."
+      go version
+      
+      # Install Node.js dependencies for mobile
+      echo "📱 Setting up mobile environment..."
+      cd /workspaces/africa-railways/mobile
+      npm install || echo "⚠️  Mobile dependencies will be installed on first use"
+      
+      # Initialize Go modules
+      echo "🔧 Initializing Go modules..."
+      cd /workspaces/africa-railways/backend
+      go mod tidy || echo "Go modules initialized"
+      
+      cd /workspaces/africa-railways/server
+      go mod tidy || echo "Server modules initialized"
+      
+      echo "✅ Environment setup complete"
+      
+    command: |
+      echo "🌍 Welcome to Africa Railways Development Environment"
+      echo ""
+      echo "Available services:"
+      echo "  - Backend API: http://localhost:8080"
+      echo "  - Frontend: http://localhost:3000"
+      echo ""
+      echo "Quick commands:"
+      echo "  gp preview http://localhost:8080  # Open backend"
+      echo "  gp preview http://localhost:3000  # Open frontend"
+      echo ""
+      echo "Run 'make help' for more commands"
+  
+  - name: 🔧 Backend Server
+    init: |
+      echo "Building backend services..."
+      cd /workspaces/africa-railways/backend
+      go build -o bin/backend ./main.go
+      
+      cd /workspaces/africa-railways/backend/cmd/spine_engine
+      go build -o ../../bin/spine_engine ./main.go
+      
+      echo "✅ Backend built successfully"
+      
+    command: |
+      echo "Starting Backend API on port 8080..."
+      cd /workspaces/africa-railways/backend/cmd/spine_engine
+      go run main.go
+  
+  - name: 🌐 Frontend Server
+    command: |
+      echo "Starting Frontend Dashboard on port 3000..."
+      cd /workspaces/africa-railways
+      python3 -m http.server 3000
+  
+  - name: 🧪 Test Runner
+    openMode: split-right
+    command: |
+      echo "🧪 Test environment ready"
+      echo ""
+      echo "Run tests with:"
+      echo "  cd backend/cmd/spine_engine && go test -v"
+      echo "  cd server && go test -v voice_ai_classifier.go voice_ai_classifier_test.go"
+      echo ""
+      gp sync-done tests-ready
+
+vscode:
+  extensions:
+    - golang.go
+    - ms-vscode.vscode-typescript-next
+    - esbenp.prettier-vscode
+    - bradlc.vscode-tailwindcss
+    - dbaeumer.vscode-eslint
+    - ritwickdey.liveserver
+    - ms-azuretools.vscode-docker
+    - eamodio.gitlens
+    - github.copilot
+
+github:
+  prebuilds:
+    master: true
+    branches: true
+    pullRequests: true
+    pullRequestsFromForks: true
+    addCheck: true
+    addComment: true
+    addBadge: true
+
+workspaceLocation: "africa-railways"

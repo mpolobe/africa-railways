@@ -1,5 +1,7 @@
 # 🚂 Africoin (AFRC) - The Digital Spine
 
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/mpolobe/africa-railways)
+
 **Connecting 54 Nations via High-Speed Rail & Sui Blockchain Technology.**
 
 The Digital Spine is the world's first integrated infrastructure project combining heavy rail logistics with the **Sui Move Ledger**. By digitizing every freight ton and passenger ticket, we ensure a transparent, secure, and hyper-efficient trade corridor for the African continent.
@@ -12,6 +14,7 @@ The Digital Spine is the world's first integrated infrastructure project combini
 ## 🛠️ Quick Links for Tech Staff
 - **[Architecture Specs](ARCHITECTURE.md)**: Deep dive into the Go Ingestion Engine.
 - **[Developer Onboarding](DEVELOPER_ONBOARDING.md)**: How to set up and contribute.
+- **[Gitpod Setup](GITPOD_SETUP.md)**: One-click cloud development environment.
 - **[Sentinel Portal](/dashboard.html)**: Live telemetry and safety reporting dashboard.
 
 ## 🗺️ 2026 Roadmap
