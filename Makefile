@@ -90,4 +90,65 @@ logs: ## Show logs (requires services to be running)
 	@echo "$(BLUE)Showing logs...$(NC)"
 	@tail -f /tmp/*.log 2>/dev/null || echo "No logs found"
 
+sui-install: ## Install Sui CLI
+	@echo "$(BLUE)Installing Sui CLI...$(NC)"
+	@if command -v sui &> /dev/null; then \
+		echo "$(YELLOW)Sui CLI already installed: $$(sui --version)$(NC)"; \
+	else \
+		cargo install --locked --git https://github.com/MystenLabs/sui.git --branch mainnet sui; \
+		echo "$(GREEN)✅ Sui CLI installed$(NC)"; \
+	fi
+
+sui-start: ## Start local Sui network with faucet
+	@echo "$(BLUE)Starting Sui local network...$(NC)"
+	@echo "This will start:"
+	@echo "  - Sui RPC on port 9000"
+	@echo "  - Sui Faucet on port 9123"
+	@sui start --with-faucet --force-regenesis
+
+sui-client: ## Open Sui client console
+	@echo "$(BLUE)Opening Sui client...$(NC)"
+	@sui client
+
+sui-build: ## Build Sui Move contracts
+	@echo "$(BLUE)Building Sui Move contracts...$(NC)"
+	@if [ -d "contracts" ]; then \
+		cd contracts && sui move build; \
+		echo "$(GREEN)✅ Contracts built$(NC)"; \
+	else \
+		echo "$(YELLOW)No contracts directory found$(NC)"; \
+	fi
+
+sui-test: ## Test Sui Move contracts
+	@echo "$(BLUE)Testing Sui Move contracts...$(NC)"
+	@if [ -d "contracts" ]; then \
+		cd contracts && sui move test; \
+		echo "$(GREEN)✅ Contract tests complete$(NC)"; \
+	else \
+		echo "$(YELLOW)No contracts directory found$(NC)"; \
+	fi
+
+sui-publish: ## Publish Sui Move contracts (requires local network)
+	@echo "$(BLUE)Publishing Sui Move contracts...$(NC)"
+	@if [ -d "contracts" ]; then \
+		cd contracts && sui client publish --gas-budget 100000000; \
+		echo "$(GREEN)✅ Contracts published$(NC)"; \
+	else \
+		echo "$(YELLOW)No contracts directory found$(NC)"; \
+	fi
+
+postgres-start: ## Start PostgreSQL service
+	@echo "$(BLUE)Starting PostgreSQL...$(NC)"
+	@sudo service postgresql start
+	@echo "$(GREEN)✅ PostgreSQL started$(NC)"
+
+postgres-stop: ## Stop PostgreSQL service
+	@echo "$(BLUE)Stopping PostgreSQL...$(NC)"
+	@sudo service postgresql stop
+	@echo "$(GREEN)✅ PostgreSQL stopped$(NC)"
+
+postgres-status: ## Check PostgreSQL status
+	@echo "$(BLUE)PostgreSQL Status:$(NC)"
+	@sudo service postgresql status
+
 .DEFAULT_GOAL := help

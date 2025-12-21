@@ -13,6 +13,9 @@ When you open this project in Gitpod, the following happens automatically:
 ### 1. Environment Setup
 - Go development environment
 - Node.js 18 LTS
+- Rust and Cargo
+- Sui CLI (blockchain development)
+- PostgreSQL database
 - All project dependencies installed
 - Go modules initialized
 
@@ -36,6 +39,9 @@ When you open this project in Gitpod, the following happens automatically:
 |------|---------|-------------|
 | 8080 | Backend API | Spine Engine & Health Check |
 | 3000 | Frontend | Dashboard & Static Files |
+| 9000 | Sui RPC | Sui blockchain RPC node |
+| 9123 | Sui Faucet | Local testnet faucet |
+| 5432 | PostgreSQL | Database server |
 | 5500 | Live Server | Development Server |
 
 ## Quick Commands
@@ -95,6 +101,9 @@ python3 -m http.server 3000
 
 ### Run Tests
 ```bash
+# All tests
+make test
+
 # Backend tests
 cd backend/cmd/spine_engine
 go test -v
@@ -102,6 +111,42 @@ go test -v
 # Voice AI Classifier tests
 cd server
 go test -v voice_ai_classifier.go voice_ai_classifier_test.go
+
+# Sui Move contract tests
+make sui-test
+```
+
+### Sui Blockchain Development
+```bash
+# Install Sui CLI (if not already installed)
+make sui-install
+
+# Start local Sui network
+make sui-start
+
+# Build Move contracts
+make sui-build
+
+# Test Move contracts
+make sui-test
+
+# Publish contracts to local network
+make sui-publish
+
+# Open Sui client console
+make sui-client
+```
+
+### Database Management
+```bash
+# Start PostgreSQL
+make postgres-start
+
+# Check PostgreSQL status
+make postgres-status
+
+# Stop PostgreSQL
+make postgres-stop
 ```
 
 ## Accessing Services

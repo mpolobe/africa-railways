@@ -10,6 +10,18 @@ ports:
     onOpen: open-browser
     description: "Frontend Dashboard"
     visibility: public
+  - port: 9000
+    onOpen: notify
+    description: "Sui RPC Node"
+    visibility: public
+  - port: 9123
+    onOpen: notify
+    description: "Sui Faucet"
+    visibility: public
+  - port: 5432
+    onOpen: ignore
+    description: "PostgreSQL"
+    visibility: private
   - port: 5500
     onOpen: ignore
     description: "Live Server"
@@ -20,8 +32,17 @@ tasks:
     init: |
       echo "=== Setting up Africa Railways Development Environment ==="
       
-      # Update system
-      sudo apt-get update -qq
+      # Install Sui CLI (cached in prebuilds)
+      echo "⛓️  Installing Sui CLI..."
+      if ! command -v sui &> /dev/null; then
+        cargo install --locked --git https://github.com/MystenLabs/sui.git --branch mainnet sui
+        echo "✅ Sui CLI installed"
+      else
+        echo "✅ Sui CLI already installed"
+      fi
+      
+      # Verify Sui installation
+      sui --version || echo "⚠️  Sui installation pending..."
       
       # Install Go dependencies
       echo "📦 Installing Go tools..."
@@ -40,6 +61,10 @@ tasks:
       cd /workspaces/africa-railways/server
       go mod tidy || echo "Server modules initialized"
       
+      # Setup PostgreSQL
+      echo "🗄️  Setting up PostgreSQL..."
+      sudo service postgresql start || true
+      
       echo "✅ Environment setup complete"
       
     command: |
@@ -49,11 +74,18 @@ tasks:
       echo "  - Backend API: http://localhost:8080"
       echo "  - Frontend: http://localhost:3000"
       echo ""
-      echo "Quick commands:"
-      echo "  gp preview http://localhost:8080  # Open backend"
-      echo "  gp preview http://localhost:3000  # Open frontend"
+      echo "Sui Blockchain:"
+      echo "  - Sui CLI: $(sui --version 2>/dev/null || echo 'Installing...')"
+      echo "  - Start local network: sui start"
       echo ""
-      echo "Run 'make help' for more commands"
+      echo "Quick commands:"
+      echo "  make help                          # Show all commands"
+      echo "  gp preview http://localhost:8080   # Open backend"
+      echo "  gp preview http://localhost:3000   # Open frontend"
+      echo ""
+      echo "PostgreSQL:"
+      echo "  - Status: $(sudo service postgresql status | grep -o 'online' || echo 'stopped')"
+      echo "  - Start: sudo service postgresql start"
   
   - name: 🔧 Backend Server
     init: |
@@ -77,12 +109,36 @@ tasks:
       cd /workspaces/africa-railways
       python3 -m http.server 3000
   
+  - name: ⛓️  Sui Blockchain (Optional)
+    command: |
+      echo "⛓️  Sui Blockchain Environment"
+      echo ""
+      echo "To start a local Sui network:"
+      echo "  sui start --with-faucet --force-regenesis"
+      echo ""
+      echo "This will start:"
+      echo "  - Sui RPC on port 9000"
+      echo "  - Sui Faucet on port 9123"
+      echo ""
+      echo "Useful Sui commands:"
+      echo "  sui client envs                    # List environments"
+      echo "  sui client active-address          # Show active address"
+      echo "  sui client gas                     # Show gas objects"
+      echo "  sui move build                     # Build Move contracts"
+      echo "  sui client publish --gas-budget 100000000  # Deploy contract"
+      echo ""
+      echo "Press Enter to start Sui network, or Ctrl+C to skip..."
+      read
+      sui start --with-faucet --force-regenesis
+  
   - name: 🧪 Test Runner
     openMode: split-right
     command: |
       echo "🧪 Test environment ready"
       echo ""
       echo "Run tests with:"
+      echo "  make test                          # Run all tests"
+      echo "  make test-coverage                 # Run with coverage"
       echo "  cd backend/cmd/spine_engine && go test -v"
       echo "  cd server && go test -v voice_ai_classifier.go voice_ai_classifier_test.go"
       echo ""

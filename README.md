@@ -15,6 +15,7 @@ The Digital Spine is the world's first integrated infrastructure project combini
 - **[Architecture Specs](ARCHITECTURE.md)**: Deep dive into the Go Ingestion Engine.
 - **[Developer Onboarding](DEVELOPER_ONBOARDING.md)**: How to set up and contribute.
 - **[Gitpod Setup](GITPOD_SETUP.md)**: One-click cloud development environment.
+- **[Sui Development](SUI_DEVELOPMENT.md)**: Blockchain development guide.
 - **[Sentinel Portal](/dashboard.html)**: Live telemetry and safety reporting dashboard.
 
 ## 🗺️ 2026 Roadmap
