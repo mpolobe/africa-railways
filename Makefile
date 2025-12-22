@@ -9,14 +9,24 @@ NC = \033[0m
 
 help:
 	@echo "$(GREEN)🌍 Africa Railways - 2025 Hybrid Suite$(NC)"
-	@echo "  make dev      - Start everything with Hot-Reload (iPad Ready)"
-	@echo "  make status   - Check all ports (3000, 8080, 8081, 9000, 8082)"
-	@echo "  make logs     - Interactive iPad log viewer"
-	@echo "  make simulate - Run ticket purchase simulation"
-	@echo "  make deploy   - Push Africoin to Sui Localnet"
-	@echo "  make sync     - Git add, commit, and push (iPad friendly)"
-	@echo "  make stop     - Stop all services"
-	@echo "  make clean    - Clean build artifacts"
+	@echo ""
+	@echo "$(BLUE)Development:$(NC)"
+	@echo "  make dev           - Start everything with Hot-Reload (iPad Ready)"
+	@echo "  make status        - Check all ports (3000, 8080, 8081, 9000, 8082)"
+	@echo "  make logs          - Interactive iPad log viewer"
+	@echo "  make simulate      - Run ticket purchase simulation"
+	@echo "  make stop          - Stop all services"
+	@echo "  make clean         - Clean build artifacts"
+	@echo ""
+	@echo "$(BLUE)Deployment:$(NC)"
+	@echo "  make auto-deploy   - Automated git sync + CI/CD trigger"
+	@echo "  make deploy-status - Check deployment status"
+	@echo "  make sync          - Manual git sync"
+	@echo "  make deploy        - Push Africoin to Sui Localnet"
+	@echo ""
+	@echo "$(BLUE)Configuration:$(NC)"
+	@echo "  make check-secrets - Verify environment variables"
+	@echo "  make preflight     - Run pre-deployment checklist"
 
 # 🚀 HYBRID DEV COMMAND
 dev:
@@ -103,6 +113,34 @@ sync:
 	@git commit -m "Manual sync: $$(date '+%Y-%m-%d %H:%M:%S')" || echo "$(YELLOW)No changes to commit$(NC)"
 	@git push origin main
 	@echo "$(GREEN)✅ Sync complete! Codespaces can now pull and Vercel is building.$(NC)"
+
+# Automated deployment with CI/CD trigger
+auto-deploy:
+	@echo "$(BLUE)📤 Syncing and Triggering Automated Deployment...$(NC)"
+	@git add .
+	@git commit -m "Automated Deploy: $$(date '+%Y-%m-%d %H:%M:%S')" || echo "$(YELLOW)No changes to commit$(NC)"
+	@git push origin main
+	@echo "$(GREEN)🚀 GitHub Actions is now building your latest changes!$(NC)"
+	@echo "$(BLUE)📊 Monitor builds:$(NC)"
+	@echo "  • GitHub Actions: https://github.com/mpolobe/africa-railways/actions"
+	@echo "  • EAS Builds: https://expo.dev/accounts/mpolobe/projects/africa-railways/builds"
+	@echo ""
+	@echo "$(YELLOW)💡 Tip: Use 'make deploy-status' to check deployment status$(NC)"
+
+# Check deployment status
+deploy-status:
+	@echo "$(BLUE)📊 Checking Deployment Status...$(NC)"
+	@echo ""
+	@echo "$(GREEN)Latest Commits:$(NC)"
+	@git log --oneline -5
+	@echo ""
+	@echo "$(GREEN)Branch Status:$(NC)"
+	@git status -sb
+	@echo ""
+	@echo "$(BLUE)🔗 Quick Links:$(NC)"
+	@echo "  • GitHub Actions: https://github.com/mpolobe/africa-railways/actions"
+	@echo "  • EAS Builds: https://expo.dev/accounts/mpolobe/projects/africa-railways/builds"
+	@echo "  • Repository: https://github.com/mpolobe/africa-railways"
 
 clean:
 	@echo "$(BLUE)🧹 Cleaning build artifacts...$(NC)"
