@@ -1,4 +1,4 @@
-.PHONY: help dev backend engine status stop clean logs deploy sync
+.PHONY: help dev backend engine status stop clean logs deploy sync build-railways-android build-railways-ios build-all-apps
 
 # Colors
 GREEN = \033[0;32m
@@ -270,3 +270,18 @@ simulate:
 		./backend/cmd/spine_engine/simulate_ticket.sh; \
 	fi
 	@echo "✅ Simulation event sent to engine."
+
+# 📱 MOBILE APP BUILDS
+build-railways-android:
+	@echo "$(BLUE)🚂 Building Africa Railways Android...$(NC)"
+	@./build-scripts/build-railways-android.sh
+
+build-railways-ios:
+	@echo "$(BLUE)🚂 Building Africa Railways iOS...$(NC)"
+	@./build-scripts/build-railways-ios.sh
+
+build-all-apps:
+	@echo "$(GREEN)📱 Building All Mobile Apps...$(NC)"
+	@$(MAKE) build-railways-android
+	@$(MAKE) build-railways-ios
+	@echo "$(GREEN)✅ All builds submitted!$(NC)"
