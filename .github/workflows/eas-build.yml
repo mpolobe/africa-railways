@@ -1,14 +1,15 @@
-name: EAS Build
+name: EAS Build (Manual Only)
 
 on:
-  push:
-    branches: ["main"]
-    paths:
-      - 'SmartphoneApp/**'
-      - 'mobile/**'
-      - 'app.json'
-      - 'eas.json'
-      - 'package.json'
+  # Disabled automatic triggers - use "Build Both Apps" workflow instead
+  # push:
+  #   branches: ["main"]
+  #   paths:
+  #     - 'SmartphoneApp/**'
+  #     - 'mobile/**'
+  #     - 'app.json'
+  #     - 'eas.json'
+  #     - 'package.json'
   workflow_dispatch:
     inputs:
       platform:
@@ -37,16 +38,22 @@ jobs:
   build:
     name: EAS Build - ${{ github.event.inputs.platform || 'all' }}
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./SmartphoneApp
     
     steps:
       - name: 🏗 Setup repo
         uses: actions/checkout@v4
+        with:
+          submodules: false
 
       - name: 🏗 Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+          cache-dependency-path: './SmartphoneApp/package-lock.json'
 
       - name: 🏗 Setup EAS
         uses: expo/expo-github-action@v8
@@ -55,7 +62,7 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📦 Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: 🚀 Build app
         run: |
