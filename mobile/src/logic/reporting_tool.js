@@ -2,31 +2,17 @@
  * Africoin Sentinel Reporting Tool
  * Integrates Sui Move (Safety) and Digits AI (Finance)
  * 
- * Automatically switches backend URLs based on app slug
+ * Uses centralized API configuration
  */
 
-import Constants from 'expo-constants';
+import API_CONFIG, { buildUrl, getApiHeaders, apiRequest } from '../../src/config/api';
 
-// Detect which app is running based on slug
-const IS_RAILWAYS = Constants.expoConfig?.slug === 'africa-railways';
-const APP_NAME = IS_RAILWAYS ? 'Railways' : 'Africoin';
-
-// This will automatically point to the right backend based on the build profile
-const API_URL = IS_RAILWAYS
-  ? 'https://africa-railways.vercel.app'
-  : 'https://africoin-wallet.vercel.app';
-
-const WS_URL = IS_RAILWAYS
-  ? 'wss://africa-railways.vercel.app'
-  : 'wss://africoin-wallet.vercel.app';
+// Get app information
+const APP_NAME = API_CONFIG.isRailways ? 'Railways' : 'Africoin';
 
 // Log which backend we're connecting to
-console.log(`🔌 ${APP_NAME} app connecting to: ${API_URL}`);
-
-// Build full URL for an endpoint
-const buildUrl = (endpoint) => {
-    return `${API_URL}${endpoint}`;
-};
+console.log(`🔌 ${APP_NAME} app connecting to: ${API_CONFIG.baseUrl}`);
+console.log(`🔑 API Key configured: ${!!API_CONFIG.apiKey}`);
 
 /**
  * Send a report to the backend

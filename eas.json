@@ -17,13 +17,17 @@
     "railways": {
       "extends": "production",
       "env": {
-        "APP_VARIANT": "railways"
+        "APP_VARIANT": "railways",
+        "BACKEND_URL": "$BACKEND_URL",
+        "API_KEY": "$RAILWAYS_API_KEY"
       }
     },
     "africoin": {
       "extends": "production",
       "env": {
-        "APP_VARIANT": "africoin"
+        "APP_VARIANT": "africoin",
+        "BACKEND_URL": "$BACKEND_URL",
+        "API_KEY": "$AFRICOIN_API_KEY"
       }
     }
   }

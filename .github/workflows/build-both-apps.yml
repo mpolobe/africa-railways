@@ -1,0 +1,187 @@
+name: Build Both Apps
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'SmartphoneApp/**'
+      - 'mobile/**'
+      - 'src/**'
+      - 'app.config.js'
+      - 'eas.json'
+      - 'package.json'
+  workflow_dispatch:
+    inputs:
+      build_railways:
+        description: 'Build Railways app'
+        required: false
+        default: true
+        type: boolean
+      build_africoin:
+        description: 'Build Africoin app'
+        required: false
+        default: true
+        type: boolean
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  build-railways:
+    name: 🚂 Build Railways App
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.build_railways != 'false' }}
+    
+    steps:
+      - name: 🏗️ Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 🏗️ Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔍 Verify configuration
+        run: |
+          echo "📋 Checking EAS configuration..."
+          cat eas.json | grep -A 10 "railways"
+          echo ""
+          echo "✅ Configuration verified"
+
+      - name: 🚀 Build Railways App
+        run: |
+          echo "🚂 Building Africa Railways Hub..."
+          eas build \
+            --platform android \
+            --profile railways \
+            --non-interactive \
+            --no-wait
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📊 Build Summary
+        run: |
+          echo "## 🚂 Railways App Build" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ✅ Build triggered successfully" >> $GITHUB_STEP_SUMMARY
+          echo "**Platform:** Android" >> $GITHUB_STEP_SUMMARY
+          echo "**Profile:** railways" >> $GITHUB_STEP_SUMMARY
+          echo "**Bundle ID:** com.mpolobe.railways" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🔗 [View build status](https://expo.dev/accounts/mpolobe/projects/africa-railways/builds)" >> $GITHUB_STEP_SUMMARY
+
+  build-africoin:
+    name: 💰 Build Africoin App
+    runs-on: ubuntu-latest
+    needs: build-railways
+    if: ${{ github.event.inputs.build_africoin != 'false' }}
+    
+    steps:
+      - name: 🏗️ Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 🏗️ Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔍 Verify configuration
+        run: |
+          echo "📋 Checking EAS configuration..."
+          cat eas.json | grep -A 10 "africoin"
+          echo ""
+          echo "✅ Configuration verified"
+
+      - name: 🚀 Build Africoin App
+        run: |
+          echo "💰 Building Africoin Wallet..."
+          eas build \
+            --platform android \
+            --profile africoin \
+            --non-interactive \
+            --no-wait
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📊 Build Summary
+        run: |
+          echo "## 💰 Africoin App Build" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ✅ Build triggered successfully" >> $GITHUB_STEP_SUMMARY
+          echo "**Platform:** Android" >> $GITHUB_STEP_SUMMARY
+          echo "**Profile:** africoin" >> $GITHUB_STEP_SUMMARY
+          echo "**Bundle ID:** com.mpolobe.africoin" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🔗 [View build status](https://expo.dev/accounts/mpolobe/projects/africoin-wallet/builds)" >> $GITHUB_STEP_SUMMARY
+
+  notify:
+    name: 📢 Notify Build Status
+    runs-on: ubuntu-latest
+    needs: [build-railways, build-africoin]
+    if: always()
+    
+    steps:
+      - name: 📊 Final Summary
+        run: |
+          echo "## 🎉 Build Pipeline Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ needs.build-railways.result }}" == "success" ]; then
+            echo "✅ **Railways App:** Build triggered successfully" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Railways App:** Build failed or skipped" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ needs.build-africoin.result }}" == "success" ]; then
+            echo "✅ **Africoin App:** Build triggered successfully" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Africoin App:** Build failed or skipped" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📱 Download Builds" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Visit the [Expo Dashboard](https://expo.dev/) to download your APKs once builds complete." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ⏱️ Build Times" >> $GITHUB_STEP_SUMMARY
+          echo "Builds typically take 10-15 minutes to complete." >> $GITHUB_STEP_SUMMARY
+
+      - name: 🔔 Build Status
+        run: |
+          RAILWAYS_STATUS="${{ needs.build-railways.result }}"
+          AFRICOIN_STATUS="${{ needs.build-africoin.result }}"
+          
+          echo "🚂 Railways: $RAILWAYS_STATUS"
+          echo "💰 Africoin: $AFRICOIN_STATUS"
+          
+          if [ "$RAILWAYS_STATUS" == "success" ] && [ "$AFRICOIN_STATUS" == "success" ]; then
+            echo "✅ All builds triggered successfully!"
+            exit 0
+          else
+            echo "⚠️ Some builds failed or were skipped"
+            exit 0
+          fi

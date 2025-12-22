@@ -28,7 +28,10 @@ export default {
           ? "82efeb87-20c5-45b4-b945-65d4b9074c32" 
           : "5fa2f2b4-5c9f-43bf-b1eb-20d90ae19185"
       },
-      APP_VARIANT: process.env.APP_VARIANT || 'railways'
+      APP_VARIANT: process.env.APP_VARIANT || 'railways',
+      // Backend configuration (from EAS secrets)
+      backendUrl: process.env.BACKEND_URL || 'https://africa-railways.vercel.app',
+      apiKey: process.env.API_KEY
     },
     
     // iOS Configuration
