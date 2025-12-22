@@ -14,14 +14,14 @@ module.exports = {
     orientation: "portrait",
     userInterfaceStyle: "dark",
     
-    // Dynamic icons and splash screens
-    icon: IS_RAILWAYS ? "./assets/icon.png" : "./assets/africoin-icon.png",
+    // Icons and splash screens (using defaults for now)
+    // icon: IS_RAILWAYS ? "./assets/icon.png" : "./assets/africoin-icon.png",
     
-    splash: {
-      image: IS_RAILWAYS ? "./assets/splash.png" : "./assets/africoin-splash.png",
-      resizeMode: "contain",
-      backgroundColor: IS_RAILWAYS ? "#0066CC" : "#FFB800"
-    },
+    // splash: {
+    //   image: IS_RAILWAYS ? "./assets/splash.png" : "./assets/africoin-splash.png",
+    //   resizeMode: "contain",
+    //   backgroundColor: IS_RAILWAYS ? "#0066CC" : "#FFB800"
+    // },
     
     // Plugins
     plugins: [
@@ -49,20 +49,20 @@ module.exports = {
     
     // Android Configuration
     android: {
-      adaptiveIcon: {
-        foregroundImage: IS_RAILWAYS
-          ? "./assets/adaptive-icon.png"
-          : "./assets/africoin-adaptive-icon.png",
-        backgroundColor: IS_RAILWAYS ? "#0066CC" : "#FFB800"
-      },
+      // adaptiveIcon: {
+      //   foregroundImage: IS_RAILWAYS
+      //     ? "./assets/adaptive-icon.png"
+      //     : "./assets/africoin-adaptive-icon.png",
+      //   backgroundColor: IS_RAILWAYS ? "#0066CC" : "#FFB800"
+      // },
       package: IS_RAILWAYS ? "com.mpolobe.railways" : "com.mpolobe.africoin",
       permissions: ["CAMERA"]
     },
     
     // Web Configuration
-    web: {
-      favicon: IS_RAILWAYS ? "./assets/favicon.png" : "./assets/africoin-favicon.png"
-    },
+    // web: {
+    //   favicon: IS_RAILWAYS ? "./assets/favicon.png" : "./assets/africoin-favicon.png"
+    // },
     
     // Extra configuration
     extra: {
