@@ -1,0 +1,15 @@
+name: Create Preview Builds
+on:
+  pull_request:
+    types: [opened, synchronize]
+jobs:
+  build_android_preview:
+    type: build
+    params:
+      platform: android
+      profile: preview
+  build_ios_preview:
+    type: build
+    params:
+      platform: ios
+      profile: preview

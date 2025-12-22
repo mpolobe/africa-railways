@@ -1,0 +1,25 @@
+name: Submit to App Stores
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform to submit'
+        required: true
+        type: choice
+        options:
+          - android
+          - ios
+          - all
+jobs:
+  submit_android:
+    type: submit
+    params:
+      platform: android
+      profile: production
+    if: ${{ github.event.inputs.platform == 'android' || github.event.inputs.platform == 'all' }}
+  submit_ios:
+    type: submit
+    params:
+      platform: ios
+      profile: production
+    if: ${{ github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'all' }}
