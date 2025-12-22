@@ -8,6 +8,7 @@ const APP_VARIANT = IS_RAILWAYS ? 'railways' : IS_AFRICOIN ? 'africoin' : 'railw
 module.exports = {
   expo: {
     // Dynamic app identity based on variant
+    // Note: Slugs must match the registered EAS project slugs
     name: IS_RAILWAYS ? "Africa Railways Hub" : "Africoin Wallet",
     slug: IS_RAILWAYS ? "africa-railways-app" : "africoin-app",
     version: "1.0.0",
