@@ -1,10 +1,12 @@
 name: Build Railways App
 
 on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main]
+  # Automatic builds disabled due to EAS credit exhaustion
+  # Re-enable after upgrading plan or January 1st reset
+  # push:
+  #   branches: [main, develop]
+  # pull_request:
+  #   branches: [main]
   workflow_dispatch:
 
 jobs:

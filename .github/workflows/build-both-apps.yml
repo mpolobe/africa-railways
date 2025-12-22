@@ -1,15 +1,17 @@
 name: Build Both Apps
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'SmartphoneApp/**'
-      - 'mobile/**'
-      - 'src/**'
-      - 'app.config.js'
-      - 'eas.json'
-      - 'package.json'
+  # Automatic builds disabled due to EAS credit exhaustion
+  # Re-enable after upgrading plan or January 1st reset
+  # push:
+  #   branches: [main]
+  #   paths:
+  #     - 'SmartphoneApp/**'
+  #     - 'mobile/**'
+  #     - 'src/**'
+  #     - 'app.config.js'
+  #     - 'eas.json'
+  #     - 'package.json'
   workflow_dispatch:
     inputs:
       build_railways:
