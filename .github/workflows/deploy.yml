@@ -7,6 +7,12 @@ on:
     branches: ["main"]
   workflow_dispatch:
 
+# Required permissions for security scanning
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
 env:
   GO_VERSION: '1.21'
   NODE_VERSION: '20'
@@ -153,7 +159,7 @@ jobs:
         # Removed continue-on-error to fail on critical vulnerabilities
 
       - name: Upload Trivy results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: 'trivy-results.sarif'
         if: always()
