@@ -25,7 +25,19 @@
         .card { background: var(--surface); padding: 30px; border-radius: 15px; border: 1px solid #222; }
         .cta-button { padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; transition: 0.3s; }
         .primary { background: var(--gold); color: var(--navy); }
+        .primary:hover { background: #FFC933; transform: translateY(-2px); }
         .secondary { border: 2px solid #333; color: white; margin-left: 10px; }
+        .secondary:hover { border-color: var(--gold); background: rgba(255,184,0,0.1); }
+        .card:hover { border-color: var(--gold); transform: translateY(-5px); transition: all 0.3s ease; }
+        @media (max-width: 768px) {
+            nav { flex-direction: column; gap: 15px; padding: 15px 5%; }
+            .nav-links { flex-wrap: wrap; justify-content: center; gap: 15px; }
+            .hero { padding: 60px 5%; }
+            .section { padding: 60px 5%; }
+            .cta-button { display: block; margin: 10px auto; max-width: 280px; }
+            .secondary { margin-left: 0; }
+            .grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -33,6 +45,7 @@
         <a href="/" class="logo"><i class="fas fa-train"></i> Africoin <span style="color:var(--cyan)">Spine</span></a>
         <ul class="nav-links">
             <li><a href="#home">Home</a></li>
+            <li><a href="#features">Features</a></li>
             <li><a href="#spine">Architecture</a></li>
             <li><a href="#sentinel">Sentinel</a></li>
             <li><a href="#tokenomics">Economics</a></li>
@@ -48,7 +61,54 @@
             <div class="stat-card"><span class="stat-value">54</span><span class="stat-label">Member States</span></div>
             <div class="stat-card"><span class="stat-value">$250K+</span><span class="stat-label">Throughput</span></div>
         </div>
-        <a href="#sentinel" class="cta-button primary">Launch Sentinel App</a>
+        <a href="#features" class="cta-button primary">Explore Features</a>
+        <a href="/dashboard.html" class="cta-button secondary">Launch Dashboard</a>
+    </section>
+    <section id="features" class="section" style="background: #0d121f;">
+        <h2 style="text-align:center; margin-bottom:20px; color:var(--gold);">Platform Features</h2>
+        <p style="text-align:center; color:#aaa; max-width:700px; margin: 0 auto 50px;">End-to-end infrastructure for rail operations, digital payments, and workforce management</p>
+        <div class="grid">
+            <div class="card">
+                <div style="font-size:2.5rem; margin-bottom:15px;">🎫</div>
+                <h3>Smart Ticketing</h3>
+                <p>Book train tickets with AFRC tokens. Instant confirmation, blockchain-verified tickets, and seamless mobile access.</p>
+            </div>
+            <div class="card">
+                <div style="font-size:2.5rem; margin-bottom:15px;">💰</div>
+                <h3>Digital Wallet</h3>
+                <p>Secure AFRC wallet with instant top-ups, real-time balance tracking, and transaction history on Sui blockchain.</p>
+            </div>
+            <div class="card">
+                <div style="font-size:2.5rem; margin-bottom:15px;">📱</div>
+                <h3>SMS Onboarding</h3>
+                <p>Phone-based authentication with OTP verification. Dual-provider system (Africa's Talking + Twilio) ensures 99.9% delivery.</p>
+            </div>
+            <div class="card">
+                <div style="font-size:2.5rem; margin-bottom:15px;">📊</div>
+                <h3>Live Analytics</h3>
+                <p>Real-time dashboard tracking SMS delivery, provider costs, booking metrics, and system health monitoring.</p>
+            </div>
+            <div class="card">
+                <div style="font-size:2.5rem; margin-bottom:15px;">🛡️</div>
+                <h3>Sentinel Network</h3>
+                <p>2,000+ track workers earn AFRC rewards for safety reporting. Proof-of-Safety consensus secures infrastructure.</p>
+            </div>
+            <div class="card">
+                <div style="font-size:2.5rem; margin-bottom:15px;">🌍</div>
+                <h3>Pan-African Reach</h3>
+                <p>54 member states connected via high-speed rail. Multi-currency support with AFRC as the settlement layer.</p>
+            </div>
+            <div class="card">
+                <div style="font-size:2.5rem; margin-bottom:15px;">⚡</div>
+                <h3>Instant Settlement</h3>
+                <p>Sub-second transaction finality on Sui. No intermediaries, no delays—just pure peer-to-peer value transfer.</p>
+            </div>
+            <div class="card">
+                <div style="font-size:2.5rem; margin-bottom:15px;">🔥</div>
+                <h3>Deflationary Model</h3>
+                <p>1% burn on every freight transaction. Token scarcity increases as network usage grows, benefiting all holders.</p>
+            </div>
+        </div>
     </section>
     <section id="spine" class="section">
         <h2 style="text-align:center; margin-bottom:40px;">The Digital Spine Architecture</h2>
