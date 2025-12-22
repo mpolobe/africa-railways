@@ -1,33 +1,28 @@
-image: gitpod/workspace-full
-
 tasks:
-  - init: sudo apt update && sudo apt install -y golang-go
+  - name: Setup and Services
+    init: |
+      sudo apt update && sudo apt install -y golang-go
+      chmod +x check-services.sh
     command: |
-      echo "🚀 Africa Railways - Starting..."
-      cd /workspaces/africa-railways
-      ./setup-ipad-2025.sh
+      # 1. Start Backend Engine
+      cd backend && nohup go run main.go > engine.log 2>&1 &
+      cd ..
+      
+      # 2. Start Python Servers
+      nohup python3 -m http.server 8082 --directory . > server8082.log 2>&1 &
+      nohup python3 -m http.server 3000 --directory . > server3000.log 2>&1 &
+      
+      # 3. Final Status Check
+      sleep 3
+      ./check-services.sh
 
 ports:
-  - port: 3000
-    onOpen: open-browser
-    description: "Frontend"
   - port: 8080
+    visibility: public
     onOpen: ignore
-    description: "Backend API"
-  - port: 8081
-    onOpen: ignore
-    description: "Spine Engine"
   - port: 8082
+    visibility: public
     onOpen: open-browser
-    description: "🚀 iPad Control Center"
-  - port: 9000
+  - port: 3000
+    visibility: public
     onOpen: ignore
-    description: "Sui RPC"
-  - port: 9123
-    onOpen: ignore
-    description: "Sui Faucet"
-
-vscode:
-  extensions:
-    - golang.go
-    - esbenp.prettier-vscode
