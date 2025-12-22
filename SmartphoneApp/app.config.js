@@ -7,10 +7,12 @@ const APP_VARIANT = IS_RAILWAYS ? 'railways' : IS_AFRICOIN ? 'africoin' : 'railw
 
 module.exports = {
   expo: {
-    // Dynamic app identity based on variant
-    // Note: Slugs must match the projectId in extra.eas
+    // 1. Name of the app as it appears on the phone
     name: IS_RAILWAYS ? "Africa Railways Hub" : "Africoin Wallet",
-    slug: IS_RAILWAYS ? "africa-railways-app" : "africoin-app",
+
+    // 2. Slug MUST match what Expo has on their servers for that Project ID
+    // Based on the error, the Africoin ID is currently linked to 'africa-railways-monorepo'
+    slug: IS_RAILWAYS ? "africa-railways-app" : "africa-railways-monorepo",
     version: "1.0.0",
     orientation: "portrait",
     userInterfaceStyle: "dark",
@@ -57,6 +59,7 @@ module.exports = {
       //   backgroundColor: IS_RAILWAYS ? "#0066CC" : "#FFB800"
       // },
       package: IS_RAILWAYS ? "com.mpolobe.railways" : "com.mpolobe.africoin",
+      versionCode: 1,
       permissions: ["CAMERA"]
     },
     
@@ -70,8 +73,8 @@ module.exports = {
       eas: {
         // projectId is the UUID from Expo Dashboard
         projectId: IS_RAILWAYS 
-          ? "82efeb87-20c5-45b4-b945-65d4b9074c32" 
-          : "5fa2f2b4-5c9f-43bf-b1eb-20d90ae19185"
+          ? "82efeb87-20c5-45b4-b945-65d4b9074c32" // Railways ID
+          : "5fa2f2b4-5c9f-43bf-b1eb-20d90ae19185" // Africoin ID
       },
       APP_VARIANT: APP_VARIANT,
       backendUrl: process.env.BACKEND_URL || "https://africa-railways.vercel.app",
