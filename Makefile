@@ -304,3 +304,7 @@ monitor:
 	@echo ""
 	@echo "$(BLUE)Recent Logs:$(NC)"
 	@tail -20 logs/backend.log 2>/dev/null || echo "No backend logs"
+
+audit:
+	@echo "$(CYAN)🔍 Running System Audit...$(NC)"
+	@./monitoring/system-audit.sh
