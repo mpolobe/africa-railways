@@ -38,3 +38,11 @@ clean-cache:
 # Check balance of Account #0
 check-balance:
 	npx hardhat run blockchain/scripts/mint_reward.js --network localhost | grep "Traveler Balance"
+
+# 🔄 2025 iPad Quick Sync
+sync:
+	@echo "📤 Syncing Africa Railways to GitHub..."
+	@git add .
+	@git commit -m "iPad Dev Sync: $$(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+	@git push
+	@echo "✅ Deployment triggered on Vercel!"
