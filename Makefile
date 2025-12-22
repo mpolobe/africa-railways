@@ -307,3 +307,26 @@ build-all-apps:
 	@$(MAKE) build-railways-android
 	@$(MAKE) build-railways-ios
 	@echo "$(GREEN)✅ All builds submitted!$(NC)"
+
+# 🔄 MONITORING & STABILITY
+health-check:
+	@./monitoring/health-check.sh
+
+supervisor:
+	@echo "$(GREEN)🔄 Starting Service Supervisor...$(NC)"
+	@./monitoring/supervisor.sh
+
+cleanup-logs:
+	@./monitoring/cleanup-logs.sh
+
+monitor:
+	@echo "$(BLUE)📊 System Monitor$(NC)"
+	@echo ""
+	@./monitoring/health-check.sh
+	@echo ""
+	@echo "$(BLUE)Recent Logs:$(NC)"
+	@tail -20 logs/backend.log 2>/dev/null || echo "No backend logs"
+
+audit:
+	@echo "$(CYAN)🔍 Running System Audit...$(NC)"
+	@./monitoring/system-audit.sh

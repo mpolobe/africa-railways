@@ -3,17 +3,36 @@
 .DS_Store
 node_modules/
 
+# Build artifacts
+bin/sovereign-engine
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Logs and runtime files
+logs/*.log
+logs/*.pid
+*.log
+*.pid
+nohup.out
+
 # Test files
 test-*.html
 *-test.html
 flow-test.html
 transaction-demo.html
 wallet-test.html
+backend/tests/
+backend/examples/
 
 # Backend test files
 backend/test_*.go
 backend/otp_example.go
 backend/main_complete.go
+backend/main_simple.go
 
 # Temporary documentation
 COMPLETE_INTEGRATION.md
@@ -26,9 +45,23 @@ PROGRESS_BAR_GUIDE.md
 QUICK_START.md
 SYNC_AND_LAUNCH.md
 backend/ONBOARDING_INTEGRATION.md
--e 
-# Sui blockchain directory
-sui/
--e 
+
 # Example files
 *.example
+
+# Dependencies
+vendor/
+go.sum.bak
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+
+# Sui blockchain directory
+sui/
