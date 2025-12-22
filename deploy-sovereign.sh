@@ -192,7 +192,7 @@ fi
 
 # Build the Go backend
 echo -e "${BLUE}Compiling Go backend...${NC}"
-if go build -o ../bin/sovereign-engine main.go; then
+if go build -o ../bin/sovereign-engine .; then
     echo -e "${GREEN}✓ Backend compiled successfully${NC}"
 else
     echo -e "${RED}❌ Backend compilation failed${NC}"
