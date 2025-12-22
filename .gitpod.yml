@@ -1,0 +1,33 @@
+image: gitpod/workspace-full
+
+tasks:
+  - init: sudo apt update && sudo apt install -y golang-go
+    command: |
+      echo "🚀 Africa Railways - Starting..."
+      cd /workspaces/africa-railways
+      ./setup-ipad-2025.sh
+
+ports:
+  - port: 3000
+    onOpen: open-browser
+    description: "Frontend"
+  - port: 8080
+    onOpen: ignore
+    description: "Backend API"
+  - port: 8081
+    onOpen: ignore
+    description: "Spine Engine"
+  - port: 8082
+    onOpen: open-browser
+    description: "🚀 iPad Control Center"
+  - port: 9000
+    onOpen: ignore
+    description: "Sui RPC"
+  - port: 9123
+    onOpen: ignore
+    description: "Sui Faucet"
+
+vscode:
+  extensions:
+    - golang.go
+    - esbenp.prettier-vscode
