@@ -1,0 +1,39 @@
+{
+  "name": "Africa Railways - Sovereign Hub",
+  "image": "mcr.microsoft.com/devcontainers/go:1-1.21-bullseye",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    },
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "golang.go",
+        "ms-python.python"
+      ],
+      "settings": {
+        "go.toolsManagement.checkForUpdates": "local",
+        "go.useLanguageServer": true,
+        "go.gopath": "/go"
+      }
+    }
+  },
+  "postCreateCommand": "go mod download && pip install --upgrade pip",
+  "forwardPorts": [8080, 8082],
+  "portsAttributes": {
+    "8080": {
+      "label": "Backend API",
+      "onAutoForward": "notify"
+    },
+    "8082": {
+      "label": "Frontend Dashboard",
+      "onAutoForward": "openPreview"
+    }
+  },
+  "remoteUser": "vscode"
+}
