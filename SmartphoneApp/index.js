@@ -1,4 +1,13 @@
+import React from 'react';
 import { registerRootComponent } from 'expo';
-import App from './App';
+import AppNavigator from './navigation/AppNavigator';
+import ErrorBoundary from './components/ErrorBoundary';
 
-registerRootComponent(App);
+// Wrap the app with ErrorBoundary
+const AppWithErrorBoundary = () => (
+  <ErrorBoundary>
+    <AppNavigator />
+  </ErrorBoundary>
+);
+
+registerRootComponent(AppWithErrorBoundary);
