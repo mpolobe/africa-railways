@@ -10,7 +10,7 @@ module.exports = {
     // Dynamic app identity based on variant
     // Note: Slugs must match the projectId in extra.eas
     name: IS_RAILWAYS ? "Africa Railways Hub" : "Africoin Wallet",
-    slug: IS_RAILWAYS ? "africa-railways" : "africoin-app",
+    slug: IS_RAILWAYS ? "africa-railways-app" : "africoin-app",
     version: "1.0.0",
     orientation: "portrait",
     userInterfaceStyle: "dark",
@@ -69,7 +69,7 @@ module.exports = {
     extra: {
       eas: {
         // projectId must match slug exactly
-        projectId: IS_RAILWAYS ? "africa-railways" : "africoin-app"
+        projectId: IS_RAILWAYS ? "africa-railways-app" : "africoin-app"
       },
       APP_VARIANT: APP_VARIANT,
       backendUrl: process.env.BACKEND_URL || "https://africa-railways.vercel.app",

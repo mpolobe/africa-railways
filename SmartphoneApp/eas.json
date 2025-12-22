@@ -45,7 +45,7 @@
         "BACKEND_URL": "$BACKEND_URL",
         "API_KEY": "$RAILWAYS_API_KEY"
       },
-      "slug": "africa-railways"
+      "slug": "africa-railways-app"
     },
     "africoin": {
       "extends": "production",
