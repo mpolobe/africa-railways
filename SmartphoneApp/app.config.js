@@ -68,8 +68,10 @@ module.exports = {
     // Extra configuration
     extra: {
       eas: {
-        // projectId must match slug exactly
-        projectId: IS_RAILWAYS ? "africa-railways-app" : "africoin-app"
+        // projectId is the UUID from Expo Dashboard
+        projectId: IS_RAILWAYS 
+          ? "82efeb87-20c5-45b4-b945-65d4b9074c32" 
+          : "5fa2f2b4-5c9f-43bf-b1eb-20d90ae19185"
       },
       APP_VARIANT: APP_VARIANT,
       backendUrl: process.env.BACKEND_URL || "https://africa-railways.vercel.app",
