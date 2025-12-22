@@ -26,3 +26,6 @@ PROGRESS_BAR_GUIDE.md
 QUICK_START.md
 SYNC_AND_LAUNCH.md
 backend/ONBOARDING_INTEGRATION.md
+-e 
+# Sui blockchain directory
+sui/
