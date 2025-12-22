@@ -55,14 +55,14 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📦 Install dependencies
-        run: npm install --legacy-peer-deps
+        run: npm ci
 
       - name: 🔍 Verify configuration
         run: |
           echo "📋 Checking EAS configuration..."
-          cat eas.json | grep -A 10 "railways" || echo "No railways profile found in eas.json"
+          cat eas.json | grep -A 10 "railways"
           echo ""
-          echo "✅ Configuration check complete"
+          echo "✅ Configuration verified"
 
       - name: 🚀 Build Railways App
         run: |
@@ -115,14 +115,14 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📦 Install dependencies
-        run: npm install --legacy-peer-deps
+        run: npm ci
 
       - name: 🔍 Verify configuration
         run: |
           echo "📋 Checking EAS configuration..."
-          cat eas.json | grep -A 10 "africoin" || echo "No africoin profile found in eas.json"
+          cat eas.json | grep -A 10 "africoin"
           echo ""
-          echo "✅ Configuration check complete"
+          echo "✅ Configuration verified"
 
       - name: 🚀 Build Africoin App
         run: |
