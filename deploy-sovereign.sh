@@ -283,19 +283,43 @@ echo ""
 if [ "$ENV_TYPE" = "Gitpod" ]; then
     WORKSPACE_URL=$(gp url $PORT_FRONTEND)
     BACKEND_URL=$(gp url $PORT_BACKEND)
-    echo -e "  ${CYAN}📱 Dashboard:${NC}      ${WORKSPACE_URL}/dashboard.html"
+    DASHBOARD_URL="${WORKSPACE_URL}/dashboard.html"
+    
+    echo -e "  ${CYAN}📱 Dashboard:${NC}      ${DASHBOARD_URL}"
     echo -e "  ${CYAN}🏠 Home Page:${NC}      ${WORKSPACE_URL}/index.html"
     echo -e "  ${CYAN}📡 Live Feed:${NC}      ${WORKSPACE_URL}/live-feed.html"
     echo -e "  ${CYAN}🎮 iPad Control:${NC}   ${WORKSPACE_URL}/ipad-control-center.html"
     echo -e "  ${CYAN}🔧 Backend API:${NC}    ${BACKEND_URL}"
     echo ""
-    echo -e "${YELLOW}💡 Tip: Open the iPad Dashboard link and 'Add to Home Screen' for native experience${NC}"
+    
+    # Generate QR Code for iPad
+    if command -v qrencode &> /dev/null; then
+        echo -e "${GOLD}📸 SCAN TO OPEN ON IPAD:${NC}"
+        echo ""
+        echo "$DASHBOARD_URL" | qrencode -t ansiutf8
+        echo ""
+        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    fi
+    
+    echo -e "${YELLOW}💡 Tip: Scan the QR code with your iPad camera, then 'Add to Home Screen'${NC}"
 elif [ "$ENV_TYPE" = "Codespaces" ]; then
-    echo -e "  ${CYAN}📱 Dashboard:${NC}      https://${CODESPACE_NAME}-${PORT_FRONTEND}.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/dashboard.html"
+    DASHBOARD_URL="https://${CODESPACE_NAME}-${PORT_FRONTEND}.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/dashboard.html"
+    
+    echo -e "  ${CYAN}📱 Dashboard:${NC}      ${DASHBOARD_URL}"
     echo -e "  ${CYAN}🏠 Home Page:${NC}      https://${CODESPACE_NAME}-${PORT_FRONTEND}.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/index.html"
     echo -e "  ${CYAN}🔧 Backend API:${NC}    https://${CODESPACE_NAME}-${PORT_BACKEND}.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}"
     echo ""
-    echo -e "${YELLOW}💡 Tip: Open the iPad Dashboard link and 'Add to Home Screen' for native experience${NC}"
+    
+    # Generate QR Code for iPad
+    if command -v qrencode &> /dev/null; then
+        echo -e "${GOLD}📸 SCAN TO OPEN ON IPAD:${NC}"
+        echo ""
+        echo "$DASHBOARD_URL" | qrencode -t ansiutf8
+        echo ""
+        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    fi
+    
+    echo -e "${YELLOW}💡 Tip: Scan the QR code with your iPad camera, then 'Add to Home Screen'${NC}"
 else
     echo -e "  ${CYAN}📱 Dashboard:${NC}      http://localhost:${PORT_FRONTEND}/dashboard.html"
     echo -e "  ${CYAN}🏠 Home Page:${NC}      http://localhost:${PORT_FRONTEND}/index.html"

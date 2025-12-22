@@ -90,15 +90,42 @@ URLs use the Codespaces port forwarding domain.
 
 ## iPad Setup
 
-For the best iPad experience:
+### Quick Access with QR Code
 
-1. Open the Dashboard URL in Safari
-2. Tap the **Share** button
-3. Select **Add to Home Screen**
-4. Name it "Sovereign Hub"
-5. Tap **Add**
+The deployment script automatically generates a QR code for instant iPad access:
+
+1. Run `./deploy-sovereign.sh`
+2. **Scan the QR code** displayed in the terminal with your iPad camera
+3. Tap the notification to open Safari
+4. Tap the **Share** button
+5. Select **Add to Home Screen**
+6. Name it "Sovereign Hub"
+7. Tap **Add**
 
 Now you have a native-like app icon on your iPad!
+
+### Manual Setup
+
+If QR code scanning isn't available:
+
+1. Copy the Dashboard URL from the deployment output
+2. Open Safari on your iPad
+3. Paste the URL and navigate
+4. Follow steps 4-7 above
+
+### QR Code Requirements
+
+The QR code feature requires `qrencode`:
+
+```bash
+# Install on Ubuntu/Debian
+sudo apt-get update && sudo apt-get install -y qrencode
+
+# Install on macOS
+brew install qrencode
+```
+
+This is automatically available in Gitpod and Codespaces environments.
 
 ---
 
@@ -190,6 +217,25 @@ php -S 0.0.0.0:8082
 
 **Or open files directly:**
 Just open `dashboard.html` in your browser.
+
+### QR Code Not Displaying
+
+**Check if qrencode is installed:**
+```bash
+qrencode --version
+```
+
+**Install if missing:**
+```bash
+# Ubuntu/Debian
+sudo apt-get install -y qrencode
+
+# macOS
+brew install qrencode
+```
+
+**Manual alternative:**
+Copy the URL and use an online QR generator like [qr-code-generator.com](https://www.qr-code-generator.com/)
 
 ### SMS Not Working
 
