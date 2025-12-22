@@ -19,7 +19,9 @@ type Event struct {
 
 type DashboardStats struct {
 	mu           sync.Mutex
-	RecentEvents []Event
+	RecentEvents []Event `json:"recent_events"`
+	ATCount      int     `json:"at_count"`
+	TwilioCount  int     `json:"twilio_count"`
 }
 
 var (
@@ -56,7 +58,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 
 	for {
 		stats.mu.Lock()
-		payload, _ := json.Marshal(stats.RecentEvents)
+		payload, _ := json.Marshal(stats)
 		stats.mu.Unlock()
 
 		if err := conn.WriteMessage(websocket.TextMessage, payload); err != nil {
@@ -93,17 +95,29 @@ func addEventHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// UpdateProviderCounts updates the provider counts from handlers
+func UpdateProviderCounts(atCount, twilioCount int) {
+	stats.mu.Lock()
+	stats.ATCount = atCount
+	stats.TwilioCount = twilioCount
+	stats.mu.Unlock()
+}
+
 // Health check endpoint
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	stats.mu.Lock()
 	eventCount := len(stats.RecentEvents)
+	atCount := stats.ATCount
+	twilioCount := stats.TwilioCount
 	stats.mu.Unlock()
 	
 	json.NewEncoder(w).Encode(map[string]interface{}{
-		"status":      "ok",
-		"event_count": eventCount,
-		"timestamp":   time.Now(),
+		"status":       "ok",
+		"event_count":  eventCount,
+		"at_count":     atCount,
+		"twilio_count": twilioCount,
+		"timestamp":    time.Now(),
 	})
 }
 

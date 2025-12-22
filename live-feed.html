@@ -246,6 +246,18 @@
                 </div>
             </div>
 
+            <!-- Provider Stats Summary -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px;">
+                <div style="text-align: center; padding: 15px; background: rgba(0,212,255,0.1); border-radius: 8px; border: 1px solid rgba(0,212,255,0.3);">
+                    <div style="font-size: 0.8rem; color: #00D4FF; margin-bottom: 5px;">📱 Africa's Talking</div>
+                    <div style="font-size: 2rem; font-weight: bold; color: #00FF88;" id="at-total">0</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: rgba(255,184,0,0.1); border-radius: 8px; border: 1px solid rgba(255,184,0,0.3);">
+                    <div style="font-size: 0.8rem; color: #FFB800; margin-bottom: 5px;">🌍 Twilio (Global)</div>
+                    <div style="font-size: 2rem; font-weight: bold; color: #FFB800;" id="twilio-total">0</div>
+                </div>
+            </div>
+
             <div id="event-feed">
                 <div class="empty-state">
                     <svg viewBox="0 0 24 24" fill="currentColor">
@@ -291,7 +303,14 @@
         };
 
         socket.onmessage = function(event) {
-            const events = JSON.parse(event.data);
+            const data = JSON.parse(event.data);
+            
+            // 1. Update the Summary Totals
+            document.getElementById('at-total').innerText = data.at_count || 0;
+            document.getElementById('twilio-total').innerText = data.twilio_count || 0;
+
+            // 2. Render the event feed
+            const events = data.recent_events || data.RecentEvents || [];
             
             if (events.length === 0) {
                 feedEl.innerHTML = `

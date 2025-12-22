@@ -36,7 +36,6 @@ var stats = &Stats{
 // recordOnboarding records which provider was used for onboarding
 func recordOnboarding(provider string) {
 	stats.mu.Lock()
-	defer stats.mu.Unlock()
 	
 	if provider == "AT" || provider == "Africa's Talking" {
 		stats.ATCount++
@@ -45,6 +44,13 @@ func recordOnboarding(provider string) {
 		stats.TwilioCount++
 		log.Printf("📊 Twilio count: %d", stats.TwilioCount)
 	}
+	
+	atCount := stats.ATCount
+	twilioCount := stats.TwilioCount
+	stats.mu.Unlock()
+	
+	// Update WebSocket stats
+	UpdateProviderCounts(atCount, twilioCount)
 }
 
 // OTPRequest represents an OTP request payload
