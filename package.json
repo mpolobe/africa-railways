@@ -4,7 +4,12 @@
   "scripts": {
     "mobile:start": "npx expo start --project SmartphoneApp",
     "mobile:install": "npm install --prefix SmartphoneApp",
-    "mobile:audit": "npm audit fix --prefix SmartphoneApp"
+    "mobile:audit": "npm audit fix --prefix SmartphoneApp",
+    "build:mobile": "./build-mobile.sh",
+    "build:android": "./build-mobile.sh android production",
+    "build:ios": "./build-mobile.sh ios production",
+    "build:preview": "./build-mobile.sh all preview",
+    "eas:build": "eas build --platform all --profile production --non-interactive"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^6.1.0",
