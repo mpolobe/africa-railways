@@ -19,8 +19,9 @@ jobs:
       - name: 🏗 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: 'npm'
+          cache-dependency-path: SmartphoneApp/package-lock.json
 
       - name: 🏗 Setup EAS
         uses: expo/expo-github-action@v8
@@ -29,14 +30,17 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📦 Install dependencies
-        run: npm ci
+        working-directory: SmartphoneApp
+        run: npm ci --legacy-peer-deps
 
       - name: 🚀 Build Railways App
-        run: eas build --platform android --profile railways --non-interactive
+        working-directory: SmartphoneApp
+        run: APP_VARIANT=railways eas build --platform android --profile railways --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📱 Get build URL
+        working-directory: SmartphoneApp
         run: |
           BUILD_URL=$(eas build:list --platform android --profile railways --limit 1 --json | jq -r '.[0].artifacts.buildUrl')
           echo "Build URL: $BUILD_URL"

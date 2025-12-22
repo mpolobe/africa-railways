@@ -24,7 +24,7 @@ on:
         type: boolean
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: '20'
 
 jobs:
   build-railways:
@@ -67,13 +67,14 @@ jobs:
       - name: 🚀 Build Railways App
         run: |
           echo "🚂 Building Africa Railways Hub..."
-          eas build \
+          APP_VARIANT=railways eas build \
             --platform android \
             --profile railways \
             --non-interactive \
             --no-wait
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          APP_VARIANT: railways
 
       - name: 📊 Build Summary
         run: |
@@ -127,13 +128,14 @@ jobs:
       - name: 🚀 Build Africoin App
         run: |
           echo "💰 Building Africoin Wallet..."
-          eas build \
+          APP_VARIANT=africoin eas build \
             --platform android \
             --profile africoin \
             --non-interactive \
             --no-wait
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          APP_VARIANT: africoin
 
       - name: 📊 Build Summary
         run: |
