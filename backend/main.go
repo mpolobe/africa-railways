@@ -126,10 +126,12 @@ func main() {
 	mux.HandleFunc("/ws", wsHandler)
 	mux.HandleFunc("/add-event", addEventHandler)
 	mux.HandleFunc("/health", healthHandler)
+	mux.HandleFunc("/api/reports", reportsHandler)
 
 	log.Println("🛰️  Sentinel Engine Live on :8080")
 	log.Println("📡 WebSocket endpoint: /ws")
 	log.Println("📩 Add event endpoint: /add-event")
 	log.Println("💚 Health check: /health")
+	log.Println("📊 Reports API: /api/reports")
 	log.Fatal(http.ListenAndServe(":8080", corsMiddleware(mux)))
 }
