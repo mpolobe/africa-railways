@@ -38,6 +38,7 @@ jobs:
   build:
     name: EAS Build - ${{ github.event.inputs.platform || 'all' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     defaults:
       run:
         working-directory: ./SmartphoneApp
@@ -62,7 +63,7 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📦 Install dependencies
-        run: npm install --legacy-peer-deps
+        run: npm ci --legacy-peer-deps
 
       - name: 🚀 Build app
         run: |
