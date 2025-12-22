@@ -1,6 +1,6 @@
 {
   "cli": {
-    "version": ">= 16.28.0",
+    "version": ">= 10.0.0",
     "appVersionSource": "remote"
   },
   "build": {
@@ -13,9 +13,18 @@
     },
     "production": {
       "autoIncrement": true
+    },
+    "railways": {
+      "extends": "production",
+      "env": {
+        "APP_VARIANT": "railways"
+      }
+    },
+    "africoin": {
+      "extends": "production",
+      "env": {
+        "APP_VARIANT": "africoin"
+      }
     }
-  },
-  "submit": {
-    "production": {}
   }
 }
