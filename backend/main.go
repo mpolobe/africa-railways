@@ -121,16 +121,7 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// reportsHandler provides data for the Railway Reporting Tool
-func reportsHandler(w http.ResponseWriter, r *http.Request) {
-	reports := []map[string]interface{}{
-		{"id": "1", "node_location": "Lusaka Central", "ticket_count": 142, "status": "Online"},
-		{"id": "2", "node_location": "Nairobi Terminal", "ticket_count": 89, "status": "Online"},
-		{"id": "3", "node_location": "Mombasa Port", "ticket_count": 0, "status": "Offline"},
-	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(reports)
-}
+// reportsHandler is defined in reports.go
 
 func main() {
 	mux := http.NewServeMux()
