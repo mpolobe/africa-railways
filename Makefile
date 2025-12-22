@@ -9,11 +9,14 @@ NC = \033[0m
 
 help:
 	@echo "$(GREEN)🌍 Africa Railways - 2025 Hybrid Suite$(NC)"
-	@echo "  make dev    - Start everything with Hot-Reload (iPad Ready)"
-	@echo "  make status - Check all ports (3000, 8080, 8081, 9000, 8082)"
-	@echo "  make logs   - Interactive iPad log viewer"
-	@echo "  make deploy - Push Africoin to Sui Localnet"
-	@echo "  make sync   - Git add, commit, and push (iPad friendly)"
+	@echo "  make dev      - Start everything with Hot-Reload (iPad Ready)"
+	@echo "  make status   - Check all ports (3000, 8080, 8081, 9000, 8082)"
+	@echo "  make logs     - Interactive iPad log viewer"
+	@echo "  make simulate - Run ticket purchase simulation"
+	@echo "  make deploy   - Push Africoin to Sui Localnet"
+	@echo "  make sync     - Git add, commit, and push (iPad friendly)"
+	@echo "  make stop     - Stop all services"
+	@echo "  make clean    - Clean build artifacts"
 
 # 🚀 HYBRID DEV COMMAND
 dev:
@@ -99,3 +102,14 @@ clean:
 	@echo "$(GREEN)✅ Clean complete$(NC)"
 
 .DEFAULT_GOAL := help
+
+# Run the ticket simulation
+simulate:
+	@echo "🎟️  Minting Africoin Ticket..."
+	@if command -v go >/dev/null 2>&1; then \
+		go run backend/cmd/spine_engine/simulate_ticket.go; \
+	else \
+		echo "⚠️  Go not found, using shell version..."; \
+		./backend/cmd/spine_engine/simulate_ticket.sh; \
+	fi
+	@echo "✅ Simulation event sent to engine."
