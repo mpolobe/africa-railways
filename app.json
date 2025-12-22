@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "5fa2f2b4-5c9f-43bf-b1eb-20d90ae19185"
+      }
+    },
+    "android": {
+      "package": "com.mpolobe.africarailwaysmonorepo"
+    },
+    "ios": {
+      "bundleIdentifier": "com.mpolobe.africarailwaysmonorepo",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    }
+  }
+}

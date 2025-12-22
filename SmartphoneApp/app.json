@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "Africa Railways",
+    "slug": "africa-railways",
+    "version": "1.0.0",
+    "userInterfaceStyle": "dark",
+    "plugins": [
+      ["expo-camera", { "cameraPermission": "Allow Africa Railways to scan your ticket." }]
+    ]
+  }
+}
