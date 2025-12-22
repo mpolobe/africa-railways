@@ -29,3 +29,6 @@ backend/ONBOARDING_INTEGRATION.md
 -e 
 # Sui blockchain directory
 sui/
+-e 
+# Example files
+*.example
