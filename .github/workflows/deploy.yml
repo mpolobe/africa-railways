@@ -50,7 +50,18 @@ jobs:
 
       - name: Build backend
         working-directory: ./backend
-        run: go build -o ../bin/sovereign-engine main.go reports.go
+        run: |
+          echo "Building optimized binary..."
+          go build \
+            -ldflags="-s -w -X main.version=${{ github.sha }} -X main.buildTime=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            -trimpath \
+            -o ../bin/sovereign-engine \
+            main.go reports.go
+          
+          echo "Binary size:"
+          ls -lh ../bin/sovereign-engine
+          
+          echo "✅ Optimized build complete"
 
       - name: Upload backend artifact
         uses: actions/upload-artifact@v4
@@ -206,6 +217,40 @@ jobs:
           echo "🚂 Deploying Sovereign Hub to production..."
           echo "Backend binary: bin/sovereign-engine"
           echo "Frontend files: *.html, frontend/"
+
+      - name: 🏥 Validate Health Check
+        run: |
+          echo "Waiting for service to start..."
+          sleep 5
+          
+          # Try health check endpoint (adjust URL as needed)
+          HEALTH_URL="${{ vars.BACKEND_URL }}/health"
+          if [ -z "$HEALTH_URL" ] || [ "$HEALTH_URL" == "/health" ]; then
+            echo "⚠️  BACKEND_URL not configured, skipping health check"
+            echo "To enable health checks, set BACKEND_URL variable in repository settings"
+            exit 0
+          fi
+          
+          echo "Checking health endpoint: $HEALTH_URL"
+          
+          MAX_RETRIES=5
+          RETRY_COUNT=0
+          
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            if curl -f -s -o /dev/null -w "%{http_code}" "$HEALTH_URL" | grep -q "200"; then
+              echo "✅ Health check passed!"
+              curl -s "$HEALTH_URL" | jq '.' || echo "Service is healthy"
+              exit 0
+            fi
+            
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+            echo "Health check attempt $RETRY_COUNT/$MAX_RETRIES failed, retrying in 10s..."
+            sleep 10
+          done
+          
+          echo "❌ Health check failed after $MAX_RETRIES attempts"
+          echo "Service may not be healthy. Please investigate."
+          exit 1
           
       - name: Create deployment summary
         run: |

@@ -2,8 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -123,17 +126,65 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 
 // reportsHandler is defined in reports.go
 
+// validateEnvironment validates required environment variables
+func validateEnvironment() string {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+		log.Println("⚠️  PORT not set, using default: 8080")
+	}
+
+	// Optional: Validate SMS provider configs
+	atKey := os.Getenv("AT_API_KEY")
+	twilioSID := os.Getenv("TWILIO_ACCOUNT_SID")
+
+	if atKey == "" && twilioSID == "" {
+		log.Println("⚠️  No SMS provider configured (AT_API_KEY or TWILIO_ACCOUNT_SID)")
+		log.Println("   SMS notifications will not be available")
+	}
+
+	env := os.Getenv("ENVIRONMENT")
+	if env == "" {
+		env = "development"
+	}
+
+	fmt.Println("\n" + strings.Repeat("=", 60))
+	fmt.Println("🔍 Environment Configuration")
+	fmt.Println(strings.Repeat("=", 60))
+	fmt.Printf("  Port:        %s\n", port)
+	fmt.Printf("  Environment: %s\n", env)
+	fmt.Printf("  AT API:      %s\n", maskValue(atKey))
+	fmt.Printf("  Twilio:      %s\n", maskValue(twilioSID))
+	fmt.Println(strings.Repeat("=", 60) + "\n")
+
+	return port
+}
+
+// maskValue masks sensitive values
+func maskValue(value string) string {
+	if value == "" {
+		return "Not configured"
+	}
+	if len(value) <= 8 {
+		return "***"
+	}
+	return value[:4] + "..." + value[len(value)-4:]
+}
+
 func main() {
+	// Validate environment variables
+	port := validateEnvironment()
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/ws", wsHandler)
 	mux.HandleFunc("/add-event", addEventHandler)
 	mux.HandleFunc("/health", healthHandler)
 	mux.HandleFunc("/api/reports", reportsHandler)
 
-	log.Println("🛰️  Sentinel Engine Live on :8080")
+	log.Println("🛰️  Sentinel Engine Live on :" + port)
 	log.Println("📡 WebSocket endpoint: /ws")
 	log.Println("📩 Add event endpoint: /add-event")
 	log.Println("💚 Health check: /health")
 	log.Println("📊 Reports API: /api/reports")
-	log.Fatal(http.ListenAndServe(":8080", corsMiddleware(mux)))
+	log.Fatal(http.ListenAndServe(":"+port, corsMiddleware(mux)))
 }

@@ -1,0 +1,16 @@
+{
+  "files": [
+    {
+      "path": "dist/**/*.js",
+      "maxSize": "500kb",
+      "compression": "gzip"
+    },
+    {
+      "path": "dist/**/*.bundle",
+      "maxSize": "10mb"
+    }
+  ],
+  "ci": {
+    "trackBranches": ["main", "develop"]
+  }
+}

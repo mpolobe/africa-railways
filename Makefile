@@ -1,4 +1,4 @@
-.PHONY: help dev backend engine status stop clean logs deploy sync build-railways-android build-railways-ios build-all-apps
+.PHONY: help dev backend engine status stop clean logs deploy sync build-railways-android build-railways-ios build-all-apps build-backend-optimized
 
 # Colors
 GREEN = \033[0;32m
@@ -11,22 +11,25 @@ help:
 	@echo "$(GREEN)🌍 Africa Railways - 2025 Hybrid Suite$(NC)"
 	@echo ""
 	@echo "$(BLUE)Development:$(NC)"
-	@echo "  make dev           - Start everything with Hot-Reload (iPad Ready)"
-	@echo "  make status        - Check all ports (3000, 8080, 8081, 9000, 8082)"
-	@echo "  make logs          - Interactive iPad log viewer"
-	@echo "  make simulate      - Run ticket purchase simulation"
-	@echo "  make stop          - Stop all services"
-	@echo "  make clean         - Clean build artifacts"
+	@echo "  make dev                    - Start everything with Hot-Reload (iPad Ready)"
+	@echo "  make status                 - Check all ports (3000, 8080, 8081, 9000, 8082)"
+	@echo "  make logs                   - Interactive iPad log viewer"
+	@echo "  make simulate               - Run ticket purchase simulation"
+	@echo "  make stop                   - Stop all services"
+	@echo "  make clean                  - Clean build artifacts"
+	@echo ""
+	@echo "$(BLUE)Build:$(NC)"
+	@echo "  make build-backend-optimized - Build optimized Go binary (30-40% smaller)"
 	@echo ""
 	@echo "$(BLUE)Deployment:$(NC)"
-	@echo "  make auto-deploy   - Automated git sync + CI/CD trigger"
-	@echo "  make deploy-status - Check deployment status"
-	@echo "  make sync          - Manual git sync"
-	@echo "  make deploy        - Push Africoin to Sui Localnet"
+	@echo "  make auto-deploy            - Automated git sync + CI/CD trigger"
+	@echo "  make deploy-status          - Check deployment status"
+	@echo "  make sync                   - Manual git sync"
+	@echo "  make deploy                 - Push Africoin to Sui Localnet"
 	@echo ""
 	@echo "$(BLUE)Configuration:$(NC)"
-	@echo "  make check-secrets - Verify environment variables"
-	@echo "  make preflight     - Run pre-deployment checklist"
+	@echo "  make check-secrets          - Verify environment variables"
+	@echo "  make preflight              - Run pre-deployment checklist"
 
 # 🚀 HYBRID DEV COMMAND
 dev:
@@ -149,6 +152,25 @@ clean:
 	@rm -rf backend/cmd/spine_engine/tmp
 	@rm -rf /tmp/africa-railways/logs/*.log
 	@echo "$(GREEN)✅ Clean complete$(NC)"
+
+build-backend-optimized:
+	@echo "$(BLUE)🔨 Building optimized backend binary...$(NC)"
+	@mkdir -p bin
+	@cd backend && go build \
+		-ldflags="-s -w -X main.version=$$(git rev-parse --short HEAD) -X main.buildTime=$$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+		-trimpath \
+		-o ../bin/sovereign-engine \
+		main.go reports.go
+	@echo ""
+	@echo "$(GREEN)✅ Build complete!$(NC)"
+	@echo "Binary size:"
+	@ls -lh bin/sovereign-engine
+	@echo ""
+	@echo "Optimization flags used:"
+	@echo "  -ldflags=\"-s -w\"  : Strip debug info (30-40% smaller)"
+	@echo "  -trimpath          : Remove file system paths"
+	@echo "  -X main.version    : Embed git commit"
+	@echo "  -X main.buildTime  : Embed build timestamp"
 
 # Check secrets and environment configuration
 check-secrets:
