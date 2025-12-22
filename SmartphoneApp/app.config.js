@@ -9,7 +9,7 @@ module.exports = {
   expo: {
     // Dynamic app identity based on variant
     name: IS_RAILWAYS ? "Africa Railways Hub" : "Africoin Wallet",
-    slug: IS_RAILWAYS ? "africa-railways" : "africoin-app",
+    slug: IS_RAILWAYS ? "africa-railways-app" : "africoin-app",
     version: "1.0.0",
     orientation: "portrait",
     userInterfaceStyle: "dark",
