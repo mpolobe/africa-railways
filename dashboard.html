@@ -41,7 +41,7 @@
             fill: #333;
             stroke: #666;
             stroke-width: 1;
-            transition: all 0.3s ease;
+            transition: fill 0.3s ease, stroke 0.3s ease;
         }
         .country:hover {
             fill: #444;
@@ -53,6 +53,16 @@
             stroke-width: 2;
             animation: pulse-country 2s ease-in-out infinite;
         }
+        
+        /* The Pulse Effect for Activity */
+        .active-region {
+            fill: #60a5fa !important;
+            stroke: #fff !important;
+            stroke-width: 2;
+            filter: drop-shadow(0 0 15px #60a5fa);
+            animation: pulse-map 2s ease-in-out infinite;
+        }
+        
         @keyframes pulse-country {
             0%, 100% { 
                 fill: rgba(255, 184, 0, 0.3);
@@ -62,6 +72,12 @@
                 fill: rgba(255, 184, 0, 0.5);
                 stroke-width: 3;
             }
+        }
+        
+        @keyframes pulse-map {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
         .railway-route {
             fill: none;
@@ -132,6 +148,33 @@
             border-color: rgba(255, 184, 0, 0.3);
             animation: pulse 2s ease-in-out infinite;
         }
+        .map-legend {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        .legend-route {
+            background: #60a5fa;
+        }
+        .legend-active {
+            background: var(--gold);
+        }
+        .legend-city {
+            background: #00FF88;
+        }
     </style>
 </head>
 <body>
@@ -199,6 +242,21 @@
                     <text class="city-label" x="385" y="650">Johannesburg</text>
                 </svg>
                 
+                <div class="map-legend">
+                    <div class="legend-item">
+                        <div class="legend-color legend-route"></div>
+                        <span>Railway Route</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color legend-active"></div>
+                        <span>Active Transit</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color legend-city"></div>
+                        <span>Hub City</span>
+                    </div>
+                </div>
+                
                 <div id="map-status">Standing by for network events...</div>
             </div>
 
@@ -244,16 +302,22 @@
                          const randomRoute = routes[Math.floor(Math.random() * routes.length)];
                          activateRoute(randomRoute);
                          
-                         // Activate corresponding cities
+                         // Activate corresponding cities and regions
                          if (randomRoute.includes('nairobi')) {
                              activateCity('marker-nairobi');
                              activateCity('marker-lusaka');
+                             activateRegion('map-kenya');
+                             activateRegion('map-zambia');
                          } else if (randomRoute.includes('dar')) {
                              activateCity('marker-dar');
                              activateCity('marker-lusaka');
+                             activateRegion('map-tanzania');
+                             activateRegion('map-zambia');
                          } else if (randomRoute.includes('joburg')) {
                              activateCity('marker-joburg');
                              activateCity('marker-lusaka');
+                             activateRegion('map-south-africa');
+                             activateRegion('map-zambia');
                          }
                      } else {
                          updateMapStatus('Standing by for network events...', false);
@@ -263,12 +327,21 @@
                  }
              }
              
+             // Activate region with pulse effect
+             function activateRegion(countryId) {
+                 const country = document.getElementById(countryId);
+                 if (country) {
+                     country.classList.add('active-region');
+                     setTimeout(() => country.classList.remove('active-region'), 4000);
+                 }
+             }
+             
              // Country hover interactions
              document.querySelectorAll('.country').forEach(country => {
                  country.addEventListener('click', function() {
                      const countryName = this.id.replace('map-', '').replace('-', ' ');
                      updateMapStatus(`📍 ${countryName.toUpperCase()} - Railway Hub`, true);
-                     this.classList.toggle('active');
+                     activateRegion(this.id);
                  });
              });
              
