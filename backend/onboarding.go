@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/tech-kenya/africastalkingsms"
+	// "github.com/tech-kenya/africastalkingsms" // Requires Go 1.24+ - commented out for now
 	"github.com/twilio/twilio-go"
 	openapi "github.com/twilio/twilio-go/rest/api/v2010"
 )
@@ -41,21 +41,25 @@ func LoadSMSConfig() *SMSConfig {
 func sendOnboardingSMS(phoneNumber string, otp string) error {
 	message := fmt.Sprintf("Welcome to Sovereign Hub! Your Africoin Activation Code is: %s", otp)
 
-	// 1. Try Africa's Talking (Primary for Africa)
+	// 1. Try Africa's Talking (Primary for Africa) - DISABLED (requires Go 1.24+)
+	/* 
 	atClient := africastalkingsms.NewSMSClient(
 		os.Getenv("AT_API_KEY"),
-		os.Getenv("AT_USERNAME"), // Use 'sandbox' for testing
-		"SOVEREIGN",               // Your Alphanumeric Sender ID
-		"false",                   // Set to 'true' if using sandbox
+		os.Getenv("AT_USERNAME"),
+		"SOVEREIGN",
+		"false",
 	)
 
 	_, err := atClient.SendSMS(phoneNumber, message)
 	if err == nil {
 		log.Printf("✅ OTP sent via Africa's Talking to %s", maskPhoneNumber(phoneNumber))
-		return nil // Success via AT
+		return nil
 	}
 
 	log.Printf("⚠️  Africa's Talking failed: %v, trying Twilio...", err)
+	*/
+
+	log.Printf("ℹ️  Using Twilio (Africa's Talking disabled)")
 
 	// 2. Fallback to Twilio (Global/Reliable)
 	client := twilio.NewRestClient()
@@ -226,16 +230,16 @@ func SendLowBalanceAlert(phoneNumber string, balance int) error {
 }
 
 // sendViaAfricasTalking sends SMS using Africa's Talking API
+// DISABLED: Requires Go 1.24+ (africastalkingsms package)
 func sendViaAfricasTalking(phoneNumber, message string, config *SMSConfig) error {
-	// Initialize Africa's Talking client
+	/* 
 	atClient := africastalkingsms.NewSMSClient(
 		config.ATApiKey,
 		config.ATUsername,
 		config.ATSenderID,
-		"false", // Set to 'true' if using sandbox
+		"false",
 	)
 
-	// Send SMS
 	_, err := atClient.SendSMS(phoneNumber, message)
 	if err != nil {
 		return fmt.Errorf("Africa's Talking API error: %w", err)
@@ -243,6 +247,9 @@ func sendViaAfricasTalking(phoneNumber, message string, config *SMSConfig) error
 
 	log.Printf("✅ SMS sent via Africa's Talking to %s", maskPhoneNumber(phoneNumber))
 	return nil
+	*/
+	
+	return fmt.Errorf("Africa's Talking is disabled (requires Go 1.24+)")
 }
 
 // sendViaTwilio sends SMS using Twilio API
