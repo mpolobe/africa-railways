@@ -67,10 +67,8 @@ module.exports = {
     
     // Extra configuration
     extra: {
-      eas: {
-        // projectId should match the actual project slug, not UUID
-        projectId: IS_RAILWAYS ? "africa-railways" : "africoin-app"
-      },
+      // Note: projectId is now set via slug in eas.json
+      // No need to set it here as it causes conflicts
       APP_VARIANT: APP_VARIANT,
       backendUrl: process.env.BACKEND_URL || "https://africa-railways.vercel.app",
       apiKey: process.env.API_KEY
