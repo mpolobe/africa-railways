@@ -1,0 +1,4 @@
+2025/12/22 03:10:15 🛰️  Sentinel Engine Live on :8080
+2025/12/22 03:10:15 📡 WebSocket endpoint: /ws
+2025/12/22 03:10:15 📩 Add event endpoint: /add-event
+2025/12/22 03:10:15 💚 Health check: /health
