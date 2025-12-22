@@ -1,20 +1,23 @@
 tasks:
   - name: Setup and Services
     init: |
-      sudo apt update && sudo apt install -y golang-go
-      chmod +x check-services.sh
+      # Install dependencies during prebuild (cached)
+      cd /workspace/africa-railways
+      cd backend && go mod download || true
+      cd /workspace/africa-railways/mobile && npm install || true
+      cd /workspace/africa-railways
+      echo "✅ Dependencies installed"
+      
     command: |
-      # 1. Start Backend Engine
-      cd backend && nohup go run main.go > engine.log 2>&1 &
-      cd ..
-      
-      # 2. Start Python Servers
-      nohup python3 -m http.server 8082 --directory . > server8082.log 2>&1 &
-      nohup python3 -m http.server 3000 --directory . > server3000.log 2>&1 &
-      
-      # 3. Final Status Check
-      sleep 3
-      ./check-services.sh
+      echo "🚀 Ready to build!"
+      echo ""
+      echo "Available commands:"
+      echo "  make help    - Show all commands"
+      echo "  make test    - Run tests"
+      echo "  make dev     - Start development servers"
+      echo ""
+      # Don't put 'go build' or 'eas build' here 
+      # unless you want them to run every single time you open the tab.
 
 ports:
   - port: 8080
