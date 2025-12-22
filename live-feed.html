@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Africa Railways - Live Feed</title>
     <style>
+        /* Base Styles & Responsive Grid */
+        :root {
+            --bg: #0d1117;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --accent: #60a5fa;
+            --text: #e6edf3;
+            --gold: #FFB800;
+            --success: #00FF88;
+            --danger: #FF4444;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,28 +23,29 @@
         }
 
         body {
+            background-color: var(--bg);
+            color: var(--text);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f3a 100%);
-            color: white;
-            padding: 20px;
+            margin: 0;
             min-height: 100vh;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 20px;
         }
 
         .header {
             text-align: center;
             padding: 30px 0;
-            border-bottom: 2px solid #FFB800;
+            border-bottom: 2px solid var(--gold);
             margin-bottom: 30px;
         }
 
         .header h1 {
-            font-size: 2rem;
-            color: #FFB800;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            color: var(--gold);
             margin-bottom: 10px;
         }
 
@@ -72,11 +84,12 @@
         }
 
         .feed-container {
-            background: rgba(22, 32, 58, 0.6);
-            border-radius: 15px;
-            padding: 20px;
+            background: var(--card-bg);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            transition: transform 0.2s ease;
         }
 
         .feed-header {
@@ -183,10 +196,12 @@
             justify-content: center;
         }
 
+        /* Touch-friendly buttons for iPad */
         .btn {
+            min-height: 48px; /* Apple/Google standard */
             padding: 12px 24px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
@@ -330,5 +345,8 @@
             }
         }
     </script>
+    
+    <!-- Load the main application logic -->
+    <script src="/frontend/js/app.js"></script>
 </body>
 </html>

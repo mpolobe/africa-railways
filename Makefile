@@ -21,11 +21,22 @@ help:
 # 🚀 HYBRID DEV COMMAND
 dev:
 	@echo "$(GREEN)🚀 Starting Hybrid Development Stack...$(NC)"
-	@# Start the iPad Control Center (8082) & Frontend (3000)
-	@python3 -m http.server 8082 --directory . > /tmp/africa-railways/logs/ipad.log 2>&1 &
+	@mkdir -p /tmp/africa-railways/logs
+	@# Serve entire frontend directory (includes all HTML apps)
+	@echo "$(BLUE)📱 Starting Frontend Server (port 3000)...$(NC)"
 	@python3 -m http.server 3000 --directory . > /tmp/africa-railways/logs/frontend.log 2>&1 &
+	@# Start iPad Control Center on dedicated port
+	@echo "$(BLUE)📱 Starting iPad Control Center (port 8082)...$(NC)"
+	@python3 -m http.server 8082 --directory . > /tmp/africa-railways/logs/ipad.log 2>&1 &
 	@# Launch Go services with AIR (Hot Reload)
 	@$(MAKE) -j 2 run-backend run-engine
+	@echo "$(GREEN)✅ All services started!$(NC)"
+	@echo "$(BLUE)Frontend URLs:$(NC)"
+	@echo "  • Main App:     http://localhost:3000"
+	@echo "  • iPad Center:  http://localhost:8082/ipad-control-center.html"
+	@echo "  • Live Feed:    http://localhost:3000/live-feed.html"
+	@echo "  • Dashboard:    http://localhost:3000/dashboard.html"
+	@echo "  • Mobile:       http://localhost:3000/mobile.html"
 
 # Hot-Reloading Logic
 run-backend:
@@ -100,6 +111,114 @@ clean:
 	@rm -rf backend/cmd/spine_engine/tmp
 	@rm -rf /tmp/africa-railways/logs/*.log
 	@echo "$(GREEN)✅ Clean complete$(NC)"
+
+# Check secrets and environment configuration
+check-secrets:
+	@echo "$(BLUE)🔍 Checking Environment Configuration...$(NC)"
+	@echo "======================================"
+	@echo ""
+	@echo "$(BLUE)📱 SMS Provider Configuration:$(NC)"
+	@if [ -n "$$TWILIO_ACCOUNT_SID" ]; then \
+		echo "$(GREEN)✅ TWILIO_ACCOUNT_SID: $${TWILIO_ACCOUNT_SID:0:8}...$${TWILIO_ACCOUNT_SID: -4}$(NC)"; \
+	else \
+		echo "$(RED)❌ TWILIO_ACCOUNT_SID not set$(NC)"; \
+	fi
+	@if [ -n "$$TWILIO_AUTH_TOKEN" ]; then \
+		echo "$(GREEN)✅ TWILIO_AUTH_TOKEN: $${TWILIO_AUTH_TOKEN:0:4}...$${TWILIO_AUTH_TOKEN: -4}$(NC)"; \
+	else \
+		echo "$(RED)❌ TWILIO_AUTH_TOKEN not set$(NC)"; \
+	fi
+	@if [ -n "$$TWILIO_MESSAGING_SERVICE_SID" ]; then \
+		echo "$(GREEN)✅ TWILIO_MESSAGING_SERVICE_SID: $${TWILIO_MESSAGING_SERVICE_SID:0:8}...$${TWILIO_MESSAGING_SERVICE_SID: -4}$(NC)"; \
+	else \
+		echo "$(YELLOW)⚠️  TWILIO_MESSAGING_SERVICE_SID not set (optional)$(NC)"; \
+	fi
+	@if [ -n "$$TWILIO_NUMBER" ]; then \
+		echo "$(GREEN)✅ TWILIO_NUMBER: $$TWILIO_NUMBER$(NC)"; \
+	else \
+		echo "$(YELLOW)⚠️  TWILIO_NUMBER not set (optional if using Messaging Service)$(NC)"; \
+	fi
+	@echo ""
+	@if [ -n "$$AT_API_KEY" ]; then \
+		echo "$(GREEN)✅ AT_API_KEY: $${AT_API_KEY:0:4}...$${AT_API_KEY: -4}$(NC)"; \
+	else \
+		echo "$(YELLOW)⚠️  AT_API_KEY not set (Africa's Talking not configured)$(NC)"; \
+	fi
+	@if [ -n "$$AT_USERNAME" ]; then \
+		echo "$(GREEN)✅ AT_USERNAME: $$AT_USERNAME$(NC)"; \
+	else \
+		echo "$(YELLOW)⚠️  AT_USERNAME not set$(NC)"; \
+	fi
+	@echo ""
+	@echo "$(BLUE)🔧 Backend Configuration:$(NC)"
+	@if [ -n "$$BACKEND_PORT" ]; then \
+		echo "$(GREEN)✅ BACKEND_PORT: $$BACKEND_PORT$(NC)"; \
+	else \
+		echo "$(YELLOW)⚠️  BACKEND_PORT not set (will use default: 8080)$(NC)"; \
+	fi
+	@echo ""
+	@echo "$(BLUE)📊 Summary:$(NC)"
+	@echo "======================================"
+	@if [ -n "$$TWILIO_ACCOUNT_SID" ] && [ -n "$$TWILIO_AUTH_TOKEN" ]; then \
+		echo "$(GREEN)✅ Twilio: Ready$(NC)"; \
+	else \
+		echo "$(RED)❌ Twilio: Not configured$(NC)"; \
+	fi
+	@if [ -n "$$AT_API_KEY" ] && [ -n "$$AT_USERNAME" ]; then \
+		echo "$(GREEN)✅ Africa's Talking: Ready$(NC)"; \
+	else \
+		echo "$(YELLOW)⚠️  Africa's Talking: Not configured$(NC)"; \
+	fi
+	@echo ""
+
+# Pre-flight check before deployment
+preflight:
+	@echo "$(GREEN)🚀 Pre-Flight Checklist$(NC)"
+	@echo "======================================"
+	@echo ""
+	@echo "$(BLUE)Step 1: Environment Configuration$(NC)"
+	@$(MAKE) check-secrets
+	@echo ""
+	@echo "$(BLUE)Step 2: File Verification$(NC)"
+	@if [ -f backend/.env ]; then \
+		echo "$(GREEN)✅ backend/.env exists$(NC)"; \
+	else \
+		echo "$(RED)❌ backend/.env missing$(NC)"; \
+	fi
+	@if [ -f setup-twilio.sh ]; then \
+		echo "$(GREEN)✅ setup-twilio.sh exists$(NC)"; \
+	else \
+		echo "$(RED)❌ setup-twilio.sh missing$(NC)"; \
+	fi
+	@if [ -f backend/onboarding.go ]; then \
+		echo "$(GREEN)✅ backend/onboarding.go exists$(NC)"; \
+	else \
+		echo "$(RED)❌ backend/onboarding.go missing$(NC)"; \
+	fi
+	@echo ""
+	@echo "$(BLUE)Step 3: Port Availability$(NC)"
+	@for port in 8080 8082; do \
+		if lsof -Pi :$$port -sTCP:LISTEN -t >/dev/null 2>&1; then \
+			echo "$(YELLOW)⚠️  Port $$port is in use$(NC)"; \
+		else \
+			echo "$(GREEN)✅ Port $$port is available$(NC)"; \
+		fi; \
+	done
+	@echo ""
+	@echo "$(BLUE)Step 4: Go Dependencies$(NC)"
+	@if command -v go >/dev/null 2>&1; then \
+		echo "$(GREEN)✅ Go installed: $$(go version)$(NC)"; \
+	else \
+		echo "$(RED)❌ Go not installed$(NC)"; \
+	fi
+	@echo ""
+	@echo "$(GREEN)✅ Pre-flight check complete!$(NC)"
+	@echo ""
+	@echo "$(BLUE)📋 Next Steps:$(NC)"
+	@echo "1. Run: make dev"
+	@echo "2. Open: http://localhost:8082/ipad-control-center.html"
+	@echo "3. Test onboarding with your phone number"
+	@echo ""
 
 .DEFAULT_GOAL := help
 

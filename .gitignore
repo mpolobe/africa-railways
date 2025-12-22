@@ -2,3 +2,27 @@
 .ash_history
 .DS_Store
 node_modules/
+
+# Test files
+test-*.html
+*-test.html
+flow-test.html
+transaction-demo.html
+wallet-test.html
+
+# Backend test files
+backend/test_*.go
+backend/otp_example.go
+backend/main_complete.go
+
+# Temporary documentation
+COMPLETE_INTEGRATION.md
+COMPLETE_ONBOARDING_SUMMARY.md
+DEPLOYMENT_READY.md
+ONBOARDING_UI_GUIDE.md
+OTP_ONBOARDING.md
+PREFLIGHT_CHECKLIST.md
+PROGRESS_BAR_GUIDE.md
+QUICK_START.md
+SYNC_AND_LAUNCH.md
+backend/ONBOARDING_INTEGRATION.md
