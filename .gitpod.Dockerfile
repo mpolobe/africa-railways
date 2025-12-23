@@ -9,12 +9,13 @@ RUN apt-get update && apt-get install -y \
     unzip \
     zip \
     openjdk-17-jdk \
+    qrencode \
     build-essential \
     imagemagick \
     jq \
     && rm -rf /var/lib/apt/lists/*
 
-# Set Java home
+# Set Java home for Android builds
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ENV PATH=$JAVA_HOME/bin:$PATH
 
@@ -24,7 +25,7 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2
     ./aws/install && \
     rm -rf aws awscliv2.zip
 
-# Install AWS SAM CLI for serverless deployments
+# Install AWS SAM CLI
 RUN pip3 install aws-sam-cli
 
 USER gitpod

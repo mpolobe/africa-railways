@@ -24,8 +24,25 @@ ports:
     description: Frontend Dashboard
 
 tasks:
-  - name: Setup Environment
+  - name: Setup Expo Build Environment
     init: |
+      # Update system
+      sudo apt-get update
+      sudo apt-get install -y curl git wget gnupg lsb-release jq unzip
+      
+      # Install Node.js 18
+      curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+      sudo apt-get install -y nodejs
+      
+      # Install AWS CLI (for S3 uploads)
+      curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      unzip awscliv2.zip
+      sudo ./aws/install
+      rm -rf aws awscliv2.zip
+      
+      # Install Expo and EAS CLI
+      npm install -g eas-cli expo-cli
+      
       # Install project dependencies
       cd /workspace/africa-railways
       npm ci || npm install
@@ -34,55 +51,44 @@ tasks:
       cd backend && go mod download || true
       
       # Install mobile dependencies
-      cd /workspace/africa-railways/mobile && npm install || true
+      cd /workspace/africa-railways/SmartphoneApp && npm install --legacy-peer-deps || true
       
       # Create necessary directories
       mkdir -p ~/.aws ~/.expo builds
       
       # Make scripts executable
+      cd /workspace/africa-railways
       chmod +x scripts/*.sh || true
       
       echo "✅ Dependencies installed"
       
     command: |
       cd /workspace/africa-railways
-      source ~/.bashrc
-      
-      echo "🚀 Africa Railways - Gitpod Development Environment"
+      echo "🚀 Expo Build Environment Ready!"
       echo "=================================================="
       echo ""
-      echo "📱 Mobile Development Commands:"
-      echo "  npm start              - Start Expo dev server"
-      echo "  eas login              - Login to Expo account"
-      echo "  eas build              - Build app with EAS"
-      echo "  make eas-build         - Interactive build menu"
-      echo "  make eas-android       - Quick Android build"
+      echo "📋 Available Commands:"
+      echo "  • ./scripts/deploy-build.sh     - Build & deploy to S3"
+      echo "  • ./scripts/setup-s3-gitpod.sh  - Setup AWS S3 for builds"
+      echo "  • npm start                     - Start Expo dev server"
+      echo "  • eas login                     - Login to Expo"
+      echo "  • make eas-build                - Interactive build menu"
       echo ""
-      echo "🛠️  Backend Commands:"
-      echo "  make dev               - Start all services"
-      echo "  make backend           - Start backend only"
-      echo "  make status            - Check service status"
+      echo "🔧 Setup:"
+      echo "  1. Run: eas login (or set EXPO_TOKEN)"
+      echo "  2. Run: ./scripts/setup-env.sh (configure credentials)"
+      echo "  3. Run: ./scripts/deploy-build.sh (build & deploy)"
       echo ""
-      echo "☁️  AWS/S3 Deployment:"
-      echo "  ./scripts/setup-s3.sh      - Setup S3 bucket"
-      echo "  ./scripts/deploy-build.sh  - Build and deploy to S3"
+      echo "📱 Current Status:"
+      echo "  • Node.js: $(node --version 2>/dev/null || echo 'Not found')"
+      echo "  • EAS CLI: $(eas --version 2>/dev/null || echo 'Not found')"
+      echo "  • AWS CLI: $(aws --version 2>&1 | head -n 1 || echo 'Not found')"
       echo ""
       echo "📚 Documentation:"
-      echo "  EAS_BUILD_SETUP.md              - Complete build guide"
-      echo "  SELF_HOSTED_RUNNER_SETUP.md     - Self-hosted setup"
-      echo "  BUILD_STRATEGY_COMPARISON.md    - Strategy comparison"
-      echo "  README-Gitpod.md                - Gitpod-specific guide"
-      echo ""
-      echo "🔧 Environment Info:"
-      echo "  Node.js: $(node --version)"
-      echo "  Java: $(java -version 2>&1 | head -n 1)"
-      echo "  Android SDK: ${ANDROID_HOME}"
-      echo "  AWS CLI: $(aws --version 2>&1 | head -n 1)"
-      echo ""
-      echo "📋 Next Steps:"
-      echo "  1. Run: eas login"
-      echo "  2. Configure AWS credentials (if using S3)"
-      echo "  3. Run: make eas-build"
+      echo "  • README-Gitpod.md              - Gitpod guide"
+      echo "  • EAS_BUILD_SETUP.md            - Build guide"
+      echo "  • BUILD_STATUS.md               - Current build status"
+      echo "  • DOWNLOAD_PAGE_SETUP.md        - Download page setup"
       echo ""
       
       # Open README if it exists
