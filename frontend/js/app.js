@@ -195,7 +195,7 @@ async function bookTicket() {
         });
 
         if (response.ok) {
-            // 2. Deduct the 50 AFRC from the local state
+            // 2. Deduct the 50 AFRC from the local state ONLY after successful response
             currentBalance -= TICKET_PRICE;
             walletState.balance = currentBalance; // Keep in sync
             
@@ -238,6 +238,7 @@ async function bookTicket() {
         }
     } catch (error) {
         console.error("Booking failed:", error);
+        // BUG FIX: Balance is NOT deducted on error - no need to restore
         bookingBtn.style.borderColor = "#ef4444";
         bookingBtn.style.color = "#ef4444";
         bookingBtn.innerText = "❌ Transaction Failed";
@@ -284,7 +285,7 @@ async function simulateTicket() {
         });
 
         if (response.ok) {
-            // Deduct from wallet
+            // BUG FIX: Deduct from wallet ONLY after successful response
             currentBalance -= TICKET_PRICE;
             walletState.balance = currentBalance;
             
@@ -310,6 +311,7 @@ async function simulateTicket() {
         }
     } catch (error) {
         console.error('Simulation failed:', error);
+        // BUG FIX: Balance is NOT deducted on error - no rollback needed
         showNotification('Simulation failed', 'error');
     }
 }
