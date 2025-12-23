@@ -1,6 +1,21 @@
+# Environment variables
 .env
+.env.local
+.env.*.local
+.gitpod.env
+!.gitpod.env.example
+.env.aws
+.s3-bucket-name
+
+# Shell history
 .ash_history
+.bash_history
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# Dependencies
 node_modules/
 
 # Build artifacts
