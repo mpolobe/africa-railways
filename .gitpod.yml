@@ -1,41 +1,19 @@
-image: gitpod/workspace-node:latest
-
-tasks:
-  - name: Setup and Services
-    init: |
-      # Install global tools
-      npm install -g eas-cli expo-cli
-      
-      # Install dependencies during prebuild (cached)
-      cd /workspace/africa-railways
-      cd backend && go mod download || true
-      cd /workspace/africa-railways/mobile && npm install || true
-      cd /workspace/africa-railways
-      npm ci || npm install
-      echo "✅ Dependencies installed"
-      
-    command: |
-      cd /workspace/africa-railways
-      echo "🚀 Africa Railways - Development Environment Ready!"
-      echo ""
-      echo "📱 EAS Build Commands:"
-      echo "  eas login                              - Login to Expo account"
-      echo "  eas build:configure                    - Configure EAS builds"
-      echo "  eas build --platform android --local   - Build Android APK locally"
-      echo "  eas build --platform android           - Build Android on EAS cloud"
-      echo ""
-      echo "🛠️  Development Commands:"
-      echo "  make help    - Show all commands"
-      echo "  make test    - Run tests"
-      echo "  make dev     - Start development servers"
-      echo ""
-      echo "📚 Documentation:"
-      echo "  See EAS_BUILD_SETUP.md for complete build guide"
-      echo ""
-      # Don't put 'go build' or 'eas build' here 
-      # unless you want them to run every single time you open the tab.
+image:
+  file: .gitpod.Dockerfile
 
 ports:
+  - port: 19000-19006
+    onOpen: notify
+    visibility: public
+    description: Expo Metro Bundler
+  - port: 8081
+    onOpen: notify
+    visibility: public
+    description: React Native Metro
+  - port: 3000
+    onOpen: notify
+    visibility: public
+    description: React Development Server
   - port: 8080
     visibility: public
     onOpen: ignore
@@ -44,23 +22,89 @@ ports:
     visibility: public
     onOpen: open-browser
     description: Frontend Dashboard
-  - port: 3000
-    visibility: public
-    onOpen: ignore
-    description: React Development Server
-  - port: 19000-19006
-    visibility: public
-    onOpen: notify
-    description: Expo Metro Bundler
-  - port: 8081
-    visibility: public
-    onOpen: notify
-    description: React Native Metro
+
+tasks:
+  - name: Setup Environment
+    init: |
+      # Install project dependencies
+      cd /workspace/africa-railways
+      npm ci || npm install
+      
+      # Install backend dependencies
+      cd backend && go mod download || true
+      
+      # Install mobile dependencies
+      cd /workspace/africa-railways/mobile && npm install || true
+      
+      # Create necessary directories
+      mkdir -p ~/.aws ~/.expo builds
+      
+      # Make scripts executable
+      chmod +x scripts/*.sh || true
+      
+      echo "✅ Dependencies installed"
+      
+    command: |
+      cd /workspace/africa-railways
+      source ~/.bashrc
+      
+      echo "🚀 Africa Railways - Gitpod Development Environment"
+      echo "=================================================="
+      echo ""
+      echo "📱 Mobile Development Commands:"
+      echo "  npm start              - Start Expo dev server"
+      echo "  eas login              - Login to Expo account"
+      echo "  eas build              - Build app with EAS"
+      echo "  make eas-build         - Interactive build menu"
+      echo "  make eas-android       - Quick Android build"
+      echo ""
+      echo "🛠️  Backend Commands:"
+      echo "  make dev               - Start all services"
+      echo "  make backend           - Start backend only"
+      echo "  make status            - Check service status"
+      echo ""
+      echo "☁️  AWS/S3 Deployment:"
+      echo "  ./scripts/setup-s3.sh      - Setup S3 bucket"
+      echo "  ./scripts/deploy-build.sh  - Build and deploy to S3"
+      echo ""
+      echo "📚 Documentation:"
+      echo "  EAS_BUILD_SETUP.md              - Complete build guide"
+      echo "  SELF_HOSTED_RUNNER_SETUP.md     - Self-hosted setup"
+      echo "  BUILD_STRATEGY_COMPARISON.md    - Strategy comparison"
+      echo "  README-Gitpod.md                - Gitpod-specific guide"
+      echo ""
+      echo "🔧 Environment Info:"
+      echo "  Node.js: $(node --version)"
+      echo "  Java: $(java -version 2>&1 | head -n 1)"
+      echo "  Android SDK: ${ANDROID_HOME}"
+      echo "  AWS CLI: $(aws --version 2>&1 | head -n 1)"
+      echo ""
+      echo "📋 Next Steps:"
+      echo "  1. Run: eas login"
+      echo "  2. Configure AWS credentials (if using S3)"
+      echo "  3. Run: make eas-build"
+      echo ""
+      
+      # Open README if it exists
+      if [ -f "README-Gitpod.md" ]; then
+        gp open README-Gitpod.md
+      fi
 
 vscode:
   extensions:
     - msjsdiag.vscode-react-native
     - byCedric.vscode-expo
+    - AmazonWebServices.aws-toolkit-vscode
     - golang.go
     - dbaeumer.vscode-eslint
     - esbenp.prettier-vscode
+    - ms-vscode.vscode-typescript-next
+
+github:
+  prebuilds:
+    master: true
+    branches: true
+    pullRequests: true
+    addCheck: true
+    addComment: false
+    addBadge: true
