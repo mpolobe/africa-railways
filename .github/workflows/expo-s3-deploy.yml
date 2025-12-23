@@ -1,0 +1,316 @@
+name: Expo Build & Deploy to S3
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform to build'
+        required: true
+        default: 'android'
+        type: choice
+        options:
+        - android
+        - ios
+        - all
+      profile:
+        description: 'Build profile'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+        - development
+        - preview
+        - production
+  push:
+    branches: [main]
+    paths:
+      - 'mobile/**'
+      - 'src/**'
+      - 'app.config.js'
+      - 'package.json'
+  release:
+    types: [published]
+
+env:
+  AWS_S3_BUCKET: expo-builds-239732581050-20251223
+  AWS_REGION: eu-north-1
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install Dependencies
+      run: npm ci
+      
+    - name: Install EAS CLI
+      run: npm install -g eas-cli
+      
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+        
+    - name: Login to Expo
+      run: eas login --non-interactive
+      env:
+        EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      
+    - name: Get Build Info
+      id: build_info
+      run: |
+        TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+        VERSION=$(node -p "require('./package.json').version")
+        COMMIT_SHA=$(git rev-parse --short HEAD)
+        PROFILE="${{ github.event.inputs.profile || 'production' }}"
+        
+        echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "commit=$COMMIT_SHA" >> $GITHUB_OUTPUT
+        echo "profile=$PROFILE" >> $GITHUB_OUTPUT
+        
+    - name: Build Android
+      if: github.event.inputs.platform == 'android' || github.event.inputs.platform == 'all' || github.event_name == 'push'
+      run: |
+        mkdir -p artifacts
+        echo "🤖 Building Android with profile: ${{ steps.build_info.outputs.profile }}"
+        
+        eas build \
+          --platform android \
+          --profile ${{ steps.build_info.outputs.profile }} \
+          --non-interactive \
+          --wait \
+          --output ./artifacts/android-build.apk
+          
+        # Get file size
+        SIZE=$(du -h ./artifacts/android-build.apk | cut -f1)
+        echo "android_size=$SIZE" >> $GITHUB_OUTPUT
+        
+    - name: Build iOS
+      if: github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'all'
+      run: |
+        mkdir -p artifacts
+        echo "🍎 Building iOS with profile: ${{ steps.build_info.outputs.profile }}"
+        
+        eas build \
+          --platform ios \
+          --profile ${{ steps.build_info.outputs.profile }} \
+          --non-interactive \
+          --wait \
+          --output ./artifacts/ios-build.ipa
+          
+        # Get file size
+        SIZE=$(du -h ./artifacts/ios-build.ipa | cut -f1)
+        echo "ios_size=$SIZE" >> $GITHUB_OUTPUT
+          
+    - name: Upload to S3
+      id: s3_upload
+      run: |
+        TIMESTAMP="${{ steps.build_info.outputs.timestamp }}"
+        VERSION="${{ steps.build_info.outputs.version }}"
+        COMMIT="${{ steps.build_info.outputs.commit }}"
+        PROFILE="${{ steps.build_info.outputs.profile }}"
+        
+        # Upload Android
+        if [ -f "./artifacts/android-build.apk" ]; then
+          echo "📱 Uploading Android build..."
+          
+          ANDROID_KEY="builds/android-v${VERSION}-${COMMIT}-${TIMESTAMP}.apk"
+          
+          aws s3 cp ./artifacts/android-build.apk \
+            "s3://${{ env.AWS_S3_BUCKET }}/${ANDROID_KEY}" \
+            --metadata "version=${VERSION},commit=${COMMIT},profile=${PROFILE},platform=android"
+          
+          # Also upload as "latest"
+          aws s3 cp ./artifacts/android-build.apk \
+            "s3://${{ env.AWS_S3_BUCKET }}/builds/android-latest.apk"
+          
+          # Generate pre-signed URL (30 days)
+          ANDROID_URL=$(aws s3 presign \
+            "s3://${{ env.AWS_S3_BUCKET }}/${ANDROID_KEY}" \
+            --expires-in 2592000)
+          
+          echo "android_url=$ANDROID_URL" >> $GITHUB_OUTPUT
+          echo "android_key=$ANDROID_KEY" >> $GITHUB_OUTPUT
+          echo "🔗 Android Download: $ANDROID_URL"
+        fi
+        
+        # Upload iOS
+        if [ -f "./artifacts/ios-build.ipa" ]; then
+          echo "🍏 Uploading iOS build..."
+          
+          IOS_KEY="builds/ios-v${VERSION}-${COMMIT}-${TIMESTAMP}.ipa"
+          
+          aws s3 cp ./artifacts/ios-build.ipa \
+            "s3://${{ env.AWS_S3_BUCKET }}/${IOS_KEY}" \
+            --metadata "version=${VERSION},commit=${COMMIT},profile=${PROFILE},platform=ios"
+          
+          # Also upload as "latest"
+          aws s3 cp ./artifacts/ios-build.ipa \
+            "s3://${{ env.AWS_S3_BUCKET }}/builds/ios-latest.ipa"
+          
+          # Generate pre-signed URL (30 days)
+          IOS_URL=$(aws s3 presign \
+            "s3://${{ env.AWS_S3_BUCKET }}/${IOS_KEY}" \
+            --expires-in 2592000)
+          
+          echo "ios_url=$IOS_URL" >> $GITHUB_OUTPUT
+          echo "ios_key=$IOS_KEY" >> $GITHUB_OUTPUT
+          echo "🔗 iOS Download: $IOS_URL"
+        fi
+        
+    - name: Create Build Manifest
+      run: |
+        cat > build-manifest.json << EOF
+        {
+          "version": "${{ steps.build_info.outputs.version }}",
+          "commit": "${{ steps.build_info.outputs.commit }}",
+          "timestamp": "${{ steps.build_info.outputs.timestamp }}",
+          "profile": "${{ steps.build_info.outputs.profile }}",
+          "builds": {
+            "android": {
+              "key": "${{ steps.s3_upload.outputs.android_key }}",
+              "url": "${{ steps.s3_upload.outputs.android_url }}",
+              "size": "${{ steps.build_info.outputs.android_size }}"
+            },
+            "ios": {
+              "key": "${{ steps.s3_upload.outputs.ios_key }}",
+              "url": "${{ steps.s3_upload.outputs.ios_url }}",
+              "size": "${{ steps.build_info.outputs.ios_size }}"
+            }
+          },
+          "github": {
+            "run_id": "${{ github.run_id }}",
+            "run_number": "${{ github.run_number }}",
+            "actor": "${{ github.actor }}",
+            "ref": "${{ github.ref }}"
+          }
+        }
+        EOF
+        
+        # Upload manifest
+        aws s3 cp build-manifest.json \
+          "s3://${{ env.AWS_S3_BUCKET }}/manifests/build-${{ steps.build_info.outputs.timestamp }}.json"
+        
+        # Also upload as latest
+        aws s3 cp build-manifest.json \
+          "s3://${{ env.AWS_S3_BUCKET }}/manifests/latest.json"
+        
+    - name: Create Build Summary
+      run: |
+        echo "## 🚀 Expo Build Complete" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📦 Build Information" >> $GITHUB_STEP_SUMMARY
+        echo "- **Version:** ${{ steps.build_info.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Commit:** ${{ steps.build_info.outputs.commit }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Profile:** ${{ steps.build_info.outputs.profile }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Timestamp:** ${{ steps.build_info.outputs.timestamp }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -n "${{ steps.s3_upload.outputs.android_url }}" ]; then
+          echo "### 📱 Android Build" >> $GITHUB_STEP_SUMMARY
+          echo "- **Size:** ${{ steps.build_info.outputs.android_size }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Download:** [android-v${{ steps.build_info.outputs.version }}.apk](${{ steps.s3_upload.outputs.android_url }})" >> $GITHUB_STEP_SUMMARY
+          echo "- **S3 Key:** \`${{ steps.s3_upload.outputs.android_key }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ -n "${{ steps.s3_upload.outputs.ios_url }}" ]; then
+          echo "### 🍎 iOS Build" >> $GITHUB_STEP_SUMMARY
+          echo "- **Size:** ${{ steps.build_info.outputs.ios_size }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Download:** [ios-v${{ steps.build_info.outputs.version }}.ipa](${{ steps.s3_upload.outputs.ios_url }})" >> $GITHUB_STEP_SUMMARY
+          echo "- **S3 Key:** \`${{ steps.s3_upload.outputs.ios_key }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "### 🔗 Quick Links" >> $GITHUB_STEP_SUMMARY
+        echo "- [S3 Bucket Console](https://s3.console.aws.amazon.com/s3/buckets/${{ env.AWS_S3_BUCKET }})" >> $GITHUB_STEP_SUMMARY
+        echo "- [View All Builds](https://s3.console.aws.amazon.com/s3/buckets/${{ env.AWS_S3_BUCKET }}/builds/)" >> $GITHUB_STEP_SUMMARY
+        echo "- [Build Manifests](https://s3.console.aws.amazon.com/s3/buckets/${{ env.AWS_S3_BUCKET }}/manifests/)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        echo "### 📋 Installation Instructions" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Android:**" >> $GITHUB_STEP_SUMMARY
+        echo "1. Download the APK file" >> $GITHUB_STEP_SUMMARY
+        echo "2. Enable 'Install from Unknown Sources' in Settings" >> $GITHUB_STEP_SUMMARY
+        echo "3. Open the APK file to install" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**iOS:**" >> $GITHUB_STEP_SUMMARY
+        echo "1. Download the IPA file" >> $GITHUB_STEP_SUMMARY
+        echo "2. Install via TestFlight or enterprise distribution" >> $GITHUB_STEP_SUMMARY
+        echo "3. Trust the developer certificate in Settings" >> $GITHUB_STEP_SUMMARY
+        
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: expo-builds-${{ steps.build_info.outputs.timestamp }}
+        path: |
+          artifacts/
+          build-manifest.json
+        retention-days: 30
+        
+    - name: Comment on PR
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const androidUrl = '${{ steps.s3_upload.outputs.android_url }}';
+          const iosUrl = '${{ steps.s3_upload.outputs.ios_url }}';
+          const version = '${{ steps.build_info.outputs.version }}';
+          
+          let comment = `## 📱 Build Ready!\n\n`;
+          comment += `**Version:** ${version}\n\n`;
+          
+          if (androidUrl) {
+            comment += `### Android\n`;
+            comment += `[Download APK](${androidUrl})\n\n`;
+          }
+          
+          if (iosUrl) {
+            comment += `### iOS\n`;
+            comment += `[Download IPA](${iosUrl})\n\n`;
+          }
+          
+          comment += `*Links expire in 30 days*`;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+          
+    - name: Create GitHub Release
+      if: github.event_name == 'release'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: artifacts/*
+        body: |
+          ## 📱 Mobile App Release
+          
+          **Version:** ${{ steps.build_info.outputs.version }}
+          **Commit:** ${{ steps.build_info.outputs.commit }}
+          
+          ### Downloads
+          
+          - Android: [Download APK](${{ steps.s3_upload.outputs.android_url }})
+          - iOS: [Download IPA](${{ steps.s3_upload.outputs.ios_url }})
+          
+          ### S3 Storage
+          
+          Builds are also available on S3:
+          - [View in S3 Console](https://s3.console.aws.amazon.com/s3/buckets/${{ env.AWS_S3_BUCKET }}/builds/)
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
