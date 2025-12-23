@@ -1,0 +1,270 @@
+name: Self-Hosted Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform to build'
+        required: true
+        default: 'android'
+        type: choice
+        options:
+          - android
+          - ios
+          - both
+      profile:
+        description: 'Build profile'
+        required: true
+        default: 'preview'
+        type: choice
+        options:
+          - development
+          - preview
+          - production
+  push:
+    branches: [main]
+    paths:
+      - 'mobile/**'
+      - 'src/**'
+      - 'app.config.js'
+      - 'package.json'
+
+jobs:
+  build-android:
+    runs-on: self-hosted
+    if: github.event.inputs.platform == 'android' || github.event.inputs.platform == 'both' || github.event_name == 'push'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm install -g eas-cli
+          
+      - name: Create build directory
+        run: mkdir -p build
+          
+      - name: Login to Expo
+        run: eas login --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          
+      - name: Build Android APK
+        run: |
+          PROFILE="${{ github.event.inputs.profile || 'preview' }}"
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          OUTPUT_FILE="./build/africa-railways-${PROFILE}-${TIMESTAMP}.apk"
+          
+          echo "Building with profile: $PROFILE"
+          echo "Output file: $OUTPUT_FILE"
+          
+          eas build --platform android --local --profile "$PROFILE" --non-interactive --output "$OUTPUT_FILE"
+          
+          echo "BUILD_FILE=$OUTPUT_FILE" >> $GITHUB_ENV
+          echo "BUILD_TIMESTAMP=$TIMESTAMP" >> $GITHUB_ENV
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          
+      - name: Get build info
+        id: build_info
+        run: |
+          FILE_SIZE=$(du -h "$BUILD_FILE" | cut -f1)
+          FILE_NAME=$(basename "$BUILD_FILE")
+          echo "size=$FILE_SIZE" >> $GITHUB_OUTPUT
+          echo "name=$FILE_NAME" >> $GITHUB_OUTPUT
+          
+      - name: Upload to transfer.sh
+        id: upload
+        run: |
+          echo "Uploading $BUILD_FILE to transfer.sh..."
+          DOWNLOAD_LINK=$(curl --upload-file "$BUILD_FILE" "https://transfer.sh/${{ steps.build_info.outputs.name }}")
+          echo "Download link: $DOWNLOAD_LINK"
+          echo "link=$DOWNLOAD_LINK" >> $GITHUB_OUTPUT
+          echo "$DOWNLOAD_LINK" > download-link.txt
+        continue-on-error: true
+          
+      - name: Upload as GitHub Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-apk-${{ env.BUILD_TIMESTAMP }}
+          path: ${{ env.BUILD_FILE }}
+          retention-days: 30
+          
+      - name: Create Release (if production)
+        if: github.event.inputs.profile == 'production' && github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.BUILD_TIMESTAMP }}
+          name: Production Build ${{ env.BUILD_TIMESTAMP }}
+          body: |
+            ## 📱 Africa Railways - Production Build
+            
+            **Platform:** Android
+            **Profile:** Production
+            **Size:** ${{ steps.build_info.outputs.size }}
+            **Built:** ${{ env.BUILD_TIMESTAMP }}
+            
+            ### Download
+            - [Download APK](${{ steps.upload.outputs.link }})
+            - Or download from GitHub Artifacts below
+            
+            ### Installation
+            1. Download the APK file
+            2. Enable "Install from Unknown Sources" on your Android device
+            3. Open the APK file to install
+            
+            ### Changes
+            ${{ github.event.head_commit.message }}
+          files: ${{ env.BUILD_FILE }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Comment on PR with download link
+        if: github.event_name == 'pull_request' && steps.upload.outcome == 'success'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const link = '${{ steps.upload.outputs.link }}';
+            const size = '${{ steps.build_info.outputs.size }}';
+            const profile = '${{ github.event.inputs.profile || 'preview' }}';
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 📱 Android Build Ready!
+              
+**Profile:** ${profile}
+**Size:** ${size}
+**Download:** ${link}
+
+The link expires in 14 days. You can also download from the GitHub Actions artifacts.
+
+### Installation
+1. Download the APK
+2. Enable "Install from Unknown Sources"
+3. Install the APK
+
+*Built by self-hosted runner*`
+            });
+            
+      - name: Post build summary
+        run: |
+          echo "## 📱 Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Platform:** Android" >> $GITHUB_STEP_SUMMARY
+          echo "**Profile:** ${{ github.event.inputs.profile || 'preview' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Size:** ${{ steps.build_info.outputs.size }}" >> $GITHUB_STEP_SUMMARY
+          echo "**File:** ${{ steps.build_info.outputs.name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.upload.outcome }}" == "success" ]; then
+            echo "**Download:** ${{ steps.upload.outputs.link }}" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Build artifacts are available in the Actions tab." >> $GITHUB_STEP_SUMMARY
+          
+      - name: Cleanup old builds
+        run: |
+          # Keep only last 5 builds
+          cd build
+          ls -t *.apk 2>/dev/null | tail -n +6 | xargs -r rm
+        continue-on-error: true
+
+  build-ios:
+    runs-on: self-hosted
+    if: (github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'both') && runner.os == 'macOS'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm install -g eas-cli
+          
+      - name: Create build directory
+        run: mkdir -p build
+          
+      - name: Login to Expo
+        run: eas login --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          
+      - name: Build iOS IPA
+        run: |
+          PROFILE="${{ github.event.inputs.profile || 'preview' }}"
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          OUTPUT_FILE="./build/africa-railways-${PROFILE}-${TIMESTAMP}.ipa"
+          
+          echo "Building with profile: $PROFILE"
+          echo "Output file: $OUTPUT_FILE"
+          
+          eas build --platform ios --local --profile "$PROFILE" --non-interactive --output "$OUTPUT_FILE"
+          
+          echo "BUILD_FILE=$OUTPUT_FILE" >> $GITHUB_ENV
+          echo "BUILD_TIMESTAMP=$TIMESTAMP" >> $GITHUB_ENV
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          
+      - name: Get build info
+        id: build_info
+        run: |
+          FILE_SIZE=$(du -h "$BUILD_FILE" | cut -f1)
+          FILE_NAME=$(basename "$BUILD_FILE")
+          echo "size=$FILE_SIZE" >> $GITHUB_OUTPUT
+          echo "name=$FILE_NAME" >> $GITHUB_OUTPUT
+          
+      - name: Upload as GitHub Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios-ipa-${{ env.BUILD_TIMESTAMP }}
+          path: ${{ env.BUILD_FILE }}
+          retention-days: 30
+          
+      - name: Post build summary
+        run: |
+          echo "## 📱 iOS Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Platform:** iOS" >> $GITHUB_STEP_SUMMARY
+          echo "**Profile:** ${{ github.event.inputs.profile || 'preview' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Size:** ${{ steps.build_info.outputs.size }}" >> $GITHUB_STEP_SUMMARY
+          echo "**File:** ${{ steps.build_info.outputs.name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Build artifacts are available in the Actions tab." >> $GITHUB_STEP_SUMMARY
+
+  notify:
+    needs: [build-android]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Send notification
+        run: |
+          if [ "${{ needs.build-android.result }}" == "success" ]; then
+            echo "✅ Build completed successfully"
+          else
+            echo "❌ Build failed"
+          fi
