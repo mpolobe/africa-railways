@@ -1,0 +1,104 @@
+name: Local EAS Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Setup Java (required for Android builds)
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+        
+      - name: Login to Expo
+        run: eas login --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        
+      - name: Configure EAS Build
+        run: eas build:configure --platform android
+        
+      - name: Build Android APK (Local)
+        run: eas build --platform android --local --non-interactive --output=./build/android.apk
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        
+      - name: Upload Android APK Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-apk
+          path: ./build/android.apk
+          retention-days: 30
+          
+      - name: Upload Build Logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-logs
+          path: |
+            ~/.expo/
+            *.log
+          retention-days: 7
+
+  build-ios:
+    runs-on: macos-latest  # iOS builds require macOS
+    if: false  # Disabled by default - enable when needed
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+        
+      - name: Login to Expo
+        run: eas login --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        
+      - name: Configure EAS Build
+        run: eas build:configure --platform ios
+        
+      - name: Build iOS IPA (Local)
+        run: eas build --platform ios --local --non-interactive --output=./build/ios.ipa
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        
+      - name: Upload iOS IPA Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios-ipa
+          path: ./build/ios.ipa
+          retention-days: 30

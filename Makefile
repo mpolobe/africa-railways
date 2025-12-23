@@ -1,4 +1,4 @@
-.PHONY: help dev backend engine status stop clean logs deploy sync build-railways-android build-railways-ios build-all-apps build-backend-optimized
+.PHONY: help dev backend engine status stop clean logs deploy sync build-railways-android build-railways-ios build-all-apps build-backend-optimized eas-build eas-android eas-ios eas-configure eas-status
 
 # Colors
 GREEN = \033[0;32m
@@ -20,6 +20,11 @@ help:
 	@echo ""
 	@echo "$(BLUE)Build:$(NC)"
 	@echo "  make build-backend-optimized - Build optimized Go binary (30-40% smaller)"
+	@echo "  make eas-build               - Interactive EAS build menu"
+	@echo "  make eas-android             - Build Android with EAS (local)"
+	@echo "  make eas-ios                 - Build iOS with EAS (local, macOS only)"
+	@echo "  make eas-configure           - Configure EAS build settings"
+	@echo "  make eas-status              - Check EAS build status"
 	@echo ""
 	@echo "$(BLUE)Deployment:$(NC)"
 	@echo "  make auto-deploy            - Automated git sync + CI/CD trigger"
@@ -330,3 +335,40 @@ monitor:
 audit:
 	@echo "$(CYAN)🔍 Running System Audit...$(NC)"
 	@./monitoring/system-audit.sh
+
+# 📱 EAS BUILD COMMANDS
+eas-build:
+	@echo "$(GREEN)📱 EAS Build Helper$(NC)"
+	@./scripts/eas-build.sh
+
+eas-configure:
+	@echo "$(BLUE)⚙️  Configuring EAS Build...$(NC)"
+	@eas build:configure
+
+eas-android:
+	@echo "$(BLUE)🤖 Building Android with EAS (Local)...$(NC)"
+	@mkdir -p builds
+	@eas build --platform android --local --profile preview --output ./builds/android-preview.apk
+	@echo "$(GREEN)✅ Android build complete: ./builds/android-preview.apk$(NC)"
+
+eas-ios:
+	@echo "$(BLUE)🍎 Building iOS with EAS (Local)...$(NC)"
+	@if [ "$$(uname)" != "Darwin" ]; then \
+		echo "$(RED)❌ iOS builds require macOS$(NC)"; \
+		exit 1; \
+	fi
+	@mkdir -p builds
+	@eas build --platform ios --local --profile preview --output ./builds/ios-preview.ipa
+	@echo "$(GREEN)✅ iOS build complete: ./builds/ios-preview.ipa$(NC)"
+
+eas-status:
+	@echo "$(BLUE)📊 EAS Build Status$(NC)"
+	@eas build:list --limit 10
+
+eas-login:
+	@echo "$(BLUE)🔐 Logging into Expo...$(NC)"
+	@eas login
+
+eas-whoami:
+	@echo "$(BLUE)👤 Current Expo User:$(NC)"
+	@eas whoami || echo "$(RED)Not logged in$(NC)"

@@ -1,20 +1,36 @@
+image: gitpod/workspace-node:latest
+
 tasks:
   - name: Setup and Services
     init: |
+      # Install global tools
+      npm install -g eas-cli expo-cli
+      
       # Install dependencies during prebuild (cached)
       cd /workspace/africa-railways
       cd backend && go mod download || true
       cd /workspace/africa-railways/mobile && npm install || true
       cd /workspace/africa-railways
+      npm ci || npm install
       echo "✅ Dependencies installed"
       
     command: |
-      echo "🚀 Ready to build!"
+      cd /workspace/africa-railways
+      echo "🚀 Africa Railways - Development Environment Ready!"
       echo ""
-      echo "Available commands:"
+      echo "📱 EAS Build Commands:"
+      echo "  eas login                              - Login to Expo account"
+      echo "  eas build:configure                    - Configure EAS builds"
+      echo "  eas build --platform android --local   - Build Android APK locally"
+      echo "  eas build --platform android           - Build Android on EAS cloud"
+      echo ""
+      echo "🛠️  Development Commands:"
       echo "  make help    - Show all commands"
       echo "  make test    - Run tests"
       echo "  make dev     - Start development servers"
+      echo ""
+      echo "📚 Documentation:"
+      echo "  See EAS_BUILD_SETUP.md for complete build guide"
       echo ""
       # Don't put 'go build' or 'eas build' here 
       # unless you want them to run every single time you open the tab.
@@ -23,9 +39,28 @@ ports:
   - port: 8080
     visibility: public
     onOpen: ignore
+    description: Backend API Server
   - port: 8082
     visibility: public
     onOpen: open-browser
+    description: Frontend Dashboard
   - port: 3000
     visibility: public
     onOpen: ignore
+    description: React Development Server
+  - port: 19000-19006
+    visibility: public
+    onOpen: notify
+    description: Expo Metro Bundler
+  - port: 8081
+    visibility: public
+    onOpen: notify
+    description: React Native Metro
+
+vscode:
+  extensions:
+    - msjsdiag.vscode-react-native
+    - byCedric.vscode-expo
+    - golang.go
+    - dbaeumer.vscode-eslint
+    - esbenp.prettier-vscode
