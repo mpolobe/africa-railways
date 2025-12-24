@@ -1,0 +1,11 @@
+[build]
+builder = "NIXPACKS"
+buildCommand = "go build -o occ-dashboard main.go"
+
+[deploy]
+startCommand = "./occ-dashboard"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+
+[env]
+PORT = "8080"

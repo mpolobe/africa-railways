@@ -1,0 +1,31 @@
+{
+  "name": "occ-dashboard",
+  "type": "web",
+  "runtime": "go",
+  "version": "1.22",
+  "buildCommand": "go build -o occ-dashboard main.go",
+  "startCommand": "./occ-dashboard",
+  "port": 8080,
+  "healthCheck": {
+    "path": "/api/health",
+    "interval": 30,
+    "timeout": 5,
+    "retries": 3
+  },
+  "env": {
+    "PORT": "8080"
+  },
+  "resources": {
+    "cpu": "1",
+    "memory": "512Mi"
+  },
+  "autoScale": {
+    "enabled": true,
+    "minInstances": 1,
+    "maxInstances": 3,
+    "targetCPU": 70
+  },
+  "domains": [
+    "occ.africarailways.com"
+  ]
+}

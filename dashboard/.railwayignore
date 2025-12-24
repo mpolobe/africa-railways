@@ -1,0 +1,18 @@
+# Ignore build artifacts
+occ-dashboard
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Ignore test files
+*_test.go
+test_*.go
+
+# Ignore documentation
+*.md
+!README.md
+
+# Ignore local config
+.env
+config.json
