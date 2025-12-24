@@ -9,8 +9,8 @@
 // ============================================================================
 
 const CONFIG = {
-    BACKEND_URL: `http://${window.location.hostname}:8080`,
-    WEBSOCKET_URL: `ws://${window.location.hostname}:8081/ws`,
+    BACKEND_URL: 'https://api.africarailways.com',
+    WEBSOCKET_URL: 'wss://api.africarailways.com/ws',
     RECONNECT_INTERVAL: 3000,
     BUTTON_RESET_DELAY: 2000
 };

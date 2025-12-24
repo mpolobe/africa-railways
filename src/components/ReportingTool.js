@@ -19,7 +19,7 @@ const ReportingTool = () => {
       setError(null);
       
       // Connect to Sovereign Engine (Go Backend)
-      const response = await fetch('http://localhost:8080/api/reports');
+      const response = await fetch('https://api.africarailways.com/api/reports');
       
       if (!response.ok) {
         throw new Error('Failed to fetch reports');
