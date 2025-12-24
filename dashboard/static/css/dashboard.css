@@ -590,6 +590,152 @@ body {
     color: var(--text-primary);
 }
 
+/* Blockchain Feed */
+.feed-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-feed {
+    padding: 0.5rem 1rem;
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-feed:hover {
+    background: var(--bg-card-hover);
+}
+
+.btn-feed.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-feed.btn-resync {
+    background: var(--warning-color);
+    border-color: var(--warning-color);
+    color: white;
+    font-weight: 600;
+}
+
+.btn-feed.btn-resync:hover {
+    background: #d97706;
+}
+
+.btn-feed.btn-resync:disabled {
+    background: #6b7280;
+    border-color: #6b7280;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-feed.btn-resync.syncing {
+    animation: pulse-resync 1.5s infinite;
+}
+
+@keyframes pulse-resync {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.blockchain-feed {
+    background: #000;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    height: 400px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+.feed-line {
+    margin-bottom: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.feed-timestamp {
+    color: #6b7280;
+    flex-shrink: 0;
+}
+
+.feed-source {
+    color: #3b82f6;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.feed-source.polygon {
+    color: #8b5cf6;
+}
+
+.feed-source.sui {
+    color: #06b6d4;
+}
+
+.feed-message {
+    color: #d1d5db;
+    word-break: break-word;
+}
+
+.feed-line.feed-event {
+    border-left: 3px solid #10b981;
+    padding-left: 0.5rem;
+}
+
+.feed-line.feed-error {
+    border-left: 3px solid #ef4444;
+    padding-left: 0.5rem;
+}
+
+.feed-line.feed-warning {
+    border-left: 3px solid #f59e0b;
+    padding-left: 0.5rem;
+}
+
+.feed-line.feed-system {
+    border-left: 3px solid #6b7280;
+    padding-left: 0.5rem;
+}
+
+.feed-event .feed-message {
+    color: #10b981;
+}
+
+.feed-error .feed-message {
+    color: #ef4444;
+}
+
+.feed-warning .feed-message {
+    color: #f59e0b;
+}
+
+.feed-data {
+    color: #9ca3af;
+    font-size: 0.8125rem;
+    margin-left: 2rem;
+    margin-top: 0.25rem;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
@@ -606,4 +752,373 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--text-secondary);
+}
+
+.blockchain-feed::-webkit-scrollbar {
+    width: 6px;
+}
+
+.blockchain-feed::-webkit-scrollbar-track {
+    background: #000;
+}
+
+.blockchain-feed::-webkit-scrollbar-thumb {
+    background: #374151;
+    border-radius: 3px;
+}
+
+.blockchain-feed::-webkit-scrollbar-thumb:hover {
+    background: #4b5563;
+}
+
+/* Big Number KPIs */
+.kpi-refresh {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.kpi-box {
+    background: var(--bg-dark);
+    border: 2px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s;
+}
+
+.kpi-box.syncing::before {
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.kpi-box:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.kpi-box.kpi-sui {
+    border-color: #06b6d4;
+}
+
+.kpi-box.kpi-polygon {
+    border-color: #8b5cf6;
+}
+
+.kpi-box.kpi-success {
+    border-color: var(--success-color);
+}
+
+.kpi-box.kpi-latency {
+    border-color: #f59e0b;
+}
+
+.kpi-box.kpi-missed {
+    border-color: var(--danger-color);
+}
+
+.kpi-box.kpi-uptime {
+    border-color: var(--primary-color);
+}
+
+.kpi-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    animation: pulse-kpi 2s ease-in-out infinite;
+}
+
+@keyframes pulse-kpi {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+.kpi-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-family: 'Courier New', monospace;
+    transition: all 0.3s ease;
+}
+
+.kpi-value.updating {
+    animation: flash-update 0.5s ease;
+}
+
+@keyframes flash-update {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; transform: scale(1.1); }
+}
+
+.kpi-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.kpi-rate {
+    font-size: 0.875rem;
+    color: var(--success-color);
+    font-weight: 600;
+}
+
+.kpi-subtext {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+}
+
+/* Syncing indicator */
+.kpi-box.syncing .kpi-icon {
+    animation: spin-pulse 2s linear infinite;
+}
+
+@keyframes spin-pulse {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(90deg) scale(1.1); }
+    50% { transform: rotate(180deg) scale(1); }
+    75% { transform: rotate(270deg) scale(1.1); }
+}
+
+/* Value color coding */
+.kpi-box.kpi-sui .kpi-value {
+    color: #06b6d4;
+}
+
+.kpi-box.kpi-polygon .kpi-value {
+    color: #8b5cf6;
+}
+
+.kpi-box.kpi-success .kpi-value {
+    color: var(--success-color);
+}
+
+.kpi-box.kpi-latency .kpi-value {
+    color: #f59e0b;
+}
+
+.kpi-box.kpi-missed .kpi-value {
+    color: var(--danger-color);
+}
+
+.kpi-box.kpi-uptime .kpi-value {
+    color: var(--primary-color);
+}
+
+/* Warning states */
+.kpi-box.kpi-missed.warning {
+    border-color: var(--warning-color);
+    animation: pulse-warning 2s infinite;
+}
+
+@keyframes pulse-warning {
+    0%, 100% { border-color: var(--danger-color); }
+    50% { border-color: var(--warning-color); }
+}
+
+.kpi-box.kpi-success.degraded {
+    border-color: var(--warning-color);
+}
+
+.kpi-box.kpi-success.degraded .kpi-value {
+    color: var(--warning-color);
+}
+
+.kpi-box.kpi-latency.slow {
+    border-color: var(--danger-color);
+}
+
+.kpi-box.kpi-latency.slow .kpi-value {
+    color: var(--danger-color);
+}
+
+/* Resync Status */
+.resync-status {
+    background: var(--bg-dark);
+    border: 1px solid var(--warning-color);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.resync-progress {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.resync-icon {
+    font-size: 1.5rem;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.resync-text {
+    flex: 1;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.resync-count {
+    color: var(--warning-color);
+    font-weight: 700;
+    font-family: monospace;
+}
+
+.resync-bar {
+    height: 8px;
+    background: var(--bg-card);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.resync-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--warning-color), #d97706);
+    transition: width 0.3s ease;
+}
+
+/* Sparkline Charts */
+.sparkline-container {
+    margin-top: 0.75rem;
+    height: 40px;
+    position: relative;
+}
+
+.sparkline-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.sparkline-label {
+    position: absolute;
+    top: -20px;
+    right: 0;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.sparkline-trend-up {
+    color: var(--success-color);
+}
+
+.sparkline-trend-down {
+    color: var(--danger-color);
+}
+
+.sparkline-trend-neutral {
+    color: var(--text-secondary);
+}
+
+/* KPI with Sparkline Layout */
+.kpi-with-sparkline {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.kpi-main-content {
+    flex: 1;
+}
+
+.kpi-sparkline-wrapper {
+    margin-top: auto;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Velocity Metrics */
+.velocity-metric {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+}
+
+.velocity-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.velocity-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-family: monospace;
+}
+
+.velocity-value.high {
+    color: var(--success-color);
+}
+
+.velocity-value.medium {
+    color: var(--warning-color);
+}
+
+.velocity-value.low {
+    color: var(--text-secondary);
+}
+
+/* Failed Attempts Counter */
+.failed-attempts-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 700;
+    font-family: monospace;
+    transition: all 0.3s ease;
+}
+
+.failed-attempts-counter.success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success-color);
+    border: 2px solid var(--success-color);
+}
+
+.failed-attempts-counter.danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+    border: 2px solid var(--danger-color);
+    animation: pulse-danger 1s infinite;
+}
+
+@keyframes pulse-danger {
+    0%, 100% { 
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    }
+    50% { 
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+    }
 }

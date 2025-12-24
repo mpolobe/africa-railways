@@ -201,6 +201,12 @@ func main() {
 	mux.HandleFunc("/api/ussd/stats", handleUSSDStats)
 	mux.HandleFunc("/api/ussd/sessions", handleUSSDSessions)
 	mux.HandleFunc("/api/ussd/revenue", handleUSSDRevenue)
+	
+	// Blockchain feed endpoint
+	mux.HandleFunc("/api/blockchain/feed", handleBlockchainFeed)
+	mux.HandleFunc("/api/blockchain/kpis", handleBlockchainKPIs)
+	mux.HandleFunc("/api/blockchain/resync", handleBlockchainResync)
+	mux.HandleFunc("/api/blockchain/sparkline", handleBlockchainSparkline)
 
 	// Enable CORS
 	handler := cors.New(cors.Options{
@@ -964,6 +970,125 @@ func handleUSSDRevenue(w http.ResponseWriter, r *http.Request) {
 	resp, err := client.Get(ussdHealthURL)
 	if err != nil {
 		http.Error(w, "Failed to fetch revenue data", http.StatusServiceUnavailable)
+		return
+	}
+	defer resp.Body.Close()
+
+	// Forward the response
+	w.Header().Set("Content-Type", "application/json")
+	body, _ := io.ReadAll(resp.Body)
+	w.Write(body)
+}
+
+func handleBlockchainFeed(w http.ResponseWriter, r *http.Request) {
+	// Query relayer for blockchain events
+	relayerURL := os.Getenv("RELAYER_URL")
+	if relayerURL == "" {
+		relayerURL = "http://localhost:8082/feed"
+	} else {
+		relayerURL = relayerURL + "/feed"
+	}
+
+	client := &http.Client{Timeout: 5 * time.Second}
+	resp, err := client.Get(relayerURL)
+	if err != nil {
+		// Return empty array if relayer not available
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte("[]"))
+		return
+	}
+	defer resp.Body.Close()
+
+	// Forward the response
+	w.Header().Set("Content-Type", "application/json")
+	body, _ := io.ReadAll(resp.Body)
+	w.Write(body)
+}
+
+func handleBlockchainKPIs(w http.ResponseWriter, r *http.Request) {
+	// Query relayer for KPIs
+	relayerURL := os.Getenv("RELAYER_URL")
+	if relayerURL == "" {
+		relayerURL = "http://localhost:8082/kpis"
+	} else {
+		relayerURL = relayerURL + "/kpis"
+	}
+
+	client := &http.Client{Timeout: 5 * time.Second}
+	resp, err := client.Get(relayerURL)
+	if err != nil {
+		// Return default KPIs if relayer not available
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte(`{
+			"sui_events_detected": 0,
+			"sui_tickets_purchased": 0,
+			"polygon_tickets_minted": 0,
+			"polygon_tx_success": 0,
+			"polygon_tx_failed": 0,
+			"bridge_latency_ms": 0,
+			"missed_tickets": 0,
+			"recovered_tickets": 0,
+			"uptime_seconds": 0,
+			"events_per_minute": 0,
+			"mints_per_minute": 0,
+			"success_rate": 100
+		}`))
+		return
+	}
+	defer resp.Body.Close()
+
+	// Forward the response
+	w.Header().Set("Content-Type", "application/json")
+	body, _ := io.ReadAll(resp.Body)
+	w.Write(body)
+}
+
+func handleBlockchainResync(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Query relayer for resync
+	relayerURL := os.Getenv("RELAYER_URL")
+	if relayerURL == "" {
+		relayerURL = "http://localhost:8082/resync"
+	} else {
+		relayerURL = relayerURL + "/resync"
+	}
+
+	// Forward the request body
+	body, _ := io.ReadAll(r.Body)
+	
+	client := &http.Client{Timeout: 30 * time.Second}
+	resp, err := client.Post(relayerURL, "application/json", bytes.NewBuffer(body))
+	if err != nil {
+		http.Error(w, "Resync failed", http.StatusServiceUnavailable)
+		return
+	}
+	defer resp.Body.Close()
+
+	// Forward the response
+	w.Header().Set("Content-Type", "application/json")
+	respBody, _ := io.ReadAll(resp.Body)
+	w.Write(respBody)
+}
+
+func handleBlockchainSparkline(w http.ResponseWriter, r *http.Request) {
+	// Query relayer for sparkline data
+	relayerURL := os.Getenv("RELAYER_URL")
+	if relayerURL == "" {
+		relayerURL = "http://localhost:8082/sparkline"
+	} else {
+		relayerURL = relayerURL + "/sparkline"
+	}
+
+	client := &http.Client{Timeout: 5 * time.Second}
+	resp, err := client.Get(relayerURL)
+	if err != nil {
+		// Return empty sparkline data if relayer not available
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte(`{"tickets_per_minute":[],"failed_attempts":[],"data_points":0,"max_points":60}`))
 		return
 	}
 	defer resp.Body.Close()

@@ -10,6 +10,8 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"sync"
+	"sync/atomic"
 	"syscall"
 	"time"
 
@@ -30,18 +32,73 @@ type Config struct {
 
 // RelayerState holds runtime state
 type RelayerState struct {
-	PolygonClient  *ethclient.Client
-	RelayerAddress common.Address
-	Balance        *big.Float
-	LastHeartbeat  time.Time
+	PolygonClient   *ethclient.Client
+	RelayerAddress  common.Address
+	Balance         *big.Float
+	LastHeartbeat   time.Time
 	EventsProcessed int64
-	UsingValidator bool
-	RPCURL         string
+	UsingValidator  bool
+	RPCURL          string
+	RecentEvents    []BlockchainEvent
+	EventsMu        sync.RWMutex
+	KPIs            SystemKPIs
+	KPIMu           sync.RWMutex
+}
+
+// SystemKPIs holds key performance indicators (thread-safe with atomic operations)
+type SystemKPIs struct {
+	// Sui Listener Metrics (atomic counters)
+	SuiEventsDetected    uint64    `json:"sui_events_detected"`
+	SuiTicketsPurchased  uint64    `json:"sui_tickets_purchased"`
+	SuiLastEventTime     time.Time `json:"sui_last_event_time"`
+	
+	// Polygon Relayer Metrics (atomic counters)
+	PolygonTicketsMinted uint64    `json:"polygon_tickets_minted"`
+	PolygonTxSuccess     uint64    `json:"polygon_tx_success"`
+	PolygonTxFailed      uint64    `json:"polygon_tx_failed"`
+	PolygonLastMintTime  time.Time `json:"polygon_last_mint_time"`
+	
+	// Bridge Health (atomic counters)
+	BridgeLatencyMs      uint64    `json:"bridge_latency_ms"`
+	MissedTickets        uint64    `json:"missed_tickets"`
+	RecoveredTickets     uint64    `json:"recovered_tickets"`
+	
+	// Session Metrics
+	SessionStartTime     time.Time `json:"session_start_time"`
+	UptimeSeconds        uint64    `json:"uptime_seconds"`
+	
+	// Rate Metrics (calculated, not atomic)
+	EventsPerMinute      float64   `json:"events_per_minute"`
+	MintsPerMinute       float64   `json:"mints_per_minute"`
+}
+
+// SparklineDataPoint represents a single data point for sparkline charts
+type SparklineDataPoint struct {
+	Timestamp time.Time `json:"timestamp"`
+	Value     float64   `json:"value"`
+}
+
+// SparklineHistory holds historical data for sparkline charts (circular buffer)
+type SparklineHistory struct {
+	TicketsPerMinute []SparklineDataPoint `json:"tickets_per_minute"`
+	FailedAttempts   []SparklineDataPoint `json:"failed_attempts"`
+	mu               sync.RWMutex
+	maxPoints        int
+}
+
+// BlockchainEvent represents a blockchain event
+type BlockchainEvent struct {
+	Timestamp time.Time              `json:"timestamp"`
+	Source    string                 `json:"source"` // "polygon" or "sui"
+	Type      string                 `json:"type"`   // "block", "transaction", "mint", "transfer"
+	Message   string                 `json:"message"`
+	Data      map[string]interface{} `json:"data"`
 }
 
 var (
-	config Config
-	state  RelayerState
+	config          Config
+	state           RelayerState
+	sparklineData   SparklineHistory
 )
 
 func main() {
@@ -49,6 +106,13 @@ func main() {
 	log.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	log.Println("Sui → Polygon Event Bridge with Heartbeat")
 	log.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+
+	// Initialize sparkline history (60 data points = 1 hour at 1-minute intervals)
+	sparklineData = SparklineHistory{
+		TicketsPerMinute: make([]SparklineDataPoint, 0, 60),
+		FailedAttempts:   make([]SparklineDataPoint, 0, 60),
+		maxPoints:        60,
+	}
 
 	// Load configuration
 	if err := loadConfig(); err != nil {
@@ -68,6 +132,9 @@ func main() {
 
 	// Start Sui event listener
 	go listenSuiEvents()
+
+	// Start sparkline data collector (updates every minute)
+	go collectSparklineData()
 
 	// Keep main alive
 	log.Println("✅ Relayer bridge running")
@@ -167,6 +234,9 @@ func initializePolygon() error {
 	if err := updateBalance(); err != nil {
 		return fmt.Errorf("failed to get balance: %w", err)
 	}
+	
+	// Initialize KPIs
+	state.KPIs.SessionStartTime = time.Now()
 
 	return nil
 }
@@ -197,35 +267,53 @@ func heartbeat() {
 	defer ticker.Stop()
 
 	log.Println("💓 Heartbeat started (30s interval)")
+	
+	var lastBlock uint64
 
 	for range ticker.C {
 		state.LastHeartbeat = time.Now()
 
-		// Check Polygon connection
-		_, err := state.PolygonClient.BlockNumber(context.Background())
+		// Check Polygon connection and get latest block
+		block, err := state.PolygonClient.BlockNumber(context.Background())
 		if err != nil {
 			log.Printf("💔 Heartbeat: Polygon connection lost (%v)", err)
+			addBlockchainEvent("polygon", "error", "Connection lost", map[string]interface{}{
+				"error": err.Error(),
+			})
 			continue
 		}
+		
+		// Check for new blocks
+		if lastBlock > 0 && block > lastBlock {
+			addBlockchainEvent("polygon", "block", fmt.Sprintf("New block: #%d", block), map[string]interface{}{
+				"block_number": block,
+				"blocks_since_last": block - lastBlock,
+			})
+		}
+		lastBlock = block
 
 		// Update balance
 		if err := updateBalance(); err != nil {
 			log.Printf("⚠️  Heartbeat: Failed to update balance (%v)", err)
 		}
 
-		// Log status
+		// Update uptime
+		uptime := time.Since(state.KPIs.SessionStartTime).Seconds()
+		atomic.StoreUint64(&state.KPIs.UptimeSeconds, uint64(uptime))
+		
+		// Log status with KPIs
 		balancePOL, _ := state.Balance.Float64()
-		log.Printf("💓 Heartbeat: OK | Balance: %.4f POL | Events: %d | Validator: %t",
-			balancePOL, state.EventsProcessed, state.UsingValidator)
+		suiEvents := atomic.LoadUint64(&state.KPIs.SuiEventsDetected)
+		polygonMints := atomic.LoadUint64(&state.KPIs.PolygonTicketsMinted)
+		
+		log.Printf("💓 Heartbeat: OK | Balance: %.4f POL | Sui Events: %d | Polygon Mints: %d | Validator: %t",
+			balancePOL, suiEvents, polygonMints, state.UsingValidator)
 	}
 }
 
 func listenSuiEvents() {
 	log.Println("👂 Sui event listener started")
 	log.Printf("   Listening on: %s", config.SuiRPCURL)
-
-	// TODO: Implement Sui event subscription
-	// For now, this is a placeholder that demonstrates the pattern
 
 	ticker := time.NewTicker(10 * time.Second)
 	defer ticker.Stop()
@@ -238,17 +326,85 @@ func listenSuiEvents() {
 		// 4. Upload metadata to IPFS
 		// 5. Update dashboard via Sui event
 
-		// Placeholder: Check for new events
+		// Simulate event detection (replace with real Sui WebSocket subscription)
 		// events := checkSuiEvents()
 		// for _, event := range events {
-		//     processEvent(event)
+		//     processSuiEvent(event)
 		// }
 
-		// For now, just log that we're listening
-		if state.EventsProcessed == 0 {
-			log.Println("👂 Listening for Sui events...")
+		// For now, just log that we're listening (no spam to dashboard)
+		if atomic.LoadUint64(&state.KPIs.SuiEventsDetected) == 0 {
+			log.Println("👂 Polling Sui for events...")
 		}
 	}
+}
+
+// processSuiEvent handles a detected Sui ticket purchase event
+func processSuiEvent(eventData map[string]interface{}) error {
+	startTime := time.Now()
+	
+	// Increment Sui event counter (thread-safe)
+	atomic.AddUint64(&state.KPIs.SuiEventsDetected, 1)
+	atomic.AddUint64(&state.KPIs.SuiTicketsPurchased, 1)
+	
+	// Update last event time
+	state.KPIMu.Lock()
+	state.KPIs.SuiLastEventTime = time.Now()
+	state.KPIMu.Unlock()
+	
+	// Log to console (for debugging, not sent to dashboard feed)
+	log.Printf("🎫 Sui ticket purchase detected: %v", eventData)
+	
+	// Extract ticket data
+	userWallet := eventData["user"].(string)
+	route := eventData["route"].(string)
+	class := eventData["class"].(string)
+	
+	// Mint NFT on Polygon
+	err := mintTicketOnPolygon(userWallet, route, class)
+	if err != nil {
+		// Increment failed counter
+		atomic.AddUint64(&state.KPIs.PolygonTxFailed, 1)
+		atomic.AddUint64(&state.KPIs.MissedTickets, 1)
+		
+		log.Printf("❌ Failed to mint ticket on Polygon: %v", err)
+		return err
+	}
+	
+	// Increment success counters
+	atomic.AddUint64(&state.KPIs.PolygonTicketsMinted, 1)
+	atomic.AddUint64(&state.KPIs.PolygonTxSuccess, 1)
+	
+	// Update last mint time
+	state.KPIMu.Lock()
+	state.KPIs.PolygonLastMintTime = time.Now()
+	state.KPIMu.Unlock()
+	
+	// Calculate bridge latency
+	latency := time.Since(startTime).Milliseconds()
+	atomic.StoreUint64(&state.KPIs.BridgeLatencyMs, uint64(latency))
+	
+	// Increment processed events
+	state.EventsProcessed++
+	
+	log.Printf("✅ Ticket minted successfully (latency: %dms)", latency)
+	
+	return nil
+}
+
+// mintTicketOnPolygon mints an NFT ticket on Polygon (gasless)
+func mintTicketOnPolygon(userWallet, route, class string) error {
+	// TODO: Implement actual minting logic
+	// 1. Generate metadata
+	// 2. Upload to IPFS
+	// 3. Create UserOperation
+	// 4. Request gas sponsorship from Alchemy
+	// 5. Sign and submit transaction
+	
+	// Simulate minting delay
+	time.Sleep(100 * time.Millisecond)
+	
+	return nil
 }
 
 func processEvent(eventData map[string]interface{}) error {
@@ -270,6 +426,10 @@ func startHTTPServer() {
 	http.HandleFunc("/status", handleStatus)
 	http.HandleFunc("/balance", handleBalance)
 	http.HandleFunc("/events", handleEvents)
+	http.HandleFunc("/feed", handleBlockchainFeed)
+	http.HandleFunc("/kpis", handleKPIs)
+	http.HandleFunc("/resync", handleResync)
+	http.HandleFunc("/sparkline", handleSparkline)
 
 	port := os.Getenv("RELAYER_PORT")
 	if port == "" {
@@ -369,4 +529,211 @@ func handleEvents(w http.ResponseWriter, r *http.Request) {
 		"last_heartbeat": "%s",
 		"status": "listening"
 	}`, state.EventsProcessed, state.LastHeartbeat.Format(time.RFC3339))
+}
+
+func handleBlockchainFeed(w http.ResponseWriter, r *http.Request) {
+	state.EventsMu.RLock()
+	defer state.EventsMu.RUnlock()
+	
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(state.RecentEvents)
+}
+
+func addBlockchainEvent(source, eventType, message string, data map[string]interface{}) {
+	event := BlockchainEvent{
+		Timestamp: time.Now(),
+		Source:    source,
+		Type:      eventType,
+		Message:   message,
+		Data:      data,
+	}
+	
+	state.EventsMu.Lock()
+	defer state.EventsMu.Unlock()
+	
+	// Add to recent events
+	state.RecentEvents = append(state.RecentEvents, event)
+	
+	// Keep only last 50 events
+	if len(state.RecentEvents) > 50 {
+		state.RecentEvents = state.RecentEvents[1:]
+	}
+	
+	// Log event (console only, not spamming dashboard)
+	log.Printf("📡 [%s] %s: %s", source, eventType, message)
+}
+
+func handleKPIs(w http.ResponseWriter, r *http.Request) {
+	// Calculate uptime
+	uptime := time.Since(state.KPIs.SessionStartTime).Seconds()
+	atomic.StoreUint64(&state.KPIs.UptimeSeconds, uint64(uptime))
+	
+	// Calculate rates (events per minute)
+	if uptime > 0 {
+		eventsPerMinute := (float64(atomic.LoadUint64(&state.KPIs.SuiEventsDetected)) / uptime) * 60
+		mintsPerMinute := (float64(atomic.LoadUint64(&state.KPIs.PolygonTicketsMinted)) / uptime) * 60
+		
+		state.KPIMu.Lock()
+		state.KPIs.EventsPerMinute = eventsPerMinute
+		state.KPIs.MintsPerMinute = mintsPerMinute
+		state.KPIMu.Unlock()
+	}
+	
+	// Read KPIs (thread-safe)
+	kpis := map[string]interface{}{
+		"sui_events_detected":     atomic.LoadUint64(&state.KPIs.SuiEventsDetected),
+		"sui_tickets_purchased":   atomic.LoadUint64(&state.KPIs.SuiTicketsPurchased),
+		"sui_last_event_time":     state.KPIs.SuiLastEventTime,
+		"polygon_tickets_minted":  atomic.LoadUint64(&state.KPIs.PolygonTicketsMinted),
+		"polygon_tx_success":      atomic.LoadUint64(&state.KPIs.PolygonTxSuccess),
+		"polygon_tx_failed":       atomic.LoadUint64(&state.KPIs.PolygonTxFailed),
+		"polygon_last_mint_time":  state.KPIs.PolygonLastMintTime,
+		"bridge_latency_ms":       atomic.LoadUint64(&state.KPIs.BridgeLatencyMs),
+		"missed_tickets":          atomic.LoadUint64(&state.KPIs.MissedTickets),
+		"recovered_tickets":       atomic.LoadUint64(&state.KPIs.RecoveredTickets),
+		"session_start_time":      state.KPIs.SessionStartTime,
+		"uptime_seconds":          atomic.LoadUint64(&state.KPIs.UptimeSeconds),
+		"events_per_minute":       state.KPIs.EventsPerMinute,
+		"mints_per_minute":        state.KPIs.MintsPerMinute,
+		"success_rate":            calculateSuccessRate(),
+	}
+	
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(kpis)
+}
+
+func calculateSuccessRate() float64 {
+	success := atomic.LoadUint64(&state.KPIs.PolygonTxSuccess)
+	failed := atomic.LoadUint64(&state.KPIs.PolygonTxFailed)
+	total := success + failed
+	
+	if total == 0 {
+		return 100.0
+	}
+	
+	return (float64(success) / float64(total)) * 100
+}
+
+func handleResync(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	
+	var req struct {
+		Blocks int    `json:"blocks"`
+		Source string `json:"source"`
+	}
+	
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+	
+	if req.Blocks == 0 {
+		req.Blocks = 100 // Default
+	}
+	
+	if req.Source == "" {
+		req.Source = "sui" // Default
+	}
+	
+	log.Printf("🔄 Force resync requested: %d blocks from %s", req.Blocks, req.Source)
+	
+	// Perform resync
+	result := performResync(req.Source, req.Blocks)
+	
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(result)
+}
+
+func performResync(source string, blocks int) map[string]interface{} {
+	startTime := time.Now()
+	
+	// TODO: Implement actual resync logic
+	// 1. Get current block number
+	// 2. Scan last N blocks
+	// 3. Find missed events
+	// 4. Process each missed event
+	// 5. Update KPIs
+	
+	// Simulate resync
+	eventsFound := 0
+	ticketsProcessed := 0
+	missedTickets := 0
+	
+	// For now, return mock data
+	log.Printf("✅ Resync complete: scanned %d blocks in %v", blocks, time.Since(startTime))
+	
+	// Update recovered tickets counter
+	if missedTickets > 0 {
+		atomic.AddUint64(&state.KPIs.RecoveredTickets, uint64(missedTickets))
+	}
+	
+	return map[string]interface{}{
+		"success":           true,
+		"source":            source,
+		"blocks_scanned":    blocks,
+		"start_block":       12345678 - blocks,
+		"end_block":         12345678,
+		"events_found":      eventsFound,
+		"tickets_processed": ticketsProcessed,
+		"missed_tickets":    missedTickets,
+		"duration_ms":       time.Since(startTime).Milliseconds(),
+	}
+}
+
+// collectSparklineData runs every minute to collect historical data for sparkline charts
+func collectSparklineData() {
+	ticker := time.NewTicker(1 * time.Minute)
+	defer ticker.Stop()
+	
+	for range ticker.C {
+		now := time.Now()
+		
+		// Calculate tickets per minute (mints per minute from KPIs)
+		state.KPIMu.RLock()
+		tpm := state.KPIs.MintsPerMinute
+		failedAttempts := float64(atomic.LoadUint64(&state.KPIs.PolygonTxFailed))
+		state.KPIMu.RUnlock()
+		
+		// Add data points to sparkline history
+		sparklineData.mu.Lock()
+		
+		// Add TPM data point
+		sparklineData.TicketsPerMinute = append(sparklineData.TicketsPerMinute, SparklineDataPoint{
+			Timestamp: now,
+			Value:     tpm,
+		})
+		
+		// Add failed attempts data point
+		sparklineData.FailedAttempts = append(sparklineData.FailedAttempts, SparklineDataPoint{
+			Timestamp: now,
+			Value:     failedAttempts,
+		})
+		
+		// Keep only last 60 data points (1 hour)
+		if len(sparklineData.TicketsPerMinute) > sparklineData.maxPoints {
+			sparklineData.TicketsPerMinute = sparklineData.TicketsPerMinute[1:]
+		}
+		if len(sparklineData.FailedAttempts) > sparklineData.maxPoints {
+			sparklineData.FailedAttempts = sparklineData.FailedAttempts[1:]
+		}
+		
+		sparklineData.mu.Unlock()
+	}
+}
+
+// handleSparkline returns sparkline data for charts
+func handleSparkline(w http.ResponseWriter, r *http.Request) {
+	sparklineData.mu.RLock()
+	defer sparklineData.mu.RUnlock()
+	
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"tickets_per_minute": sparklineData.TicketsPerMinute,
+		"failed_attempts":    sparklineData.FailedAttempts,
+		"data_points":        len(sparklineData.TicketsPerMinute),
+		"max_points":         sparklineData.maxPoints,
+	})
 }

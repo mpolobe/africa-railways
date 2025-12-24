@@ -381,6 +381,110 @@
                 </div>
             </div>
 
+            <!-- Big Number KPIs -->
+            <div class="card card-wide">
+                <div class="card-header">
+                    <h2>📊 System Pulse - Live KPIs</h2>
+                    <span class="kpi-refresh" id="kpi-refresh">Updated: --</span>
+                </div>
+                <div class="card-body">
+                    <div class="kpi-grid">
+                        <div class="kpi-box kpi-sui kpi-with-sparkline">
+                            <div class="kpi-main-content">
+                                <div class="kpi-icon">🌊</div>
+                                <div class="kpi-value" id="kpi-sui-events">0</div>
+                                <div class="kpi-label">Sui Events Detected</div>
+                                <div class="kpi-rate" id="kpi-events-rate">0/min</div>
+                            </div>
+                            <div class="kpi-sparkline-wrapper">
+                                <div class="sparkline-container">
+                                    <canvas id="sparkline-events" class="sparkline-canvas"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="kpi-box kpi-polygon kpi-with-sparkline">
+                            <div class="kpi-main-content">
+                                <div class="kpi-icon">⛓️</div>
+                                <div class="kpi-value" id="kpi-polygon-mints">0</div>
+                                <div class="kpi-label">Polygon Tickets Minted</div>
+                                <div class="kpi-rate" id="kpi-mints-rate">0/min</div>
+                            </div>
+                            <div class="kpi-sparkline-wrapper">
+                                <div class="sparkline-container">
+                                    <canvas id="sparkline-mints" class="sparkline-canvas"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="kpi-box kpi-success">
+                            <div class="kpi-icon">✅</div>
+                            <div class="kpi-value" id="kpi-success-rate">100%</div>
+                            <div class="kpi-label">Bridge Success Rate</div>
+                            <div class="kpi-subtext" id="kpi-success-count">0 success / 0 failed</div>
+                        </div>
+                        <div class="kpi-box kpi-latency">
+                            <div class="kpi-icon">⚡</div>
+                            <div class="kpi-value" id="kpi-latency">0ms</div>
+                            <div class="kpi-label">Bridge Latency</div>
+                            <div class="kpi-subtext">Sui → Polygon</div>
+                        </div>
+                        <div class="kpi-box kpi-missed kpi-with-sparkline">
+                            <div class="kpi-main-content">
+                                <div class="kpi-icon">⚠️</div>
+                                <div class="failed-attempts-counter success" id="failed-attempts-badge">
+                                    <span id="kpi-missed">0</span>
+                                </div>
+                                <div class="kpi-label">Failed Attempts</div>
+                                <div class="kpi-subtext" id="kpi-recovered">0 recovered</div>
+                            </div>
+                            <div class="kpi-sparkline-wrapper">
+                                <div class="sparkline-container">
+                                    <canvas id="sparkline-failed" class="sparkline-canvas"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="kpi-box kpi-uptime">
+                            <div class="kpi-icon">⏱️</div>
+                            <div class="kpi-value" id="kpi-uptime">0h 0m</div>
+                            <div class="kpi-label">Session Uptime</div>
+                            <div class="kpi-subtext" id="kpi-start-time">Started: --</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Blockchain Feed -->
+            <div class="card card-wide">
+                <div class="card-header">
+                    <h2>📡 Live Blockchain Feed</h2>
+                    <div class="feed-controls">
+                        <button class="btn-feed" onclick="toggleFeed('polygon')" id="btn-polygon">Polygon</button>
+                        <button class="btn-feed" onclick="toggleFeed('sui')" id="btn-sui">Sui</button>
+                        <button class="btn-feed" onclick="clearFeed()">Clear</button>
+                        <button class="btn-feed" onclick="toggleAutoScroll()" id="btn-autoscroll">Auto-scroll: ON</button>
+                        <button class="btn-feed btn-resync" onclick="forceResync()" id="btn-resync">🔄 Force Resync</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="resync-status" id="resync-status" style="display: none;">
+                        <div class="resync-progress">
+                            <span class="resync-icon">🔄</span>
+                            <span class="resync-text" id="resync-text">Rescanning last 100 blocks...</span>
+                            <span class="resync-count" id="resync-count">0/100</span>
+                        </div>
+                        <div class="resync-bar">
+                            <div class="resync-fill" id="resync-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="blockchain-feed" id="blockchain-feed">
+                        <div class="feed-line feed-system">
+                            <span class="feed-timestamp">[00:00:00]</span>
+                            <span class="feed-source">[SYSTEM]</span>
+                            <span class="feed-message">Blockchain listener initialized. Waiting for events...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Active Alerts -->
             <div class="card card-wide">
                 <div class="card-header">

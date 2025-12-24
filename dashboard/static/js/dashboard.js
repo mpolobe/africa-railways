@@ -24,6 +24,9 @@ function updateDashboard(metrics) {
     
     // Update alerts
     updateAlerts(metrics.alerts);
+    
+    // Process blockchain events for feed
+    processBlockchainEvents(metrics);
 }
 
 function updateBlockchainMetrics(blockchain) {
@@ -318,4 +321,532 @@ function formatCurrency(amount) {
 function formatTimestamp(timestamp) {
     const date = new Date(timestamp);
     return date.toLocaleString();
+}
+
+// Blockchain Feed Management
+let feedFilters = {
+    polygon: true,
+    sui: true
+};
+let autoScroll = true;
+let feedLineCount = 0;
+const MAX_FEED_LINES = 100;
+
+function addFeedLine(source, message, type = 'event', data = null) {
+    // Check if source is filtered
+    if (source === 'POLYGON' && !feedFilters.polygon) return;
+    if (source === 'SUI' && !feedFilters.sui) return;
+    
+    const feed = document.getElementById('blockchain-feed');
+    const timestamp = new Date().toLocaleTimeString();
+    
+    const line = document.createElement('div');
+    line.className = `feed-line feed-${type}`;
+    
+    const sourceClass = source.toLowerCase();
+    line.innerHTML = `
+        <span class="feed-timestamp">[${timestamp}]</span>
+        <span class="feed-source ${sourceClass}">[${source}]</span>
+        <span class="feed-message">${message}</span>
+    `;
+    
+    if (data) {
+        const dataLine = document.createElement('div');
+        dataLine.className = 'feed-data';
+        dataLine.textContent = JSON.stringify(data, null, 2);
+        line.appendChild(dataLine);
+    }
+    
+    feed.appendChild(line);
+    feedLineCount++;
+    
+    // Limit feed lines
+    if (feedLineCount > MAX_FEED_LINES) {
+        feed.removeChild(feed.firstChild);
+        feedLineCount--;
+    }
+    
+    // Auto-scroll to bottom
+    if (autoScroll) {
+        feed.scrollTop = feed.scrollHeight;
+    }
+}
+
+function toggleFeed(source) {
+    feedFilters[source] = !feedFilters[source];
+    const btn = document.getElementById(`btn-${source}`);
+    
+    if (feedFilters[source]) {
+        btn.classList.add('active');
+        addFeedLine('SYSTEM', `${source.toUpperCase()} feed enabled`, 'system');
+    } else {
+        btn.classList.remove('active');
+        addFeedLine('SYSTEM', `${source.toUpperCase()} feed disabled`, 'system');
+    }
+}
+
+function clearFeed() {
+    const feed = document.getElementById('blockchain-feed');
+    feed.innerHTML = '';
+    feedLineCount = 0;
+    addFeedLine('SYSTEM', 'Feed cleared. Listening for events...', 'system');
+}
+
+function toggleAutoScroll() {
+    autoScroll = !autoScroll;
+    const btn = document.getElementById('btn-autoscroll');
+    btn.textContent = `Auto-scroll: ${autoScroll ? 'ON' : 'OFF'}`;
+    
+    if (autoScroll) {
+        btn.classList.add('active');
+    } else {
+        btn.classList.remove('active');
+    }
+}
+
+// Force Resync Functionality
+let isResyncing = false;
+
+async function forceResync() {
+    if (isResyncing) {
+        return; // Already resyncing
+    }
+    
+    isResyncing = true;
+    const btn = document.getElementById('btn-resync');
+    const status = document.getElementById('resync-status');
+    const text = document.getElementById('resync-text');
+    const count = document.getElementById('resync-count');
+    const fill = document.getElementById('resync-fill');
+    
+    // Disable button and show syncing state
+    btn.disabled = true;
+    btn.classList.add('syncing');
+    btn.textContent = '🔄 Syncing...';
+    status.style.display = 'block';
+    
+    // Add system message
+    addFeedLine('SYSTEM', 'Force resync initiated - scanning last 100 blocks', 'warning');
+    
+    try {
+        // Call resync API
+        const response = await fetch('/api/blockchain/resync', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                blocks: 100,
+                source: 'sui' // or 'polygon'
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Resync failed: ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        
+        // Simulate progress (in production, use WebSocket or polling for real progress)
+        for (let i = 0; i <= 100; i++) {
+            await new Promise(resolve => setTimeout(resolve, 50));
+            count.textContent = `${i}/100`;
+            fill.style.width = `${i}%`;
+            text.textContent = `Rescanning block ${result.start_block + i}...`;
+        }
+        
+        // Show results
+        addFeedLine('SYSTEM', `Resync complete: Found ${result.events_found} events, ${result.tickets_processed} tickets processed`, 'event');
+        
+        if (result.missed_tickets > 0) {
+            addFeedLine('SYSTEM', `⚠️ ${result.missed_tickets} missed tickets recovered and processed`, 'warning');
+        }
+        
+        // Refresh dashboard data
+        fetchBlockchainEvents();
+        
+    } catch (error) {
+        console.error('Resync error:', error);
+        addFeedLine('SYSTEM', `Resync failed: ${error.message}`, 'error');
+    } finally {
+        // Reset UI
+        setTimeout(() => {
+            status.style.display = 'none';
+            btn.disabled = false;
+            btn.classList.remove('syncing');
+            btn.textContent = '🔄 Force Resync';
+            isResyncing = false;
+        }, 2000);
+    }
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    // Ctrl+L - Clear feed
+    if (e.ctrlKey && e.key === 'l') {
+        e.preventDefault();
+        clearFeed();
+    }
+    
+    // Ctrl+P - Toggle Polygon
+    if (e.ctrlKey && e.key === 'p') {
+        e.preventDefault();
+        toggleFeed('polygon');
+    }
+    
+    // Ctrl+S - Toggle Sui
+    if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        toggleFeed('sui');
+    }
+    
+    // Ctrl+A - Toggle auto-scroll
+    if (e.ctrlKey && e.key === 'a') {
+        e.preventDefault();
+        toggleAutoScroll();
+    }
+    
+    // Ctrl+R - Force resync
+    if (e.ctrlKey && e.key === 'r') {
+        e.preventDefault();
+        forceResync();
+    }
+});
+
+// Simulate blockchain events (replace with real event listener)
+function simulateBlockchainEvents() {
+    // This would be replaced with actual WebSocket or polling from relayer
+    
+    // Example Polygon event
+    setTimeout(() => {
+        addFeedLine('POLYGON', 'New block mined: #12345678', 'event');
+    }, 5000);
+    
+    setTimeout(() => {
+        addFeedLine('POLYGON', 'Ticket minted: TokenID #42', 'event', {
+            from: '0x4C97260183BaD57AbF37f0119695f0607f2c3921',
+            to: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
+            tokenId: 42,
+            route: 'JHB-CPT',
+            class: 'Economy'
+        });
+    }, 10000);
+    
+    setTimeout(() => {
+        addFeedLine('SUI', 'Purchase event detected', 'event', {
+            user: '0x1234...5678',
+            amount: '150 POL',
+            route: 'JHB-CPT'
+        });
+    }, 15000);
+}
+
+// Fetch blockchain events from relayer
+async function fetchBlockchainEvents() {
+    try {
+        const response = await fetch('/api/blockchain/feed');
+        if (response.ok) {
+            const events = await response.json();
+            
+            // Process new events
+            if (!window.processedEventIds) window.processedEventIds = new Set();
+            
+            events.forEach(event => {
+                const eventId = `${event.timestamp}-${event.message}`;
+                if (!window.processedEventIds.has(eventId)) {
+                    window.processedEventIds.add(eventId);
+                    
+                    const source = event.source.toUpperCase();
+                    const type = event.type === 'error' ? 'error' : 
+                                event.type === 'warning' ? 'warning' : 'event';
+                    
+                    addFeedLine(source, event.message, type, event.data);
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Failed to fetch blockchain events:', error);
+    }
+}
+
+// KPI Management
+let previousKPIs = {};
+
+async function fetchKPIs() {
+    try {
+        const response = await fetch('/api/blockchain/kpis');
+        if (response.ok) {
+            const kpis = await response.json();
+            updateKPIs(kpis);
+        }
+    } catch (error) {
+        console.error('Failed to fetch KPIs:', error);
+    }
+}
+
+function updateKPIs(kpis) {
+    // Update refresh time
+    const now = new Date();
+    document.getElementById('kpi-refresh').textContent = `Updated: ${now.toLocaleTimeString()}`;
+    
+    // Sui Events
+    updateKPIValue('kpi-sui-events', kpis.sui_events_detected, 'kpi-sui');
+    document.getElementById('kpi-events-rate').textContent = `${kpis.events_per_minute.toFixed(1)}/min`;
+    
+    // Polygon Mints
+    updateKPIValue('kpi-polygon-mints', kpis.polygon_tickets_minted, 'kpi-polygon');
+    document.getElementById('kpi-mints-rate').textContent = `${kpis.mints_per_minute.toFixed(1)}/min`;
+    
+    // Success Rate
+    const successRate = kpis.success_rate || 100;
+    document.getElementById('kpi-success-rate').textContent = `${successRate.toFixed(1)}%`;
+    document.getElementById('kpi-success-count').textContent = 
+        `${kpis.polygon_tx_success} success / ${kpis.polygon_tx_failed} failed`;
+    
+    // Update success box styling based on rate
+    const successBox = document.querySelector('.kpi-box.kpi-success');
+    if (successRate < 90) {
+        successBox.classList.add('degraded');
+    } else {
+        successBox.classList.remove('degraded');
+    }
+    
+    // Bridge Latency
+    const latency = kpis.bridge_latency_ms || 0;
+    document.getElementById('kpi-latency').textContent = `${latency}ms`;
+    
+    // Update latency box styling
+    const latencyBox = document.querySelector('.kpi-box.kpi-latency');
+    if (latency > 5000) {
+        latencyBox.classList.add('slow');
+    } else {
+        latencyBox.classList.remove('slow');
+    }
+    
+    // Failed Attempts (Missed Tickets)
+    const failedAttempts = kpis.polygon_tx_failed || 0;
+    updateKPIValue('kpi-missed', failedAttempts, 'kpi-missed');
+    document.getElementById('kpi-recovered').textContent = `${kpis.recovered_tickets} recovered`;
+    
+    // Update failed attempts badge styling
+    const failedBadge = document.getElementById('failed-attempts-badge');
+    if (failedAttempts === 0) {
+        failedBadge.className = 'failed-attempts-counter success';
+    } else {
+        failedBadge.className = 'failed-attempts-counter danger';
+    }
+    
+    // Update missed box styling
+    const missedBox = document.querySelector('.kpi-box.kpi-missed');
+    if (failedAttempts > 0) {
+        missedBox.classList.add('warning');
+    } else {
+        missedBox.classList.remove('warning');
+    }
+    
+    // Uptime
+    const uptime = formatUptime(kpis.uptime_seconds);
+    document.getElementById('kpi-uptime').textContent = uptime;
+    
+    const startTime = new Date(kpis.session_start_time);
+    document.getElementById('kpi-start-time').textContent = 
+        `Started: ${startTime.toLocaleTimeString()}`;
+    
+    // Add syncing animation if values are changing
+    if (kpis.sui_events_detected > (previousKPIs.sui_events_detected || 0)) {
+        document.querySelector('.kpi-box.kpi-sui').classList.add('syncing');
+        setTimeout(() => {
+            document.querySelector('.kpi-box.kpi-sui').classList.remove('syncing');
+        }, 2000);
+    }
+    
+    if (kpis.polygon_tickets_minted > (previousKPIs.polygon_tickets_minted || 0)) {
+        document.querySelector('.kpi-box.kpi-polygon').classList.add('syncing');
+        setTimeout(() => {
+            document.querySelector('.kpi-box.kpi-polygon').classList.remove('syncing');
+        }, 2000);
+    }
+    
+    // Store previous values
+    previousKPIs = kpis;
+}
+
+function updateKPIValue(elementId, newValue, boxClass) {
+    const element = document.getElementById(elementId);
+    const oldValue = parseInt(element.textContent) || 0;
+    
+    if (newValue !== oldValue) {
+        // Flash animation on update
+        element.classList.add('updating');
+        setTimeout(() => {
+            element.classList.remove('updating');
+        }, 500);
+    }
+    
+    element.textContent = newValue.toLocaleString();
+}
+
+function formatUptime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+    
+    if (hours > 0) {
+        return `${hours}h ${minutes}m`;
+    } else if (minutes > 0) {
+        return `${minutes}m ${secs}s`;
+    } else {
+        return `${secs}s`;
+    }
+}
+
+// Initialize feed
+document.addEventListener('DOMContentLoaded', () => {
+    // Set initial button states
+    document.getElementById('btn-polygon').classList.add('active');
+    document.getElementById('btn-sui').classList.add('active');
+    document.getElementById('btn-autoscroll').classList.add('active');
+    
+    // Fetch blockchain events every 10 seconds
+    setInterval(fetchBlockchainEvents, 10000);
+    fetchBlockchainEvents(); // Initial fetch
+    
+    // Fetch KPIs every 5 seconds
+    setInterval(fetchKPIs, 5000);
+    fetchKPIs(); // Initial fetch
+    
+    // Fetch sparkline data every 30 seconds
+    setInterval(fetchSparklineData, 30000);
+    fetchSparklineData(); // Initial fetch
+});
+
+// Fetch sparkline data from relayer
+async function fetchSparklineData() {
+    try {
+        const response = await fetch('/api/blockchain/sparkline');
+        if (!response.ok) {
+            console.warn('Failed to fetch sparkline data');
+            return;
+        }
+        
+        const data = await response.json();
+        
+        // Render sparklines
+        renderSparkline('sparkline-events', data.tickets_per_minute, '#06b6d4'); // Cyan for Sui
+        renderSparkline('sparkline-mints', data.tickets_per_minute, '#a855f7'); // Purple for Polygon
+        renderSparkline('sparkline-failed', data.failed_attempts, '#ef4444'); // Red for failures
+        
+    } catch (error) {
+        console.error('Error fetching sparkline data:', error);
+    }
+}
+
+// Render sparkline chart on canvas
+function renderSparkline(canvasId, dataPoints, color) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width = canvas.offsetWidth;
+    const height = canvas.height = canvas.offsetHeight;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    if (!dataPoints || dataPoints.length === 0) {
+        return;
+    }
+    
+    // Extract values
+    const values = dataPoints.map(dp => dp.value);
+    const maxValue = Math.max(...values, 1);
+    const minValue = Math.min(...values, 0);
+    const range = maxValue - minValue || 1;
+    
+    // Calculate points
+    const points = values.map((value, index) => {
+        const x = (index / (values.length - 1 || 1)) * width;
+        const y = height - ((value - minValue) / range) * height;
+        return { x, y };
+    });
+    
+    // Draw line
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    
+    ctx.beginPath();
+    points.forEach((point, index) => {
+        if (index === 0) {
+            ctx.moveTo(point.x, point.y);
+        } else {
+            ctx.lineTo(point.x, point.y);
+        }
+    });
+    ctx.stroke();
+    
+    // Draw fill gradient
+    ctx.lineTo(width, height);
+    ctx.lineTo(0, height);
+    ctx.closePath();
+    
+    const gradient = ctx.createLinearGradient(0, 0, 0, height);
+    gradient.addColorStop(0, color + '40'); // 25% opacity
+    gradient.addColorStop(1, color + '00'); // 0% opacity
+    ctx.fillStyle = gradient;
+    ctx.fill();
+}
+
+// Process blockchain events from metrics
+function processBlockchainEvents(metrics) {
+    // Check for new Polygon blocks
+    if (metrics.blockchain && metrics.blockchain.polygon) {
+        const polygon = metrics.blockchain.polygon;
+        if (polygon.last_tx_hash && polygon.last_tx_hash !== window.lastPolygonTx) {
+            window.lastPolygonTx = polygon.last_tx_hash;
+            addFeedLine('POLYGON', `Transaction: ${polygon.last_tx_hash.substring(0, 10)}...`, 'event');
+        }
+    }
+    
+    // Check for Sui events
+    if (metrics.blockchain && metrics.blockchain.sui) {
+        const sui = metrics.blockchain.sui;
+        if (sui.event_count > (window.lastSuiEventCount || 0)) {
+            window.lastSuiEventCount = sui.event_count;
+            addFeedLine('SUI', `Event count: ${sui.event_count}`, 'event');
+        }
+    }
+    
+    // Check for new tickets
+    if (metrics.tickets && metrics.tickets.total_minted > (window.lastTicketCount || 0)) {
+        const newTickets = metrics.tickets.total_minted - (window.lastTicketCount || 0);
+        window.lastTicketCount = metrics.tickets.total_minted;
+        addFeedLine('POLYGON', `${newTickets} new ticket(s) minted`, 'event');
+    }
+    
+    // Check for USSD purchases
+    if (metrics.ussd && metrics.ussd.revenue) {
+        const revenue = metrics.ussd.revenue;
+        if (revenue.tickets_today > (window.lastTicketsToday || 0)) {
+            const newTickets = revenue.tickets_today - (window.lastTicketsToday || 0);
+            window.lastTicketsToday = revenue.tickets_today;
+            addFeedLine('SUI', `${newTickets} ticket(s) purchased via USSD`, 'event', {
+                revenue_today: `R ${revenue.revenue_today.toFixed(2)}`
+            });
+        }
+    }
+    
+    // Check for alerts
+    if (metrics.alerts && metrics.alerts.length > 0) {
+        metrics.alerts.forEach(alert => {
+            if (!window.shownAlerts) window.shownAlerts = new Set();
+            const alertKey = `${alert.timestamp}-${alert.message}`;
+            if (!window.shownAlerts.has(alertKey)) {
+                window.shownAlerts.add(alertKey);
+                const type = alert.level === 'critical' ? 'error' : 'warning';
+                addFeedLine('SYSTEM', alert.message, type);
+            }
+        });
+    }
 }
