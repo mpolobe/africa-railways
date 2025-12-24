@@ -38,6 +38,25 @@ type Stats struct {
 	StartTime          time.Time
 }
 
+// RevenueTracker tracks revenue metrics
+type RevenueTracker struct {
+	ConfirmedTotal float64 // Transactions successful on Sui/Polygon
+	PendingTotal   float64 // Sum of ticket prices in active sessions
+	TotalRevenue   float64 // All-time revenue
+	RevenueToday   float64 // Today's revenue
+	TicketsSold    int64   // Total tickets sold
+	TicketsToday   int64   // Tickets sold today
+	ConversionRate float64 // Successful purchases / total sessions
+	mu             sync.RWMutex
+}
+
+// TicketPrice represents pricing for different routes and classes
+type TicketPrice struct {
+	Route string
+	Class string
+	Price float64
+}
+
 var (
 	sessionStore = &SessionStore{
 		sessions: make(map[string]*Session),
@@ -46,6 +65,27 @@ var (
 		StartTime: time.Now(),
 	}
 	statsMu sync.RWMutex
+	
+	revenueTracker = &RevenueTracker{}
+	
+	// Ticket pricing table
+	ticketPrices = map[string]map[string]float64{
+		"JHB-CPT": {
+			"Economy":     150.00,
+			"Business":    300.00,
+			"FirstClass":  500.00,
+		},
+		"JHB-DBN": {
+			"Economy":     120.00,
+			"Business":    240.00,
+			"FirstClass":  400.00,
+		},
+		"CPT-PE": {
+			"Economy":     100.00,
+			"Business":    200.00,
+			"FirstClass":  350.00,
+		},
+	}
 )
 
 func main() {
@@ -66,6 +106,9 @@ func main() {
 	
 	// Active sessions endpoint
 	mux.HandleFunc("/sessions", handleSessions)
+	
+	// Revenue endpoint
+	mux.HandleFunc("/revenue", handleRevenue)
 
 	// Enable CORS
 	handler := cors.New(cors.Options{
@@ -173,20 +216,32 @@ func processUSSDMenu(session *Session, input string) string {
 	if input == "1*1*1*1" {
 		session.State = "confirm_payment"
 		session.Data["class"] = "Economy"
-		session.Data["price"] = 150
-		return "CON Confirm Purchase:\n" +
-			"Route: Johannesburg - Cape Town\n" +
-			"Date: Today\n" +
-			"Class: Economy\n" +
-			"Price: R150\n\n" +
-			"1. Pay with M-Pesa\n" +
-			"2. Pay with Card\n" +
-			"0. Cancel"
+		route := session.Data["route"].(string)
+		price := getTicketPrice(route, "Economy")
+		session.Data["price"] = price
+		
+		// Add to potential revenue
+		revenueTracker.addPotentialRevenue(price)
+		
+		return fmt.Sprintf("CON Confirm Purchase:\n"+
+			"Route: Johannesburg - Cape Town\n"+
+			"Date: Today\n"+
+			"Class: Economy\n"+
+			"Price: R%.2f\n\n"+
+			"1. Pay with M-Pesa\n"+
+			"2. Pay with Card\n"+
+			"0. Cancel", price)
 	}
 
 	if input == "1*1*1*1*1" {
 		// Process payment and mint ticket
 		session.State = "payment_processing"
+		
+		// Get ticket price
+		price, ok := session.Data["price"].(float64)
+		if !ok {
+			price = 150.00 // Default fallback
+		}
 		
 		// In production:
 		// 1. Initiate M-Pesa payment
@@ -194,6 +249,9 @@ func processUSSDMenu(session *Session, input string) string {
 		// 3. Mint NFT ticket on Polygon
 		// 4. Upload metadata to IPFS
 		// 5. Send ticket to user's wallet
+		
+		// Update revenue tracking
+		revenueTracker.confirmPurchase(price)
 		
 		statsMu.Lock()
 		stats.SuccessfulSessions++
@@ -203,10 +261,11 @@ func processUSSDMenu(session *Session, input string) string {
 		// Clean up session
 		sessionStore.Remove(session.SessionID)
 		
-		return "END Payment initiated!\n" +
-			"You will receive an SMS with your ticket details.\n" +
-			"Wallet: 0x" + generateMockWallet() + "\n" +
-			"Thank you for choosing Africa Railways!"
+		return fmt.Sprintf("END Payment initiated!\n"+
+			"Amount: R%.2f\n"+
+			"You will receive an SMS with your ticket details.\n"+
+			"Wallet: 0x%s\n"+
+			"Thank you for choosing Africa Railways!", price, generateMockWallet())
 	}
 
 	// Check ticket
@@ -272,17 +331,26 @@ func handleHealth(w http.ResponseWriter, r *http.Request) {
 	}
 	sessionStore.mu.RUnlock()
 
+	// Get revenue metrics
+	liveRevenue := calculateLiveRevenue()
+	
 	health := map[string]interface{}{
-		"connected":              true,
-		"active_sessions":        activeSessions,
-		"total_sessions_today":   totalSessions,
-		"success_rate":           successRate,
+		"connected":                true,
+		"active_sessions":          activeSessions,
+		"total_sessions_today":     totalSessions,
+		"success_rate":             successRate,
 		"average_response_time_ms": avgResponseTime,
-		"peak_sessions":          activeSessions, // Mock
-		"failed_sessions":        stats.FailedSessions,
-		"last_session_time":      lastSessionTime,
-		"uptime_percent":         uptimePercent,
-		"uptime_duration":        uptime.String(),
+		"peak_sessions":            activeSessions, // Mock
+		"failed_sessions":          stats.FailedSessions,
+		"last_session_time":        lastSessionTime,
+		"uptime_percent":           uptimePercent,
+		"uptime_duration":          uptime.String(),
+		"revenue": map[string]interface{}{
+			"confirmed_total": liveRevenue.ConfirmedTotal,
+			"pending_total":   liveRevenue.PendingTotal,
+			"revenue_today":   liveRevenue.RevenueToday,
+			"tickets_today":   liveRevenue.TicketsToday,
+		},
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -359,4 +427,154 @@ func cleanupSessions() {
 // generateMockWallet generates a mock wallet address for demo
 func generateMockWallet() string {
 	return fmt.Sprintf("%x", time.Now().UnixNano())[:40]
+}
+
+// getTicketPrice returns the price for a route and class
+func getTicketPrice(route, class string) float64 {
+	if prices, ok := ticketPrices[route]; ok {
+		if price, ok := prices[class]; ok {
+			return price
+		}
+	}
+	return 150.00 // Default price
+}
+
+// RevenueTracker methods
+func (rt *RevenueTracker) addPotentialRevenue(amount float64) {
+	rt.mu.Lock()
+	defer rt.mu.Unlock()
+	rt.PendingTotal += amount
+}
+
+func (rt *RevenueTracker) removePotentialRevenue(amount float64) {
+	rt.mu.Lock()
+	defer rt.mu.Unlock()
+	rt.PendingTotal -= amount
+	if rt.PendingTotal < 0 {
+		rt.PendingTotal = 0
+	}
+}
+
+func (rt *RevenueTracker) confirmPurchase(amount float64) {
+	rt.mu.Lock()
+	defer rt.mu.Unlock()
+	
+	// Remove from pending
+	rt.PendingTotal -= amount
+	if rt.PendingTotal < 0 {
+		rt.PendingTotal = 0
+	}
+	
+	// Add to confirmed
+	rt.ConfirmedTotal += amount
+	rt.TotalRevenue += amount
+	rt.RevenueToday += amount
+	rt.TicketsSold++
+	rt.TicketsToday++
+}
+
+func (rt *RevenueTracker) cancelPurchase(amount float64) {
+	rt.mu.Lock()
+	defer rt.mu.Unlock()
+	
+	// Remove from pending
+	rt.PendingTotal -= amount
+	if rt.PendingTotal < 0 {
+		rt.PendingTotal = 0
+	}
+}
+
+func (rt *RevenueTracker) getMetrics() map[string]interface{} {
+	rt.mu.RLock()
+	defer rt.mu.RUnlock()
+	
+	// Calculate conversion rate
+	statsMu.RLock()
+	totalSessions := stats.TotalSessionsToday
+	successfulSessions := stats.SuccessfulSessions
+	statsMu.RUnlock()
+	
+	conversionRate := 0.0
+	if totalSessions > 0 {
+		conversionRate = (float64(successfulSessions) / float64(totalSessions)) * 100
+	}
+	
+	averageTicketPrice := 0.0
+	if rt.TicketsSold > 0 {
+		averageTicketPrice = rt.TotalRevenue / float64(rt.TicketsSold)
+	}
+	
+	return map[string]interface{}{
+		"confirmed_total":      rt.ConfirmedTotal,
+		"pending_total":        rt.PendingTotal,
+		"total_revenue":        rt.TotalRevenue,
+		"revenue_today":        rt.RevenueToday,
+		"tickets_sold":         rt.TicketsSold,
+		"tickets_today":        rt.TicketsToday,
+		"conversion_rate":      conversionRate,
+		"average_ticket_price": averageTicketPrice,
+	}
+}
+
+// calculateLiveRevenue recalculates pending revenue from active sessions
+func calculateLiveRevenue() RevenueTracker {
+	sessionStore.mu.RLock()
+	defer sessionStore.mu.RUnlock()
+	
+	var pending float64
+	
+	// Iterate through active sessions
+	for _, session := range sessionStore.sessions {
+		// Check if session has reached payment confirmation stage
+		if session.State == "confirm_payment" || session.State == "payment_processing" {
+			if price, ok := session.Data["price"].(float64); ok {
+				pending += price
+			}
+		}
+	}
+	
+	revenueTracker.mu.Lock()
+	revenueTracker.PendingTotal = pending
+	revenueTracker.mu.Unlock()
+	
+	// Return current state
+	revenueTracker.mu.RLock()
+	defer revenueTracker.mu.RUnlock()
+	
+	return RevenueTracker{
+		ConfirmedTotal: revenueTracker.ConfirmedTotal,
+		PendingTotal:   pending,
+		TotalRevenue:   revenueTracker.TotalRevenue,
+		RevenueToday:   revenueTracker.RevenueToday,
+		TicketsSold:    revenueTracker.TicketsSold,
+		TicketsToday:   revenueTracker.TicketsToday,
+		ConversionRate: revenueTracker.ConversionRate,
+	}
+}
+
+// handleRevenue returns revenue metrics
+func handleRevenue(w http.ResponseWriter, r *http.Request) {
+	// Recalculate live revenue
+	liveRevenue := calculateLiveRevenue()
+	
+	metrics := map[string]interface{}{
+		"confirmed_total":      liveRevenue.ConfirmedTotal,
+		"pending_total":        liveRevenue.PendingTotal,
+		"total_revenue":        liveRevenue.TotalRevenue,
+		"revenue_today":        liveRevenue.RevenueToday,
+		"tickets_sold":         liveRevenue.TicketsSold,
+		"tickets_today":        liveRevenue.TicketsToday,
+		"conversion_rate":      liveRevenue.ConversionRate,
+		"average_ticket_price": 0.0,
+	}
+	
+	if liveRevenue.TicketsSold > 0 {
+		metrics["average_ticket_price"] = liveRevenue.TotalRevenue / float64(liveRevenue.TicketsSold)
+	}
+	
+	// Add breakdown by route
+	metrics["pricing"] = ticketPrices
+	
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(metrics)
 }

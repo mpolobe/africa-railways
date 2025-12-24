@@ -491,6 +491,105 @@ body {
     }
 }
 
+/* Revenue Tracker */
+.revenue-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.revenue-section {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--bg-dark);
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s;
+}
+
+.revenue-section:hover {
+    transform: translateY(-2px);
+}
+
+.revenue-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.revenue-label {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.revenue-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--success-color);
+    margin-bottom: 0.5rem;
+}
+
+.revenue-value.pending {
+    color: var(--warning-color);
+}
+
+.revenue-subtext {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+/* Revenue Chart */
+.revenue-chart {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.chart-bar {
+    display: grid;
+    grid-template-columns: 100px 1fr 100px;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.chart-label {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.chart-progress {
+    height: 24px;
+    background: var(--bg-dark);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+.chart-fill {
+    height: 100%;
+    transition: width 0.5s ease;
+    border-radius: 12px;
+    position: relative;
+}
+
+.chart-fill.confirmed {
+    background: linear-gradient(90deg, var(--success-color), #059669);
+}
+
+.chart-fill.pending {
+    background: linear-gradient(90deg, var(--warning-color), #d97706);
+}
+
+.chart-value {
+    text-align: right;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;

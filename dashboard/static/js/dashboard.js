@@ -126,6 +126,54 @@ function updateUSSDMetrics(ussd) {
     } else {
         ussdStatusIcon.className = 'card-status error';
     }
+    
+    // Update revenue metrics
+    if (ussd.revenue) {
+        updateRevenueMetrics(ussd.revenue);
+    }
+}
+
+function updateRevenueMetrics(revenue) {
+    // Format currency
+    const formatCurrency = (amount) => {
+        return `R ${amount.toFixed(2)}`;
+    };
+    
+    // Update confirmed revenue
+    document.getElementById('revenue-confirmed').textContent = formatCurrency(revenue.confirmed_total || 0);
+    
+    // Update pending revenue
+    document.getElementById('revenue-pending').textContent = formatCurrency(revenue.pending_total || 0);
+    
+    // Update today's revenue
+    document.getElementById('revenue-today').textContent = formatCurrency(revenue.revenue_today || 0);
+    document.getElementById('tickets-sold-today').textContent = `${revenue.tickets_today || 0} tickets sold`;
+    
+    // Update average ticket price
+    const avgPrice = revenue.average_ticket_price || 0;
+    document.getElementById('avg-ticket-price').textContent = formatCurrency(avgPrice);
+    
+    // Update conversion rate
+    const conversionRate = revenue.conversion_rate || 0;
+    document.getElementById('conversion-rate').textContent = `${conversionRate.toFixed(1)}% conversion`;
+    
+    // Update chart
+    const totalRevenue = (revenue.confirmed_total || 0) + (revenue.pending_total || 0);
+    if (totalRevenue > 0) {
+        const confirmedPercent = ((revenue.confirmed_total || 0) / totalRevenue) * 100;
+        const pendingPercent = ((revenue.pending_total || 0) / totalRevenue) * 100;
+        
+        document.getElementById('chart-confirmed').style.width = `${confirmedPercent}%`;
+        document.getElementById('chart-pending').style.width = `${pendingPercent}%`;
+        
+        document.getElementById('chart-confirmed-value').textContent = formatCurrency(revenue.confirmed_total || 0);
+        document.getElementById('chart-pending-value').textContent = formatCurrency(revenue.pending_total || 0);
+    } else {
+        document.getElementById('chart-confirmed').style.width = '0%';
+        document.getElementById('chart-pending').style.width = '0%';
+        document.getElementById('chart-confirmed-value').textContent = 'R 0.00';
+        document.getElementById('chart-pending-value').textContent = 'R 0.00';
+    }
 }
 
 function updateTicketMetrics(tickets) {

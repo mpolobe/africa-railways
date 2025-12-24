@@ -204,6 +204,58 @@
                 </div>
             </div>
 
+            <!-- Revenue Tracker -->
+            <div class="card card-wide" style="border-left: 5px solid #10b981;">
+                <div class="card-header">
+                    <h2>💰 Revenue Tracker</h2>
+                    <span class="card-status" style="color: #10b981;">●</span>
+                </div>
+                <div class="card-body">
+                    <div class="revenue-grid">
+                        <div class="revenue-section">
+                            <div class="revenue-icon">✅</div>
+                            <div class="revenue-label">Confirmed Revenue</div>
+                            <div class="revenue-value" id="revenue-confirmed">R 0.00</div>
+                            <div class="revenue-subtext">Successful on Polygon</div>
+                        </div>
+                        <div class="revenue-section">
+                            <div class="revenue-icon">⏳</div>
+                            <div class="revenue-label">Pending Revenue</div>
+                            <div class="revenue-value pending" id="revenue-pending">R 0.00</div>
+                            <div class="revenue-subtext">In active sessions</div>
+                        </div>
+                        <div class="revenue-section">
+                            <div class="revenue-icon">📊</div>
+                            <div class="revenue-label">Today's Revenue</div>
+                            <div class="revenue-value" id="revenue-today">R 0.00</div>
+                            <div class="revenue-subtext" id="tickets-sold-today">0 tickets sold</div>
+                        </div>
+                        <div class="revenue-section">
+                            <div class="revenue-icon">💳</div>
+                            <div class="revenue-label">Avg Ticket Price</div>
+                            <div class="revenue-value" id="avg-ticket-price">R 0.00</div>
+                            <div class="revenue-subtext" id="conversion-rate">0% conversion</div>
+                        </div>
+                    </div>
+                    <div class="revenue-chart">
+                        <div class="chart-bar">
+                            <div class="chart-label">Confirmed</div>
+                            <div class="chart-progress">
+                                <div class="chart-fill confirmed" id="chart-confirmed" style="width: 0%"></div>
+                            </div>
+                            <div class="chart-value" id="chart-confirmed-value">R 0</div>
+                        </div>
+                        <div class="chart-bar">
+                            <div class="chart-label">Pending</div>
+                            <div class="chart-progress">
+                                <div class="chart-fill pending" id="chart-pending" style="width: 0%"></div>
+                            </div>
+                            <div class="chart-value" id="chart-pending-value">R 0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Ticket Lifecycle -->
             <div class="card card-wide">
                 <div class="card-header">

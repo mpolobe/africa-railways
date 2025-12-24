@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"math/big"
 	"net/http"
@@ -85,15 +87,27 @@ type TicketMetrics struct {
 }
 
 type USSDMetrics struct {
-	Connected          bool      `json:"connected"`
-	ActiveSessions     int       `json:"active_sessions"`
-	TotalSessionsToday int64     `json:"total_sessions_today"`
-	SuccessRate        float64   `json:"success_rate"`
-	AverageResponseTime int64    `json:"average_response_time_ms"`
-	PeakSessions       int       `json:"peak_sessions"`
-	FailedSessions     int64     `json:"failed_sessions"`
-	LastSessionTime    time.Time `json:"last_session_time"`
-	Uptime             float64   `json:"uptime_percent"`
+	Connected           bool          `json:"connected"`
+	ActiveSessions      int           `json:"active_sessions"`
+	TotalSessionsToday  int64         `json:"total_sessions_today"`
+	SuccessRate         float64       `json:"success_rate"`
+	AverageResponseTime int64         `json:"average_response_time_ms"`
+	PeakSessions        int           `json:"peak_sessions"`
+	FailedSessions      int64         `json:"failed_sessions"`
+	LastSessionTime     time.Time     `json:"last_session_time"`
+	Uptime              float64       `json:"uptime_percent"`
+	Revenue             RevenueMetrics `json:"revenue"`
+}
+
+type RevenueMetrics struct {
+	ConfirmedTotal     float64 `json:"confirmed_total"`
+	PendingTotal       float64 `json:"pending_total"`
+	RevenueToday       float64 `json:"revenue_today"`
+	TicketsToday       int64   `json:"tickets_today"`
+	TotalRevenue       float64 `json:"total_revenue"`
+	TicketsSold        int64   `json:"tickets_sold"`
+	ConversionRate     float64 `json:"conversion_rate"`
+	AverageTicketPrice float64 `json:"average_ticket_price"`
 }
 
 type HealthMetrics struct {
@@ -186,6 +200,7 @@ func main() {
 	// USSD specific endpoints
 	mux.HandleFunc("/api/ussd/stats", handleUSSDStats)
 	mux.HandleFunc("/api/ussd/sessions", handleUSSDSessions)
+	mux.HandleFunc("/api/ussd/revenue", handleUSSDRevenue)
 
 	// Enable CORS
 	handler := cors.New(cors.Options{
@@ -433,15 +448,21 @@ func collectUSSDMetrics(config Config) USSDMetrics {
 
 	// Parse USSD metrics from health endpoint
 	var ussdHealth struct {
-		Connected          bool      `json:"connected"`
-		ActiveSessions     int       `json:"active_sessions"`
-		TotalSessionsToday int64     `json:"total_sessions_today"`
-		SuccessRate        float64   `json:"success_rate"`
-		AverageResponseTime int64    `json:"average_response_time_ms"`
-		PeakSessions       int       `json:"peak_sessions"`
-		FailedSessions     int64     `json:"failed_sessions"`
-		LastSessionTime    time.Time `json:"last_session_time"`
-		Uptime             float64   `json:"uptime_percent"`
+		Connected           bool      `json:"connected"`
+		ActiveSessions      int       `json:"active_sessions"`
+		TotalSessionsToday  int64     `json:"total_sessions_today"`
+		SuccessRate         float64   `json:"success_rate"`
+		AverageResponseTime int64     `json:"average_response_time_ms"`
+		PeakSessions        int       `json:"peak_sessions"`
+		FailedSessions      int64     `json:"failed_sessions"`
+		LastSessionTime     time.Time `json:"last_session_time"`
+		Uptime              float64   `json:"uptime_percent"`
+		Revenue             struct {
+			ConfirmedTotal float64 `json:"confirmed_total"`
+			PendingTotal   float64 `json:"pending_total"`
+			RevenueToday   float64 `json:"revenue_today"`
+			TicketsToday   int64   `json:"tickets_today"`
+		} `json:"revenue"`
 	}
 
 	if err := json.NewDecoder(resp.Body).Decode(&ussdHealth); err != nil {
@@ -453,15 +474,21 @@ func collectUSSDMetrics(config Config) USSDMetrics {
 	}
 
 	return USSDMetrics{
-		Connected:          true,
-		ActiveSessions:     ussdHealth.ActiveSessions,
-		TotalSessionsToday: ussdHealth.TotalSessionsToday,
-		SuccessRate:        ussdHealth.SuccessRate,
+		Connected:           true,
+		ActiveSessions:      ussdHealth.ActiveSessions,
+		TotalSessionsToday:  ussdHealth.TotalSessionsToday,
+		SuccessRate:         ussdHealth.SuccessRate,
 		AverageResponseTime: ussdHealth.AverageResponseTime,
-		PeakSessions:       ussdHealth.PeakSessions,
-		FailedSessions:     ussdHealth.FailedSessions,
-		LastSessionTime:    ussdHealth.LastSessionTime,
-		Uptime:             ussdHealth.Uptime,
+		PeakSessions:        ussdHealth.PeakSessions,
+		FailedSessions:      ussdHealth.FailedSessions,
+		LastSessionTime:     ussdHealth.LastSessionTime,
+		Uptime:              ussdHealth.Uptime,
+		Revenue: RevenueMetrics{
+			ConfirmedTotal: ussdHealth.Revenue.ConfirmedTotal,
+			PendingTotal:   ussdHealth.Revenue.PendingTotal,
+			RevenueToday:   ussdHealth.Revenue.RevenueToday,
+			TicketsToday:   ussdHealth.Revenue.TicketsToday,
+		},
 	}
 }
 
@@ -921,6 +948,30 @@ func handleUSSDSessions(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(sessions)
+}
+
+func handleUSSDRevenue(w http.ResponseWriter, r *http.Request) {
+	// Query USSD gateway for revenue metrics
+	ussdHealthURL := os.Getenv("USSD_HEALTH_URL")
+	if ussdHealthURL == "" {
+		ussdHealthURL = "http://localhost:8081/revenue"
+	} else {
+		// Replace /health with /revenue
+		ussdHealthURL = ussdHealthURL[:len(ussdHealthURL)-6] + "revenue"
+	}
+
+	client := &http.Client{Timeout: 5 * time.Second}
+	resp, err := client.Get(ussdHealthURL)
+	if err != nil {
+		http.Error(w, "Failed to fetch revenue data", http.StatusServiceUnavailable)
+		return
+	}
+	defer resp.Body.Close()
+
+	// Forward the response
+	w.Header().Set("Content-Type", "application/json")
+	body, _ := io.ReadAll(resp.Body)
+	w.Write(body)
 }
 
 // Cloud Infrastructure Control Handlers
