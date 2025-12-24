@@ -1,6 +1,6 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "go build -o occ-dashboard main.go"
+buildCommand = "chmod +x railway-setup.sh && ./railway-setup.sh && go build -o occ-dashboard main.go"
 
 [deploy]
 startCommand = "./occ-dashboard"
