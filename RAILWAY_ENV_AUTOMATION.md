@@ -67,8 +67,8 @@ railway variables
 
 You should see:
 ```
-RELAYER_PRIVATE_KEY=e4cbd7...
-ALCHEMY_API_KEY=4-gxorN-...
+RELAYER_PRIVATE_KEY=your_private_key_here
+ALCHEMY_API_KEY=your_alchemy_key_here
 PORT=8080
 ```
 
@@ -86,13 +86,13 @@ The `.env.railway` file contains all your environment variables:
 
 ```bash
 # Required Variables
-RELAYER_PRIVATE_KEY=e4cbd7171db39d6d336b6555e0e1eec1c2da2cbc5ddc4a90c4acf61904552c56
-ALCHEMY_API_KEY=4-gxorN-H4MhqZWrskRQ-
+RELAYER_PRIVATE_KEY=your_64_character_private_key_here
+ALCHEMY_API_KEY=your_alchemy_api_key_here
 PORT=8080
 
 # Optional Variables
-GAS_POLICY_ID=demo-policy
-IPFS_API_KEY=demo-key
+GAS_POLICY_ID=your_gas_policy_id
+IPFS_API_KEY=your_pinata_api_key
 ```
 
 **⚠️ Security Note:** `.env.railway` is in `.gitignore` and won't be committed to Git.
@@ -112,10 +112,10 @@ If you prefer to set variables manually:
 
 ```
 Name: RELAYER_PRIVATE_KEY
-Value: e4cbd7171db39d6d336b6555e0e1eec1c2da2cbc5ddc4a90c4acf61904552c56
+Value: your_64_character_private_key_here
 
 Name: ALCHEMY_API_KEY
-Value: 4-gxorN-H4MhqZWrskRQ-
+Value: your_alchemy_api_key_here
 
 Name: PORT
 Value: 8080
@@ -124,8 +124,8 @@ Value: 8080
 ### Via Railway CLI
 
 ```bash
-railway variables set RELAYER_PRIVATE_KEY=e4cbd7171db39d6d336b6555e0e1eec1c2da2cbc5ddc4a90c4acf61904552c56
-railway variables set ALCHEMY_API_KEY=4-gxorN-H4MhqZWrskRQ-
+railway variables set RELAYER_PRIVATE_KEY=your_private_key_here
+railway variables set ALCHEMY_API_KEY=your_alchemy_key_here
 railway variables set PORT=8080
 ```
 
@@ -223,7 +223,7 @@ railway logs
 Look for:
 ```
 🚂 Africa Railways OCC Dashboard Starting...
-🔐 Auto-detected Relayer Address: 0x4C97260183BaD57AbF37f0119695f0607f2c3921
+🔐 Auto-detected Relayer Address: 0xYourAddressHere
 ✅ OCC Dashboard running on http://localhost:8080
 ```
 

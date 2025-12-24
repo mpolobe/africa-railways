@@ -125,8 +125,8 @@ Update DNS with the CNAME record provided by Railway.
 ### Required Variables (Set Automatically)
 
 ```bash
-RELAYER_PRIVATE_KEY=e4cbd7171db39d6d336b6555e0e1eec1c2da2cbc5ddc4a90c4acf61904552c56
-ALCHEMY_API_KEY=4-gxorN-H4MhqZWrskRQ-
+RELAYER_PRIVATE_KEY=your_64_character_private_key_here
+ALCHEMY_API_KEY=your_alchemy_api_key_here
 PORT=8080
 ```
 
@@ -139,8 +139,8 @@ PORT=8080
 
 **Option 2: Manual**
 ```bash
-railway variables set RELAYER_PRIVATE_KEY=your_key
-railway variables set ALCHEMY_API_KEY=4-gxorN-H4MhqZWrskRQ-
+railway variables set RELAYER_PRIVATE_KEY=your_private_key_here
+railway variables set ALCHEMY_API_KEY=your_alchemy_key_here
 railway variables set PORT=8080
 ```
 
@@ -214,8 +214,8 @@ railway variables
 
 Expected output:
 ```
-RELAYER_PRIVATE_KEY=e4cbd7...
-ALCHEMY_API_KEY=4-gxorN-...
+RELAYER_PRIVATE_KEY=your_private_key...
+ALCHEMY_API_KEY=your_alchemy_key...
 PORT=8080
 ```
 

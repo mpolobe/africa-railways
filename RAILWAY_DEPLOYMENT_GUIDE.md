@@ -54,8 +54,8 @@ Deploy the Africa Railways OCC Dashboard to Railway with custom subdomain `occ.a
 
 2. **Add Required Variables:**
    ```
-   RELAYER_PRIVATE_KEY=e4cbd7171db39d6d336b6555e0e1eec1c2da2cbc5ddc4a90c4acf61904552c56
-   ALCHEMY_API_KEY=4-gxorN-H4MhqZWrskRQ-
+   RELAYER_PRIVATE_KEY=your_64_character_private_key_here
+   ALCHEMY_API_KEY=your_alchemy_api_key_here
    PORT=8080
    ```
 
@@ -178,8 +178,8 @@ Select your GitHub repository.
 ### Step 5: Set Environment Variables
 
 ```bash
-railway variables set RELAYER_PRIVATE_KEY=e4cbd7171db39d6d336b6555e0e1eec1c2da2cbc5ddc4a90c4acf61904552c56
-railway variables set ALCHEMY_API_KEY=4-gxorN-H4MhqZWrskRQ-
+railway variables set RELAYER_PRIVATE_KEY=your_64_character_private_key_here
+railway variables set ALCHEMY_API_KEY=your_alchemy_api_key_here
 railway variables set PORT=8080
 ```
 
@@ -267,8 +267,8 @@ config.json
 
 | Variable | Value | Description |
 |----------|-------|-------------|
-| `RELAYER_PRIVATE_KEY` | `e4cbd7...` | Your wallet private key |
-| `ALCHEMY_API_KEY` | `4-gxorN-...` | Alchemy API key |
+| `RELAYER_PRIVATE_KEY` | `your_private_key...` | Your wallet private key |
+| `ALCHEMY_API_KEY` | `your_alchemy_key...` | Alchemy API key |
 | `PORT` | `8080` | Server port |
 
 ### Optional Variables
