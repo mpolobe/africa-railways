@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚂 Africa Railways - Operational Control Centre</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>🚂 Africa Railways OCC</h1>
+                <p class="subtitle">Operational Control Centre</p>
+            </div>
+            <div class="header-right">
+                <div class="status-indicator" id="connection-status">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Connecting...</span>
+                </div>
+                <div class="last-update">
+                    Last update: <span id="last-update-time">--:--:--</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Alert Banner -->
+        <div class="alert-banner" id="alert-banner" style="display: none;">
+            <div class="alert-content">
+                <span class="alert-icon">🚨</span>
+                <span class="alert-message" id="alert-message"></span>
+                <button class="alert-close" onclick="closeAlert()">×</button>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="dashboard-grid">
+            <!-- Blockchain Status -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>⛓️ Blockchain Status</h2>
+                    <span class="card-status" id="blockchain-status">●</span>
+                </div>
+                <div class="card-body">
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Polygon Network</div>
+                            <div class="metric-value" id="polygon-status">--</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Latest Block</div>
+                            <div class="metric-value" id="latest-block">--</div>
+                        </div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Sui Network</div>
+                            <div class="metric-value" id="sui-status">--</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Sui Latency</div>
+                            <div class="metric-value" id="sui-latency">--</div>
+                        </div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Network Latency</div>
+                            <div class="metric-value" id="network-latency">--</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Total Tickets Minted</div>
+                            <div class="metric-value" id="total-minted">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wallet Monitor -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>💰 Relayer Wallet</h2>
+                    <span class="card-status" id="wallet-status">●</span>
+                </div>
+                <div class="card-body">
+                    <div class="metric-large">
+                        <div class="metric-label">Balance</div>
+                        <div class="metric-value-large" id="wallet-balance">-- POL</div>
+                        <div class="metric-subtext" id="wallet-balance-usd">$--</div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Gas Price</div>
+                            <div class="metric-value" id="gas-price">-- Gwei</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">TX Capacity</div>
+                            <div class="metric-value" id="tx-capacity">-- mints</div>
+                        </div>
+                    </div>
+                    <div class="wallet-address">
+                        <small id="wallet-address">--</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gas Policy -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>⛽ Gas Policy</h2>
+                    <span class="card-status" id="gas-policy-status">●</span>
+                </div>
+                <div class="card-body">
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Status</div>
+                            <div class="metric-value" id="policy-status">--</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Policy ID</div>
+                            <div class="metric-value-small" id="policy-id">--</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="policy-progress" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-label">
+                        <span id="policy-usage">0%</span> of budget used
+                    </div>
+                </div>
+            </div>
+
+            <!-- IPFS Status -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>📦 IPFS / Pinata</h2>
+                    <span class="card-status" id="ipfs-status">●</span>
+                </div>
+                <div class="card-body">
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Total Uploads</div>
+                            <div class="metric-value" id="total-uploads">--</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Today</div>
+                            <div class="metric-value" id="uploads-today">--</div>
+                        </div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Success Rate</div>
+                            <div class="metric-value" id="upload-success-rate">--%</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Avg Upload Time</div>
+                            <div class="metric-value" id="avg-upload-time">-- ms</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- USSD Gateway -->
+            <div class="card" style="border-left: 5px solid #3498db;">
+                <div class="card-header">
+                    <h2>📱 USSD Gateway</h2>
+                    <span class="card-status" id="ussd-status">●</span>
+                </div>
+                <div class="card-body">
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Active Sessions</div>
+                            <div class="metric-value" id="ussd-active-sessions">--</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Sessions Today</div>
+                            <div class="metric-value" id="ussd-sessions-today">--</div>
+                        </div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Success Rate</div>
+                            <div class="metric-value" id="ussd-success-rate">--%</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Avg Response</div>
+                            <div class="metric-value" id="ussd-response-time">-- ms</div>
+                        </div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Last Activity</div>
+                            <div class="metric-value-small" id="ussd-last-command">--</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Uptime</div>
+                            <div class="metric-value" id="ussd-uptime">--</div>
+                        </div>
+                    </div>
+                    <div class="health-controls" style="margin-top: 1rem;">
+                        <button class="btn-control btn-start" onclick="controlService('ussd', 'start')">▶ Start</button>
+                        <button class="btn-control btn-stop" onclick="controlService('ussd', 'stop')">🔧 Maintenance Mode</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ticket Lifecycle -->
+            <div class="card card-wide">
+                <div class="card-header">
+                    <h2>🎫 Ticket Lifecycle</h2>
+                </div>
+                <div class="card-body">
+                    <div class="lifecycle-grid">
+                        <div class="lifecycle-stage">
+                            <div class="stage-icon">📝</div>
+                            <div class="stage-label">Minted</div>
+                            <div class="stage-value" id="tickets-minted">--</div>
+                        </div>
+                        <div class="lifecycle-arrow">→</div>
+                        <div class="lifecycle-stage">
+                            <div class="stage-icon">⏳</div>
+                            <div class="stage-label">Pending</div>
+                            <div class="stage-value" id="tickets-pending">--</div>
+                        </div>
+                        <div class="lifecycle-arrow">→</div>
+                        <div class="lifecycle-stage">
+                            <div class="stage-icon">✅</div>
+                            <div class="stage-label">Active</div>
+                            <div class="stage-value" id="tickets-active">--</div>
+                        </div>
+                        <div class="lifecycle-arrow">→</div>
+                        <div class="lifecycle-stage">
+                            <div class="stage-icon">🎟️</div>
+                            <div class="stage-label">Used</div>
+                            <div class="stage-value" id="tickets-used">--</div>
+                        </div>
+                        <div class="lifecycle-stage">
+                            <div class="stage-icon">⏰</div>
+                            <div class="stage-label">Expired</div>
+                            <div class="stage-value" id="tickets-expired">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Health -->
+            <div class="card card-wide">
+                <div class="card-header">
+                    <h2>🏥 System Health</h2>
+                </div>
+                <div class="card-body">
+                    <div class="health-grid">
+                        <div class="health-item">
+                            <div class="health-name">Relayer Service</div>
+                            <div class="health-status" id="health-relayer">
+                                <span class="health-dot">●</span>
+                                <span class="health-text">--</span>
+                            </div>
+                            <div class="health-controls">
+                                <button class="btn-control btn-start" onclick="controlService('relayer', 'start')">▶ Start</button>
+                                <button class="btn-control btn-stop" onclick="controlService('relayer', 'stop')">■ Stop</button>
+                            </div>
+                        </div>
+                        <div class="health-item">
+                            <div class="health-name">IPFS Uploader</div>
+                            <div class="health-status" id="health-ipfs">
+                                <span class="health-dot">●</span>
+                                <span class="health-text">--</span>
+                            </div>
+                            <div class="health-controls">
+                                <button class="btn-control btn-start" onclick="controlService('ipfs', 'start')">▶ Start</button>
+                                <button class="btn-control btn-stop" onclick="controlService('ipfs', 'stop')">■ Stop</button>
+                            </div>
+                        </div>
+                        <div class="health-item">
+                            <div class="health-name">Monitor Engine</div>
+                            <div class="health-status" id="health-monitor">
+                                <span class="health-dot">●</span>
+                                <span class="health-text">--</span>
+                            </div>
+                            <div class="health-controls">
+                                <button class="btn-control btn-start" onclick="controlService('monitor', 'start')">▶ Start</button>
+                                <button class="btn-control btn-stop" onclick="controlService('monitor', 'stop')">■ Stop</button>
+                            </div>
+                        </div>
+                        <div class="health-item">
+                            <div class="health-name">USSD Gateway</div>
+                            <div class="health-status" id="health-ussd-gateway">
+                                <span class="health-dot">●</span>
+                                <span class="health-text">--</span>
+                            </div>
+                        </div>
+                        <div class="health-item">
+                            <div class="health-name">API Server</div>
+                            <div class="health-status" id="health-api">
+                                <span class="health-dot">●</span>
+                                <span class="health-text">--</span>
+                            </div>
+                        </div>
+                        <div class="health-item">
+                            <div class="health-name">Sui Node (GCP)</div>
+                            <div class="health-status" id="health-sui-node">
+                                <span class="health-dot">●</span>
+                                <span class="health-text">--</span>
+                            </div>
+                        </div>
+                        <div class="health-item">
+                            <div class="health-name">Alchemy API</div>
+                            <div class="health-status" id="health-alchemy">
+                                <span class="health-dot">●</span>
+                                <span class="health-text">--</span>
+                            </div>
+                        </div>
+                        <div class="health-item">
+                            <div class="health-name">Pinata API</div>
+                            <div class="health-status" id="health-pinata">
+                                <span class="health-dot">●</span>
+                                <span class="health-text">--</span>
+                            </div>
+                        </div>
+                        <div class="health-item">
+                            <div class="health-name">AWS S3 Storage</div>
+                            <div class="health-status" id="health-aws-s3">
+                                <span class="health-dot">●</span>
+                                <span class="health-text">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Alerts -->
+            <div class="card card-wide">
+                <div class="card-header">
+                    <h2>🚨 Active Alerts</h2>
+                    <span class="alert-count" id="alert-count">0</span>
+                </div>
+                <div class="card-body">
+                    <div class="alerts-list" id="alerts-list">
+                        <div class="no-alerts">✅ No active alerts - all systems operational</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <p>Africa Railways Operational Control Centre | Powered by Polygon, Sui, Alchemy & IPFS</p>
+        </footer>
+    </div>
+
+    <script src="js/websocket.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
