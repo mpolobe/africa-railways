@@ -65,3 +65,4 @@ Thumbs.db
 
 # Sui blockchain directory
 sui/
+config.json

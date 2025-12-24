@@ -1,0 +1,17 @@
+{
+  "name": "Africa Railways: Ticket #1024",
+  "description": "Standard Class Ticket - Johannesburg to Cape Town",
+  "image": "ipfs://QmYourTicketDesignCID",
+  "external_url": "https://africarailways.com/verify/1024",
+  "attributes": [
+    { "trait_type": "Route", "value": "JHB-CPT" },
+    { "trait_type": "Class", "value": "Standard" },
+    { "trait_type": "Seat", "value": "14A" },
+    { "display_type": "date", "trait_type": "Departure", "value": 1735017600 },
+    { "display_type": "date", "trait_type": "Arrival", "value": 1735088400 },
+    { "trait_type": "Passenger", "value": "John Doe" },
+    { "trait_type": "Phone", "value": "+27123456789" },
+    { "display_type": "number", "trait_type": "Price", "value": 450.00 },
+    { "trait_type": "Currency", "value": "ZAR" }
+  ]
+}

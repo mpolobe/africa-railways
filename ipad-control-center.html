@@ -48,6 +48,7 @@
             /* Default: Mobile (Stack everything) */
             grid-template-areas: 
                 "header"
+                "scanner"
                 "wallet"
                 "booking"
                 "monitor";
@@ -59,6 +60,7 @@
                 grid-template-columns: 1fr 1fr;
                 grid-template-areas: 
                     "header header"
+                    "scanner scanner"
                     "wallet booking"
                     "monitor monitor";
             }
@@ -67,9 +69,10 @@
         /* Large Desktop (1200px+) */
         @media (min-width: 1200px) {
             .dashboard-container {
-                grid-template-columns: 300px 1fr 350px;
+                grid-template-columns: 400px 1fr 350px;
                 grid-template-areas: 
                     "header header header"
+                    "scanner monitor booking"
                     "wallet monitor booking";
             }
         }
@@ -194,6 +197,128 @@
             }
         }
 
+        /* Ticket Scanner Styles */
+        .scanner-card {
+            grid-area: scanner;
+        }
+
+        #scanner-video {
+            width: 100%;
+            max-height: 300px;
+            border-radius: 12px;
+            background: #000;
+            object-fit: cover;
+        }
+
+        .scanner-overlay {
+            position: relative;
+            margin: 15px 0;
+        }
+
+        .scanner-frame {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            border: 3px solid var(--gold);
+            border-radius: 12px;
+            pointer-events: none;
+        }
+
+        .scanner-frame::before,
+        .scanner-frame::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--gold);
+        }
+
+        .scanner-frame::before {
+            top: -3px;
+            left: -3px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .scanner-frame::after {
+            bottom: -3px;
+            right: -3px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .scan-result {
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .scan-result.valid {
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid var(--success);
+        }
+
+        .scan-result.invalid {
+            background: rgba(255, 68, 68, 0.1);
+            border: 2px solid var(--danger);
+        }
+
+        .scan-result.used {
+            background: rgba(255, 184, 0, 0.1);
+            border: 2px solid var(--gold);
+        }
+
+        .scan-result-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .scan-result-details {
+            display: grid;
+            gap: 10px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .detail-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .detail-value {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .scanner-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 1rem;
+            margin: 10px 0;
+        }
+
+        .scanner-input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
         .event-time {
             color: var(--accent);
             font-size: 0.8rem;
@@ -275,6 +400,56 @@
         <div class="header">
             <h1>🚂 Africa Railways</h1>
             <p style="color: var(--accent);">iPad Control Center - 2025</p>
+        </div>
+
+        <!-- Ticket Scanner Card -->
+        <div class="card scanner-card">
+            <h3>🎫 Ticket Scanner</h3>
+            <p style="color: #888; margin-bottom: 15px;">Scan QR codes to verify NFT tickets</p>
+            
+            <!-- Scanner Mode Toggle -->
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <button id="camera-mode-btn" class="btn primary" onclick="startCamera()" style="flex: 1;">
+                    📷 Camera Scan
+                </button>
+                <button id="manual-mode-btn" class="btn secondary" onclick="showManualInput()" style="flex: 1;">
+                    ⌨️ Manual Entry
+                </button>
+            </div>
+
+            <!-- Camera Scanner -->
+            <div id="camera-scanner" style="display: none;">
+                <div class="scanner-overlay">
+                    <video id="scanner-video" autoplay playsinline></video>
+                    <div class="scanner-frame"></div>
+                </div>
+                <button class="btn secondary" onclick="stopCamera()">Stop Camera</button>
+            </div>
+
+            <!-- Manual Input -->
+            <div id="manual-scanner" style="display: none;">
+                <input 
+                    type="text" 
+                    id="ticket-id-input" 
+                    class="scanner-input" 
+                    placeholder="Enter Ticket ID (e.g., TKT1024)"
+                    onkeypress="if(event.key==='Enter') verifyTicketManual()"
+                >
+                <button class="btn primary" onclick="verifyTicketManual()">
+                    🔍 Verify Ticket
+                </button>
+            </div>
+
+            <!-- Scan Result -->
+            <div id="scan-result" style="display: none;"></div>
+
+            <!-- Recent Scans -->
+            <div id="recent-scans" style="margin-top: 20px;">
+                <h4 style="color: var(--gold); margin-bottom: 10px;">Recent Scans</h4>
+                <div id="scan-history" class="scroll-container" style="max-height: 200px;">
+                    <div style="text-align: center; color: #666; padding: 20px;">No scans yet</div>
+                </div>
+            </div>
         </div>
 
         <!-- Sovereign Wallet Card -->

@@ -1,15 +1,37 @@
 # 🔐 Security Guide - API Keys & Secrets
 
-## ⚠️ CRITICAL: API Key Exposed
+## ⚠️ CRITICAL: Protecting Your Credentials
 
-**If you've shared an API key publicly, take immediate action:**
+### 🚨 HIGHLY SENSITIVE INFORMATION
 
-### Immediate Steps:
+The following credentials are **CRITICAL** and must NEVER be committed to git:
+
+```
+❌ NEVER SHARE OR COMMIT:
+
+1. Gas Policy ID: 2e114558-d9e8-4a3c-8290-ff9e6023f486
+2. IPFS API Key: 787a512e.0a43e609db2a4913a861b6f0de5dd6e7
+3. Alchemy API Key: 4-gxorN-H4MhqZWrskRQ-
+4. Private Key: 0xe4cbd7171db39d6d336b6555e0e1eec1c2da2cbc5ddc4a90c4acf61904552c56
+5. Relayer Address: 0x4C97260183BaD57AbF37f0119695f0607f2c3921
+```
+
+### ⚠️ Why This Matters
+
+**If these keys are leaked:**
+- ❌ Others could use your IPFS storage quota
+- ❌ Others could drain your gas policy budget  
+- ❌ Others could access your relayer wallet
+- ❌ Financial losses could occur
+- ❌ System could be compromised
+
+### Immediate Steps if Exposed:
 
 1. **Revoke the exposed key immediately**
 2. **Generate a new key**
 3. **Update all services using the old key**
 4. **Never commit keys to git**
+5. **Audit git history for exposed keys**
 
 ---
 
@@ -32,6 +54,39 @@ nano .env
 echo ".env" >> .gitignore
 echo ".env.local" >> .gitignore
 echo ".env.*.local" >> .gitignore
+echo "config.json" >> .gitignore  # If it contains sensitive data
+```
+
+### ⚠️ Important: config.json Security
+
+**For setup/documentation, config.json contains actual keys.**
+
+**For production:**
+
+1. **Option A: Use environment variables in config.json**
+   ```json
+   {
+     "storage": {
+       "ipfs_api_key": "${IPFS_API_KEY}"
+     }
+   }
+   ```
+
+2. **Option B: Load config from environment**
+   ```go
+   config.Storage.IPFSAPIKey = os.Getenv("IPFS_API_KEY")
+   ```
+
+3. **Option C: Use separate config files**
+   ```bash
+   config.example.json  # Commit this (no real keys)
+   config.json          # Gitignore this (real keys)
+   ```
+
+**Verify config.json is gitignored:**
+```bash
+git check-ignore config.json
+# Should output: config.json
 ```
 
 ### For GitHub Actions
