@@ -28,7 +28,7 @@ GOOGLE_API_KEY=4/0ATX87lMSK6Ko84IahZvklAP5AsQ3uk1lWICkMXqHYCB7nsKMwuu3HMXEnzaYiZ
   "alchemyEndpoint": "https://polygon-amoy.g.alchemy.com/v2/4-gxorN-H4MhqZWrskRQ-",
   "gasPolicyId": "2e114558-d9e8-4a3c-8290-ff9e6023f486",
   "ipfsApiKey": "787a512e.0a43e609db2a4913a861b6f0de5dd6e7",
-  "relayerAddress": "0x4C97260183BaD57AbF37f0119695f0607f2c3921",
+  "relayerAddress": "0xYourRelayerAddressHere",
   "googleApiKey": "4/0ATX87lMSK6Ko84IahZvklAP5AsQ3uk1lWICkMXqHYCB7nsKMwuu3HMXEnzaYiZrK8jhXjw"
 }
 ```

@@ -28,8 +28,8 @@ backend/
 ```bash
 # Polygon Network
 POLYGON_RPC_URL=https://polygon-amoy.g.alchemy.com/v2/4-gxorN-H4MhqZWrskRQ-
-POLYGON_PRIVATE_KEY=0xe4cbd7171db39d6d336b6555e0e1eec1c2da2cbc5ddc4a90c4acf61904552c56
-POLYGON_RELAYER_ADDRESS=0x4C97260183BaD57AbF37f0119695f0607f2c3921
+POLYGON_PRIVATE_KEY=0xyour_private_key_here
+POLYGON_RELAYER_ADDRESS=0xYourRelayerAddressHere
 
 # IPFS (Choose one)
 NFT_STORAGE_API_KEY=your_key_here  # Free option
@@ -40,7 +40,7 @@ PINATA_SECRET_KEY=your_key_here
 ### Wallet Details
 
 - **Network:** Polygon Amoy Testnet (Chain ID: 80002)
-- **Relayer Address:** `0x4C97260183BaD57AbF37f0119695f0607f2c3921`
+- **Relayer Address:** `0xYourRelayerAddressHere`
 - **RPC Provider:** Alchemy
 - **Current Balance:** ✅ 0.1 POL (Funded and ready!)
 
@@ -232,7 +232,7 @@ Monitor your minting activity:
 ### PolygonScan
 
 View transactions and NFTs:
-- Relayer: [https://amoy.polygonscan.com/address/0x4C97260183BaD57AbF37f0119695f0607f2c3921](https://amoy.polygonscan.com/address/0x4C97260183BaD57AbF37f0119695f0607f2c3921)
+- Relayer: [https://amoy.polygonscan.com/address/0xYourRelayerAddressHere](https://amoy.polygonscan.com/address/0xYourRelayerAddressHere)
 
 ## 🛠️ Utility Functions
 

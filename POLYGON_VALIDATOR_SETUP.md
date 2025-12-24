@@ -35,7 +35,7 @@ Replace Alchemy endpoint with your validator:
   "alchemyEndpoint": "https://polygon-amoy.g.alchemy.com/v2/4-gxorN-H4MhqZWrskRQ-",
   "gasPolicyId": "2e114558-d9e8-4a3c-8290-ff9e6023f486",
   "ipfsApiKey": "787a512e.0a43e609db2a4913a861b6f0de5dd6e7",
-  "relayerAddress": "0x4C97260183BaD57AbF37f0119695f0607f2c3921"
+  "relayerAddress": "0xYourRelayerAddressHere"
 }
 ```
 
@@ -52,8 +52,8 @@ POLYGON_RPC_URL_EXTERNAL=http://34.10.5.8:8545
 ALCHEMY_RPC_URL=https://polygon-amoy.g.alchemy.com/v2/4-gxorN-H4MhqZWrskRQ-
 
 # Relayer
-RELAYER_ADDRESS=0x4C97260183BaD57AbF37f0119695f0607f2c3921
-PRIVATE_KEY=0xe4cbd7171db39d6d336b6555e0e1eec1c2da2cbc5ddc4a90c4acf61904552c56
+RELAYER_ADDRESS=0xYourRelayerAddressHere
+PRIVATE_KEY=0xyour_private_key_here
 
 # IPFS
 IPFS_JWT=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
@@ -117,7 +117,7 @@ Expected output:
 🔍 Checking relayer wallet balance...
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✅ Connected to Polygon validator: 10.128.0.2:8545
-📍 Relayer Address: 0x4C97260183BaD57AbF37f0119695f0607f2c3921
+📍 Relayer Address: 0xYourRelayerAddressHere
 💰 Balance: 0.0850 POL
 💵 USD Value: $0.04
 ⛽ Gas Price: 35.2 Gwei

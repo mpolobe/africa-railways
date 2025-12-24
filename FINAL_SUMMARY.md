@@ -152,8 +152,8 @@ curl -X POST http://localhost:8081/ussd \
 **backend/.env**:
 ```env
 POLYGON_RPC_URL=https://polygon-amoy.g.alchemy.com/v2/YOUR_KEY
-RELAYER_ADDRESS=0x4C97260183BaD57AbF37f0119695f0607f2c3921
-PRIVATE_KEY=0xe4cbd7171db39d6d336b6555e0e1eec1c2da2cbc5ddc4a90c4acf61904552c56
+RELAYER_ADDRESS=0xYourRelayerAddressHere
+PRIVATE_KEY=0xyour_private_key_here
 ```
 
 ### Environment Variables
@@ -198,7 +198,7 @@ export USSD_HEALTH_URL="http://localhost:8081/health"
 
 ### 2. Relayer Bridge (Go)
 - **Purpose**: Gasless NFT minting
-- **Wallet**: 0x4C97260183BaD57AbF37f0119695f0607f2c3921
+- **Wallet**: 0xYourRelayerAddressHere
 - **Balance**: 0.0850 POL (~425 tx)
 - **Gas Policy**: 2e114558-d9e8-4a3c-8290-ff9e6023f486
 

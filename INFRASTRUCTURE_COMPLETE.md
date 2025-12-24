@@ -95,7 +95,7 @@ gcloud compute ssh sui-fullnode \
 
 **Specifications**:
 - **Language**: Go
-- **Wallet**: 0x4C97260183BaD57AbF37f0119695f0607f2c3921
+- **Wallet**: 0xYourRelayerAddressHere
 - **Balance**: 0.0850 POL (~425 transactions)
 - **Gas Policy**: 2e114558-d9e8-4a3c-8290-ff9e6023f486
 
@@ -323,8 +323,8 @@ tail -f alerts.log
 **`backend/.env`** (gitignored):
 ```env
 POLYGON_RPC_URL=https://polygon-amoy.g.alchemy.com/v2/YOUR_KEY
-RELAYER_ADDRESS=0x4C97260183BaD57AbF37f0119695f0607f2c3921
-PRIVATE_KEY=0xe4cbd7171db39d6d336b6555e0e1eec1c2da2cbc5ddc4a90c4acf61904552c56
+RELAYER_ADDRESS=0xYourRelayerAddressHere
+PRIVATE_KEY=0xyour_private_key_here
 ```
 
 ### Environment Variables

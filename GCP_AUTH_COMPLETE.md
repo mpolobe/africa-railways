@@ -113,7 +113,7 @@ Now that you're authenticated, update your relayer to use the validator:
   "alchemyEndpoint": "https://polygon-amoy.g.alchemy.com/v2/4-gxorN-H4MhqZWrskRQ-",
   "gasPolicyId": "2e114558-d9e8-4a3c-8290-ff9e6023f486",
   "ipfsApiKey": "787a512e.0a43e609db2a4913a861b6f0de5dd6e7",
-  "relayerAddress": "0x4C97260183BaD57AbF37f0119695f0607f2c3921",
+  "relayerAddress": "0xYourRelayerAddressHere",
   "suiRpcUrl": "https://fullnode.testnet.sui.io:443"
 }
 ```
@@ -149,7 +149,7 @@ Sui → Polygon Event Bridge with Heartbeat
 ✅ Configuration loaded
    Polygon RPC: http://10.128.0.2:8545
    Sui RPC: https://fullnode.testnet.sui.io:443
-   Relayer: 0x4C97260183BaD57AbF37f0119695f0607f2c3921
+   Relayer: 0xYourRelayerAddressHere
 🔗 Connecting to Polygon...
 ✅ Connected to Polygon validator
 📦 Latest Block: 12345678
@@ -319,7 +319,7 @@ go build -o relayer relayer.go
 
 # Configure
 export POLYGON_RPC_URL="http://10.128.0.2:8545"
-export RELAYER_ADDRESS="0x4C97260183BaD57AbF37f0119695f0607f2c3921"
+export RELAYER_ADDRESS="0xYourRelayerAddressHere"
 
 # Run
 ./relayer

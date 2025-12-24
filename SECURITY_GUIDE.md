@@ -12,8 +12,8 @@ The following credentials are **CRITICAL** and must NEVER be committed to git:
 1. Gas Policy ID: 2e114558-d9e8-4a3c-8290-ff9e6023f486
 2. IPFS API Key: 787a512e.0a43e609db2a4913a861b6f0de5dd6e7
 3. Alchemy API Key: 4-gxorN-H4MhqZWrskRQ-
-4. Private Key: 0xe4cbd7171db39d6d336b6555e0e1eec1c2da2cbc5ddc4a90c4acf61904552c56
-5. Relayer Address: 0x4C97260183BaD57AbF37f0119695f0607f2c3921
+4. Private Key: 0xyour_private_key_here
+5. Relayer Address: 0xYourRelayerAddressHere
 ```
 
 ### ⚠️ Why This Matters

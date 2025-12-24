@@ -36,7 +36,7 @@ Sui → Polygon Event Bridge with Heartbeat
 ✅ Configuration loaded
    Polygon RPC: http://10.128.0.2:8545
    Sui RPC: https://fullnode.testnet.sui.io:443
-   Relayer: 0x4C97260183BaD57AbF37f0119695f0607f2c3921
+   Relayer: 0xYourRelayerAddressHere
 🔗 Connecting to Polygon...
 ✅ Connected to Polygon validator
 📦 Latest Block: 12345678
@@ -84,7 +84,7 @@ Expected response:
   "rpc_url": "http://10.128.0.2:8545",
   "using_validator": true,
   "latest_block": 12345678,
-  "relayer_address": "0x4C97260183BaD57AbF37f0119695f0607f2c3921",
+  "relayer_address": "0xYourRelayerAddressHere",
   "balance_pol": 0.0850,
   "gas_price_gwei": 35.20,
   "estimated_tx": 425,
@@ -104,7 +104,7 @@ Expected response:
 {
   "balance_pol": 0.0850,
   "balance_usd": 0.04,
-  "address": "0x4C97260183BaD57AbF37f0119695f0607f2c3921"
+  "address": "0xYourRelayerAddressHere"
 }
 ```
 
@@ -396,7 +396,7 @@ go build -o relayer relayer.go
 
 # Set environment variables
 export POLYGON_RPC_URL="http://10.128.0.2:8545"
-export RELAYER_ADDRESS="0x4C97260183BaD57AbF37f0119695f0607f2c3921"
+export RELAYER_ADDRESS="0xYourRelayerAddressHere"
 
 # Run relayer
 ./relayer
@@ -416,7 +416,7 @@ WorkingDirectory=/opt/africa-railways
 ExecStart=/opt/africa-railways/relayer
 Restart=always
 Environment="POLYGON_RPC_URL=http://10.128.0.2:8545"
-Environment="RELAYER_ADDRESS=0x4C97260183BaD57AbF37f0119695f0607f2c3921"
+Environment="RELAYER_ADDRESS=0xYourRelayerAddressHere"
 Environment="RELAYER_PORT=8082"
 
 [Install]

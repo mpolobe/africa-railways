@@ -59,7 +59,7 @@ All components configured, tested, and secured for deployment.
   },
   "blockchain": {
     "gas_policy_id": "2e114558-d9e8-4a3c-8290-ff9e6023f486",
-    "relayer_address": "0x4C97260183BaD57AbF37f0119695f0607f2c3921"
+    "relayer_address": "0xYourRelayerAddressHere"
   },
   "storage": {
     "ipfs_api_key": "787a512e.0a43e609db2a4913a861b6f0de5dd6e7",
@@ -330,7 +330,7 @@ func handleUSSDTicketPurchase(session *USSDSession) string {
 - Automated metadata upload
 
 ✅ **Wallet & Network**
-- Address: `0x4C97260183BaD57AbF37f0119695f0607f2c3921`
+- Address: `0xYourRelayerAddressHere`
 - Balance: 0.1 POL
 - Network: Polygon Amoy (Chain ID: 80002)
 

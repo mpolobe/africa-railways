@@ -25,7 +25,7 @@ All configuration is centralized in `config.json`:
   "blockchain": {
     "polygon_endpoint": "https://polygon-amoy.g.alchemy.com/v2/YOUR_API_KEY",
     "gas_policy_id": "2e114558-d9e8-4a3c-8290-ff9e6023f486",
-    "relayer_address": "0x4C97260183BaD57AbF37f0119695f0607f2c3921",
+    "relayer_address": "0xYourRelayerAddressHere",
     "chain_id": 80002,
     "entry_point": "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789"
   },

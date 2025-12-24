@@ -8,7 +8,7 @@ The relayer wallet needs POL tokens to pay for gas fees when minting NFT tickets
 
 ✅ **Wallet Funded and Ready**
 
-- **Address:** `0x4C97260183BaD57AbF37f0119695f0607f2c3921`
+- **Address:** `0xYourRelayerAddressHere`
 - **Balance:** 0.1 POL
 - **Network:** Polygon Amoy Testnet
 - **Estimated Mints:** ~500 transactions
@@ -31,7 +31,7 @@ GOTOOLCHAIN=auto go run cmd/check-balance/main.go
 🔗 Connecting to Polygon Amoy via Alchemy...
 ✅ Connected to Chain ID: 80002
 
-📍 Relayer Address: 0x4C97260183BaD57AbF37f0119695f0607f2c3921
+📍 Relayer Address: 0xYourRelayerAddressHere
 
 💰 Fetching Live Balance...
 
@@ -80,7 +80,7 @@ import (
 )
 
 client, _ := ethclient.Dial(os.Getenv("POLYGON_RPC_URL"))
-address := common.HexToAddress("0x4C97260183BaD57AbF37f0119695f0607f2c3921")
+address := common.HexToAddress("0xYourRelayerAddressHere")
 
 balance, err := getRelayerBalance(client, address)
 if err != nil {
@@ -224,13 +224,13 @@ func mintTicketWithBalanceCheck(ticket TicketDetails) error {
 
 **Faucet:**
 1. Visit: [https://faucet.polygon.technology](https://faucet.polygon.technology)
-2. Enter address: `0x4C97260183BaD57AbF37f0119695f0607f2c3921`
+2. Enter address: `0xYourRelayerAddressHere`
 3. Request tokens (usually 0.1 - 0.5 POL per request)
 4. Wait 1-2 minutes for confirmation
 
 **Check Transaction:**
 ```
-https://amoy.polygonscan.com/address/0x4C97260183BaD57AbF37f0119695f0607f2c3921
+https://amoy.polygonscan.com/address/0xYourRelayerAddressHere
 ```
 
 ### Mainnet (Production)
@@ -327,7 +327,7 @@ GOTOOLCHAIN=auto go run cmd/check-balance/main.go
 
 **Verify on PolygonScan:**
 ```
-https://amoy.polygonscan.com/address/0x4C97260183BaD57AbF37f0119695f0607f2c3921
+https://amoy.polygonscan.com/address/0xYourRelayerAddressHere
 ```
 
 ### "Insufficient Funds" Error

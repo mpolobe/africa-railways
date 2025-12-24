@@ -12,13 +12,13 @@ The `.env` file contains:
 
 ```bash
 POLYGON_RPC_URL=https://polygon-amoy.g.alchemy.com/v2/4-gxorN-H4MhqZWrskRQ-
-POLYGON_PRIVATE_KEY=0xe4cbd7171db39d6d336b6555e0e1eec1c2da2cbc5ddc4a90c4acf61904552c56
+POLYGON_PRIVATE_KEY=0xyour_private_key_here
 ```
 
 ### Wallet Details
 
 - **Network:** Polygon Amoy Testnet (Chain ID: 80002)
-- **Relayer Address:** `0x4C97260183BaD57AbF37f0119695f0607f2c3921`
+- **Relayer Address:** `0xYourRelayerAddressHere`
 - **RPC Provider:** Alchemy
 
 ## Setup Steps
@@ -28,7 +28,7 @@ POLYGON_PRIVATE_KEY=0xe4cbd7171db39d6d336b6555e0e1eec1c2da2cbc5ddc4a90c4acf61904
 Get test MATIC tokens from the Polygon faucet:
 
 1. Visit [https://faucet.polygon.technology](https://faucet.polygon.technology)
-2. Enter address: `0x4C97260183BaD57AbF37f0119695f0607f2c3921`
+2. Enter address: `0xYourRelayerAddressHere`
 3. Request test MATIC (needed for gas fees)
 
 ### 2. Run the Minting Script
@@ -43,7 +43,7 @@ go run cmd/mint-ticket/main.go
 ```
 🔗 Connecting to Polygon Amoy via Alchemy...
 ✅ Connected to Chain ID: 80002
-🔑 Relayer Address: 0x4C97260183BaD57AbF37f0119695f0607f2c3921
+🔑 Relayer Address: 0xYourRelayerAddressHere
 💰 Balance: 0.500000 MATIC
 
 🎫 Preparing NFT Ticket Mint Transaction...
@@ -146,7 +146,7 @@ if err != nil {
 
 ### View Transactions
 
-- **PolygonScan Amoy:** [https://amoy.polygonscan.com/address/0x4C97260183BaD57AbF37f0119695f0607f2c3921](https://amoy.polygonscan.com/address/0x4C97260183BaD57AbF37f0119695f0607f2c3921)
+- **PolygonScan Amoy:** [https://amoy.polygonscan.com/address/0xYourRelayerAddressHere](https://amoy.polygonscan.com/address/0xYourRelayerAddressHere)
 
 ### Check Balance
 

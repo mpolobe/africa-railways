@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"crypto/ecdsa"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -14,7 +15,9 @@ import (
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/joho/godotenv"
 )
 
 // Config holds monitoring configuration
@@ -61,6 +64,16 @@ func main() {
 	log.Println("🛰️  Africa Railways Monitor Engine Starting...")
 	log.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
+	// Load .env file
+	if err := godotenv.Load(".env"); err != nil {
+		log.Printf("⚠️  Warning: .env file not found, using environment variables")
+	}
+
+	// Auto-detect relayer address from private key
+	if err := autoDetectRelayerAddress(); err != nil {
+		log.Printf("⚠️  Warning: Could not auto-detect relayer address: %v", err)
+	}
+
 	// Load configuration
 	if err := loadConfig(); err != nil {
 		log.Fatalf("❌ Failed to load config: %v", err)
@@ -82,6 +95,41 @@ func main() {
 	for range ticker.C {
 		runHealthCheck()
 	}
+}
+
+// autoDetectRelayerAddress derives the public address from RELAYER_PRIVATE_KEY
+func autoDetectRelayerAddress() error {
+	privKeyHex := os.Getenv("RELAYER_PRIVATE_KEY")
+	if privKeyHex == "" {
+		return fmt.Errorf("RELAYER_PRIVATE_KEY not found in environment")
+	}
+
+	address, err := deriveAddress(privKeyHex)
+	if err != nil {
+		return fmt.Errorf("failed to derive address: %w", err)
+	}
+
+	// Set for session use
+	os.Setenv("RELAYER_ADDRESS", address)
+	log.Printf("🔐 Auto-detected Relayer Address: %s", address)
+
+	return nil
+}
+
+// deriveAddress derives the Ethereum address from a private key hex string
+func deriveAddress(hexKey string) (string, error) {
+	privateKey, err := crypto.HexToECDSA(hexKey)
+	if err != nil {
+		return "", err
+	}
+
+	publicKey := privateKey.Public()
+	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+	if !ok {
+		return "", fmt.Errorf("error casting public key to ECDSA")
+	}
+
+	return crypto.PubkeyToAddress(*publicKeyECDSA).Hex(), nil
 }
 
 func loadConfig() error {

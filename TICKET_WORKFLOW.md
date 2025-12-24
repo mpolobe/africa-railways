@@ -324,7 +324,7 @@ go run cmd/mint-ticket-full/main.go
    ✅ Connected to Chain ID: 80002
 
 🔑 Step 4: Loading Relayer Wallet...
-   ✅ Relayer Address: 0x4C97260183BaD57AbF37f0119695f0607f2c3921
+   ✅ Relayer Address: 0xYourRelayerAddressHere
    💰 Balance: 0.500000 POL
 
 🎨 Step 5: Preparing Mint Transaction...

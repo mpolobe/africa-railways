@@ -34,7 +34,7 @@ All components are configured, tested, and ready for deployment.
   "blockchain": {
     "polygon_endpoint": "https://polygon-amoy.g.alchemy.com/v2/4-gxorN-H4MhqZWrskRQ-",
     "gas_policy_id": "2e114558-d9e8-4a3c-8290-ff9e6023f486",
-    "relayer_address": "0x4C97260183BaD57AbF37f0119695f0607f2c3921",
+    "relayer_address": "0xYourRelayerAddressHere",
     "chain_id": 80002
   },
   "storage": {
@@ -54,7 +54,7 @@ All components are configured, tested, and ready for deployment.
 
 - **Gas Policy ID:** `2e114558-d9e8-4a3c-8290-ff9e6023f486` ← THE SECRET SAUCE
 - **IPFS API Key:** `787a512e.0a43e609db2a4913a861b6f0de5dd6e7`
-- **Relayer Address:** `0x4C97260183BaD57AbF37f0119695f0607f2c3921`
+- **Relayer Address:** `0xYourRelayerAddressHere`
 - **Network:** Polygon Amoy Testnet (Chain ID: 80002)
 
 ---
@@ -440,7 +440,7 @@ All infrastructure is configured and tested. The system is ready to mint gasless
 
 - [x] Gas Policy ID: `2e114558-d9e8-4a3c-8290-ff9e6023f486`
 - [x] IPFS API Key: `787a512e.0a43e609db2a4913a861b6f0de5dd6e7`
-- [x] Relayer Wallet: `0x4C97260183BaD57AbF37f0119695f0607f2c3921`
+- [x] Relayer Wallet: `0xYourRelayerAddressHere`
 - [x] Balance: 0.1 POL (funded)
 - [x] Network: Polygon Amoy (connected)
 - [x] Configuration: config.json (complete)
