@@ -42,6 +42,14 @@ function updateBlockchainMetrics(blockchain) {
     document.getElementById('sui-status').textContent = suiStatus;
     document.getElementById('sui-latency').textContent = `${blockchain.sui.network_latency_ms}ms`;
     
+    // Sui detailed metrics
+    document.getElementById('sui-epoch').textContent = blockchain.sui.current_epoch || '--';
+    document.getElementById('sui-checkpoint').textContent = blockchain.sui.latest_checkpoint ? 
+        parseInt(blockchain.sui.latest_checkpoint).toLocaleString() : '--';
+    document.getElementById('sui-total-tx').textContent = blockchain.sui.total_transactions ? 
+        parseInt(blockchain.sui.total_transactions).toLocaleString() : '--';
+    document.getElementById('sui-gas-price').textContent = blockchain.sui.reference_gas_price || '--';
+    
     // Update card status indicator
     const blockchainStatusIcon = document.getElementById('blockchain-status');
     if (blockchain.polygon.connected && blockchain.sui.connected) {

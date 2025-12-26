@@ -53,10 +53,16 @@ type PolygonMetrics struct {
 }
 
 type SuiMetrics struct {
-	Connected      bool      `json:"connected"`
-	EventCount     int64     `json:"event_count"`
-	LastEventTime  time.Time `json:"last_event_time"`
-	NetworkLatency int64     `json:"network_latency_ms"`
+	Connected              bool      `json:"connected"`
+	CurrentEpoch           string    `json:"current_epoch"`
+	LatestCheckpoint       string    `json:"latest_checkpoint"`
+	TotalTransactions      string    `json:"total_transactions"`
+	ReferenceGasPrice      string    `json:"reference_gas_price"`
+	EventCount             int64     `json:"event_count"`
+	LastEventTime          time.Time `json:"last_event_time"`
+	NetworkLatency         int64     `json:"network_latency_ms"`
+	EpochStartTimestamp    string    `json:"epoch_start_timestamp"`
+	EpochDurationMs        string    `json:"epoch_duration_ms"`
 }
 
 type WalletMetrics struct {
@@ -321,6 +327,13 @@ func collectMetrics(config Config) SystemMetrics {
 		metrics.USSD = collectUSSDMetrics(config)
 	}()
 
+	// Collect Sui metrics
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		metrics.Blockchain.Sui = collectSuiMetrics(config)
+	}()
+
 	// Collect System Health
 	wg.Add(1)
 	go func() {
@@ -439,6 +452,101 @@ func collectIPFSMetrics(config Config) IPFSMetrics {
 	metrics.AverageUploadTime = 500
 
 	return metrics
+}
+
+func collectSuiMetrics(config Config) SuiMetrics {
+	metrics := SuiMetrics{
+		Connected: false,
+	}
+
+	suiRPC := os.Getenv("SUI_RPC_URL")
+	if suiRPC == "" {
+		suiRPC = "https://fullnode.testnet.sui.io:443"
+	}
+
+	httpClient := &http.Client{Timeout: 5 * time.Second}
+	start := time.Now()
+
+	// Fetch latest checkpoint
+	checkpoint, err := callSuiRPC(httpClient, suiRPC, "sui_getLatestCheckpointSequenceNumber", []interface{}{})
+	if err == nil && checkpoint != nil {
+		metrics.Connected = true
+		metrics.NetworkLatency = time.Since(start).Milliseconds()
+		if checkpointStr, ok := checkpoint.(string); ok {
+			metrics.LatestCheckpoint = checkpointStr
+		}
+	}
+
+	// Fetch total transactions
+	totalTx, err := callSuiRPC(httpClient, suiRPC, "sui_getTotalTransactionBlocks", []interface{}{})
+	if err == nil && totalTx != nil {
+		if txStr, ok := totalTx.(string); ok {
+			metrics.TotalTransactions = txStr
+		}
+	}
+
+	// Fetch reference gas price
+	gasPrice, err := callSuiRPC(httpClient, suiRPC, "suix_getReferenceGasPrice", []interface{}{})
+	if err == nil && gasPrice != nil {
+		if gasPriceStr, ok := gasPrice.(string); ok {
+			metrics.ReferenceGasPrice = gasPriceStr
+		}
+	}
+
+	// Fetch system state for epoch info
+	systemState, err := callSuiRPC(httpClient, suiRPC, "suix_getLatestSuiSystemState", []interface{}{})
+	if err == nil && systemState != nil {
+		if stateMap, ok := systemState.(map[string]interface{}); ok {
+			if epoch, ok := stateMap["epoch"].(string); ok {
+				metrics.CurrentEpoch = epoch
+			}
+			if epochStart, ok := stateMap["epochStartTimestampMs"].(string); ok {
+				metrics.EpochStartTimestamp = epochStart
+			}
+			if epochDuration, ok := stateMap["epochDurationMs"].(string); ok {
+				metrics.EpochDurationMs = epochDuration
+			}
+		}
+	}
+
+	return metrics
+}
+
+func callSuiRPC(client *http.Client, rpcURL string, method string, params []interface{}) (interface{}, error) {
+	payload := map[string]interface{}{
+		"jsonrpc": "2.0",
+		"id":      1,
+		"method":  method,
+		"params":  params,
+	}
+
+	jsonData, err := json.Marshal(payload)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", rpcURL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var result map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, err
+	}
+
+	if resultData, ok := result["result"]; ok {
+		return resultData, nil
+	}
+
+	return nil, fmt.Errorf("no result in response")
 }
 
 func collectUSSDMetrics(config Config) USSDMetrics {
