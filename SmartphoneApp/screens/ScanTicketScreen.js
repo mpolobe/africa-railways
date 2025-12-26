@@ -4,9 +4,9 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alchemy, Network } from 'alchemy-sdk';
 
-// Use the credentials from your root config.json
+// Use the credentials from environment variables
 const settings = {
-  apiKey: "4-gxorN-H4MhqZWrskRQ-", // Your Alchemy Key
+  apiKey: process.env.ALCHEMY_SDK_KEY || process.env.EXPO_PUBLIC_ALCHEMY_SDK_KEY,
   network: Network.MATIC_AMOY,      // Polygon Amoy Testnet
 };
 
