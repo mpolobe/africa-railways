@@ -190,6 +190,14 @@ func main() {
 	fs := http.FileServer(http.Dir("static"))
 	mux.Handle("/", fs)
 	
+	// OCC route - serve the dashboard at /occ
+	mux.HandleFunc("/occ", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "static/index.html")
+	})
+	mux.HandleFunc("/occ/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "static/index.html")
+	})
+	
 	// API endpoints
 	mux.HandleFunc("/api/metrics", handleMetrics)
 	mux.HandleFunc("/api/health", handleHealth)
