@@ -143,17 +143,21 @@ curl -X POST http://localhost:8081/ussd \
 **config.json** (root):
 ```json
 {
-  "alchemyEndpoint": "https://polygon-amoy.g.alchemy.com/v2/YOUR_KEY",
-  "gasPolicyId": "2e114558-d9e8-4a3c-8290-ff9e6023f486",
-  "ipfsApiKey": "787a512e.0a43e609db2a4913a861b6f0de5dd6e7"
+  "alchemyEndpoint": "your_alchemy_endpoint_here",
+  "gasPolicyId": "your_gas_policy_id_here",
+  "ipfsApiKey": "your_ipfs_api_key_here"
 }
 ```
 
-**backend/.env**:
+**backend/.env** or **.env**:
 ```env
-POLYGON_RPC_URL=https://polygon-amoy.g.alchemy.com/v2/YOUR_KEY
-RELAYER_ADDRESS=0xYourRelayerAddressHere
-PRIVATE_KEY=0xyour_private_key_here
+POLYGON_RPC_URL=your_polygon_rpc_url_here
+RELAYER_ADDRESS=your_relayer_address_here
+PRIVATE_KEY=your_private_key_here
+ALCHEMY_RPC_URL=your_alchemy_rpc_url_here
+GOOGLE_API_KEY=your_google_api_key_here
+GAS_POLICY_ID=your_gas_policy_id_here
+IPFS_API_KEY=your_ipfs_api_key_here
 ```
 
 ### Environment Variables
@@ -198,9 +202,9 @@ export USSD_HEALTH_URL="http://localhost:8081/health"
 
 ### 2. Relayer Bridge (Go)
 - **Purpose**: Gasless NFT minting
-- **Wallet**: 0xYourRelayerAddressHere
-- **Balance**: 0.0850 POL (~425 tx)
-- **Gas Policy**: 2e114558-d9e8-4a3c-8290-ff9e6023f486
+- **Wallet**: See .env file for RELAYER_ADDRESS
+- **Balance**: Check via dashboard
+- **Gas Policy**: See .env file for GAS_POLICY_ID
 
 ### 3. Legacy Workers (AWS EC2)
 - **Purpose**: Background processing

@@ -67,7 +67,7 @@ func initialize() error {
 		log.Printf("⚠️  Primary RPC failed, trying Alchemy fallback...")
 		alchemyURL := os.Getenv("ALCHEMY_RPC_URL")
 		if alchemyURL == "" {
-			alchemyURL = "https://polygon-amoy.g.alchemy.com/v2/4-gxorN-H4MhqZWrskRQ-"
+			return fmt.Errorf("ALCHEMY_RPC_URL environment variable not set")
 		}
 		client, err = ethclient.Dial(alchemyURL)
 		if err != nil {
@@ -91,7 +91,7 @@ func initialize() error {
 	// Get relayer address
 	addressStr := os.Getenv("RELAYER_ADDRESS")
 	if addressStr == "" {
-		addressStr = "0x4C97260183BaD57AbF37f0119695f0607f2c3921" // Default
+		return fmt.Errorf("RELAYER_ADDRESS environment variable not set")
 	}
 	relayerAddress = common.HexToAddress(addressStr)
 	log.Printf("📍 Relayer Address: %s", relayerAddress.Hex())

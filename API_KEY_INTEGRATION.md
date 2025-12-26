@@ -6,30 +6,28 @@
 
 ## Your API Key
 
-```
-4/0ATX87lMSK6Ko84IahZvklAP5AsQ3uk1lWICkMXqHYCB7nsKMwuu3HMXEnzaYiZrK8jhXjw
-```
+**API key has been moved to `.env` file for security.**
 
-This appears to be a Google OAuth token or API key.
+Check the `.env` file for the `GOOGLE_API_KEY` variable.
 
 ## Secure Storage
 
 ### 1. Add to .env File (Gitignored)
 
 ```bash
-# backend/.env
-GOOGLE_API_KEY=4/0ATX87lMSK6Ko84IahZvklAP5AsQ3uk1lWICkMXqHYCB7nsKMwuu3HMXEnzaYiZrK8jhXjw
+# backend/.env or .env
+GOOGLE_API_KEY=your_google_api_key_here
 ```
 
 ### 2. Add to config.json (Gitignored)
 
 ```json
 {
-  "alchemyEndpoint": "https://polygon-amoy.g.alchemy.com/v2/4-gxorN-H4MhqZWrskRQ-",
-  "gasPolicyId": "2e114558-d9e8-4a3c-8290-ff9e6023f486",
-  "ipfsApiKey": "787a512e.0a43e609db2a4913a861b6f0de5dd6e7",
+  "alchemyEndpoint": "your_alchemy_endpoint_here",
+  "gasPolicyId": "your_gas_policy_id_here",
+  "ipfsApiKey": "your_ipfs_api_key_here",
   "relayerAddress": "0xYourRelayerAddressHere",
-  "googleApiKey": "4/0ATX87lMSK6Ko84IahZvklAP5AsQ3uk1lWICkMXqHYCB7nsKMwuu3HMXEnzaYiZrK8jhXjw"
+  "googleApiKey": "your_google_api_key_here"
 }
 ```
 
@@ -37,7 +35,7 @@ GOOGLE_API_KEY=4/0ATX87lMSK6Ko84IahZvklAP5AsQ3uk1lWICkMXqHYCB7nsKMwuu3HMXEnzaYiZ
 
 ```bash
 # Add to ~/.bashrc or ~/.zshrc
-export GOOGLE_API_KEY="4/0ATX87lMSK6Ko84IahZvklAP5AsQ3uk1lWICkMXqHYCB7nsKMwuu3HMXEnzaYiZrK8jhXjw"
+export GOOGLE_API_KEY="your_google_api_key_here"
 
 # Reload shell
 source ~/.bashrc
@@ -138,7 +136,7 @@ If this is an OAuth authorization code:
 ```bash
 # Exchange for access token
 curl -X POST https://oauth2.googleapis.com/token \
-  -d "code=4/0ATX87lMSK6Ko84IahZvklAP5AsQ3uk1lWICkMXqHYCB7nsKMwuu3HMXEnzaYiZrK8jhXjw" \
+  -d "code=YOUR_AUTHORIZATION_CODE" \
   -d "client_id=YOUR_CLIENT_ID" \
   -d "client_secret=YOUR_CLIENT_SECRET" \
   -d "redirect_uri=YOUR_REDIRECT_URI" \
@@ -293,7 +291,7 @@ go run test-api-key.go
 
 ```bash
 # Set environment variable
-export GOOGLE_API_KEY="4/0ATX87lMSK6Ko84IahZvklAP5AsQ3uk1lWICkMXqHYCB7nsKMwuu3HMXEnzaYiZrK8jhXjw"
+export GOOGLE_API_KEY="your_google_api_key_here"
 
 # Start relayer
 ./relayer

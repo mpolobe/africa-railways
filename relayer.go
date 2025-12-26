@@ -179,13 +179,22 @@ func loadConfig() error {
 
 	// Set defaults
 	if config.PolygonRPCURL == "" {
-		config.PolygonRPCURL = "http://10.128.0.2:8545" // Internal validator
+		config.PolygonRPCURL = os.Getenv("POLYGON_RPC_URL")
+		if config.PolygonRPCURL == "" {
+			config.PolygonRPCURL = "http://10.128.0.2:8545" // Internal validator
+		}
 	}
 	if config.AlchemyEndpoint == "" {
-		config.AlchemyEndpoint = "https://polygon-amoy.g.alchemy.com/v2/4-gxorN-H4MhqZWrskRQ-"
+		config.AlchemyEndpoint = os.Getenv("ALCHEMY_RPC_URL")
+		if config.AlchemyEndpoint == "" {
+			log.Fatal("❌ ALCHEMY_RPC_URL not set in config.json or environment")
+		}
 	}
 	if config.RelayerAddress == "" {
-		config.RelayerAddress = "0x4C97260183BaD57AbF37f0119695f0607f2c3921"
+		config.RelayerAddress = os.Getenv("RELAYER_ADDRESS")
+		if config.RelayerAddress == "" {
+			log.Fatal("❌ RELAYER_ADDRESS not set in config.json or environment")
+		}
 	}
 	if config.SuiRPCURL == "" {
 		config.SuiRPCURL = "https://fullnode.testnet.sui.io:443"
