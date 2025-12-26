@@ -1,0 +1,16 @@
+# Dockerfile for Caddy Reverse Proxy on Railway
+FROM caddy:2.7-alpine
+
+# Copy the Caddyfile
+COPY Caddyfile /etc/caddy/Caddyfile
+
+# Copy static website files
+COPY *.html /app/
+COPY *.css /app/ 2>/dev/null || true
+COPY *.js /app/ 2>/dev/null || true
+
+# Expose port (Railway will set $PORT)
+EXPOSE 8080
+
+# Start Caddy
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
