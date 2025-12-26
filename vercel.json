@@ -1,1 +1,11 @@
-{"version": 2, "cleanUrls": true, "outputDirectory": "."}
+{
+  "version": 2,
+  "cleanUrls": true,
+  "outputDirectory": ".",
+  "rewrites": [
+    {
+      "source": "/occ",
+      "destination": "/occ.html"
+    }
+  ]
+}
