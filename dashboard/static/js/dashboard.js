@@ -162,6 +162,9 @@ function updateGCPMetrics(gcp) {
         document.getElementById('sui-validator-zone').textContent = 
             gcp.sui_validator.zone || '--';
         
+        // Update CPU progress bar
+        updateCPUProgressBar('sui-validator-cpu-bar', suiCPU);
+        
         // Update stability
         const stabilityElement = document.getElementById('sui-validator-stability');
         if (suiStability !== undefined) {
@@ -203,6 +206,9 @@ function updateGCPMetrics(gcp) {
             railwayCPU > 0 ? `${railwayCPU.toFixed(1)}% CPU` : 'No data';
         document.getElementById('railway-core-zone').textContent = 
             gcp.railway_core.zone || '--';
+        
+        // Update CPU progress bar
+        updateCPUProgressBar('railway-core-cpu-bar', railwayCPU);
         
         // Update stability
         const stabilityElement = document.getElementById('railway-core-stability');
@@ -256,6 +262,29 @@ function updateGCPMetrics(gcp) {
         gcpStatusIcon.className = 'card-status warning';
     } else {
         gcpStatusIcon.className = 'card-status error';
+    }
+}
+
+function updateCPUProgressBar(elementId, cpuValue) {
+    const progressBar = document.getElementById(elementId);
+    if (!progressBar) return;
+    
+    // Set width
+    progressBar.style.width = `${cpuValue}%`;
+    
+    // Remove all threshold classes
+    progressBar.classList.remove('healthy', 'warning', 'critical');
+    
+    // Apply color based on thresholds
+    if (cpuValue >= 0 && cpuValue < 60) {
+        // 0-60%: Blue/Green (Healthy)
+        progressBar.classList.add('healthy');
+    } else if (cpuValue >= 60 && cpuValue < 85) {
+        // 60-85%: Yellow (Heavy Load)
+        progressBar.classList.add('warning');
+    } else if (cpuValue >= 85) {
+        // 85-100%: Red (Critical)
+        progressBar.classList.add('critical');
     }
 }
 

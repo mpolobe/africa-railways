@@ -1184,3 +1184,50 @@ body {
         box-shadow: 0 0 0 4px rgba(16, 185, 129, 0);
     }
 }
+
+/* CPU Progress Bars */
+.cpu-progress-bar {
+    width: 100%;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 0.75rem 0;
+    border: 1px solid var(--border-color);
+    position: relative;
+}
+
+.cpu-progress-fill {
+    height: 100%;
+    transition: width 0.5s ease, background-color 0.3s ease;
+    border-radius: 12px;
+    position: relative;
+    background: linear-gradient(90deg, #10b981, #059669);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+/* Color thresholds for CPU load */
+.cpu-progress-fill.healthy {
+    background: linear-gradient(90deg, #10b981, #059669);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.cpu-progress-fill.warning {
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+.cpu-progress-fill.critical {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+    animation: pulse-critical 1.5s infinite;
+}
+
+@keyframes pulse-critical {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
