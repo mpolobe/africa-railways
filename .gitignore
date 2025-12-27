@@ -1,7 +1,15 @@
 .env
+.env.*
 .ash_history
 .DS_Store
 node_modules/
+
+# GCP Service Account Keys
+*-key.json
+*_key.json
+service-account*.json
+credentials.json
+web-viewer-key.json
 
 # Build artifacts
 bin/sovereign-engine
