@@ -1,5 +1,6 @@
 workflows:
   # React Native - Railways App (Android)
+  # Note: EXPO_TOKEN must be set in railways_credentials group for EAS authentication
   react-native-railways-android:
     name: Africa Railways - Android
     max_build_duration: 60
@@ -36,10 +37,6 @@ workflows:
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
-      - name: Configure EAS
-        script: |
-          cd SmartphoneApp
-          eas login --non-interactive
       - name: Build Android APK
         script: |
           cd SmartphoneApp
@@ -96,10 +93,6 @@ workflows:
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
-      - name: Configure EAS
-        script: |
-          cd SmartphoneApp
-          eas login --non-interactive
       - name: Build iOS IPA
         script: |
           cd SmartphoneApp
@@ -155,10 +148,6 @@ workflows:
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
-      - name: Configure EAS
-        script: |
-          cd SmartphoneApp
-          eas login --non-interactive
       - name: Build Android APK
         script: |
           cd SmartphoneApp
@@ -215,10 +204,6 @@ workflows:
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
-      - name: Configure EAS
-        script: |
-          cd SmartphoneApp
-          eas login --non-interactive
       - name: Build iOS IPA
         script: |
           cd SmartphoneApp
@@ -364,10 +349,6 @@ workflows:
           cd SmartphoneApp
           npm install --legacy-peer-deps
           npm install -g eas-cli
-      - name: Configure EAS
-        script: |
-          cd SmartphoneApp
-          eas login --non-interactive
       - name: Build Android
         script: |
           cd SmartphoneApp
@@ -431,10 +412,6 @@ workflows:
           cd SmartphoneApp
           npm install --legacy-peer-deps
           npm install -g eas-cli
-      - name: Configure EAS
-        script: |
-          cd SmartphoneApp
-          eas login --non-interactive
       - name: Build Android
         script: |
           cd SmartphoneApp
@@ -498,10 +475,6 @@ workflows:
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
-      - name: Configure EAS
-        script: |
-          cd SmartphoneApp
-          eas login --non-interactive
       - name: Build all platforms
         script: |
           cd SmartphoneApp
@@ -557,10 +530,6 @@ workflows:
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
-      - name: Configure EAS
-        script: |
-          cd SmartphoneApp
-          eas login --non-interactive
       - name: Build preview
         script: |
           cd SmartphoneApp
