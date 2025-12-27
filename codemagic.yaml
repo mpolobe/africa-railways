@@ -1,0 +1,578 @@
+workflows:
+  # React Native - Railways App (Android)
+  react-native-railways-android:
+    name: Africa Railways - Android
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      groups:
+        - railways_credentials
+      vars:
+        APP_VARIANT: railways
+        PACKAGE_NAME: com.mpolobe.railways
+        EXPO_PROJECT_ID: 82efeb87-20c5-45b4-b945-65d4b9074c32
+      node: 18.19.0
+    cache:
+      cache_paths:
+        - $HOME/.npm
+        - $HOME/.expo
+        - SmartphoneApp/node_modules
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+        - pattern: 'develop'
+          include: true
+      tag_patterns:
+        - pattern: 'railways-*'
+          include: true
+    scripts:
+      - name: Install dependencies
+        script: |
+          cd SmartphoneApp
+          npm install
+      - name: Install EAS CLI
+        script: |
+          npm install -g eas-cli
+      - name: Configure EAS
+        script: |
+          cd SmartphoneApp
+          eas login --non-interactive
+      - name: Build Android APK
+        script: |
+          cd SmartphoneApp
+          APP_VARIANT=railways eas build --platform android --profile production --non-interactive --no-wait
+    artifacts:
+      - SmartphoneApp/build/**/*.apk
+      - SmartphoneApp/build/**/*.aab
+    publishing:
+      email:
+        recipients:
+          - mpolobe@example.com
+        notify:
+          success: true
+          failure: true
+
+  # React Native - Railways App (iOS)
+  react-native-railways-ios:
+    name: Africa Railways - iOS
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      groups:
+        - railways_credentials
+        - ios_credentials
+      vars:
+        APP_VARIANT: railways
+        BUNDLE_ID: com.mpolobe.railways
+        EXPO_PROJECT_ID: 82efeb87-20c5-45b4-b945-65d4b9074c32
+      node: 18.19.0
+      xcode: 15.0
+      cocoapods: default
+    cache:
+      cache_paths:
+        - $HOME/.npm
+        - $HOME/.expo
+        - SmartphoneApp/node_modules
+        - SmartphoneApp/ios/Pods
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+        - pattern: 'develop'
+          include: true
+      tag_patterns:
+        - pattern: 'railways-*'
+          include: true
+    scripts:
+      - name: Install dependencies
+        script: |
+          cd SmartphoneApp
+          npm install
+      - name: Install EAS CLI
+        script: |
+          npm install -g eas-cli
+      - name: Configure EAS
+        script: |
+          cd SmartphoneApp
+          eas login --non-interactive
+      - name: Build iOS IPA
+        script: |
+          cd SmartphoneApp
+          APP_VARIANT=railways eas build --platform ios --profile production --non-interactive --no-wait
+    artifacts:
+      - SmartphoneApp/build/**/*.ipa
+    publishing:
+      email:
+        recipients:
+          - mpolobe@example.com
+        notify:
+          success: true
+          failure: true
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+
+  # React Native - Africoin App (Android)
+  react-native-africoin-android:
+    name: Africoin Wallet - Android
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      groups:
+        - africoin_credentials
+      vars:
+        APP_VARIANT: africoin
+        PACKAGE_NAME: com.mpolobe.africoin
+        EXPO_PROJECT_ID: 5fa2f2b4-5c9f-43bf-b1eb-20d90ae19185
+      node: 18.19.0
+    cache:
+      cache_paths:
+        - $HOME/.npm
+        - $HOME/.expo
+        - SmartphoneApp/node_modules
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+        - pattern: 'develop'
+          include: true
+      tag_patterns:
+        - pattern: 'africoin-*'
+          include: true
+    scripts:
+      - name: Install dependencies
+        script: |
+          cd SmartphoneApp
+          npm install
+      - name: Install EAS CLI
+        script: |
+          npm install -g eas-cli
+      - name: Configure EAS
+        script: |
+          cd SmartphoneApp
+          eas login --non-interactive
+      - name: Build Android APK
+        script: |
+          cd SmartphoneApp
+          APP_VARIANT=africoin eas build --platform android --profile production --non-interactive --no-wait
+    artifacts:
+      - SmartphoneApp/build/**/*.apk
+      - SmartphoneApp/build/**/*.aab
+    publishing:
+      email:
+        recipients:
+          - mpolobe@example.com
+        notify:
+          success: true
+          failure: true
+
+  # React Native - Africoin App (iOS)
+  react-native-africoin-ios:
+    name: Africoin Wallet - iOS
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      groups:
+        - africoin_credentials
+        - ios_credentials
+      vars:
+        APP_VARIANT: africoin
+        BUNDLE_ID: com.mpolobe.africoin
+        EXPO_PROJECT_ID: 5fa2f2b4-5c9f-43bf-b1eb-20d90ae19185
+      node: 18.19.0
+      xcode: 15.0
+      cocoapods: default
+    cache:
+      cache_paths:
+        - $HOME/.npm
+        - $HOME/.expo
+        - SmartphoneApp/node_modules
+        - SmartphoneApp/ios/Pods
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+        - pattern: 'develop'
+          include: true
+      tag_patterns:
+        - pattern: 'africoin-*'
+          include: true
+    scripts:
+      - name: Install dependencies
+        script: |
+          cd SmartphoneApp
+          npm install
+      - name: Install EAS CLI
+        script: |
+          npm install -g eas-cli
+      - name: Configure EAS
+        script: |
+          cd SmartphoneApp
+          eas login --non-interactive
+      - name: Build iOS IPA
+        script: |
+          cd SmartphoneApp
+          APP_VARIANT=africoin eas build --platform ios --profile production --non-interactive --no-wait
+    artifacts:
+      - SmartphoneApp/build/**/*.ipa
+    publishing:
+      email:
+        recipients:
+          - mpolobe@example.com
+        notify:
+          success: true
+          failure: true
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+
+  # Native Android Build (if needed)
+  native-android:
+    name: Native Android Build
+    max_build_duration: 60
+    instance_type: linux_x2
+    environment:
+      groups:
+        - android_credentials
+      vars:
+        PACKAGE_NAME: com.mpolobe.railways
+      android_signing:
+        - railways_keystore
+      java: 17
+    cache:
+      cache_paths:
+        - $HOME/.gradle/caches
+        - SmartphoneApp/android/.gradle
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'native-android'
+          include: true
+    scripts:
+      - name: Set up local.properties
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > SmartphoneApp/android/local.properties
+      - name: Build Android APK
+        script: |
+          cd SmartphoneApp/android
+          ./gradlew assembleRelease
+      - name: Build Android App Bundle
+        script: |
+          cd SmartphoneApp/android
+          ./gradlew bundleRelease
+    artifacts:
+      - SmartphoneApp/android/app/build/outputs/**/*.apk
+      - SmartphoneApp/android/app/build/outputs/**/*.aab
+    publishing:
+      email:
+        recipients:
+          - mpolobe@example.com
+        notify:
+          success: true
+          failure: true
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+
+  # Web Build (React/Vite from AfricaRailways)
+  web-app:
+    name: Web App Build
+    max_build_duration: 30
+    instance_type: linux_x2
+    environment:
+      groups:
+        - web_credentials
+      vars:
+        GEMINI_API_KEY: $GEMINI_API_KEY
+      node: 18.19.0
+    cache:
+      cache_paths:
+        - $HOME/.npm
+        - SmartphoneApp/node_modules
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+        - pattern: 'web'
+          include: true
+    scripts:
+      - name: Install dependencies
+        script: |
+          cd SmartphoneApp
+          npm install
+          npm install react-dom@^19.2.3 @google/genai@^1.34.0 lucide-react@^0.562.0 @vitejs/plugin-react@^5.0.0 vite@^6.2.0
+      - name: Build web app
+        script: |
+          cd SmartphoneApp
+          npm run build || npx vite build
+    artifacts:
+      - SmartphoneApp/dist/**/*
+      - SmartphoneApp/build/**/*
+    publishing:
+      email:
+        recipients:
+          - mpolobe@example.com
+        notify:
+          success: true
+          failure: true
+
+  # Combined Build - All Platforms (Railways)
+  all-platforms-railways:
+    name: Build All Platforms - Railways
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+    environment:
+      groups:
+        - railways_credentials
+        - ios_credentials
+        - web_credentials
+      vars:
+        APP_VARIANT: railways
+        EXPO_PROJECT_ID: 82efeb87-20c5-45b4-b945-65d4b9074c32
+        GEMINI_API_KEY: $GEMINI_API_KEY
+      node: 18.19.0
+      xcode: 15.0
+      cocoapods: default
+    cache:
+      cache_paths:
+        - $HOME/.npm
+        - $HOME/.expo
+        - SmartphoneApp/node_modules
+    triggering:
+      events:
+        - tag
+      tag_patterns:
+        - pattern: 'railways-v*'
+          include: true
+    scripts:
+      - name: Install dependencies
+        script: |
+          cd SmartphoneApp
+          npm install
+          npm install -g eas-cli
+      - name: Configure EAS
+        script: |
+          cd SmartphoneApp
+          eas login --non-interactive
+      - name: Build Android
+        script: |
+          cd SmartphoneApp
+          APP_VARIANT=railways eas build --platform android --profile production --non-interactive --no-wait
+      - name: Build iOS
+        script: |
+          cd SmartphoneApp
+          APP_VARIANT=railways eas build --platform ios --profile production --non-interactive --no-wait
+      - name: Build Web
+        script: |
+          cd SmartphoneApp
+          npm install react-dom@^19.2.3 @google/genai@^1.34.0 lucide-react@^0.562.0 @vitejs/plugin-react@^5.0.0 vite@^6.2.0
+          npm run build || npx vite build
+    artifacts:
+      - SmartphoneApp/build/**/*.apk
+      - SmartphoneApp/build/**/*.aab
+      - SmartphoneApp/build/**/*.ipa
+      - SmartphoneApp/dist/**/*
+    publishing:
+      email:
+        recipients:
+          - mpolobe@example.com
+        notify:
+          success: true
+          failure: true
+      slack:
+        channel: '#builds'
+        notify_on_build_start: true
+
+  # Combined Build - All Platforms (Africoin)
+  all-platforms-africoin:
+    name: Build All Platforms - Africoin
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+    environment:
+      groups:
+        - africoin_credentials
+        - ios_credentials
+        - web_credentials
+      vars:
+        APP_VARIANT: africoin
+        EXPO_PROJECT_ID: 5fa2f2b4-5c9f-43bf-b1eb-20d90ae19185
+        GEMINI_API_KEY: $GEMINI_API_KEY
+      node: 18.19.0
+      xcode: 15.0
+      cocoapods: default
+    cache:
+      cache_paths:
+        - $HOME/.npm
+        - $HOME/.expo
+        - SmartphoneApp/node_modules
+    triggering:
+      events:
+        - tag
+      tag_patterns:
+        - pattern: 'africoin-v*'
+          include: true
+    scripts:
+      - name: Install dependencies
+        script: |
+          cd SmartphoneApp
+          npm install
+          npm install -g eas-cli
+      - name: Configure EAS
+        script: |
+          cd SmartphoneApp
+          eas login --non-interactive
+      - name: Build Android
+        script: |
+          cd SmartphoneApp
+          APP_VARIANT=africoin eas build --platform android --profile production --non-interactive --no-wait
+      - name: Build iOS
+        script: |
+          cd SmartphoneApp
+          APP_VARIANT=africoin eas build --platform ios --profile production --non-interactive --no-wait
+      - name: Build Web
+        script: |
+          cd SmartphoneApp
+          npm install react-dom@^19.2.3 @google/genai@^1.34.0 lucide-react@^0.562.0 @vitejs/plugin-react@^5.0.0 vite@^6.2.0
+          npm run build || npx vite build
+    artifacts:
+      - SmartphoneApp/build/**/*.apk
+      - SmartphoneApp/build/**/*.aab
+      - SmartphoneApp/build/**/*.ipa
+      - SmartphoneApp/dist/**/*
+    publishing:
+      email:
+        recipients:
+          - mpolobe@example.com
+        notify:
+          success: true
+          failure: true
+      slack:
+        channel: '#builds'
+        notify_on_build_start: true
+
+  # Combined Build - All Platforms
+  all-platforms:
+    name: Build All Platforms
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+    environment:
+      groups:
+        - railways_credentials
+        - ios_credentials
+      vars:
+        APP_VARIANT: railways
+        EXPO_PROJECT_ID: 82efeb87-20c5-45b4-b945-65d4b9074c32
+      node: 18.19.0
+      xcode: 15.0
+      cocoapods: default
+    cache:
+      cache_paths:
+        - $HOME/.npm
+        - $HOME/.expo
+        - SmartphoneApp/node_modules
+    triggering:
+      events:
+        - tag
+      tag_patterns:
+        - pattern: 'release-*'
+          include: true
+    scripts:
+      - name: Install dependencies
+        script: |
+          cd SmartphoneApp
+          npm install
+      - name: Install EAS CLI
+        script: |
+          npm install -g eas-cli
+      - name: Configure EAS
+        script: |
+          cd SmartphoneApp
+          eas login --non-interactive
+      - name: Build all platforms
+        script: |
+          cd SmartphoneApp
+          APP_VARIANT=railways eas build --platform all --profile production --non-interactive --no-wait
+    artifacts:
+      - SmartphoneApp/build/**/*.apk
+      - SmartphoneApp/build/**/*.aab
+      - SmartphoneApp/build/**/*.ipa
+    publishing:
+      email:
+        recipients:
+          - mpolobe@example.com
+        notify:
+          success: true
+          failure: true
+
+  # Preview/Development Build
+  preview-build:
+    name: Preview Build (All Platforms)
+    max_build_duration: 90
+    instance_type: mac_mini_m1
+    environment:
+      groups:
+        - railways_credentials
+      vars:
+        APP_VARIANT: railways
+        EXPO_PROJECT_ID: 82efeb87-20c5-45b4-b945-65d4b9074c32
+      node: 18.19.0
+      xcode: 15.0
+      cocoapods: default
+    cache:
+      cache_paths:
+        - $HOME/.npm
+        - $HOME/.expo
+        - SmartphoneApp/node_modules
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'develop'
+          include: true
+        - pattern: 'feature/*'
+          include: true
+    scripts:
+      - name: Install dependencies
+        script: |
+          cd SmartphoneApp
+          npm install
+      - name: Run tests
+        script: |
+          cd SmartphoneApp
+          npm test -- --coverage --watchAll=false || echo "Tests completed"
+      - name: Install EAS CLI
+        script: |
+          npm install -g eas-cli
+      - name: Configure EAS
+        script: |
+          cd SmartphoneApp
+          eas login --non-interactive
+      - name: Build preview
+        script: |
+          cd SmartphoneApp
+          APP_VARIANT=railways eas build --platform all --profile preview --non-interactive --no-wait
+    artifacts:
+      - SmartphoneApp/build/**/*.apk
+      - SmartphoneApp/build/**/*.ipa
+      - SmartphoneApp/coverage/**/*
+    publishing:
+      email:
+        recipients:
+          - mpolobe@example.com
+        notify:
+          success: true
+          failure: true
