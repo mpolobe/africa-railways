@@ -19,6 +19,9 @@ function updateDashboard(metrics) {
     // Update ticket metrics
     updateTicketMetrics(metrics.tickets);
     
+    // Update GCP metrics
+    updateGCPMetrics(metrics.gcp_metrics);
+    
     // Update system health
     updateSystemHealth(metrics.system_health);
     
@@ -141,6 +144,52 @@ function updateUSSDMetrics(ussd) {
     // Update revenue metrics
     if (ussd.revenue) {
         updateRevenueMetrics(ussd.revenue);
+    }
+}
+
+function updateGCPMetrics(gcp) {
+    if (!gcp) return;
+    
+    // Update Sui Validator metrics
+    if (gcp.sui_validator) {
+        const suiCPU = gcp.sui_validator.cpu_utilization;
+        document.getElementById('sui-validator-cpu').textContent = 
+            suiCPU > 0 ? `${suiCPU.toFixed(1)}% CPU` : 'No data';
+        document.getElementById('sui-validator-zone').textContent = 
+            gcp.sui_validator.zone || '--';
+    }
+    
+    // Update Railway Core metrics
+    if (gcp.railway_core) {
+        const railwayCPU = gcp.railway_core.cpu_utilization;
+        document.getElementById('railway-core-cpu').textContent = 
+            railwayCPU > 0 ? `${railwayCPU.toFixed(1)}% CPU` : 'No data';
+        document.getElementById('railway-core-zone').textContent = 
+            gcp.railway_core.zone || '--';
+    }
+    
+    // Update last updated time
+    if (gcp.last_updated) {
+        const lastUpdated = new Date(gcp.last_updated);
+        document.getElementById('gcp-last-updated').textContent = 
+            lastUpdated.toLocaleTimeString();
+    }
+    
+    // Update refresh interval
+    document.getElementById('gcp-refresh-interval').textContent = 
+        `${gcp.update_interval_seconds || 60}s`;
+    
+    // Update card status
+    const gcpStatusIcon = document.getElementById('gcp-status');
+    const suiOK = gcp.sui_validator && gcp.sui_validator.status === 'operational';
+    const railwayOK = gcp.railway_core && gcp.railway_core.status === 'operational';
+    
+    if (suiOK && railwayOK) {
+        gcpStatusIcon.className = 'card-status';
+    } else if (suiOK || railwayOK) {
+        gcpStatusIcon.className = 'card-status warning';
+    } else {
+        gcpStatusIcon.className = 'card-status error';
     }
 }
 

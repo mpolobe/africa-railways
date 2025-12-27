@@ -209,6 +209,13 @@ body {
     color: var(--text-primary);
 }
 
+.metric-sublabel {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    font-style: italic;
+}
+
 .metric-value-small {
     font-size: 0.875rem;
     font-weight: 500;

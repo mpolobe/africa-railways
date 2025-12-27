@@ -16,12 +16,17 @@ import (
 	"sync"
 	"time"
 
+	monitoring "cloud.google.com/go/monitoring/apiv3/v2"
+	"cloud.google.com/go/monitoring/apiv3/v2/monitoringpb"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
 	"github.com/rs/cors"
+	"google.golang.org/api/option"
+	"google.golang.org/protobuf/types/known/durationpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // SystemMetrics holds all real-time monitoring data
@@ -33,7 +38,24 @@ type SystemMetrics struct {
 	Tickets         TicketMetrics     `json:"tickets"`
 	USSD            USSDMetrics       `json:"ussd"`
 	SystemHealth    HealthMetrics     `json:"system_health"`
+	GCPMetrics      GCPMetrics        `json:"gcp_metrics"`
 	Alerts          []Alert           `json:"alerts"`
+}
+
+type GCPMetrics struct {
+	SuiValidator    InstanceMetrics `json:"sui_validator"`
+	RailwayCore     InstanceMetrics `json:"railway_core"`
+	LastUpdated     time.Time       `json:"last_updated"`
+	UpdateInterval  int             `json:"update_interval_seconds"`
+}
+
+type InstanceMetrics struct {
+	Name            string  `json:"name"`
+	ProjectID       string  `json:"project_id"`
+	InstanceID      string  `json:"instance_id"`
+	Zone            string  `json:"zone"`
+	CPUUtilization  float64 `json:"cpu_utilization"`
+	Status          string  `json:"status"`
 }
 
 type BlockchainMetrics struct {
@@ -334,6 +356,13 @@ func collectMetrics(config Config) SystemMetrics {
 		metrics.Blockchain.Sui = collectSuiMetrics(config)
 	}()
 
+	// Collect GCP metrics (60 second refresh rate)
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		metrics.GCPMetrics = collectGCPMetrics(config)
+	}()
+
 	// Collect System Health
 	wg.Add(1)
 	go func() {
@@ -547,6 +576,122 @@ func callSuiRPC(client *http.Client, rpcURL string, method string, params []inte
 	}
 
 	return nil, fmt.Errorf("no result in response")
+}
+
+func collectGCPMetrics(config Config) GCPMetrics {
+	metrics := GCPMetrics{
+		LastUpdated:    time.Now(),
+		UpdateInterval: 60, // 60 seconds refresh rate
+		SuiValidator: InstanceMetrics{
+			Name:   "Sui Validator 1",
+			Status: "unknown",
+		},
+		RailwayCore: InstanceMetrics{
+			Name:   "Railway Core",
+			Status: "unknown",
+		},
+	}
+
+	// Check if GCP credentials are available
+	credPath := os.Getenv("GOOGLE_APPLICATION_CREDENTIALS")
+	if credPath == "" {
+		// Try to use GCP_SERVICE_ACCOUNT_KEY environment variable
+		credJSON := os.Getenv("GCP_SERVICE_ACCOUNT_KEY")
+		if credJSON == "" {
+			log.Println("⚠️  No GCP credentials found, skipping GCP metrics")
+			return metrics
+		}
+		// Create temporary credentials file
+		tmpFile, err := os.CreateTemp("", "gcp-creds-*.json")
+		if err != nil {
+			log.Printf("❌ Failed to create temp credentials file: %v\n", err)
+			return metrics
+		}
+		defer os.Remove(tmpFile.Name())
+		
+		if _, err := tmpFile.Write([]byte(credJSON)); err != nil {
+			log.Printf("❌ Failed to write credentials: %v\n", err)
+			return metrics
+		}
+		tmpFile.Close()
+		credPath = tmpFile.Name()
+	}
+
+	ctx := context.Background()
+	client, err := monitoring.NewMetricClient(ctx, option.WithCredentialsFile(credPath))
+	if err != nil {
+		log.Printf("❌ Failed to create GCP monitoring client: %v\n", err)
+		return metrics
+	}
+	defer client.Close()
+
+	// Query CPU utilization from the scoping project
+	projectName := "projects/africa-railways-481823"
+	endTime := time.Now()
+	startTime := endTime.Add(-5 * time.Minute)
+
+	req := &monitoringpb.ListTimeSeriesRequest{
+		Name:   projectName,
+		Filter: `metric.type="compute.googleapis.com/instance/cpu/utilization"`,
+		Interval: &monitoringpb.TimeInterval{
+			EndTime:   timestamppb.New(endTime),
+			StartTime: timestamppb.New(startTime),
+		},
+		Aggregation: &monitoringpb.Aggregation{
+			AlignmentPeriod:  durationpb.New(60 * time.Second),
+			PerSeriesAligner: monitoringpb.Aggregation_ALIGN_MEAN,
+		},
+	}
+
+	it := client.ListTimeSeries(ctx, req)
+	
+	// Process time series data
+	for {
+		resp, err := it.Next()
+		if err != nil {
+			if err.Error() == "no more items in iterator" {
+				break
+			}
+			log.Printf("❌ Error fetching time series: %v\n", err)
+			break
+		}
+
+		// Extract labels
+		projectID := resp.Resource.Labels["project_id"]
+		instanceID := resp.Resource.Labels["instance_id"]
+		zone := resp.Resource.Labels["zone"]
+
+		// Get latest CPU value
+		var cpuValue float64
+		if len(resp.Points) > 0 {
+			cpuValue = resp.Points[0].Value.GetDoubleValue() * 100 // Convert to percentage
+		}
+
+		// Map to friendly names based on project_id
+		if projectID == "valued-context-481911-i4" {
+			// Sui Validator Node
+			metrics.SuiValidator = InstanceMetrics{
+				Name:           "Sui Validator 1",
+				ProjectID:      projectID,
+				InstanceID:     instanceID,
+				Zone:           zone,
+				CPUUtilization: cpuValue,
+				Status:         "operational",
+			}
+		} else if projectID == "africa-railways-481823" {
+			// Railway Core Infrastructure
+			metrics.RailwayCore = InstanceMetrics{
+				Name:           "Railway Core",
+				ProjectID:      projectID,
+				InstanceID:     instanceID,
+				Zone:           zone,
+				CPUUtilization: cpuValue,
+				Status:         "operational",
+			}
+		}
+	}
+
+	return metrics
 }
 
 func collectUSSDMetrics(config Config) USSDMetrics {
