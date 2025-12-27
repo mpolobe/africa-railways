@@ -56,6 +56,8 @@ type InstanceMetrics struct {
 	Zone            string  `json:"zone"`
 	CPUUtilization  float64 `json:"cpu_utilization"`
 	Status          string  `json:"status"`
+	Stability       float64 `json:"stability"`
+	DataPointsCount int     `json:"data_points_count"`
 }
 
 type BlockchainMetrics struct {
@@ -583,11 +585,11 @@ func collectGCPMetrics(config Config) GCPMetrics {
 		LastUpdated:    time.Now(),
 		UpdateInterval: 60, // 60 seconds refresh rate
 		SuiValidator: InstanceMetrics{
-			Name:   "Sui Validator 1",
+			Name:   "SUI NETWORK",
 			Status: "unknown",
 		},
 		RailwayCore: InstanceMetrics{
-			Name:   "Railway Core",
+			Name:   "RAILWAY OPERATIONS",
 			Status: "unknown",
 		},
 	}
@@ -628,7 +630,7 @@ func collectGCPMetrics(config Config) GCPMetrics {
 	// Query CPU utilization from the scoping project
 	projectName := "projects/africa-railways-481823"
 	endTime := time.Now()
-	startTime := endTime.Add(-5 * time.Minute)
+	startTime := endTime.Add(-24 * time.Hour) // Last 24 hours for stability calculation
 
 	req := &monitoringpb.ListTimeSeriesRequest{
 		Name:   projectName,
@@ -646,6 +648,12 @@ func collectGCPMetrics(config Config) GCPMetrics {
 	it := client.ListTimeSeries(ctx, req)
 	
 	// Process time series data
+	now := time.Now()
+	
+	// Expected data points in 24 hours with 60-second intervals
+	// 24 hours * 60 minutes * 1 point per minute = 1440 expected points
+	expectedDataPoints := 1440
+	
 	for {
 		resp, err := it.Next()
 		if err != nil {
@@ -661,32 +669,60 @@ func collectGCPMetrics(config Config) GCPMetrics {
 		instanceID := resp.Resource.Labels["instance_id"]
 		zone := resp.Resource.Labels["zone"]
 
-		// Get latest CPU value
+		// Get latest CPU value and timestamp
 		var cpuValue float64
-		if len(resp.Points) > 0 {
+		var lastDataPoint time.Time
+		var status string
+		actualDataPoints := len(resp.Points)
+		
+		if actualDataPoints > 0 {
 			cpuValue = resp.Points[0].Value.GetDoubleValue() * 100 // Convert to percentage
+			lastDataPoint = resp.Points[0].Interval.EndTime.AsTime()
+			
+			// Determine status based on data freshness
+			timeSinceLastData := now.Sub(lastDataPoint)
+			if timeSinceLastData <= 5*time.Minute {
+				status = "online" // Green - data within last 5 minutes
+			} else if timeSinceLastData <= 10*time.Minute {
+				status = "offline" // Red - no data for 5-10 minutes
+			} else {
+				status = "offline" // Red - no data for more than 10 minutes
+			}
+		} else {
+			status = "offline" // Red - no data points available
+		}
+		
+		// Calculate stability percentage
+		// Stability = (actual data points / expected data points) * 100
+		stability := (float64(actualDataPoints) / float64(expectedDataPoints)) * 100
+		if stability > 100 {
+			stability = 100 // Cap at 100%
 		}
 
 		// Map to friendly names based on project_id
 		if projectID == "valued-context-481911-i4" {
-			// Sui Validator Node
+			// Sui Network
 			metrics.SuiValidator = InstanceMetrics{
-				Name:           "Sui Validator 1",
-				ProjectID:      projectID,
-				InstanceID:     instanceID,
-				Zone:           zone,
-				CPUUtilization: cpuValue,
-				Status:         "operational",
+				Name:            "SUI NETWORK",
+				ProjectID:       projectID,
+				InstanceID:      instanceID,
+				Zone:            zone,
+				CPUUtilization:  cpuValue,
+				Status:          status,
+				Stability:       stability,
+				DataPointsCount: actualDataPoints,
 			}
 		} else if projectID == "africa-railways-481823" {
-			// Railway Core Infrastructure
+			// Railway Operations
 			metrics.RailwayCore = InstanceMetrics{
-				Name:           "Railway Core",
-				ProjectID:      projectID,
-				InstanceID:     instanceID,
-				Zone:           zone,
-				CPUUtilization: cpuValue,
-				Status:         "operational",
+				Name:            "RAILWAY OPERATIONS",
+				ProjectID:       projectID,
+				InstanceID:      instanceID,
+				Zone:            zone,
+				CPUUtilization:  cpuValue,
+				Status:          status,
+				Stability:       stability,
+				DataPointsCount: actualDataPoints,
 			}
 		}
 	}

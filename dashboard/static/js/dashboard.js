@@ -153,19 +153,85 @@ function updateGCPMetrics(gcp) {
     // Update Sui Validator metrics
     if (gcp.sui_validator) {
         const suiCPU = gcp.sui_validator.cpu_utilization;
+        const suiStatus = gcp.sui_validator.status;
+        const suiStability = gcp.sui_validator.stability;
+        const suiDataPoints = gcp.sui_validator.data_points_count;
+        
         document.getElementById('sui-validator-cpu').textContent = 
             suiCPU > 0 ? `${suiCPU.toFixed(1)}% CPU` : 'No data';
         document.getElementById('sui-validator-zone').textContent = 
             gcp.sui_validator.zone || '--';
+        
+        // Update stability
+        const stabilityElement = document.getElementById('sui-validator-stability');
+        if (suiStability !== undefined) {
+            stabilityElement.textContent = `${suiStability.toFixed(1)}%`;
+            // Color code based on stability
+            if (suiStability >= 99) {
+                stabilityElement.style.color = 'var(--success-color)';
+            } else if (suiStability >= 95) {
+                stabilityElement.style.color = 'var(--warning-color)';
+            } else {
+                stabilityElement.style.color = 'var(--danger-color)';
+            }
+        } else {
+            stabilityElement.textContent = '--';
+        }
+        
+        document.getElementById('sui-validator-datapoints').textContent = 
+            suiDataPoints ? `${suiDataPoints.toLocaleString()} / 1,440 points` : '--';
+        
+        // Update status badge
+        const suiStatusBadge = document.getElementById('sui-validator-status');
+        if (suiStatus === 'online') {
+            suiStatusBadge.textContent = 'ONLINE';
+            suiStatusBadge.className = 'status-badge status-online';
+        } else {
+            suiStatusBadge.textContent = 'OFFLINE';
+            suiStatusBadge.className = 'status-badge status-offline';
+        }
     }
     
     // Update Railway Core metrics
     if (gcp.railway_core) {
         const railwayCPU = gcp.railway_core.cpu_utilization;
+        const railwayStatus = gcp.railway_core.status;
+        const railwayStability = gcp.railway_core.stability;
+        const railwayDataPoints = gcp.railway_core.data_points_count;
+        
         document.getElementById('railway-core-cpu').textContent = 
             railwayCPU > 0 ? `${railwayCPU.toFixed(1)}% CPU` : 'No data';
         document.getElementById('railway-core-zone').textContent = 
             gcp.railway_core.zone || '--';
+        
+        // Update stability
+        const stabilityElement = document.getElementById('railway-core-stability');
+        if (railwayStability !== undefined) {
+            stabilityElement.textContent = `${railwayStability.toFixed(1)}%`;
+            // Color code based on stability
+            if (railwayStability >= 99) {
+                stabilityElement.style.color = 'var(--success-color)';
+            } else if (railwayStability >= 95) {
+                stabilityElement.style.color = 'var(--warning-color)';
+            } else {
+                stabilityElement.style.color = 'var(--danger-color)';
+            }
+        } else {
+            stabilityElement.textContent = '--';
+        }
+        
+        document.getElementById('railway-core-datapoints').textContent = 
+            railwayDataPoints ? `${railwayDataPoints.toLocaleString()} / 1,440 points` : '--';
+        
+        // Update status badge
+        const railwayStatusBadge = document.getElementById('railway-core-status');
+        if (railwayStatus === 'online') {
+            railwayStatusBadge.textContent = 'ONLINE';
+            railwayStatusBadge.className = 'status-badge status-online';
+        } else {
+            railwayStatusBadge.textContent = 'OFFLINE';
+            railwayStatusBadge.className = 'status-badge status-offline';
+        }
     }
     
     // Update last updated time
@@ -181,8 +247,8 @@ function updateGCPMetrics(gcp) {
     
     // Update card status
     const gcpStatusIcon = document.getElementById('gcp-status');
-    const suiOK = gcp.sui_validator && gcp.sui_validator.status === 'operational';
-    const railwayOK = gcp.railway_core && gcp.railway_core.status === 'operational';
+    const suiOK = gcp.sui_validator && gcp.sui_validator.status === 'online';
+    const railwayOK = gcp.railway_core && gcp.railway_core.status === 'online';
     
     if (suiOK && railwayOK) {
         gcpStatusIcon.className = 'card-status';
