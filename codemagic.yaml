@@ -32,7 +32,7 @@ workflows:
       - name: Install dependencies
         script: |
           cd SmartphoneApp
-          npm install
+          npm install --legacy-peer-deps
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
@@ -92,7 +92,7 @@ workflows:
       - name: Install dependencies
         script: |
           cd SmartphoneApp
-          npm install
+          npm install --legacy-peer-deps
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
@@ -151,7 +151,7 @@ workflows:
       - name: Install dependencies
         script: |
           cd SmartphoneApp
-          npm install
+          npm install --legacy-peer-deps
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
@@ -211,7 +211,7 @@ workflows:
       - name: Install dependencies
         script: |
           cd SmartphoneApp
-          npm install
+          npm install --legacy-peer-deps
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
@@ -313,7 +313,7 @@ workflows:
       - name: Install dependencies
         script: |
           cd SmartphoneApp
-          npm install
+          npm install --legacy-peer-deps
           npm install react-dom@^19.2.3 @google/genai@^1.34.0 lucide-react@^0.562.0 @vitejs/plugin-react@^5.0.0 vite@^6.2.0
       - name: Build web app
         script: |
@@ -362,7 +362,7 @@ workflows:
       - name: Install dependencies
         script: |
           cd SmartphoneApp
-          npm install
+          npm install --legacy-peer-deps
           npm install -g eas-cli
       - name: Configure EAS
         script: |
@@ -429,7 +429,7 @@ workflows:
       - name: Install dependencies
         script: |
           cd SmartphoneApp
-          npm install
+          npm install --legacy-peer-deps
           npm install -g eas-cli
       - name: Configure EAS
         script: |
@@ -494,7 +494,7 @@ workflows:
       - name: Install dependencies
         script: |
           cd SmartphoneApp
-          npm install
+          npm install --legacy-peer-deps
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
@@ -549,7 +549,7 @@ workflows:
       - name: Install dependencies
         script: |
           cd SmartphoneApp
-          npm install
+          npm install --legacy-peer-deps
       - name: Run tests
         script: |
           cd SmartphoneApp
