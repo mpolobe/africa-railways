@@ -109,9 +109,33 @@ WebSocket connection:
 
 ## Verification Before Deployment
 
-### Script: `preview_occ_data.sh`
+### Script 1: `simulate_occ_logic.sh` (Recommended)
 
-Run this from your root folder to see exactly what data the dashboard will display:
+Run this from your root folder to see the **exact display logic data**:
+
+```bash
+./simulate_occ_logic.sh
+```
+
+**Expected Output:**
+```
+Fetching live data for OCC Display Logic...
+------------------------------------------
+NETWORK                      NODE_ID               CPU_LOAD
+valued-context-481911-i4     1234567890123456789   0.15234
+africa-railways-481823       9876543210987654321   0.08456
+```
+
+**What this shows:**
+- ✅ Both networks (SUI and Railway) are returning data
+- ✅ Node IDs are visible for each instance
+- ✅ CPU load values are being collected
+- ✅ The scoping project link is working correctly
+- ✅ Data format matches what the dashboard will display
+
+### Script 2: `preview_occ_data.sh` (Alternative)
+
+Simpler version without alpha features:
 
 ```bash
 ./preview_occ_data.sh
