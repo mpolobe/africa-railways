@@ -60,6 +60,27 @@ gcloud iam service-accounts keys create ./web-viewer-key.json \
     --iam-account=$SA_NAME@$PROJECT_ID.iam.gserviceaccount.com
 ```
 
+## Verify the Service Account Key
+
+The downloaded JSON file should contain these fields:
+
+```json
+{
+  "type": "service_account",
+  "project_id": "africa-railways-481823",
+  "private_key_id": "...",
+  "private_key": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n",
+  "client_email": "occ-web-viewer@africa-railways-481823.iam.gserviceaccount.com",
+  "client_id": "...",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "..."
+}
+```
+
+⚠️ **Important:** The key must include the `private_key` field. If you only have certificates, you need to regenerate the key.
+
 ## Using the Key in the Dashboard
 
 ### For Railway Deployment
@@ -73,6 +94,8 @@ cat web-viewer-key.json | base64 -w 0
 # In Railway dashboard, add environment variable:
 # GCP_SERVICE_ACCOUNT_KEY=<base64-encoded-json>
 ```
+
+Or add the JSON directly as a multiline environment variable in Railway.
 
 ### For Local Development
 
