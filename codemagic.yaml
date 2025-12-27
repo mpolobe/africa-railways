@@ -4,7 +4,7 @@ workflows:
   react-native-railways-android:
     name: Africa Railways - Android
     max_build_duration: 60
-    instance_type: mac_mini_m1
+    instance_type: mac_mini_m2
     environment:
       groups:
         - railways_credentials
@@ -56,7 +56,7 @@ workflows:
   react-native-railways-ios:
     name: Africa Railways - iOS
     max_build_duration: 60
-    instance_type: mac_mini_m1
+    instance_type: mac_mini_m2
     environment:
       groups:
         - railways_credentials
@@ -115,7 +115,7 @@ workflows:
   react-native-africoin-android:
     name: Africoin Wallet - Android
     max_build_duration: 60
-    instance_type: mac_mini_m1
+    instance_type: mac_mini_m2
     environment:
       groups:
         - africoin_credentials
@@ -167,7 +167,7 @@ workflows:
   react-native-africoin-ios:
     name: Africoin Wallet - iOS
     max_build_duration: 60
-    instance_type: mac_mini_m1
+    instance_type: mac_mini_m2
     environment:
       groups:
         - africoin_credentials
@@ -319,7 +319,7 @@ workflows:
   all-platforms-railways:
     name: Build All Platforms - Railways
     max_build_duration: 120
-    instance_type: mac_mini_m1
+    instance_type: mac_mini_m2
     environment:
       groups:
         - railways_credentials
@@ -382,7 +382,7 @@ workflows:
   all-platforms-africoin:
     name: Build All Platforms - Africoin
     max_build_duration: 120
-    instance_type: mac_mini_m1
+    instance_type: mac_mini_m2
     environment:
       groups:
         - africoin_credentials
@@ -445,7 +445,7 @@ workflows:
   all-platforms:
     name: Build All Platforms
     max_build_duration: 120
-    instance_type: mac_mini_m1
+    instance_type: mac_mini_m2
     environment:
       groups:
         - railways_credentials
@@ -495,7 +495,7 @@ workflows:
   preview-build:
     name: Preview Build (All Platforms)
     max_build_duration: 90
-    instance_type: mac_mini_m1
+    instance_type: mac_mini_m2
     environment:
       groups:
         - railways_credentials
