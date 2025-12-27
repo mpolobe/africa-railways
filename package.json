@@ -9,7 +9,17 @@
     "build:android": "./build-mobile.sh android production",
     "build:ios": "./build-mobile.sh ios production",
     "build:preview": "./build-mobile.sh all preview",
-    "eas:build": "eas build --platform all --profile production --non-interactive"
+    "eas:build": "eas build --platform all --profile production --non-interactive",
+    "build:railways:android": "cd SmartphoneApp && APP_VARIANT=railways eas build --platform android --profile railways --non-interactive",
+    "build:railways:ios": "cd SmartphoneApp && APP_VARIANT=railways eas build --platform ios --profile railways --non-interactive",
+    "build:africoin:android": "cd SmartphoneApp && APP_VARIANT=africoin eas build --platform android --profile africoin --non-interactive",
+    "build:africoin:ios": "cd SmartphoneApp && APP_VARIANT=africoin eas build --platform ios --profile africoin --non-interactive",
+    "build:sentinel:android": "cd SmartphoneApp && APP_VARIANT=sentinel eas build --platform android --profile sentinel --non-interactive",
+    "build:sentinel:ios": "cd SmartphoneApp && APP_VARIANT=sentinel eas build --platform ios --profile sentinel --non-interactive",
+    "build:staff:android": "cd SmartphoneApp && APP_VARIANT=staff eas build --platform android --profile staff --non-interactive",
+    "build:staff:ios": "cd SmartphoneApp && APP_VARIANT=staff eas build --platform ios --profile staff --non-interactive",
+    "build:all:android": "npm run build:railways:android && npm run build:africoin:android && npm run build:sentinel:android && npm run build:staff:android",
+    "build:all:ios": "npm run build:railways:ios && npm run build:africoin:ios && npm run build:sentinel:ios && npm run build:staff:ios"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^6.1.0",

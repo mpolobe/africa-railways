@@ -545,3 +545,217 @@ workflows:
         notify:
           success: true
           failure: true
+
+  # React Native - Sentinel App (Android)
+  react-native-sentinel-android:
+    name: Sentinel Portal - Android
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      groups:
+        - sentinel_credentials
+      vars:
+        APP_VARIANT: sentinel
+        PACKAGE_NAME: com.mpolobe.sentinel
+        EXPO_PROJECT_ID: 82efeb87-20c5-45b4-b945-65d4b9074c32
+      node: 18.19.0
+    cache:
+      cache_paths:
+        - $HOME/.npm
+        - $HOME/.expo
+        - SmartphoneApp/node_modules
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+        - pattern: 'develop'
+          include: true
+      tag_patterns:
+        - pattern: 'sentinel-*'
+          include: true
+    scripts:
+      - name: Install dependencies
+        script: |
+          cd SmartphoneApp
+          npm install --legacy-peer-deps
+      - name: Install EAS CLI
+        script: |
+          npm install -g eas-cli
+      - name: Build Android APK
+        script: |
+          cd SmartphoneApp
+          APP_VARIANT=sentinel eas build --platform android --profile sentinel --non-interactive --no-wait
+    artifacts:
+      - SmartphoneApp/build/**/*.apk
+      - SmartphoneApp/build/**/*.aab
+    publishing:
+      email:
+        recipients:
+          - mpolobe@example.com
+        notify:
+          success: true
+          failure: true
+
+  # React Native - Sentinel App (iOS)
+  react-native-sentinel-ios:
+    name: Sentinel Portal - iOS
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      groups:
+        - sentinel_credentials
+        - ios_credentials
+      vars:
+        APP_VARIANT: sentinel
+        BUNDLE_ID: com.mpolobe.sentinel
+        EXPO_PROJECT_ID: 82efeb87-20c5-45b4-b945-65d4b9074c32
+      node: 18.19.0
+      xcode: 15.0
+      cocoapods: default
+    cache:
+      cache_paths:
+        - $HOME/.npm
+        - $HOME/.expo
+        - SmartphoneApp/node_modules
+        - SmartphoneApp/ios/Pods
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+        - pattern: 'develop'
+          include: true
+      tag_patterns:
+        - pattern: 'sentinel-*'
+          include: true
+    scripts:
+      - name: Install dependencies
+        script: |
+          cd SmartphoneApp
+          npm install --legacy-peer-deps
+      - name: Install EAS CLI
+        script: |
+          npm install -g eas-cli
+      - name: Build iOS IPA
+        script: |
+          cd SmartphoneApp
+          APP_VARIANT=sentinel eas build --platform ios --profile sentinel --non-interactive --no-wait
+    artifacts:
+      - SmartphoneApp/build/**/*.ipa
+    publishing:
+      email:
+        recipients:
+          - mpolobe@example.com
+        notify:
+          success: true
+          failure: true
+
+  # React Native - Staff Verification App (Android)
+  react-native-staff-android:
+    name: Staff Verification - Android
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      groups:
+        - staff_credentials
+      vars:
+        APP_VARIANT: staff
+        PACKAGE_NAME: com.mpolobe.staff
+        EXPO_PROJECT_ID: 82efeb87-20c5-45b4-b945-65d4b9074c32
+      node: 18.19.0
+    cache:
+      cache_paths:
+        - $HOME/.npm
+        - $HOME/.expo
+        - SmartphoneApp/node_modules
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+        - pattern: 'develop'
+          include: true
+      tag_patterns:
+        - pattern: 'staff-*'
+          include: true
+    scripts:
+      - name: Install dependencies
+        script: |
+          cd SmartphoneApp
+          npm install --legacy-peer-deps
+      - name: Install EAS CLI
+        script: |
+          npm install -g eas-cli
+      - name: Build Android APK
+        script: |
+          cd SmartphoneApp
+          APP_VARIANT=staff eas build --platform android --profile staff --non-interactive --no-wait
+    artifacts:
+      - SmartphoneApp/build/**/*.apk
+      - SmartphoneApp/build/**/*.aab
+    publishing:
+      email:
+        recipients:
+          - mpolobe@example.com
+        notify:
+          success: true
+          failure: true
+
+  # React Native - Staff Verification App (iOS)
+  react-native-staff-ios:
+    name: Staff Verification - iOS
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      groups:
+        - staff_credentials
+        - ios_credentials
+      vars:
+        APP_VARIANT: staff
+        BUNDLE_ID: com.mpolobe.staff
+        EXPO_PROJECT_ID: 82efeb87-20c5-45b4-b945-65d4b9074c32
+      node: 18.19.0
+      xcode: 15.0
+      cocoapods: default
+    cache:
+      cache_paths:
+        - $HOME/.npm
+        - $HOME/.expo
+        - SmartphoneApp/node_modules
+        - SmartphoneApp/ios/Pods
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+        - pattern: 'develop'
+          include: true
+      tag_patterns:
+        - pattern: 'staff-*'
+          include: true
+    scripts:
+      - name: Install dependencies
+        script: |
+          cd SmartphoneApp
+          npm install --legacy-peer-deps
+      - name: Install EAS CLI
+        script: |
+          npm install -g eas-cli
+      - name: Build iOS IPA
+        script: |
+          cd SmartphoneApp
+          APP_VARIANT=staff eas build --platform ios --profile staff --non-interactive --no-wait
+    artifacts:
+      - SmartphoneApp/build/**/*.ipa
+    publishing:
+      email:
+        recipients:
+          - mpolobe@example.com
+        notify:
+          success: true
+          failure: true

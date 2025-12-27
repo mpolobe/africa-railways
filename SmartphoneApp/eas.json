@@ -56,6 +56,30 @@
         "BACKEND_URL": "$BACKEND_URL",
         "API_KEY": "$AFRICOIN_API_KEY"
       }
+    },
+    "sentinel": {
+      "extends": "production",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "APP_VARIANT": "sentinel",
+        "BACKEND_URL": "$BACKEND_URL",
+        "API_KEY": "$SENTINEL_API_KEY",
+        "SUI_NETWORK": "mainnet"
+      }
+    },
+    "staff": {
+      "extends": "production",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "APP_VARIANT": "staff",
+        "BACKEND_URL": "$BACKEND_URL",
+        "API_KEY": "$STAFF_API_KEY",
+        "ALCHEMY_SDK_KEY": "$ALCHEMY_SDK_KEY"
+      }
     }
   },
   "submit": {

@@ -1,39 +1,67 @@
-// app.config.js - Dynamic configuration for Railways and Africoin apps
-const IS_RAILWAYS = process.env.APP_VARIANT === 'railways';
-const IS_AFRICOIN = process.env.APP_VARIANT === 'africoin';
+// app.config.js - Dynamic configuration for all 4 apps
+const APP_VARIANT = process.env.APP_VARIANT || 'railways';
 
-// Determine which app we're building
-const APP_VARIANT = IS_RAILWAYS ? 'railways' : IS_AFRICOIN ? 'africoin' : 'railways';
+// App configurations
+const APP_CONFIGS = {
+  railways: {
+    name: "Africa Railways Hub",
+    slug: "africa-railways-app",
+    package: "com.mpolobe.railways",
+    bundleIdentifier: "com.mpolobe.railways",
+    projectId: "82efeb87-20c5-45b4-b945-65d4b9074c32",
+    cameraPermission: "Allow Africa Railways to scan your ticket.",
+    backgroundColor: "#0066CC",
+    description: "Book tickets and manage your railway journey"
+  },
+  africoin: {
+    name: "Africoin Wallet",
+    slug: "africa-railways-monorepo",
+    package: "com.mpolobe.africoin",
+    bundleIdentifier: "com.mpolobe.africoin",
+    projectId: "5fa2f2b4-5c9f-43bf-b1eb-20d90ae19185",
+    cameraPermission: "Allow Africoin to scan QR codes.",
+    backgroundColor: "#FFB800",
+    description: "Pan-African digital currency wallet"
+  },
+  sentinel: {
+    name: "Sentinel Portal",
+    slug: "sentinel-portal",
+    package: "com.mpolobe.sentinel",
+    bundleIdentifier: "com.mpolobe.sentinel",
+    projectId: "82efeb87-20c5-45b4-b945-65d4b9074c32", // Use Railways project for now
+    cameraPermission: "Allow Sentinel to scan track checkpoint QR codes.",
+    backgroundColor: "#FFB800",
+    description: "Track worker safety monitoring and reporting"
+  },
+  staff: {
+    name: "Staff Verification",
+    slug: "staff-verification",
+    package: "com.mpolobe.staff",
+    bundleIdentifier: "com.mpolobe.staff",
+    projectId: "82efeb87-20c5-45b4-b945-65d4b9074c32", // Use Railways project for now
+    cameraPermission: "Allow Staff Verification to scan passenger tickets.",
+    backgroundColor: "#0066CC",
+    description: "Railway staff ticket verification tool"
+  }
+};
+
+// Get current app config
+const config = APP_CONFIGS[APP_VARIANT] || APP_CONFIGS.railways;
 
 module.exports = {
   expo: {
-    // 1. Name of the app as it appears on the phone
-    name: IS_RAILWAYS ? "Africa Railways Hub" : "Africoin Wallet",
-
-    // 2. Slug MUST match what Expo has on their servers for that Project ID
-    // Based on the error, the Africoin ID is currently linked to 'africa-railways-monorepo'
-    slug: IS_RAILWAYS ? "africa-railways-app" : "africa-railways-monorepo",
+    name: config.name,
+    slug: config.slug,
     version: "1.0.0",
     orientation: "portrait",
     userInterfaceStyle: "dark",
-    
-    // Icons and splash screens (using defaults for now)
-    // icon: IS_RAILWAYS ? "./assets/icon.png" : "./assets/africoin-icon.png",
-    
-    // splash: {
-    //   image: IS_RAILWAYS ? "./assets/splash.png" : "./assets/africoin-splash.png",
-    //   resizeMode: "contain",
-    //   backgroundColor: IS_RAILWAYS ? "#0066CC" : "#FFB800"
-    // },
     
     // Plugins
     plugins: [
       [
         "expo-camera",
         {
-          cameraPermission: IS_RAILWAYS
-            ? "Allow Africa Railways to scan your ticket."
-            : "Allow Africoin to scan QR codes."
+          cameraPermission: config.cameraPermission
         }
       ]
     ],
@@ -44,7 +72,7 @@ module.exports = {
     // iOS Configuration
     ios: {
       supportsTablet: true,
-      bundleIdentifier: IS_RAILWAYS ? "com.mpolobe.railways" : "com.mpolobe.africoin",
+      bundleIdentifier: config.bundleIdentifier,
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false
       }
@@ -52,33 +80,21 @@ module.exports = {
     
     // Android Configuration
     android: {
-      // adaptiveIcon: {
-      //   foregroundImage: IS_RAILWAYS
-      //     ? "./assets/adaptive-icon.png"
-      //     : "./assets/africoin-adaptive-icon.png",
-      //   backgroundColor: IS_RAILWAYS ? "#0066CC" : "#FFB800"
-      // },
-      package: IS_RAILWAYS ? "com.mpolobe.railways" : "com.mpolobe.africoin",
+      package: config.package,
       versionCode: 1,
-      permissions: ["CAMERA"]
+      permissions: ["CAMERA", "ACCESS_FINE_LOCATION"]
     },
-    
-    // Web Configuration
-    // web: {
-    //   favicon: IS_RAILWAYS ? "./assets/favicon.png" : "./assets/africoin-favicon.png"
-    // },
     
     // Extra configuration
     extra: {
       eas: {
-        // projectId is the UUID from Expo Dashboard
-        projectId: IS_RAILWAYS 
-          ? "82efeb87-20c5-45b4-b945-65d4b9074c32" // Railways ID
-          : "5fa2f2b4-5c9f-43bf-b1eb-20d90ae19185" // Africoin ID
+        projectId: config.projectId
       },
       APP_VARIANT: APP_VARIANT,
+      appDescription: config.description,
       backendUrl: process.env.BACKEND_URL || "https://africa-railways.vercel.app",
-      apiKey: process.env.API_KEY
+      apiKey: process.env.API_KEY,
+      alchemyKey: process.env.ALCHEMY_SDK_KEY
     }
   }
 };
