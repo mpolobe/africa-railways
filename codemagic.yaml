@@ -34,6 +34,7 @@ workflows:
         script: |
           cd SmartphoneApp
           npm install --legacy-peer-deps
+          npm dedupe
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
@@ -45,6 +46,12 @@ workflows:
             exit 1
           fi
           echo "✅ EXPO_TOKEN is set (length: ${#EXPO_TOKEN})"
+      - name: Apply Gradle fixes
+        script: |
+          cd SmartphoneApp
+          # Install expo-build-properties to handle packaging options
+          npx expo install expo-build-properties
+          echo "✅ Gradle fix dependencies installed"
       - name: Build Android APK
         script: |
           cd SmartphoneApp
