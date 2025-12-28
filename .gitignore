@@ -76,3 +76,4 @@ sui/
 config.json
 .env.railway
 CODEMAGIC_CREDENTIALS.md
+CODEMAGIC_ENV_REFERENCE.txt
