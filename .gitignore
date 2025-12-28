@@ -75,3 +75,4 @@ Thumbs.db
 sui/
 config.json
 .env.railway
+CODEMAGIC_CREDENTIALS.md
