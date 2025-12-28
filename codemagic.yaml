@@ -37,9 +37,18 @@ workflows:
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
+      - name: Verify EXPO_TOKEN
+        script: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "❌ ERROR: EXPO_TOKEN is not set!"
+            echo "Please add EXPO_TOKEN to the railways_credentials group in Codemagic"
+            exit 1
+          fi
+          echo "✅ EXPO_TOKEN is set (length: ${#EXPO_TOKEN})"
       - name: Build Android APK
         script: |
           cd SmartphoneApp
+          export EXPO_TOKEN=$EXPO_TOKEN
           APP_VARIANT=railways eas build --platform android --profile production --non-interactive --no-wait
     artifacts:
       - SmartphoneApp/build/**/*.apk
@@ -93,9 +102,18 @@ workflows:
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
+      - name: Verify EXPO_TOKEN
+        script: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "❌ ERROR: EXPO_TOKEN is not set!"
+            echo "Please add EXPO_TOKEN to the credentials group in Codemagic"
+            exit 1
+          fi
+          echo "✅ EXPO_TOKEN is set (length: ${#EXPO_TOKEN})"
       - name: Build iOS IPA
         script: |
           cd SmartphoneApp
+          export EXPO_TOKEN=$EXPO_TOKEN
           APP_VARIANT=railways eas build --platform ios --profile production --non-interactive --no-wait
     artifacts:
       - SmartphoneApp/build/**/*.ipa
@@ -148,9 +166,18 @@ workflows:
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
+      - name: Verify EXPO_TOKEN
+        script: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "❌ ERROR: EXPO_TOKEN is not set!"
+            echo "Please add EXPO_TOKEN to the credentials group in Codemagic"
+            exit 1
+          fi
+          echo "✅ EXPO_TOKEN is set (length: ${#EXPO_TOKEN})"
       - name: Build Android APK
         script: |
           cd SmartphoneApp
+          export EXPO_TOKEN=$EXPO_TOKEN
           APP_VARIANT=africoin eas build --platform android --profile production --non-interactive --no-wait
     artifacts:
       - SmartphoneApp/build/**/*.apk
@@ -204,9 +231,18 @@ workflows:
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
+      - name: Verify EXPO_TOKEN
+        script: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "❌ ERROR: EXPO_TOKEN is not set!"
+            echo "Please add EXPO_TOKEN to the credentials group in Codemagic"
+            exit 1
+          fi
+          echo "✅ EXPO_TOKEN is set (length: ${#EXPO_TOKEN})"
       - name: Build iOS IPA
         script: |
           cd SmartphoneApp
+          export EXPO_TOKEN=$EXPO_TOKEN
           APP_VARIANT=africoin eas build --platform ios --profile production --non-interactive --no-wait
     artifacts:
       - SmartphoneApp/build/**/*.ipa
@@ -352,10 +388,12 @@ workflows:
       - name: Build Android
         script: |
           cd SmartphoneApp
+          export EXPO_TOKEN=$EXPO_TOKEN
           APP_VARIANT=railways eas build --platform android --profile production --non-interactive --no-wait
       - name: Build iOS
         script: |
           cd SmartphoneApp
+          export EXPO_TOKEN=$EXPO_TOKEN
           APP_VARIANT=railways eas build --platform ios --profile production --non-interactive --no-wait
       - name: Build Web
         script: |
@@ -415,10 +453,12 @@ workflows:
       - name: Build Android
         script: |
           cd SmartphoneApp
+          export EXPO_TOKEN=$EXPO_TOKEN
           APP_VARIANT=africoin eas build --platform android --profile production --non-interactive --no-wait
       - name: Build iOS
         script: |
           cd SmartphoneApp
+          export EXPO_TOKEN=$EXPO_TOKEN
           APP_VARIANT=africoin eas build --platform ios --profile production --non-interactive --no-wait
       - name: Build Web
         script: |
@@ -475,9 +515,18 @@ workflows:
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
+      - name: Verify EXPO_TOKEN
+        script: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "❌ ERROR: EXPO_TOKEN is not set!"
+            echo "Please add EXPO_TOKEN to the credentials group in Codemagic"
+            exit 1
+          fi
+          echo "✅ EXPO_TOKEN is set (length: ${#EXPO_TOKEN})"
       - name: Build all platforms
         script: |
           cd SmartphoneApp
+          export EXPO_TOKEN=$EXPO_TOKEN
           APP_VARIANT=railways eas build --platform all --profile production --non-interactive --no-wait
     artifacts:
       - SmartphoneApp/build/**/*.apk
@@ -530,9 +579,18 @@ workflows:
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
+      - name: Verify EXPO_TOKEN
+        script: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "❌ ERROR: EXPO_TOKEN is not set!"
+            echo "Please add EXPO_TOKEN to the credentials group in Codemagic"
+            exit 1
+          fi
+          echo "✅ EXPO_TOKEN is set (length: ${#EXPO_TOKEN})"
       - name: Build preview
         script: |
           cd SmartphoneApp
+          export EXPO_TOKEN=$EXPO_TOKEN
           APP_VARIANT=railways eas build --platform all --profile preview --non-interactive --no-wait
     artifacts:
       - SmartphoneApp/build/**/*.apk
@@ -583,9 +641,18 @@ workflows:
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
+      - name: Verify EXPO_TOKEN
+        script: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "❌ ERROR: EXPO_TOKEN is not set!"
+            echo "Please add EXPO_TOKEN to the credentials group in Codemagic"
+            exit 1
+          fi
+          echo "✅ EXPO_TOKEN is set (length: ${#EXPO_TOKEN})"
       - name: Build Android APK
         script: |
           cd SmartphoneApp
+          export EXPO_TOKEN=$EXPO_TOKEN
           APP_VARIANT=sentinel eas build --platform android --profile sentinel --non-interactive --no-wait
     artifacts:
       - SmartphoneApp/build/**/*.apk
@@ -639,9 +706,18 @@ workflows:
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
+      - name: Verify EXPO_TOKEN
+        script: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "❌ ERROR: EXPO_TOKEN is not set!"
+            echo "Please add EXPO_TOKEN to the credentials group in Codemagic"
+            exit 1
+          fi
+          echo "✅ EXPO_TOKEN is set (length: ${#EXPO_TOKEN})"
       - name: Build iOS IPA
         script: |
           cd SmartphoneApp
+          export EXPO_TOKEN=$EXPO_TOKEN
           APP_VARIANT=sentinel eas build --platform ios --profile sentinel --non-interactive --no-wait
     artifacts:
       - SmartphoneApp/build/**/*.ipa
@@ -690,9 +766,18 @@ workflows:
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
+      - name: Verify EXPO_TOKEN
+        script: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "❌ ERROR: EXPO_TOKEN is not set!"
+            echo "Please add EXPO_TOKEN to the credentials group in Codemagic"
+            exit 1
+          fi
+          echo "✅ EXPO_TOKEN is set (length: ${#EXPO_TOKEN})"
       - name: Build Android APK
         script: |
           cd SmartphoneApp
+          export EXPO_TOKEN=$EXPO_TOKEN
           APP_VARIANT=staff eas build --platform android --profile staff --non-interactive --no-wait
     artifacts:
       - SmartphoneApp/build/**/*.apk
@@ -746,9 +831,18 @@ workflows:
       - name: Install EAS CLI
         script: |
           npm install -g eas-cli
+      - name: Verify EXPO_TOKEN
+        script: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "❌ ERROR: EXPO_TOKEN is not set!"
+            echo "Please add EXPO_TOKEN to the credentials group in Codemagic"
+            exit 1
+          fi
+          echo "✅ EXPO_TOKEN is set (length: ${#EXPO_TOKEN})"
       - name: Build iOS IPA
         script: |
           cd SmartphoneApp
+          export EXPO_TOKEN=$EXPO_TOKEN
           APP_VARIANT=staff eas build --platform ios --profile staff --non-interactive --no-wait
     artifacts:
       - SmartphoneApp/build/**/*.ipa
