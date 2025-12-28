@@ -270,7 +270,7 @@ workflows:
         PACKAGE_NAME: com.mpolobe.railways
       android_signing:
         - railways_keystore
-      java: 17
+      java: 21
     cache:
       cache_paths:
         - $HOME/.gradle/caches
