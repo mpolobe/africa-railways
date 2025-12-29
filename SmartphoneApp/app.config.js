@@ -78,6 +78,9 @@ module.exports = {
         "expo-build-properties",
         {
           android: {
+            compileSdkVersion: 34,
+            targetSdkVersion: 34,
+            minSdkVersion: 23,
             useAndroidX: true,
             enableJetifier: true,
             packagingOptions: {
@@ -116,7 +119,14 @@ module.exports = {
     android: {
       package: config.package,
       versionCode: 1,
-      permissions: ["CAMERA", "ACCESS_FINE_LOCATION"],
+      permissions: [
+        "CAMERA", 
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_NETWORK_STATE",
+        "ACCESS_WIFI_STATE"
+      ],
+      usesCleartextTraffic: true,
+      hardwareAccelerated: true,
       adaptiveIcon: {
         foregroundImage: `./assets/adaptive-icon-${APP_VARIANT}.png`,
         backgroundColor: config.backgroundColor
