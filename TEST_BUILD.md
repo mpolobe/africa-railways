@@ -149,7 +149,7 @@ Build URL: https://expo.dev/...
 **Fix:**
 1. Go to: https://github.com/mpolobe/africa-railways/settings/secrets/actions
 2. Verify secret name is exactly: `EXPO_TOKEN` (case-sensitive)
-3. If missing, add it with value: `PU6XiaYTwUlDHY224UJecC_nxeLquM0mLCUDbi41`
+3. If missing, add it with value: `YOUR_EXPO_TOKEN_HERE`
 
 ### Issue: "Authentication failed"
 

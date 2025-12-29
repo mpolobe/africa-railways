@@ -123,7 +123,7 @@ Check build logs for:
 ### Your Credentials
 
 ```
-EXPO_TOKEN: PU6XiaYTwUlDHY224UJecC_nxeLquM0mLCUDbi41
+EXPO_TOKEN: YOUR_EXPO_TOKEN_HERE
 BACKEND_URL: https://africa-railways.vercel.app
 RAILWAYS_API_KEY: rw_34a9e08f44dadbfd0f376a76df6d5594763a0e4fa77b6f63
 AFRICOIN_API_KEY: ac_606759e20b550edfc538388d6330a46e272f3b9644719ab1

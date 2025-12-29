@@ -104,7 +104,7 @@ Once builds complete:
 
 ### GitHub Secrets
 ```
-✅ EXPO_TOKEN = PU6XiaYTwUlDHY224UJecC_nxeLquM0mLCUDbi41
+✅ EXPO_TOKEN = YOUR_EXPO_TOKEN_HERE
 ⚠️ BACKEND_URL = (optional, recommended)
 ⚠️ RAILWAYS_API_KEY = (optional, recommended)
 ⚠️ AFRICOIN_API_KEY = (optional, recommended)

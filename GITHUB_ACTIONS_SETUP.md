@@ -14,7 +14,7 @@ You need to add these secrets to your GitHub repository:
 
 | Secret Name | Value | Purpose |
 |-------------|-------|---------|
-| `EXPO_TOKEN` | `PU6XiaYTwUlDHY224UJecC_nxeLquM0mLCUDbi41` | Authenticate with Expo |
+| `EXPO_TOKEN` | `YOUR_EXPO_TOKEN_HERE` | Authenticate with Expo |
 | `BACKEND_URL` | `https://africa-railways.vercel.app` | Backend API URL |
 | `RAILWAYS_API_KEY` | Your Railways API key | Railways app authentication |
 | `AFRICOIN_API_KEY` | Your Africoin API key | Africoin app authentication |
@@ -31,7 +31,7 @@ You need to add these secrets to your GitHub repository:
 
 ```
 Name: EXPO_TOKEN
-Value: PU6XiaYTwUlDHY224UJecC_nxeLquM0mLCUDbi41
+Value: YOUR_EXPO_TOKEN_HERE
 ```
 
 ```
@@ -56,7 +56,7 @@ If you have GitHub CLI installed:
 ```bash
 # Set EXPO_TOKEN
 gh secret set EXPO_TOKEN \
-  --body "PU6XiaYTwUlDHY224UJecC_nxeLquM0mLCUDbi41" \
+  --body "YOUR_EXPO_TOKEN_HERE" \
   --repo mpolobe/africa-railways
 
 # Set BACKEND_URL

@@ -198,7 +198,7 @@ jobs:
 #### Check 1: EXPO_TOKEN is Valid
 ```bash
 # Test locally
-export EXPO_TOKEN="PU6XiaYTwUlDHY224UJecC_nxeLquM0mLCUDbi41"
+export EXPO_TOKEN="YOUR_EXPO_TOKEN_HERE"
 eas whoami
 ```
 

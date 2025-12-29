@@ -12,11 +12,11 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Your credentials (from setup-all-secrets.sh)
-EXPO_TOKEN="PU6XiaYTwUlDHY224UJecC_nxeLquM0mLCUDbi41"
-RAILWAYS_KEY="rw_34a9e08f44dadbfd0f376a76df6d5594763a0e4fa77b6f63"
-AFRICOIN_KEY="ac_606759e20b550edfc538388d6330a46e272f3b9644719ab1"
-BACKEND_URL="https://africa-railways.vercel.app"
+# Your credentials (set these as environment variables or replace with actual values)
+EXPO_TOKEN="${EXPO_TOKEN:-YOUR_EXPO_TOKEN_HERE}"
+RAILWAYS_KEY="${RAILWAYS_KEY:-YOUR_RAILWAYS_KEY_HERE}"
+AFRICOIN_KEY="${AFRICOIN_KEY:-YOUR_AFRICOIN_KEY_HERE}"
+BACKEND_URL="${BACKEND_URL:-https://africa-railways.vercel.app}"
 
 echo -e "${BLUE}╔════════════════════════════════════════════════════════════╗${NC}"
 echo -e "${BLUE}║   Codemagic Environment Variables Setup Helper            ║${NC}"
