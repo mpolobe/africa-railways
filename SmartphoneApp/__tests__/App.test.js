@@ -12,7 +12,7 @@ jest.mock('expo-camera', () => ({
 }));
 
 // Mock Sui client
-jest.mock('@mysten/sui.js/client', () => ({
+jest.mock('@mysten/sui/client', () => ({
   SuiClient: jest.fn().mockImplementation(() => ({
     getObject: jest.fn()
   })),

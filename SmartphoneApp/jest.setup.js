@@ -28,7 +28,7 @@ jest.mock('react-native-reanimated', () => {
 });
 
 // Mock Sui client
-jest.mock('@mysten/sui.js/client', () => ({
+jest.mock('@mysten/sui/client', () => ({
   SuiClient: jest.fn().mockImplementation(() => ({
     getObject: jest.fn().mockResolvedValue({
       data: {
@@ -44,8 +44,8 @@ jest.mock('@mysten/sui.js/client', () => ({
   getFullnodeUrl: jest.fn(() => 'http://localhost:9000')
 }));
 
-jest.mock('@mysten/sui.js/transactions', () => ({
-  TransactionBlock: jest.fn()
+jest.mock('@mysten/sui/transactions', () => ({
+  Transaction: jest.fn()
 }));
 
 // Silence the warning: Animated: `useNativeDriver` is not supported

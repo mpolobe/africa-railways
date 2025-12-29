@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { MapHologram } from './MapHologram'; // Our Pixel-Map component
-import { TransactionBlock } from '@mysten/sui.js/transactions';
-import { SuiClient, getFullnodeUrl } from '@mysten/sui.js/client';
+import { Transaction } from '@mysten/sui/transactions';
+import { SuiClient, getFullnodeUrl } from '@mysten/sui/client';
 
 // This line is updated automatically by your deploy-railway.sh script
 const PACKAGE_ID = "0x0"; 
