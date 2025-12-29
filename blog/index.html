@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Africa Railways Blog - News, Insights & Updates</title>
+    <meta name="description" content="Latest news, insights, and updates about railway infrastructure, digital payments, and transportation across Africa.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --navy: #0a0e1a;
+            --gold: #FFB800;
+            --cyan: #00D4FF;
+            --white: #ffffff;
+            --surface: #16203a;
+            --text-gray: #aaa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--navy);
+            color: var(--white);
+            line-height: 1.6;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 8%;
+            background: rgba(10,14,26,0.95);
+            border-bottom: 1px solid #222;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--gold);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+        
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+        
+        .hero {
+            padding: 80px 8% 60px;
+            text-align: center;
+            background: radial-gradient(circle at center, #16203a 0%, #0a0e1a 100%);
+        }
+        
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            color: var(--text-gray);
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .blog-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+        
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .blog-card {
+            background: var(--surface);
+            border: 1px solid #222;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .blog-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-5px);
+        }
+        
+        .blog-card-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #16203a 0%, #0a0e1a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .blog-card-image i {
+            font-size: 60px;
+            color: var(--gold);
+            opacity: 0.3;
+        }
+        
+        .blog-card-content {
+            padding: 25px;
+        }
+        
+        .blog-card-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+            color: var(--text-gray);
+        }
+        
+        .blog-card-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .blog-card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--white);
+            line-height: 1.3;
+        }
+        
+        .blog-card-excerpt {
+            color: var(--text-gray);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .blog-card-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        
+        .tag {
+            background: rgba(255, 184, 0, 0.1);
+            color: var(--gold);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            border: 1px solid rgba(255, 184, 0, 0.3);
+        }
+        
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .read-more:hover {
+            gap: 12px;
+        }
+        
+        footer {
+            background: rgba(10,14,26,0.95);
+            border-top: 1px solid #222;
+            padding: 40px 8%;
+            text-align: center;
+            color: var(--text-gray);
+            margin-top: 80px;
+        }
+        
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px 5%;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+            
+            .hero {
+                padding: 60px 5% 40px;
+            }
+            
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo"><i class="fas fa-train"></i> Africa Railways <span style="color:var(--cyan)">Blog</span></a>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="/dashboard.html">Sentinel Portal</a></li>
+            <li><a href="/occ">OCC Dashboard</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <h1>Africa Railways <span style="color: var(--gold)">Blog</span></h1>
+        <p>News, insights, and updates about railway infrastructure, digital payments, and transportation across Africa.</p>
+    </section>
+
+    <div class="blog-container">
+        <div class="blog-grid">
+            <!-- Featured Post: TAZARA 50 Years -->
+            <article class="blog-card" onclick="window.location.href='/blog/posts/tazara-50-years.html'">
+                <div class="blog-card-image">
+                    <i class="fas fa-train"></i>
+                </div>
+                <div class="blog-card-content">
+                    <div class="blog-card-meta">
+                        <span><i class="fas fa-calendar"></i> Dec 28, 2025</span>
+                        <span><i class="fas fa-clock"></i> 8 min read</span>
+                    </div>
+                    <h2 class="blog-card-title">The TAZARA Turns 50: Riding the Railway That Bridges Tanzania and Zambia</h2>
+                    <p class="blog-card-excerpt">A journey on the Tanzania-Zambia Railway Authority's Mukuba Express reveals both the challenges and promise of one of Africa's most ambitious infrastructure projects.</p>
+                    <div class="blog-card-tags">
+                        <span class="tag">TAZARA</span>
+                        <span class="tag">Tanzania</span>
+                        <span class="tag">Zambia</span>
+                        <span class="tag">Infrastructure</span>
+                    </div>
+                    <a href="/blog/posts/tazara-50-years.html" class="read-more">
+                        Read Article <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </article>
+
+            <!-- Placeholder for future posts -->
+            <article class="blog-card" style="opacity: 0.5; cursor: default;">
+                <div class="blog-card-image">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="blog-card-content">
+                    <div class="blog-card-meta">
+                        <span><i class="fas fa-calendar"></i> Coming Soon</span>
+                    </div>
+                    <h2 class="blog-card-title">Africoin: Building Africa's Digital Payment Infrastructure</h2>
+                    <p class="blog-card-excerpt">How blockchain technology is revolutionizing cross-border payments and railway ticketing across the continent.</p>
+                    <div class="blog-card-tags">
+                        <span class="tag">Africoin</span>
+                        <span class="tag">Blockchain</span>
+                        <span class="tag">Payments</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="blog-card" style="opacity: 0.5; cursor: default;">
+                <div class="blog-card-image">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="blog-card-content">
+                    <div class="blog-card-meta">
+                        <span><i class="fas fa-calendar"></i> Coming Soon</span>
+                    </div>
+                    <h2 class="blog-card-title">Sentinel Portal: Ensuring Worker Safety on African Railways</h2>
+                    <p class="blog-card-excerpt">An inside look at how technology is improving safety monitoring and incident reporting for railway workers.</p>
+                    <div class="blog-card-tags">
+                        <span class="tag">Safety</span>
+                        <span class="tag">Technology</span>
+                        <span class="tag">Workers</span>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Africa Railways. Building the Digital Spine of Africa.</p>
+        <p style="margin-top: 10px; font-size: 0.85rem;">
+            <a href="/" style="color: var(--gold); text-decoration: none;">Home</a> | 
+            <a href="/blog" style="color: var(--gold); text-decoration: none;">Blog</a> | 
+            <a href="/privacy-policy.html" style="color: var(--gold); text-decoration: none;">Privacy</a> | 
+            <a href="/terms-of-service.html" style="color: var(--gold); text-decoration: none;">Terms</a>
+        </p>
+    </footer>
+</body>
+</html>
