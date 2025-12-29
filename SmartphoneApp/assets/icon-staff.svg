@@ -1,0 +1,56 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Staff Verification Icon - Blue Theme -->
+  <defs>
+    <linearGradient id="staffGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0066CC;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#003D7A;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="180" fill="url(#staffGradient)"/>
+  
+  <!-- ID Badge Icon -->
+  <g transform="translate(512, 512)">
+    <!-- Badge background -->
+    <rect x="-180" y="-220" width="360" height="440" rx="20" fill="#FFFFFF" opacity="0.95"/>
+    
+    <!-- Badge header -->
+    <rect x="-180" y="-220" width="360" height="80" rx="20" fill="#0066CC"/>
+    <rect x="-180" y="-140" width="360" height="20" fill="#0066CC"/>
+    
+    <!-- Clip -->
+    <rect x="-20" y="-260" width="40" height="40" rx="5" fill="#666666"/>
+    <circle cx="0" cy="-240" r="15" fill="#333333"/>
+    
+    <!-- Profile icon -->
+    <circle cx="0" cy="-40" r="50" fill="#0066CC"/>
+    <path d="M -70,80 Q -70,20 0,20 Q 70,20 70,80 L 70,100 L -70,100 Z" fill="#0066CC"/>
+    
+    <!-- Verification checkmark -->
+    <circle cx="50" cy="-10" r="30" fill="#00CC66"/>
+    <path d="M 35,0 L 45,10 L 65,-10" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Text lines -->
+    <rect x="-120" y="130" width="240" height="12" rx="6" fill="#CCCCCC"/>
+    <rect x="-120" y="160" width="180" height="12" rx="6" fill="#CCCCCC"/>
+    
+    <!-- Barcode -->
+    <g transform="translate(0, 190)">
+      <rect x="-100" y="0" width="8" height="30" fill="#333333"/>
+      <rect x="-80" y="0" width="12" height="30" fill="#333333"/>
+      <rect x="-60" y="0" width="6" height="30" fill="#333333"/>
+      <rect x="-45" y="0" width="10" height="30" fill="#333333"/>
+      <rect x="-25" y="0" width="8" height="30" fill="#333333"/>
+      <rect x="-10" y="0" width="14" height="30" fill="#333333"/>
+      <rect x="10" y="0" width="6" height="30" fill="#333333"/>
+      <rect x="25" y="0" width="12" height="30" fill="#333333"/>
+      <rect x="45" y="0" width="8" height="30" fill="#333333"/>
+      <rect x="60" y="0" width="10" height="30" fill="#333333"/>
+      <rect x="80" y="0" width="6" height="30" fill="#333333"/>
+    </g>
+  </g>
+  
+  <!-- Staff Text -->
+  <text x="512" y="900" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="#FFFFFF" text-anchor="middle">STAFF</text>
+</svg>

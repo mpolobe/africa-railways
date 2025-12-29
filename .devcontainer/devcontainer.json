@@ -3,7 +3,7 @@
   "image": "mcr.microsoft.com/devcontainers/go:1-1.22-bookworm",
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
-      "version": "lts"
+      "version": "20"
     },
     "ghcr.io/devcontainers/features/python:1": {
       "version": "3.11"

@@ -1,0 +1,37 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Africoin Icon - Gold Theme -->
+  <defs>
+    <linearGradient id="africoinGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFB800;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF8C00;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="coinShine" cx="40%" cy="40%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#FFB800;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="180" fill="url(#africoinGradient)"/>
+  
+  <!-- Coin -->
+  <g transform="translate(512, 450)">
+    <!-- Outer circle -->
+    <circle cx="0" cy="0" r="220" fill="#FFF4CC" opacity="0.3"/>
+    <circle cx="0" cy="0" r="200" fill="#FFFFFF" opacity="0.95"/>
+    
+    <!-- Inner circle with shine -->
+    <circle cx="0" cy="0" r="180" fill="#FFB800"/>
+    <circle cx="0" cy="0" r="180" fill="url(#coinShine)"/>
+    
+    <!-- Africa continent outline (simplified) -->
+    <path d="M -60,-80 L -40,-100 L 0,-110 L 40,-100 L 70,-70 L 80,-20 L 70,40 L 40,80 L 0,100 L -40,90 L -70,50 L -80,0 L -70,-50 Z" 
+          fill="#FFFFFF" opacity="0.9" stroke="#FF8C00" stroke-width="3"/>
+    
+    <!-- Currency symbol -->
+    <text x="0" y="15" font-family="Arial, sans-serif" font-size="120" font-weight="bold" fill="#FF8C00" text-anchor="middle">₳</text>
+  </g>
+  
+  <!-- Africoin Text -->
+  <text x="512" y="880" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="#FFFFFF" text-anchor="middle">AFRICOIN</text>
+</svg>

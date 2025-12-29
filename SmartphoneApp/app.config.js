@@ -56,6 +56,16 @@ module.exports = {
     orientation: "portrait",
     userInterfaceStyle: "dark",
     
+    // App Icon
+    icon: `./assets/icon-${APP_VARIANT}.png`,
+    
+    // Splash Screen
+    splash: {
+      image: `./assets/splash-${APP_VARIANT}.png`,
+      resizeMode: "contain",
+      backgroundColor: config.backgroundColor
+    },
+    
     // Plugins
     plugins: [
       [
@@ -106,7 +116,11 @@ module.exports = {
     android: {
       package: config.package,
       versionCode: 1,
-      permissions: ["CAMERA", "ACCESS_FINE_LOCATION"]
+      permissions: ["CAMERA", "ACCESS_FINE_LOCATION"],
+      adaptiveIcon: {
+        foregroundImage: `./assets/adaptive-icon-${APP_VARIANT}.png`,
+        backgroundColor: config.backgroundColor
+      }
     },
     
     // Extra configuration
