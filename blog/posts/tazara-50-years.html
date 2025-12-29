@@ -256,6 +256,144 @@
             background: rgba(255, 184, 0, 0.1);
         }
         
+        .comments-section {
+            max-width: 800px;
+            margin: 60px auto 0;
+            padding: 0 20px;
+        }
+        
+        .comments-header {
+            font-size: 1.8rem;
+            color: var(--gold);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .comment {
+            background: var(--surface);
+            border: 1px solid #333;
+            border-left: 4px solid var(--cyan);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .comment-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+        
+        .comment-meta {
+            flex: 1;
+        }
+        
+        .comment-author {
+            font-weight: 700;
+            color: var(--white);
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .comment-role {
+            color: var(--gold);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .comment-date {
+            color: var(--text-gray);
+            font-size: 0.85rem;
+        }
+        
+        .comment-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--cyan);
+            margin-bottom: 15px;
+        }
+        
+        .comment-body {
+            color: #ddd;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        
+        .comment-body p {
+            margin-bottom: 1rem;
+        }
+        
+        .comment-body ul {
+            margin: 15px 0 15px 20px;
+        }
+        
+        .comment-body li {
+            margin-bottom: 10px;
+            color: #ddd;
+        }
+        
+        .comment-body strong {
+            color: var(--gold);
+        }
+        
+        .comment-cta {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+        
+        .cta-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: var(--gold);
+            color: var(--navy);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .cta-link:hover {
+            background: #FFC933;
+            transform: translateY(-2px);
+        }
+        
+        .cta-link.secondary {
+            background: transparent;
+            border: 2px solid var(--cyan);
+            color: var(--cyan);
+        }
+        
+        .cta-link.secondary:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: var(--cyan);
+        }
+        
         footer {
             background: rgba(10,14,26,0.95);
             border-top: 1px solid #222;
@@ -304,6 +442,7 @@
         <a href="/" class="logo"><i class="fas fa-train"></i> Africa Railways <span style="color:var(--cyan)">Blog</span></a>
         <ul class="nav-links">
             <li><a href="/">Home</a></li>
+            <li><a href="/about.html">About</a></li>
             <li><a href="/blog">Blog</a></li>
             <li><a href="/dashboard.html">Sentinel Portal</a></li>
             <li><a href="/occ">OCC Dashboard</a></li>
@@ -431,10 +570,67 @@
         </footer>
     </article>
 
+    <!-- Comments Section -->
+    <section class="comments-section">
+        <h2 class="comments-header">
+            <i class="fas fa-comments"></i>
+            Comments
+        </h2>
+
+        <div class="comment">
+            <div class="comment-header">
+                <div class="comment-avatar">AR</div>
+                <div class="comment-meta">
+                    <div class="comment-author">Africa Railways Team</div>
+                    <div class="comment-role">Official Response</div>
+                    <div class="comment-date">December 28, 2025</div>
+                </div>
+            </div>
+
+            <h3 class="comment-title">Africoin Wallet: Your Digital Companion for the TAZARA Corridor</h3>
+
+            <div class="comment-body">
+                <p>Welcome to the future of African rail travel. The <strong>Africoin Wallet</strong> is the official digital payment and logistics platform designed for the 1,860km Dar-Kapiri corridor. Whether you are a passenger, a railway worker, or a freight shipper, Africoin connects you directly to the Africa Railways Operations Command Center (OCC).</p>
+
+                <h4 style="color: var(--gold); margin: 20px 0 10px;">KEY FEATURES:</h4>
+                <ul>
+                    <li><strong>SMART TICKETING & PAYMENTS:</strong> Purchase TAZARA tickets instantly using Africoin or local mobile money. No more queues at the station—your QR code ticket is stored securely in your wallet.</li>
+                    
+                    <li><strong>LIVE TRAIN TRACKING:</strong> Powered by real-time IoT sensors from the Africa Railways OCC. Know exactly where your train is, see predictive arrival times, and receive instant alerts about delays or schedule changes.</li>
+                    
+                    <li><strong>TRANSPARENT PAYROLL:</strong> For TAZARA staff, receive your earnings via a secure, blockchain-backed smart contract. Zero late payments, full transparency, and instant access to your funds.</li>
+                    
+                    <li><strong>FREIGHT & LOGISTICS:</strong> Shippers can track copper and cargo shipments from mine to port. Access digital bills of lading and real-time status updates directly from your smartphone.</li>
+                    
+                    <li><strong>CROSS-BORDER SIMPLICITY:</strong> Seamlessly handle currency exchange and digital customs declarations at the Tunduma/Nakonde border.</li>
+                </ul>
+
+                <h4 style="color: var(--cyan); margin: 20px 0 10px;">WHY AFRICOIN?</h4>
+                <p>Built on state-of-the-art blockchain technology, Africoin is designed to modernize Africa's most strategic railway. Our mission is to enhance safety, improve reliability, and provide financial inclusion for every traveler and worker on the TAZARA line.</p>
+            </div>
+
+            <div class="comment-cta">
+                <a href="https://www.africarailways.com/" class="cta-link" target="_blank">
+                    <i class="fas fa-globe"></i>
+                    Visit Website
+                </a>
+                <a href="mailto:ben.mpolokoso@gmail.com" class="cta-link secondary">
+                    <i class="fas fa-envelope"></i>
+                    Contact Support
+                </a>
+                <a href="/occ" class="cta-link secondary">
+                    <i class="fas fa-dashboard"></i>
+                    OCC Dashboard
+                </a>
+            </div>
+        </div>
+    </section>
+
     <footer>
         <p>&copy; 2025 Africa Railways. Building the Digital Spine of Africa.</p>
         <p style="margin-top: 10px; font-size: 0.85rem;">
             <a href="/" style="color: var(--gold); text-decoration: none;">Home</a> | 
+            <a href="/about.html" style="color: var(--gold); text-decoration: none;">About</a> | 
             <a href="/blog" style="color: var(--gold); text-decoration: none;">Blog</a> | 
             <a href="/privacy-policy.html" style="color: var(--gold); text-decoration: none;">Privacy</a> | 
             <a href="/terms-of-service.html" style="color: var(--gold); text-decoration: none;">Terms</a>
