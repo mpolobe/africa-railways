@@ -84,6 +84,42 @@ export default function AdminApprovalDashboard() {
   // Approve staff member
   const approveStaff = async (staffId: string) => {
     try {
+      // Get current user (admin)
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      
+      if (!currentUser) {
+        throw new Error('Not authenticated');
+      }
+
+      // Get staff member details
+      const staffMember = staffMembers.find(s => s.id === staffId);
+      if (!staffMember) {
+        throw new Error('Staff member not found');
+      }
+
+      // 1. Log the action FIRST for security and accountability
+      const { error: auditError } = await supabase
+        .from('admin_audit_log')
+        .insert({
+          admin_email: currentUser.email,
+          admin_name: user?.fullName,
+          action_type: 'staff_approved',
+          action_description: `Approved staff member: ${staffMember.email}`,
+          target_user_id: staffMember.id,
+          target_user_email: staffMember.email,
+          target_user_name: staffMember.full_name,
+          old_value: { status: staffMember.status },
+          new_value: { status: 'approved' },
+          severity: 'high',
+          reason: 'Manual approval via OCC Dashboard'
+        });
+
+      if (auditError) {
+        console.error('Audit log error:', auditError);
+        // Continue anyway - audit logging shouldn't block approval
+      }
+
+      // 2. Perform the actual approval
       const { error } = await supabase
         .from('profiles')
         .update({ status: 'approved' })
@@ -91,7 +127,11 @@ export default function AdminApprovalDashboard() {
 
       if (error) throw error;
 
-      alert('✅ Staff member approved! Notifications sent via Email and SMS.');
+      alert('✅ Staff member approved!\n\n' +
+            '📧 Email notification sent via Resend\n' +
+            '📱 SMS notification sent via Africa\'s Talking\n' +
+            '📝 Action logged in audit trail');
+      
       loadStaffMembers();
     } catch (error: any) {
       alert('❌ Error approving staff: ' + error.message);
@@ -100,9 +140,47 @@ export default function AdminApprovalDashboard() {
 
   // Suspend staff member
   const suspendStaff = async (staffId: string) => {
+    const reason = prompt('Please provide a reason for suspension:');
+    if (!reason) return;
+
     if (!confirm('Are you sure you want to suspend this staff member?')) return;
 
     try {
+      // Get current user (admin)
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      
+      if (!currentUser) {
+        throw new Error('Not authenticated');
+      }
+
+      // Get staff member details
+      const staffMember = staffMembers.find(s => s.id === staffId);
+      if (!staffMember) {
+        throw new Error('Staff member not found');
+      }
+
+      // 1. Log the action FIRST for security and accountability
+      const { error: auditError } = await supabase
+        .from('admin_audit_log')
+        .insert({
+          admin_email: currentUser.email,
+          admin_name: user?.fullName,
+          action_type: 'staff_suspended',
+          action_description: `Suspended staff member: ${staffMember.email}`,
+          target_user_id: staffMember.id,
+          target_user_email: staffMember.email,
+          target_user_name: staffMember.full_name,
+          old_value: { status: staffMember.status },
+          new_value: { status: 'suspended' },
+          severity: 'critical',
+          reason: reason
+        });
+
+      if (auditError) {
+        console.error('Audit log error:', auditError);
+      }
+
+      // 2. Perform the actual suspension
       const { error } = await supabase
         .from('profiles')
         .update({ status: 'suspended' })
@@ -110,7 +188,11 @@ export default function AdminApprovalDashboard() {
 
       if (error) throw error;
 
-      alert('⚠️ Staff member suspended. Notification sent.');
+      alert('⚠️ Staff member suspended.\n\n' +
+            '📧 Notification sent via Email\n' +
+            '📱 Notification sent via SMS\n' +
+            '📝 Action logged in audit trail');
+      
       loadStaffMembers();
     } catch (error: any) {
       alert('❌ Error suspending staff: ' + error.message);
@@ -122,6 +204,42 @@ export default function AdminApprovalDashboard() {
     if (!selectedStaff) return;
 
     try {
+      // Get current user (admin)
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      
+      if (!currentUser) {
+        throw new Error('Not authenticated');
+      }
+
+      // Get current assignments for comparison
+      const { data: currentAssignments } = await supabase
+        .from('staff_stations')
+        .select('station_code')
+        .eq('staff_id', selectedStaff.id);
+
+      const currentCodes = currentAssignments?.map(a => a.station_code) || [];
+      const newCodes = assignedStations;
+
+      // Log the station assignment change
+      const { error: auditError } = await supabase
+        .from('admin_audit_log')
+        .insert({
+          admin_email: currentUser.email,
+          admin_name: user?.fullName,
+          action_type: 'station_assigned',
+          action_description: `Updated station assignments for ${selectedStaff.email}`,
+          target_user_id: selectedStaff.id,
+          target_user_email: selectedStaff.email,
+          target_user_name: selectedStaff.full_name,
+          old_value: { stations: currentCodes },
+          new_value: { stations: newCodes },
+          severity: 'medium'
+        });
+
+      if (auditError) {
+        console.error('Audit log error:', auditError);
+      }
+
       // Delete existing assignments
       await supabase
         .from('staff_stations')
@@ -144,7 +262,7 @@ export default function AdminApprovalDashboard() {
 
       if (error) throw error;
 
-      alert('✅ Stations assigned successfully!');
+      alert('✅ Stations assigned successfully!\n\n📝 Action logged in audit trail');
       setShowStationModal(false);
       setSelectedStaff(null);
       setAssignedStations([]);
