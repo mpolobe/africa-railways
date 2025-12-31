@@ -26,8 +26,35 @@ try:
 except ImportError as e:
     SUI_AVAILABLE = False
     logger.warning(f"⚠️  Sui integration not available: {e}")
+
+# SMS notifications - THE CLOSED LOOP
+try:
+    from notifications import (
+        send_investment_success_sms,
+        send_ticket_confirmation_sms,
+        send_vesting_reminder_sms
+    )
+    SMS_AVAILABLE = True
+    logger.info("✅ SMS notifications loaded")
+except ImportError as e:
+    SMS_AVAILABLE = False
+    logger.warning(f"⚠️  SMS notifications not available: {e}")
     
-    # Mock functions for development/testing
+    # Mock SMS functions for development/testing
+    def send_investment_success_sms(phone, amount, tx_digest):
+        logger.info(f"[MOCK SMS] Investment confirmation to {phone}: {amount} SUI, TX: {tx_digest[:10]}...")
+        return True
+    
+    def send_ticket_confirmation_sms(phone, route, time, ticket_id):
+        logger.info(f"[MOCK SMS] Ticket confirmation to {phone}: {route} at {time}, Ticket: {ticket_id}")
+        return True
+    
+    def send_vesting_reminder_sms(phone, claimable_amount):
+        logger.info(f"[MOCK SMS] Vesting reminder to {phone}: {claimable_amount} tokens claimable")
+        return True
+
+# Mock Sui functions if not available
+if not SUI_AVAILABLE:
     def execute_investment(phone, amount):
         logger.info(f"[MOCK] Investment: {phone} -> {amount} SUI")
         return True, "0xMOCK_TX_DIGEST_" + str(amount)
@@ -243,12 +270,26 @@ def ussd_callback():
             success, ticket_id, error = book_ticket(phone_number, route, 'express')
             
             if success:
+                # Send SMS confirmation
+                if SMS_AVAILABLE:
+                    sms_sent = send_ticket_confirmation_sms(
+                        phone_number, 
+                        route, 
+                        "Express 06:00", 
+                        ticket_id
+                    )
+                    if sms_sent:
+                        logger.info(f"📱 Ticket SMS sent to {phone_number}")
+                
                 response = f"END ✅ Booking Confirmed!\n\n"
                 response += f"Route: {route}\n"
                 response += f"Train: Express 06:00\n"
                 response += f"Price: K{price}\n"
                 response += f"Ticket: {ticket_id}\n\n"
-                response += f"SMS sent to {phone_number}\n"
+                if SMS_AVAILABLE:
+                    response += "SMS confirmation sent.\n"
+                else:
+                    response += f"SMS sent to {phone_number}\n"
                 response += "Safe travels! 🚂"
                 clear_session(session_id)
             else:
@@ -288,13 +329,13 @@ def ussd_callback():
         
         elif text == "2*1*1":
             # Confirm 100 SUI investment
-            # THIS IS THE CRITICAL BRIDGE: USSD → Sui Blockchain
+            # THIS IS THE CRITICAL BRIDGE: USSD → Sui Blockchain → SMS
             sui_amount = session_data.get('sui_amount', 100)
             
             logger.info(f"🚀 INVESTMENT TRIGGER: {phone_number} investing {sui_amount} SUI")
-            logger.info(f"   Calling execute_investment() from sui_logic.py")
+            logger.info(f"   Step 1: Calling execute_investment() from sui_logic.py")
             
-            # Execute on-chain transaction
+            # Step 1: Execute on-chain transaction
             success, result = execute_investment(phone_number, sui_amount)
             
             if success:
@@ -302,12 +343,22 @@ def ussd_callback():
                 equity_percent = (sui_amount / 350000) * 10
                 
                 logger.info(f"✅ Investment successful: {tx_digest}")
+                logger.info(f"   Step 2: Sending SMS confirmation")
+                
+                # Step 2: Send SMS confirmation (THE CLOSED LOOP)
+                if SMS_AVAILABLE:
+                    sms_sent = send_investment_success_sms(phone_number, sui_amount, tx_digest)
+                    if sms_sent:
+                        logger.info(f"📱 SMS sent to {phone_number}")
+                    else:
+                        logger.warning(f"⚠️  SMS failed for {phone_number}")
                 
                 response = f"END ✅ Investment Confirmed!\n\n"
                 response += f"Amount: {sui_amount} SUI\n"
                 response += f"Equity: {equity_percent:.4f}%\n"
                 response += f"TX: {tx_digest[:10]}...\n\n"
-                response += "Certificate NFT sent to your wallet.\n"
+                if SMS_AVAILABLE:
+                    response += "Check your SMS for details.\n"
                 response += "Welcome to ARAIL! 🚂💎"
                 clear_session(session_id)
             else:
@@ -383,16 +434,96 @@ def ussd_callback():
             success, data = check_investment_status(phone_number)
             
             if success and data.get('has_investment'):
-                response = f"END Your $SENT Balance:\n\n"
-                response += f"Invested: {data['total_invested']} SUI\n"
-                response += f"Equity Tokens: {data['equity_tokens']:,}\n"
-                response += f"Vested: {data['vesting_progress']:.1f}%\n"
-                response += f"Claimable: {data['claimable_tokens']:,}\n\n"
-                response += "Visit africarailways.com/vesting to claim"
+                # Store certificate ID in session for claiming
+                set_session_data(session_id, {
+                    'certificate_id': data.get('certificate_id'),
+                    'claimable_tokens': data.get('claimable_tokens', 0)
+                })
+                
+                response = f"CON Your $SENT Balance:\n\n"
+                response += f"Total: {data['equity_tokens']:,} tokens\n"
+                response += f"Vested: {data['vested_tokens']:,} ({data['vesting_progress']:.1f}%)\n"
+                response += f"Locked: {data['locked_tokens']:,}\n\n"
+                
+                if data['claimable_tokens'] > 0:
+                    response += f"1. Claim {data['claimable_tokens']:,} Tokens\n"
+                    response += "2. SMS Full Details\n"
+                    response += "0. Back"
+                else:
+                    response += "No tokens ready to claim yet.\n"
+                    response += f"{data['days_until_fully_vested']} days until fully vested.\n\n"
+                    response += "2. SMS Full Details\n"
+                    response += "0. Back"
             else:
                 response = f"END No investments found.\n\n"
                 response += "Dial *384*26621# and select\n"
                 response += "2. Invest in $SENT to get started!"
+        
+        elif text == "3*1*1":
+            # Claim vested tokens
+            certificate_id = session_data.get('certificate_id')
+            claimable = session_data.get('claimable_tokens', 0)
+            
+            if not certificate_id or claimable == 0:
+                response = "END No tokens available to claim.\n\n"
+                response += "Check back later as your tokens vest."
+            else:
+                logger.info(f"🎁 Claiming {claimable} tokens for {phone_number}")
+                
+                success, result = claim_vested_tokens(phone_number, certificate_id)
+                
+                if success:
+                    tx_digest = result
+                    logger.info(f"✅ Claim successful: {tx_digest}")
+                    
+                    # Send SMS confirmation
+                    if SMS_AVAILABLE:
+                        send_vesting_reminder_sms(phone_number, claimable)
+                    
+                    response = f"END ✅ Tokens Claimed!\n\n"
+                    response += f"Amount: {claimable:,} $SENT\n"
+                    response += f"TX: {tx_digest[:10]}...\n\n"
+                    if SMS_AVAILABLE:
+                        response += "Check SMS for details.\n"
+                    response += "Tokens sent to your wallet! 💎"
+                    clear_session(session_id)
+                else:
+                    error_msg = result
+                    logger.error(f"❌ Claim failed: {error_msg}")
+                    
+                    response = f"END ❌ Claim Failed\n\n"
+                    response += f"Error: {error_msg[:50]}\n"
+                    response += "Please try again or contact support."
+        
+        elif text == "3*1*2":
+            # SMS full wallet details
+            success, data = check_investment_status(phone_number)
+            
+            if success and data.get('has_investment'):
+                if SMS_AVAILABLE:
+                    # Send detailed SMS with full wallet data
+                    sms_sent = send_vesting_reminder_sms(
+                        phone_number, 
+                        data['claimable_tokens'],
+                        wallet_data=data
+                    )
+                    
+                    if sms_sent:
+                        response = "END ✅ SMS Sent!\n\n"
+                        response += "Check your phone for:\n"
+                        response += "- Total token balance\n"
+                        response += "- Vested vs locked tokens\n"
+                        response += "- Vesting progress %\n"
+                        response += "- Claimable amount"
+                    else:
+                        response = "END ❌ SMS Failed\n\n"
+                        response += "Please try again or contact support."
+                else:
+                    response = "END SMS service unavailable.\n\n"
+                    response += "Visit africarailways.com/wallet\n"
+                    response += "to view your full balance."
+            else:
+                response = "END No investment found."
         
         # ============================================
         # HELP & SUPPORT

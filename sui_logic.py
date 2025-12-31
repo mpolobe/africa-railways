@@ -112,6 +112,19 @@ def check_investment_status(phone_number: str):
     
     Returns:
         (success: bool, data: dict or error_message: str)
+        
+    Data dict structure:
+        {
+            'has_investment': bool,
+            'total_invested': int,        # Total SUI invested
+            'equity_tokens': int,         # Total $SENT tokens allocated
+            'vested_tokens': int,         # Tokens vested so far
+            'locked_tokens': int,         # Tokens still locked
+            'vesting_progress': float,    # % of vesting complete
+            'claimable_tokens': int,      # Tokens ready to claim
+            'days_until_fully_vested': int,
+            'certificate_id': str         # NFT object ID for claiming
+        }
     """
     try:
         logger.info(f"🔍 Checking investment status for {phone_number}")
@@ -120,14 +133,32 @@ def check_investment_status(phone_number: str):
         # 1. Query database for wallet address associated with phone number
         # 2. Query Sui blockchain for InvestmentCertificate objects owned by that address
         # 3. Parse certificate data (sui_invested, equity_tokens, vesting_start, etc.)
+        # 4. Calculate vesting progress based on current time vs vesting_start
         
-        # For now, return mock data
+        # Example production query:
+        # cfg = SuiConfig.default_config()
+        # client = SyncClient(cfg)
+        # wallet_address = get_wallet_for_phone(phone_number)  # From your DB
+        # objects = client.get_objects_owned_by_address(wallet_address)
+        # certificates = [obj for obj in objects if obj.type.contains("InvestmentCertificate")]
+        
+        # For now, return mock data with realistic vesting calculation
+        # Simulating: 500 SUI invested 1 month ago (8.33% vested in 12-month linear vesting)
+        total_tokens = 142857
+        vesting_progress = 8.33  # 1 month / 12 months
+        vested_tokens = int(total_tokens * vesting_progress / 100)
+        locked_tokens = total_tokens - vested_tokens
+        
         return True, {
             'has_investment': True,
             'total_invested': 500,  # SUI
-            'equity_tokens': 142857,
-            'vesting_progress': 8.33,  # %
-            'claimable_tokens': 11905
+            'equity_tokens': total_tokens,
+            'vested_tokens': vested_tokens,
+            'locked_tokens': locked_tokens,
+            'vesting_progress': vesting_progress,
+            'claimable_tokens': vested_tokens,  # Assuming none claimed yet
+            'days_until_fully_vested': 330,  # 11 months remaining
+            'certificate_id': '0xMOCK_CERTIFICATE_ID_12345'
         }
         
     except Exception as e:
