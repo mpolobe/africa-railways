@@ -14,31 +14,37 @@ from datetime import datetime
 import hashlib
 import hmac
 
-# Sui blockchain integration
+# Sui blockchain integration - THE ENGINE
 try:
-    from backend.sui_integration import (
-        invest_sent,
-        check_sent_balance,
-        claim_vested_tokens,
-        mint_afc,
-        mint_ticket_nft
+    from sui_logic import (
+        execute_investment,
+        check_investment_status,
+        claim_vested_tokens
     )
     SUI_AVAILABLE = True
-except ImportError:
+    logger.info("✅ Sui blockchain integration loaded")
+except ImportError as e:
     SUI_AVAILABLE = False
-    print("⚠️  Warning: Sui integration not available")
+    logger.warning(f"⚠️  Sui integration not available: {e}")
     
-    # Mock functions for development
-    def invest_sent(phone, amount):
-        return True, "0xMOCK_TX", None
-    def check_sent_balance(phone):
-        return True, {'total_equity_tokens': 142857, 'claimable': 11905}, None
+    # Mock functions for development/testing
+    def execute_investment(phone, amount):
+        logger.info(f"[MOCK] Investment: {phone} -> {amount} SUI")
+        return True, "0xMOCK_TX_DIGEST_" + str(amount)
+    
+    def check_investment_status(phone):
+        logger.info(f"[MOCK] Status check: {phone}")
+        return True, {
+            'has_investment': True,
+            'total_invested': 500,
+            'equity_tokens': 142857,
+            'vesting_progress': 8.33,
+            'claimable_tokens': 11905
+        }
+    
     def claim_vested_tokens(phone, cert_id):
-        return True, "0xMOCK_TX", None
-    def mint_afc(phone, amount):
-        return True, "0xMOCK_TX", None
-    def mint_ticket_nft(phone, route, train, seat, price):
-        return True, "TKT123", None
+        logger.info(f"[MOCK] Claim: {phone} -> {cert_id}")
+        return True, "0xMOCK_CLAIM_TX"
 
 app = Flask(__name__)
 CORS(app)
@@ -282,14 +288,21 @@ def ussd_callback():
         
         elif text == "2*1*1":
             # Confirm 100 SUI investment
+            # THIS IS THE CRITICAL BRIDGE: USSD → Sui Blockchain
             sui_amount = session_data.get('sui_amount', 100)
             
             logger.info(f"🚀 INVESTMENT TRIGGER: {phone_number} investing {sui_amount} SUI")
+            logger.info(f"   Calling execute_investment() from sui_logic.py")
             
-            success, tx_digest, error = mint_sent_tokens(phone_number, sui_amount)
+            # Execute on-chain transaction
+            success, result = execute_investment(phone_number, sui_amount)
             
             if success:
+                tx_digest = result
                 equity_percent = (sui_amount / 350000) * 10
+                
+                logger.info(f"✅ Investment successful: {tx_digest}")
+                
                 response = f"END ✅ Investment Confirmed!\n\n"
                 response += f"Amount: {sui_amount} SUI\n"
                 response += f"Equity: {equity_percent:.4f}%\n"
@@ -298,8 +311,11 @@ def ussd_callback():
                 response += "Welcome to ARAIL! 🚂💎"
                 clear_session(session_id)
             else:
+                error_msg = result
+                logger.error(f"❌ Investment failed: {error_msg}")
+                
                 response = f"END ❌ Investment Failed\n\n"
-                response += f"Error: {error}\n"
+                response += f"Error: {error_msg[:50]}\n"
                 response += "Please contact investors@africarailways.com"
         
         elif text == "2*2":
@@ -320,14 +336,21 @@ def ussd_callback():
         
         elif text == "2*2*1":
             # Confirm 500 SUI investment
+            # THIS IS THE CRITICAL BRIDGE: USSD → Sui Blockchain
             sui_amount = session_data.get('sui_amount', 500)
             
             logger.info(f"🚀 INVESTMENT TRIGGER: {phone_number} investing {sui_amount} SUI")
+            logger.info(f"   Calling execute_investment() from sui_logic.py")
             
-            success, tx_digest, error = mint_sent_tokens(phone_number, sui_amount)
+            # Execute on-chain transaction
+            success, result = execute_investment(phone_number, sui_amount)
             
             if success:
+                tx_digest = result
                 equity_percent = (sui_amount / 350000) * 10
+                
+                logger.info(f"✅ Investment successful: {tx_digest}")
+                
                 response = f"END ✅ Investment Confirmed!\n\n"
                 response += f"Amount: {sui_amount} SUI\n"
                 response += f"Equity: {equity_percent:.4f}%\n"
@@ -336,8 +359,11 @@ def ussd_callback():
                 response += "Welcome to ARAIL! 🚂💎"
                 clear_session(session_id)
             else:
+                error_msg = result
+                logger.error(f"❌ Investment failed: {error_msg}")
+                
                 response = f"END ❌ Investment Failed\n\n"
-                response += f"Error: {error}\n"
+                response += f"Error: {error_msg[:50]}\n"
                 response += "Please contact investors@africarailways.com"
         
         # ============================================
@@ -351,13 +377,22 @@ def ussd_callback():
             response += "0. Back"
         
         elif text == "3*1":
-            # Check $SENT balance
-            response = f"END Your $SENT Balance:\n\n"
-            response += "Balance: 142,857 SENT\n"
-            response += "Equity: 0.1429%\n"
-            response += "Vested: 35,714 SENT\n"
-            response += "Claimable: 11,905 SENT\n\n"
-            response += "Visit africarailways.com/vesting to claim"
+            # Check $SENT balance - Query blockchain
+            logger.info(f"📊 Balance check for {phone_number}")
+            
+            success, data = check_investment_status(phone_number)
+            
+            if success and data.get('has_investment'):
+                response = f"END Your $SENT Balance:\n\n"
+                response += f"Invested: {data['total_invested']} SUI\n"
+                response += f"Equity Tokens: {data['equity_tokens']:,}\n"
+                response += f"Vested: {data['vesting_progress']:.1f}%\n"
+                response += f"Claimable: {data['claimable_tokens']:,}\n\n"
+                response += "Visit africarailways.com/vesting to claim"
+            else:
+                response = f"END No investments found.\n\n"
+                response += "Dial *384*26621# and select\n"
+                response += "2. Invest in $SENT to get started!"
         
         # ============================================
         # HELP & SUPPORT

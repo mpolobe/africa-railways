@@ -2,6 +2,7 @@
 """
 ARAIL Sui Blockchain Integration
 Handles $SENT investment, AFC minting, and ticket NFT creation
+Uses pysui - the most robust Python SDK for Sui
 """
 
 import os
@@ -12,8 +13,6 @@ from datetime import datetime
 try:
     from pysui import SuiConfig, SyncClient
     from pysui.sui.sui_txn import SyncTransaction
-    from pysui.sui.sui_types import ObjectID, SuiString, SuiU64
-    from pysui.sui.sui_crypto import keypair_from_keystring
     SUI_AVAILABLE = True
 except ImportError:
     SUI_AVAILABLE = False
@@ -22,18 +21,18 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 # Configuration from environment
-SUI_RPC_URL = os.environ.get('SUI_RPC_URL', 'https://fullnode.mainnet.sui.io:443')
-SUI_PRIVATE_KEY = os.environ.get('SUI_PRIVATE_KEY', '')
-PACKAGE_ID = os.environ.get('PACKAGE_ID', '')
-TREASURY_ID = os.environ.get('TREASURY_ID', '')
-AFC_PACKAGE_ID = os.environ.get('AFC_PACKAGE_ID', '')
-TICKET_PACKAGE_ID = os.environ.get('TICKET_PACKAGE_ID', '')
+# CRITICAL: Set these in Railway.app Environment Variables
+PACKAGE_ID = os.environ.get('PACKAGE_ID', '0xYOUR_DEPLOYED_PACKAGE_ID')
+TREASURY_ID = os.environ.get('TREASURY_ID', '0xYOUR_SHARED_TREASURY_OBJECT_ID')
+AFC_PACKAGE_ID = os.environ.get('AFC_PACKAGE_ID', '0xYOUR_AFC_PACKAGE_ID')
+TICKET_PACKAGE_ID = os.environ.get('TICKET_PACKAGE_ID', '0xYOUR_TICKET_PACKAGE_ID')
 
 # Constants
 MIST_PER_SUI = 1_000_000_000
 MIN_INVESTMENT_SUI = 100
 TOTAL_RAISE_SUI = 350000
 EQUITY_OFFERED = 10  # 10%
+SYSTEM_CLOCK = "0x6"  # Sui System Clock object
 
 class SuiIntegration:
     """Handles all Sui blockchain interactions"""
@@ -77,12 +76,15 @@ class SuiIntegration:
         user_wallet_address: Optional[str] = None
     ) -> Tuple[bool, Optional[str], Optional[str]]:
         """
-        Invest in $SENT Pre-Seed round
+        Invest in $SENT Pre-Seed round via USSD
+        
+        This is the CRITICAL function that bridges USSD (*384*26621#) to Sui blockchain.
+        When a user confirms investment via USSD, this executes the on-chain transaction.
         
         Args:
-            phone_number: Investor's phone number
-            sui_amount: Amount in SUI (not MIST)
-            user_wallet_address: Optional user wallet (if None, creates one)
+            phone_number: Investor's phone number (e.g., "+260975190740")
+            sui_amount: Amount in SUI (not MIST) - e.g., 100, 500, 1000
+            user_wallet_address: Optional user wallet (if None, uses treasury wallet)
         
         Returns:
             (success, tx_digest, error_message)
@@ -95,43 +97,34 @@ class SuiIntegration:
             if sui_amount < MIN_INVESTMENT_SUI:
                 return False, None, f"Minimum investment is {MIN_INVESTMENT_SUI} SUI"
             
-            # Convert SUI to MIST
-            amount_mist = sui_amount * MIST_PER_SUI
-            
-            # Get or create user wallet
-            if not user_wallet_address:
-                user_wallet_address = self._get_or_create_wallet(phone_number)
-            
             logger.info(f"💰 Processing investment: {sui_amount} SUI for {phone_number}")
             
-            # Create transaction
-            txn = SyncTransaction(client=self.client, initial_sender=self.keypair)
+            # 1. Initialize Client (Uses active address in config)
+            cfg = SuiConfig.default_config()
+            client = SyncClient(cfg)
+            txer = SyncTransaction(client=client)
             
-            # Split coins for payment
-            split_coin = txn.split_coin(
-                coin=txn.gas,
-                amounts=[amount_mist]
-            )
+            # 2. Split Gas Coin to get the investment amount (in MIST)
+            mist_amount = int(sui_amount * MIST_PER_SUI)
+            investment_coin = txer.split_coin(coin=txer.gas, amounts=[mist_amount])
             
-            # Call investment contract
-            txn.move_call(
+            # 3. Call the Move 'invest' function
+            # Note: We use the system clock object (0x6) for the timestamp
+            txer.move_call(
                 target=f"{PACKAGE_ID}::investment::invest",
                 arguments=[
-                    ObjectID(TREASURY_ID),  # Treasury object
-                    split_coin,              # Payment coin
-                    ObjectID("0x6"),        # Clock object (system)
-                ],
-                type_arguments=[]
+                    TREASURY_ID,      # Treasury shared object
+                    investment_coin,  # Payment coin (split from gas)
+                    SYSTEM_CLOCK      # Sui System Clock (0x6)
+                ]
             )
             
-            # Sign and execute
-            result = txn.execute(
-                gas_budget=10_000_000  # 0.01 SUI gas budget
-            )
+            # 4. Execute & Sign
+            result = txer.execute()
             
             if result.is_ok():
-                tx_digest = result.digest
-                logger.info(f"✅ Investment successful: {tx_digest}")
+                tx_digest = result.result_data.digest
+                logger.info(f"✅ Investment successful for {phone_number}: {tx_digest}")
                 
                 # Extract certificate NFT ID from effects
                 certificate_id = self._extract_certificate_id(result)
@@ -139,7 +132,7 @@ class SuiIntegration:
                 # Store mapping in database
                 self._store_investment_record(
                     phone_number=phone_number,
-                    wallet_address=user_wallet_address,
+                    wallet_address=user_wallet_address or "treasury_managed",
                     sui_amount=sui_amount,
                     tx_digest=tx_digest,
                     certificate_id=certificate_id
@@ -147,12 +140,12 @@ class SuiIntegration:
                 
                 return True, tx_digest, None
             else:
-                error_msg = result.error if hasattr(result, 'error') else "Transaction failed"
-                logger.error(f"❌ Investment failed: {error_msg}")
+                error_msg = result.result_string
+                logger.error(f"❌ Investment failed for {phone_number}: {error_msg}")
                 return False, None, error_msg
                 
         except Exception as e:
-            logger.error(f"❌ Investment error: {str(e)}")
+            logger.error(f"❌ Investment error for {phone_number}: {str(e)}")
             return False, None, str(e)
     
     def check_sent_balance(
