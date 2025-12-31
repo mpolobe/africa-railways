@@ -212,6 +212,49 @@ class SubscriptionService {
     
     return cleaned;
   }
+
+  async generateReceipt(subscriptionId) {
+    try {
+      const token = await this.getAuthToken();
+      const response = await fetch(`${API_BASE_URL}/api/subscriptions/receipt/${subscriptionId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate receipt');
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Generate receipt error:', error);
+      throw error;
+    }
+  }
+
+  async shareReceipt(subscriptionId) {
+    try {
+      const receipt = await this.generateReceipt(subscriptionId);
+      
+      // For TAZARA traders who need physical records
+      // Send receipt via SMS as a backup
+      if (receipt.sms_sent) {
+        return {
+          success: true,
+          message: 'Receipt sent to your phone via SMS',
+          receipt
+        };
+      }
+      
+      return receipt;
+    } catch (error) {
+      console.error('Share receipt error:', error);
+      throw error;
+    }
+  }
 }
 
 export const subscriptionService = new SubscriptionService();
