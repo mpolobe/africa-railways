@@ -10,6 +10,18 @@
     {
       "source": "/investor",
       "destination": "/investor.html"
+    },
+    {
+      "source": "/invest",
+      "destination": "/invest.html"
+    },
+    {
+      "source": "/pitch-deck",
+      "destination": "/pitch-deck.html"
+    },
+    {
+      "source": "/vesting",
+      "destination": "/investor-vesting-dashboard.html"
     }
   ]
 }
