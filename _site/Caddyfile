@@ -1,0 +1,40 @@
+{
+    admin off
+}
+
+# Railway automatically fills $PORT
+:{$PORT} {
+    # Route /occ requests to the OCC Dashboard on GCP africoin-node-1
+    handle_path /occ/* {
+        reverse_proxy http://34.10.37.126:8080 {
+            header_up Host {upstream_hostport}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # Route /occ (without trailing slash) to the OCC Dashboard
+    handle /occ {
+        redir /occ/ permanent
+    }
+
+    # Route everything else to the main website
+    # This serves the static HTML files (index.html, dashboard.html, etc.)
+    handle /* {
+        root * /app
+        try_files {path} {path}.html {path}/index.html
+        file_server
+    }
+
+    # Enable compression
+    encode gzip
+
+    # Security headers
+    header {
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+}

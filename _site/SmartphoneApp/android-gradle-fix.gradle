@@ -1,0 +1,47 @@
+// android-gradle-fix.gradle
+// Add this to your app/build.gradle to fix duplicate class errors
+
+android {
+    packagingOptions {
+        // Exclude duplicate files
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/*.kotlin_module'
+        
+        // Pick first occurrence for duplicates
+        pickFirst 'lib/x86/libc++_shared.so'
+        pickFirst 'lib/x86_64/libc++_shared.so'
+        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
+    }
+    
+    configurations {
+        all {
+            // Exclude duplicate dependencies
+            exclude group: 'com.google.guava', module: 'listenablefuture'
+            
+            // Force specific versions to avoid conflicts
+            resolutionStrategy {
+                force 'com.facebook.react:react-native:0.73.11'
+                force 'androidx.core:core:1.12.0'
+                force 'androidx.appcompat:appcompat:1.6.1'
+            }
+        }
+    }
+}
+
+dependencies {
+    // Ensure single version of critical libraries
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    
+    // Exclude conflicting transitive dependencies
+    configurations.all {
+        exclude group: 'com.google.android.gms', module: 'play-services-safetynet'
+    }
+}

@@ -1,0 +1,93 @@
+{
+  "cli": {
+    "version": ">= 5.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "API_URL": "http://localhost:8080",
+        "SUI_NETWORK": "localnet"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "API_URL": "https://8080-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}",
+        "SUI_NETWORK": "testnet"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "API_URL": "https://api.africarailways.com",
+        "SUI_NETWORK": "mainnet"
+      }
+    },
+    "railways": {
+      "extends": "production",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "APP_VARIANT": "railways",
+        "BACKEND_URL": "$BACKEND_URL",
+        "API_KEY": "$RAILWAYS_API_KEY"
+      }
+    },
+    "africoin": {
+      "extends": "production",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "APP_VARIANT": "africoin",
+        "BACKEND_URL": "$BACKEND_URL",
+        "API_KEY": "$AFRICOIN_API_KEY"
+      }
+    },
+    "sentinel": {
+      "extends": "production",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "APP_VARIANT": "sentinel",
+        "BACKEND_URL": "$BACKEND_URL",
+        "API_KEY": "$SENTINEL_API_KEY",
+        "SUI_NETWORK": "mainnet"
+      }
+    },
+    "staff": {
+      "extends": "production",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "APP_VARIANT": "staff",
+        "BACKEND_URL": "$BACKEND_URL",
+        "API_KEY": "$STAFF_API_KEY",
+        "ALCHEMY_SDK_KEY": "$ALCHEMY_SDK_KEY"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./service-account-key.json"
+      }
+    }
+  }
+}
+

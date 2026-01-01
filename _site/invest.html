@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invest in ARAIL - Africa's Digital Railway</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(to right, #60a5fa, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        .shimmer {
+            background: linear-gradient(90deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.0) 100%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white">
+
+<!-- Navigation -->
+<nav class="border-b border-blue-800 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <span class="text-3xl">🚂</span>
+            <div>
+                <a href="/" class="text-2xl font-bold hover:text-cyan-400 transition">ARAIL</a>
+                <p class="text-xs text-blue-300">Africa's Digital Railway</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="/" class="hover:text-cyan-400 transition hidden md:inline">Home</a>
+            <a href="/investor" class="hover:text-cyan-400 transition hidden md:inline">Portal</a>
+            <a href="/vesting" class="hover:text-cyan-400 transition hidden md:inline">My Investments</a>
+            <a href="/pitch-deck" class="hover:text-cyan-400 transition hidden md:inline">Pitch Deck</a>
+            <button 
+                id="connectWalletBtn" 
+                class="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition"
+            >
+                Connect Wallet
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="max-w-7xl mx-auto px-4 py-16 text-center">
+    <div class="inline-block px-4 py-2 bg-blue-600/30 rounded-full text-sm mb-6 animate-pulse">
+        🔥 Pre-Seed Round Now Open • Limited to 50 Investors
+    </div>
+    
+    <h1 class="text-5xl md:text-6xl font-bold mb-6">
+        <span class="gradient-text">Invest in Africa's Railway Revolution</span>
+    </h1>
+    
+    <p class="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
+        Be part of the infrastructure transformation connecting 2 billion Africans. 
+        Working MVP. Real traction. SUI-powered treasury with auto-staking.
+    </p>
+
+    <!-- Raise Progress -->
+    <div class="max-w-2xl mx-auto mb-12">
+        <div class="bg-slate-800/80 backdrop-blur p-6 rounded-xl border border-blue-700 shadow-2xl">
+            <div class="flex justify-between mb-2 text-sm">
+                <span class="font-semibold"><span id="raisedSui">85,400</span> SUI Raised</span>
+                <span class="text-gray-400">350,000 SUI Goal</span>
+            </div>
+            <div class="w-full bg-slate-700 rounded-full h-4 mb-4 overflow-hidden">
+                <div id="progressBar" class="bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500 h-4 rounded-full transition-all duration-1000" 
+                     style="width: 24.4%"></div>
+            </div>
+            <div class="grid grid-cols-3 gap-4 text-center">
+                <div class="bg-slate-900/50 p-3 rounded-lg">
+                    <div id="progressPercent" class="text-3xl font-bold text-cyan-400">24.4%</div>
+                    <div class="text-xs text-gray-400">Funded</div>
+                </div>
+                <div class="bg-slate-900/50 p-3 rounded-lg">
+                    <div id="investorCount" class="text-3xl font-bold text-cyan-400">37</div>
+                    <div class="text-xs text-gray-400">Investors</div>
+                </div>
+                <div class="bg-slate-900/50 p-3 rounded-lg">
+                    <div class="text-3xl font-bold text-cyan-400">13d</div>
+                    <div class="text-xs text-gray-400">Remaining</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MVP Demo -->
+<section class="max-w-6xl mx-auto px-4 mb-20">
+    <h2 class="text-3xl font-bold text-center mb-12">✅ Working MVP with Real Users</h2>
+    
+    <div class="grid md:grid-cols-2 gap-8">
+        <div class="bg-gradient-to-br from-slate-800 to-blue-900/50 p-8 rounded-xl border border-blue-600 shadow-2xl hover:scale-105 transition-transform">
+            <div class="text-5xl mb-4">📱</div>
+            <h3 class="text-2xl font-bold mb-3">USSD Booking System</h3>
+            <p class="text-gray-300 mb-4">Book train tickets by dialing *723# - works on any phone, no smartphone needed.</p>
+            <div class="bg-black/70 p-4 rounded-lg font-mono text-sm text-green-400">
+                *723#<br/>
+                Welcome to ARAIL<br/>
+                1. Book Ticket<br/>
+                2. View Routes<br/>
+                3. My Bookings<br/>
+                <span class="animate-pulse">▋</span>
+            </div>
+            <div class="mt-4 grid grid-cols-2 gap-2">
+                <div class="bg-green-900/30 p-2 rounded text-center">
+                    <div class="text-2xl font-bold text-green-400">500+</div>
+                    <div class="text-xs text-gray-400">Test Users</div>
+                </div>
+                <div class="bg-green-900/30 p-2 rounded text-center">
+                    <div class="text-2xl font-bold text-green-400">95%</div>
+                    <div class="text-xs text-gray-400">Satisfaction</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-slate-800 to-purple-900/50 p-8 rounded-xl border border-purple-600 shadow-2xl hover:scale-105 transition-transform">
+            <div class="text-5xl mb-4">⛓️</div>
+            <h3 class="text-2xl font-bold mb-3">Sui Blockchain Infrastructure</h3>
+            <p class="text-gray-300 mb-4">Built on SUI - the fastest L1 blockchain with institutional backing.</p>
+            <div class="space-y-3">
+                <div class="bg-slate-900/70 p-3 rounded-lg flex justify-between items-center">
+                    <span class="text-sm">Peak TPS (Dec 30, 2025)</span>
+                    <span class="text-cyan-400 font-bold">866 TPS</span>
+                </div>
+                <div class="bg-slate-900/70 p-3 rounded-lg flex justify-between items-center">
+                    <span class="text-sm">Average Fee</span>
+                    <span class="text-cyan-400 font-bold">$0.002</span>
+                </div>
+                <div class="bg-slate-900/70 p-3 rounded-lg flex justify-between items-center">
+                    <span class="text-sm">Treasury Auto-Staking APY</span>
+                    <span class="text-cyan-400 font-bold">~1.91%</span>
+                </div>
+                <div class="bg-slate-900/70 p-3 rounded-lg flex justify-between items-center">
+                    <span class="text-sm">Market Cap</span>
+                    <span class="text-cyan-400 font-bold">$5.4B</span>
+                </div>
+            </div>
+            <div class="mt-4 bg-green-900/30 p-3 rounded-lg border border-green-700/50">
+                <div class="flex items-center gap-2 text-xs text-green-400">
+                    <span>🎯</span>
+                    <span class="font-semibold">Bitwise Spot SUI ETF Filed (Dec 31, 2025)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Market Context Banner -->
+<section class="bg-gradient-to-r from-blue-900/50 to-purple-900/50 border-y border-blue-700 py-8">
+    <div class="max-w-6xl mx-auto px-4">
+        <div class="text-center mb-4">
+            <h3 class="text-2xl font-bold mb-2">Why Invest Now?</h3>
+            <p class="text-sm text-gray-300">Market conditions favor early SUI infrastructure plays</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="bg-slate-900/50 p-4 rounded-xl border border-blue-700">
+                <div class="text-3xl mb-2">📈</div>
+                <h4 class="font-bold mb-1">Institutional Validation</h4>
+                <p class="text-sm text-gray-400">Bitwise filed for Spot SUI ETF today, signaling major institutional interest and exit liquidity for early investors.</p>
+            </div>
+            <div class="bg-slate-900/50 p-4 rounded-xl border border-blue-700">
+                <div class="text-3xl mb-2">⚡</div>
+                <h4 class="font-bold mb-1">Proven Scalability</h4>
+                <p class="text-sm text-gray-400">SUI hit 866 TPS on Dec 30, 2025 - proving it can handle high-volume TAZARA ticketing without congestion.</p>
+            </div>
+            <div class="bg-slate-900/50 p-4 rounded-xl border border-blue-700">
+                <div class="text-3xl mb-2">💎</div>
+                <h4 class="font-bold mb-1">Early-Stage Entry</h4>
+                <p class="text-sm text-gray-400">Pre-seed valuation at $5M. Comparable rail-tech companies trade at 10-50x revenue multiples.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Investment Calculator -->
+<section class="bg-slate-800/30 py-20 border-b border-blue-800 backdrop-blur">
+    <div class="max-w-4xl mx-auto px-4">
+        <h2 class="text-4xl font-bold text-center mb-4">Calculate Your Investment</h2>
+        <p class="text-center text-gray-400 mb-12">See exactly what you'll receive</p>
+        
+        <div class="bg-slate-900 p-8 rounded-xl border border-blue-700 shadow-2xl">
+            <div class="mb-8">
+                <label class="block text-lg font-semibold mb-4">Investment Amount (SUI)</label>
+                <input 
+                    type="range" 
+                    id="amountInput"
+                    min="100" 
+                    max="10000" 
+                    step="100" 
+                    value="500"
+                    class="w-full h-3 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                />
+                <div class="flex justify-between text-sm text-gray-400 mt-2">
+                    <span>100 SUI</span>
+                    <span id="suiDisplay" class="text-2xl font-bold text-white">500 SUI</span>
+                    <span>10,000 SUI</span>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                    <div class="text-sm text-gray-400 mb-2">USD Value</div>
+                    <div id="usdValue" class="text-3xl font-bold text-green-400">$720.00</div>
+                    <div class="text-xs text-gray-500 mt-1">at $1.44/SUI</div>
+                </div>
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                    <div class="text-sm text-gray-400 mb-2">Your Equity</div>
+                    <div id="equityValue" class="text-3xl font-bold text-cyan-400">0.143%</div>
+                    <div class="text-xs text-gray-500 mt-1">of ARAIL</div>
+                </div>
+            </div>
+
+            <div class="bg-blue-950/40 rounded-xl p-6 border border-blue-800 mb-8">
+                <h3 class="text-lg font-semibold mb-4">💰 Treasury Auto-Staking Benefit</h3>
+                <p class="text-sm text-gray-300 mb-4">
+                    Your invested SUI is automatically staked to Sui validators, generating ~1.91% APY. 
+                    This yield funds operational costs (servers, SMS gateway, development) while your principal remains secure for infrastructure.
+                </p>
+                <div class="flex justify-between items-center bg-slate-900/50 p-4 rounded-lg">
+                    <span class="text-sm">Estimated Yearly Yield</span>
+                    <span id="yearlyYield" class="text-xl font-bold text-yellow-400">+9.55 SUI/yr</span>
+                </div>
+                <div class="text-xs text-gray-400 mt-2">
+                    <i class="fas fa-shield-alt mr-1"></i>
+                    Your equity is protected. Staking rewards fund operations, not dilution.
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-slate-800 to-blue-900/50 p-6 rounded-xl border border-blue-600 mb-8">
+                <h3 class="text-lg font-semibold mb-3">📜 What You Receive</h3>
+                <ul class="space-y-2 text-sm">
+                    <li class="flex items-start gap-2">
+                        <span class="text-cyan-400">✓</span>
+                        <span>Investment Certificate NFT (proof of ownership on Sui blockchain)</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-cyan-400">✓</span>
+                        <span>Equity tokens with 12-month linear vesting</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-cyan-400">✓</span>
+                        <span>Claim vested tokens anytime via investor dashboard</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-cyan-400">✓</span>
+                        <span>Transparent milestone tracking (5 TAZARA project phases)</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-cyan-400">✓</span>
+                        <span>Access to investor-only updates and governance</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Vesting Progress Visualization -->
+            <div class="mt-12 bg-slate-900/80 border border-blue-500/30 rounded-xl p-6">
+                <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <span class="text-cyan-400">📊</span> Your Projected Asset Growth
+                </h3>
+                <div class="space-y-6">
+                    <div>
+                        <div class="flex justify-between text-xs mb-2 text-slate-400 uppercase tracking-widest font-bold">
+                            <span>Vesting Progress (12 Months)</span>
+                            <span id="vestingPercent">8.33% Unlocked (Month 1)</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden">
+                            <div id="vestingBar" class="bg-gradient-to-r from-cyan-500 to-blue-500 h-full transition-all duration-1000 shadow-[0_0_10px_#22d3ee]" style="width: 8.33%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs mt-2 text-slate-500">
+                            <span>Today</span>
+                            <span>Month 6</span>
+                            <span>Fully Vested</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-4 bg-blue-900/20 rounded-lg border border-blue-800/50">
+                            <p class="text-xs text-slate-400 mb-1">Total Equity Tokens</p>
+                            <p class="text-xl font-bold" id="equityTokens">142,857</p>
+                            <p class="text-xs text-slate-500 mt-1">Precision: 100M scaling</p>
+                        </div>
+                        <div class="p-4 bg-blue-900/20 rounded-lg border border-blue-800/50">
+                            <p class="text-xs text-slate-400 mb-1">Monthly Unlock</p>
+                            <p class="text-xl font-bold text-cyan-400" id="monthlyUnlock">11,905</p>
+                            <p class="text-xs text-slate-500 mt-1">Linear vesting</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-800/50 p-4 rounded-lg border border-slate-700">
+                        <div class="flex items-start gap-3">
+                            <div class="text-2xl">🔐</div>
+                            <div>
+                                <h4 class="font-semibold text-sm mb-1">Linear Vesting Protection</h4>
+                                <p class="text-xs text-slate-400">
+                                    Your equity unlocks gradually over 12 months, preventing pump-and-dump scenarios. 
+                                    Claim vested tokens anytime via the investor dashboard. This aligns long-term interests 
+                                    between investors and the ARAIL team.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button 
+                id="investNowBtn"
+                class="w-full py-5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:scale-105 rounded-xl font-black text-lg transition-all shadow-xl mt-8"
+            >
+                INVEST NOW
+            </button>
+
+            <div class="text-center text-xs text-gray-400 mt-4">
+                <i class="fas fa-lock mr-1"></i>
+                Secure transaction via Sui Wallet • Minimum investment: 100 SUI
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Milestones -->
+<section class="max-w-6xl mx-auto px-4 py-20">
+    <h2 class="text-4xl font-bold text-center mb-4">Milestone-Based Fund Release</h2>
+    <p class="text-center text-gray-400 mb-12">Funds released only when we hit verified milestones</p>
+    
+    <div class="space-y-4">
+        <div class="bg-slate-800 p-6 rounded-xl border border-blue-700 flex items-center gap-6">
+            <div class="text-4xl">1️⃣</div>
+            <div class="flex-1">
+                <h3 class="text-xl font-bold mb-1">MVP Launch - Digital Ticketing System</h3>
+                <p class="text-sm text-gray-400">Fully functional USSD + mobile app for ticket booking</p>
+            </div>
+            <div class="text-right">
+                <div class="text-2xl font-bold text-cyan-400">20%</div>
+                <div class="text-xs text-gray-500">of funds</div>
+            </div>
+        </div>
+
+        <div class="bg-slate-800 p-6 rounded-xl border border-blue-700 flex items-center gap-6">
+            <div class="text-4xl">2️⃣</div>
+            <div class="flex-1">
+                <h3 class="text-xl font-bold mb-1">TAZARA Railway Integration</h3>
+                <p class="text-sm text-gray-400">Live integration with TAZARA stations and schedules</p>
+            </div>
+            <div class="text-right">
+                <div class="text-2xl font-bold text-cyan-400">25%</div>
+                <div class="text-xs text-gray-500">of funds</div>
+            </div>
+        </div>
+
+        <div class="bg-slate-800 p-6 rounded-xl border border-blue-700 flex items-center gap-6">
+            <div class="text-4xl">3️⃣</div>
+            <div class="flex-1">
+                <h3 class="text-xl font-bold mb-1">USSD Gateway Deployment</h3>
+                <p class="text-sm text-gray-400">*723# live across Zambia and Tanzania</p>
+            </div>
+            <div class="text-right">
+                <div class="text-2xl font-bold text-cyan-400">20%</div>
+                <div class="text-xs text-gray-500">of funds</div>
+            </div>
+        </div>
+
+        <div class="bg-slate-800 p-6 rounded-xl border border-blue-700 flex items-center gap-6">
+            <div class="text-4xl">4️⃣</div>
+            <div class="flex-1">
+                <h3 class="text-xl font-bold mb-1">10,000 Active Users Milestone</h3>
+                <p class="text-sm text-gray-400">Verified active users booking tickets monthly</p>
+            </div>
+            <div class="text-right">
+                <div class="text-2xl font-bold text-cyan-400">20%</div>
+                <div class="text-xs text-gray-500">of funds</div>
+            </div>
+        </div>
+
+        <div class="bg-slate-800 p-6 rounded-xl border border-blue-700 flex items-center gap-6">
+            <div class="text-4xl">5️⃣</div>
+            <div class="flex-1">
+                <h3 class="text-xl font-bold mb-1">Revenue Positive Operations</h3>
+                <p class="text-sm text-gray-400">Monthly revenue exceeds operational costs</p>
+            </div>
+            <div class="text-right">
+                <div class="text-2xl font-bold text-cyan-400">15%</div>
+                <div class="text-xs text-gray-500">of funds</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-8 bg-yellow-900/20 border border-yellow-600/50 p-6 rounded-xl">
+        <div class="flex items-start gap-4">
+            <div class="text-3xl">🔒</div>
+            <div>
+                <h3 class="text-lg font-bold text-yellow-400 mb-2">Investor Protection</h3>
+                <p class="text-sm text-gray-300">
+                    All milestone verifications are recorded on-chain. Funds cannot be released without 
+                    verified completion. This ensures accountability and protects your investment.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="max-w-4xl mx-auto px-4 py-20 text-center">
+    <h2 class="text-4xl font-bold mb-6">Ready to Join the Revolution?</h2>
+    <p class="text-xl text-gray-300 mb-8">
+        Limited spots available. Be part of Africa's infrastructure transformation.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <button 
+            id="investCTABtn"
+            class="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 hover:scale-105 rounded-xl font-bold text-lg transition-all shadow-xl"
+        >
+            Invest Now
+        </button>
+        <a 
+            href="/whitepaper.html"
+            class="px-8 py-4 bg-slate-800 hover:bg-slate-700 border border-blue-700 rounded-xl font-bold text-lg transition-all"
+        >
+            Read Whitepaper
+        </a>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="border-t border-blue-800 bg-slate-900/50 py-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <div class="flex justify-center gap-2 text-yellow-500 mb-4 font-bold text-sm">
+            <i class="fas fa-exclamation-circle"></i> High-Risk Venture Opportunity
+        </div>
+        <p class="text-xs text-gray-500 leading-relaxed max-w-3xl mx-auto mb-6">
+            Investment in ARAIL involves significant risk. Equity is distributed as NFTs on the Sui Mainnet 
+            and is subject to a 12-month vesting period. This is a pre-revenue venture. Past performance 
+            of Sui Network is not indicative of future returns.
+        </p>
+        <div class="text-sm text-gray-400">
+            © 2025 Africa Railways. All rights reserved. | 
+            <a href="/privacy-policy.html" class="hover:text-cyan-400">Privacy</a> | 
+            <a href="/terms-of-service.html" class="hover:text-cyan-400">Terms</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Real-time data (December 31, 2025)
+    const suiPrice = 1.44;
+    const totalRaiseSui = 350000;
+    const equityOffered = 10; // 10%
+    const stakingApy = 1.91; // Current network average
+    let currentRaised = 85400;
+    let investorCount = 37;
+
+    // DOM elements
+    const amountInput = document.getElementById('amountInput');
+    const suiDisplay = document.getElementById('suiDisplay');
+    const usdValue = document.getElementById('usdValue');
+    const equityValue = document.getElementById('equityValue');
+    const yearlyYield = document.getElementById('yearlyYield');
+    const connectWalletBtn = document.getElementById('connectWalletBtn');
+    const investNowBtn = document.getElementById('investNowBtn');
+    const investCTABtn = document.getElementById('investCTABtn');
+
+    // Update calculator
+    function updateCalculator() {
+        const amount = parseInt(amountInput.value);
+        suiDisplay.textContent = `${amount.toLocaleString()} SUI`;
+        
+        // USD Value
+        const usd = amount * suiPrice;
+        usdValue.textContent = `$${usd.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        
+        // Equity % (Pro-rata)
+        const equity = (amount / totalRaiseSui) * equityOffered;
+        equityValue.textContent = `${equity.toFixed(4)}%`;
+        
+        // Staking Yield
+        const yieldAmount = (amount * (stakingApy / 100)).toFixed(2);
+        yearlyYield.textContent = `+${yieldAmount} SUI/yr`;
+        
+        // Equity Tokens (using SCALING_FACTOR from Move contract)
+        const SCALING_FACTOR = 100000000; // 100M precision
+        const equityTokens = Math.floor((amount * equityOffered * SCALING_FACTOR) / totalRaiseSui);
+        document.getElementById('equityTokens').textContent = equityTokens.toLocaleString();
+        
+        // Monthly Unlock (12-month linear vesting)
+        const monthlyUnlock = Math.floor(equityTokens / 12);
+        document.getElementById('monthlyUnlock').textContent = monthlyUnlock.toLocaleString();
+        
+        // Update vesting visualization (simulate 1 month progress)
+        const vestingProgress = 8.33; // Month 1
+        document.getElementById('vestingPercent').textContent = `${vestingProgress.toFixed(2)}% Unlocked (Month 1)`;
+        document.getElementById('vestingBar').style.width = `${vestingProgress}%`;
+    }
+
+    // Connect wallet
+    async function connectWallet() {
+        try {
+            if (typeof window.suiWallet !== 'undefined') {
+                const accounts = await window.suiWallet.requestPermissions();
+                if (accounts && accounts.length > 0) {
+                    connectWalletBtn.textContent = `✓ ${accounts[0].substring(0, 6)}...${accounts[0].substring(accounts[0].length - 4)}`;
+                    connectWalletBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    connectWalletBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+                }
+            } else {
+                // Demo mode or redirect to investor portal
+                window.location.href = '/investor.html';
+            }
+        } catch (error) {
+            console.error('Wallet connection error:', error);
+            alert('Please install Sui Wallet extension or visit the investor portal');
+        }
+    }
+
+    // Invest now
+    function investNow() {
+        const amount = parseInt(amountInput.value);
+        window.location.href = `/investor.html?amount=${amount}`;
+    }
+
+    // Event listeners
+    amountInput.addEventListener('input', updateCalculator);
+    connectWalletBtn.addEventListener('click', connectWallet);
+    investNowBtn.addEventListener('click', investNow);
+    investCTABtn.addEventListener('click', investNow);
+
+    // Initialize
+    updateCalculator();
+
+    // Simulate real-time updates (poll every 30 seconds)
+    async function updateProgress() {
+        try {
+            // In production, fetch from API or blockchain
+            // For now, simulate small increases
+            const random = Math.random();
+            if (random > 0.7) {
+                currentRaised += Math.floor(Math.random() * 500) + 100;
+                investorCount += Math.random() > 0.5 ? 1 : 0;
+                
+                document.getElementById('raisedSui').textContent = currentRaised.toLocaleString();
+                document.getElementById('investorCount').textContent = investorCount;
+                
+                const progress = (currentRaised / totalRaiseSui) * 100;
+                document.getElementById('progressPercent').textContent = `${progress.toFixed(1)}%`;
+                document.getElementById('progressBar').style.width = `${progress}%`;
+            }
+        } catch (error) {
+            console.error('Update error:', error);
+        }
+    }
+
+    // Poll for updates
+    setInterval(updateProgress, 30000);
+</script>
+
+</body>
+</html>

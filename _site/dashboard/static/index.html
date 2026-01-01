@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚂 Africa Railways - Operational Control Centre</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>🚂 Africa Railways OCC</h1>
+                <p class="subtitle">Operational Control Centre</p>
+            </div>
+            <div class="header-right">
+                <div class="status-indicator" id="connection-status">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Connecting...</span>
+                </div>
+                <div class="last-update">
+                    Last update: <span id="last-update-time">--:--:--</span>
+                </div>
+                <a href="/" class="home-link" title="Back to Home">🏠 Home</a>
+            </div>
+        </header>
+
+        <!-- Alert Banner -->
+        <div class="alert-banner" id="alert-banner" style="display: none;">
+            <div class="alert-content">
+                <span class="alert-icon">🚨</span>
+                <span class="alert-message" id="alert-message"></span>
+                <button class="alert-close" onclick="closeAlert()">×</button>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="dashboard-grid">
+            <!-- Blockchain Status -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>⛓️ Blockchain Status</h2>
+                    <span class="card-status" id="blockchain-status">●</span>
+                </div>
+                <div class="card-body">
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Polygon Network</div>
+                            <div class="metric-value" id="polygon-status">--</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Latest Block</div>
+                            <div class="metric-value" id="latest-block">--</div>
+                        </div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Sui Network</div>
+                            <div class="metric-value" id="sui-status">--</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Sui Latency</div>
+                            <div class="metric-value" id="sui-latency">--</div>
+                        </div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Current Epoch</div>
+                            <div class="metric-value" id="sui-epoch">--</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Latest Checkpoint</div>
+                            <div class="metric-value" id="sui-checkpoint">--</div>
+                        </div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Total Transactions</div>
+                            <div class="metric-value" id="sui-total-tx">--</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Gas Price (MIST)</div>
+                            <div class="metric-value" id="sui-gas-price">--</div>
+                        </div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Network Latency</div>
+                            <div class="metric-value" id="network-latency">--</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Total Tickets Minted</div>
+                            <div class="metric-value" id="total-minted">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GCP Infrastructure -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>☁️ GCP Infrastructure</h2>
+                    <span class="card-status" id="gcp-status">●</span>
+                </div>
+                <div class="card-body">
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">
+                                SUI NETWORK
+                                <span class="status-badge" id="sui-validator-status">OFFLINE</span>
+                            </div>
+                            <div class="metric-value" id="sui-validator-cpu">--</div>
+                            <div class="cpu-progress-bar">
+                                <div class="cpu-progress-fill" id="sui-validator-cpu-bar" style="width: 0%"></div>
+                            </div>
+                            <div class="metric-sublabel" id="sui-validator-zone">--</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">
+                                RAILWAY OPERATIONS
+                                <span class="status-badge" id="railway-core-status">OFFLINE</span>
+                            </div>
+                            <div class="metric-value" id="railway-core-cpu">--</div>
+                            <div class="cpu-progress-bar">
+                                <div class="cpu-progress-fill" id="railway-core-cpu-bar" style="width: 0%"></div>
+                            </div>
+                            <div class="metric-sublabel" id="railway-core-zone">--</div>
+                        </div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">SUI Stability (24h)</div>
+                            <div class="metric-value" id="sui-validator-stability">--</div>
+                            <div class="metric-sublabel" id="sui-validator-datapoints">--</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Railway Stability (24h)</div>
+                            <div class="metric-value" id="railway-core-stability">--</div>
+                            <div class="metric-sublabel" id="railway-core-datapoints">--</div>
+                        </div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Last Updated</div>
+                            <div class="metric-value" id="gcp-last-updated">--</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Refresh Interval</div>
+                            <div class="metric-value" id="gcp-refresh-interval">60s</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wallet Monitor -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>💰 Relayer Wallet</h2>
+                    <span class="card-status" id="wallet-status">●</span>
+                </div>
+                <div class="card-body">
+                    <div class="metric-large">
+                        <div class="metric-label">Balance</div>
+                        <div class="metric-value-large" id="wallet-balance">-- POL</div>
+                        <div class="metric-subtext" id="wallet-balance-usd">$--</div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Gas Price</div>
+                            <div class="metric-value" id="gas-price">-- Gwei</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">TX Capacity</div>
+                            <div class="metric-value" id="tx-capacity">-- mints</div>
+                        </div>
+                    </div>
+                    <div class="wallet-address">
+                        <small id="wallet-address">--</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gas Policy -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>⛽ Gas Policy</h2>
+                    <span class="card-status" id="gas-policy-status">●</span>
+                </div>
+                <div class="card-body">
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Status</div>
+                            <div class="metric-value" id="policy-status">--</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Policy ID</div>
+                            <div class="metric-value-small" id="policy-id">--</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="policy-progress" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-label">
+                        <span id="policy-usage">0%</span> of budget used
+                    </div>
+                </div>
+            </div>
+
+            <!-- IPFS Status -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>📦 IPFS / Pinata</h2>
+                    <span class="card-status" id="ipfs-status">●</span>
+                </div>
+                <div class="card-body">
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Total Uploads</div>
+                            <div class="metric-value" id="total-uploads">--</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Today</div>
+                            <div class="metric-value" id="uploads-today">--</div>
+                        </div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Success Rate</div>
+                            <div class="metric-value" id="upload-success-rate">--%</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Avg Upload Time</div>
+                            <div class="metric-value" id="avg-upload-time">-- ms</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- USSD Gateway -->
+            <div class="card" style="border-left: 5px solid #3498db;">
+                <div class="card-header">
+                    <h2>📱 USSD Gateway</h2>
+                    <span class="card-status" id="ussd-status">●</span>
+                </div>
+                <div class="card-body">
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Active Sessions</div>
+                            <div class="metric-value" id="ussd-active-sessions">--</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Sessions Today</div>
+                            <div class="metric-value" id="ussd-sessions-today">--</div>
+                        </div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Success Rate</div>
+                            <div class="metric-value" id="ussd-success-rate">--%</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Avg Response</div>
+                            <div class="metric-value" id="ussd-response-time">-- ms</div>
+                        </div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric">
+                            <div class="metric-label">Last Activity</div>
+                            <div class="metric-value-small" id="ussd-last-command">--</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Uptime</div>
+                            <div class="metric-value" id="ussd-uptime">--</div>
+                        </div>
+                    </div>
+                    <div class="health-controls" style="margin-top: 1rem;">
+                        <button class="btn-control btn-start" onclick="controlService('ussd', 'start')">▶ Start</button>
+                        <button class="btn-control btn-stop" onclick="controlService('ussd', 'stop')">🔧 Maintenance Mode</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue Tracker -->
+            <div class="card card-wide" style="border-left: 5px solid #10b981;">
+                <div class="card-header">
+                    <h2>💰 Revenue Tracker</h2>
+                    <span class="card-status" style="color: #10b981;">●</span>
+                </div>
+                <div class="card-body">
+                    <div class="revenue-grid">
+                        <div class="revenue-section">
+                            <div class="revenue-icon">✅</div>
+                            <div class="revenue-label">Confirmed Revenue</div>
+                            <div class="revenue-value" id="revenue-confirmed">R 0.00</div>
+                            <div class="revenue-subtext">Successful on Polygon</div>
+                        </div>
+                        <div class="revenue-section">
+                            <div class="revenue-icon">⏳</div>
+                            <div class="revenue-label">Pending Revenue</div>
+                            <div class="revenue-value pending" id="revenue-pending">R 0.00</div>
+                            <div class="revenue-subtext">In active sessions</div>
+                        </div>
+                        <div class="revenue-section">
+                            <div class="revenue-icon">📊</div>
+                            <div class="revenue-label">Today's Revenue</div>
+                            <div class="revenue-value" id="revenue-today">R 0.00</div>
+                            <div class="revenue-subtext" id="tickets-sold-today">0 tickets sold</div>
+                        </div>
+                        <div class="revenue-section">
+                            <div class="revenue-icon">💳</div>
+                            <div class="revenue-label">Avg Ticket Price</div>
+                            <div class="revenue-value" id="avg-ticket-price">R 0.00</div>
+                            <div class="revenue-subtext" id="conversion-rate">0% conversion</div>
+                        </div>
+                    </div>
+                    <div class="revenue-chart">
+                        <div class="chart-bar">
+                            <div class="chart-label">Confirmed</div>
+                            <div class="chart-progress">
+                                <div class="chart-fill confirmed" id="chart-confirmed" style="width: 0%"></div>
+                            </div>
+                            <div class="chart-value" id="chart-confirmed-value">R 0</div>
+                        </div>
+                        <div class="chart-bar">
+                            <div class="chart-label">Pending</div>
+                            <div class="chart-progress">
+                                <div class="chart-fill pending" id="chart-pending" style="width: 0%"></div>
+                            </div>
+                            <div class="chart-value" id="chart-pending-value">R 0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ticket Lifecycle -->
+            <div class="card card-wide">
+                <div class="card-header">
+                    <h2>🎫 Ticket Lifecycle</h2>
+                </div>
+                <div class="card-body">
+                    <div class="lifecycle-grid">
+                        <div class="lifecycle-stage">
+                            <div class="stage-icon">📝</div>
+                            <div class="stage-label">Minted</div>
+                            <div class="stage-value" id="tickets-minted">--</div>
+                        </div>
+                        <div class="lifecycle-arrow">→</div>
+                        <div class="lifecycle-stage">
+                            <div class="stage-icon">⏳</div>
+                            <div class="stage-label">Pending</div>
+                            <div class="stage-value" id="tickets-pending">--</div>
+                        </div>
+                        <div class="lifecycle-arrow">→</div>
+                        <div class="lifecycle-stage">
+                            <div class="stage-icon">✅</div>
+                            <div class="stage-label">Active</div>
+                            <div class="stage-value" id="tickets-active">--</div>
+                        </div>
+                        <div class="lifecycle-arrow">→</div>
+                        <div class="lifecycle-stage">
+                            <div class="stage-icon">🎟️</div>
+                            <div class="stage-label">Used</div>
+                            <div class="stage-value" id="tickets-used">--</div>
+                        </div>
+                        <div class="lifecycle-stage">
+                            <div class="stage-icon">⏰</div>
+                            <div class="stage-label">Expired</div>
+                            <div class="stage-value" id="tickets-expired">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Health -->
+            <div class="card card-wide">
+                <div class="card-header">
+                    <h2>🏥 System Health</h2>
+                </div>
+                <div class="card-body">
+                    <div class="health-grid">
+                        <div class="health-item">
+                            <div class="health-name">Relayer Service</div>
+                            <div class="health-status" id="health-relayer">
+                                <span class="health-dot">●</span>
+                                <span class="health-text">--</span>
+                            </div>
+                            <div class="health-controls">
+                                <button class="btn-control btn-start" onclick="controlService('relayer', 'start')">▶ Start</button>
+                                <button class="btn-control btn-stop" onclick="controlService('relayer', 'stop')">■ Stop</button>
+                            </div>
+                        </div>
+                        <div class="health-item">
+                            <div class="health-name">IPFS Uploader</div>
+                            <div class="health-status" id="health-ipfs">
+                                <span class="health-dot">●</span>
+                                <span class="health-text">--</span>
+                            </div>
+                            <div class="health-controls">
+                                <button class="btn-control btn-start" onclick="controlService('ipfs', 'start')">▶ Start</button>
+                                <button class="btn-control btn-stop" onclick="controlService('ipfs', 'stop')">■ Stop</button>
+                            </div>
+                        </div>
+                        <div class="health-item">
+                            <div class="health-name">Monitor Engine</div>
+                            <div class="health-status" id="health-monitor">
+                                <span class="health-dot">●</span>
+                                <span class="health-text">--</span>
+                            </div>
+                            <div class="health-controls">
+                                <button class="btn-control btn-start" onclick="controlService('monitor', 'start')">▶ Start</button>
+                                <button class="btn-control btn-stop" onclick="controlService('monitor', 'stop')">■ Stop</button>
+                            </div>
+                        </div>
+                        <div class="health-item">
+                            <div class="health-name">USSD Gateway</div>
+                            <div class="health-status" id="health-ussd-gateway">
+                                <span class="health-dot">●</span>
+                                <span class="health-text">--</span>
+                            </div>
+                        </div>
+                        <div class="health-item">
+                            <div class="health-name">API Server</div>
+                            <div class="health-status" id="health-api">
+                                <span class="health-dot">●</span>
+                                <span class="health-text">--</span>
+                            </div>
+                        </div>
+                        <div class="health-item">
+                            <div class="health-name">Sui Node (GCP)</div>
+                            <div class="health-status" id="health-sui-node">
+                                <span class="health-dot">●</span>
+                                <span class="health-text">--</span>
+                            </div>
+                        </div>
+                        <div class="health-item">
+                            <div class="health-name">Alchemy API</div>
+                            <div class="health-status" id="health-alchemy">
+                                <span class="health-dot">●</span>
+                                <span class="health-text">--</span>
+                            </div>
+                        </div>
+                        <div class="health-item">
+                            <div class="health-name">Pinata API</div>
+                            <div class="health-status" id="health-pinata">
+                                <span class="health-dot">●</span>
+                                <span class="health-text">--</span>
+                            </div>
+                        </div>
+                        <div class="health-item">
+                            <div class="health-name">AWS S3 Storage</div>
+                            <div class="health-status" id="health-aws-s3">
+                                <span class="health-dot">●</span>
+                                <span class="health-text">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Big Number KPIs -->
+            <div class="card card-wide">
+                <div class="card-header">
+                    <h2>📊 System Pulse - Live KPIs</h2>
+                    <span class="kpi-refresh" id="kpi-refresh">Updated: --</span>
+                </div>
+                <div class="card-body">
+                    <div class="kpi-grid">
+                        <div class="kpi-box kpi-sui kpi-with-sparkline">
+                            <div class="kpi-main-content">
+                                <div class="kpi-icon">🌊</div>
+                                <div class="kpi-value" id="kpi-sui-events">0</div>
+                                <div class="kpi-label">Sui Events Detected</div>
+                                <div class="kpi-rate" id="kpi-events-rate">0/min</div>
+                            </div>
+                            <div class="kpi-sparkline-wrapper">
+                                <div class="sparkline-container">
+                                    <canvas id="sparkline-events" class="sparkline-canvas"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="kpi-box kpi-polygon kpi-with-sparkline">
+                            <div class="kpi-main-content">
+                                <div class="kpi-icon">⛓️</div>
+                                <div class="kpi-value" id="kpi-polygon-mints">0</div>
+                                <div class="kpi-label">Polygon Tickets Minted</div>
+                                <div class="kpi-rate" id="kpi-mints-rate">0/min</div>
+                            </div>
+                            <div class="kpi-sparkline-wrapper">
+                                <div class="sparkline-container">
+                                    <canvas id="sparkline-mints" class="sparkline-canvas"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="kpi-box kpi-success">
+                            <div class="kpi-icon">✅</div>
+                            <div class="kpi-value" id="kpi-success-rate">100%</div>
+                            <div class="kpi-label">Bridge Success Rate</div>
+                            <div class="kpi-subtext" id="kpi-success-count">0 success / 0 failed</div>
+                        </div>
+                        <div class="kpi-box kpi-latency">
+                            <div class="kpi-icon">⚡</div>
+                            <div class="kpi-value" id="kpi-latency">0ms</div>
+                            <div class="kpi-label">Bridge Latency</div>
+                            <div class="kpi-subtext">Sui → Polygon</div>
+                        </div>
+                        <div class="kpi-box kpi-missed kpi-with-sparkline">
+                            <div class="kpi-main-content">
+                                <div class="kpi-icon">⚠️</div>
+                                <div class="failed-attempts-counter success" id="failed-attempts-badge">
+                                    <span id="kpi-missed">0</span>
+                                </div>
+                                <div class="kpi-label">Failed Attempts</div>
+                                <div class="kpi-subtext" id="kpi-recovered">0 recovered</div>
+                            </div>
+                            <div class="kpi-sparkline-wrapper">
+                                <div class="sparkline-container">
+                                    <canvas id="sparkline-failed" class="sparkline-canvas"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="kpi-box kpi-uptime">
+                            <div class="kpi-icon">⏱️</div>
+                            <div class="kpi-value" id="kpi-uptime">0h 0m</div>
+                            <div class="kpi-label">Session Uptime</div>
+                            <div class="kpi-subtext" id="kpi-start-time">Started: --</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Blockchain Feed -->
+            <div class="card card-wide">
+                <div class="card-header">
+                    <h2>📡 Live Blockchain Feed</h2>
+                    <div class="feed-controls">
+                        <button class="btn-feed" onclick="toggleFeed('polygon')" id="btn-polygon">Polygon</button>
+                        <button class="btn-feed" onclick="toggleFeed('sui')" id="btn-sui">Sui</button>
+                        <button class="btn-feed" onclick="clearFeed()">Clear</button>
+                        <button class="btn-feed" onclick="toggleAutoScroll()" id="btn-autoscroll">Auto-scroll: ON</button>
+                        <button class="btn-feed btn-resync" onclick="forceResync()" id="btn-resync">🔄 Force Resync</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="resync-status" id="resync-status" style="display: none;">
+                        <div class="resync-progress">
+                            <span class="resync-icon">🔄</span>
+                            <span class="resync-text" id="resync-text">Rescanning last 100 blocks...</span>
+                            <span class="resync-count" id="resync-count">0/100</span>
+                        </div>
+                        <div class="resync-bar">
+                            <div class="resync-fill" id="resync-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="blockchain-feed" id="blockchain-feed">
+                        <div class="feed-line feed-system">
+                            <span class="feed-timestamp">[00:00:00]</span>
+                            <span class="feed-source">[SYSTEM]</span>
+                            <span class="feed-message">Blockchain listener initialized. Waiting for events...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Alerts -->
+            <div class="card card-wide">
+                <div class="card-header">
+                    <h2>🚨 Active Alerts</h2>
+                    <span class="alert-count" id="alert-count">0</span>
+                </div>
+                <div class="card-body">
+                    <div class="alerts-list" id="alerts-list">
+                        <div class="no-alerts">✅ No active alerts - all systems operational</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <p>Africa Railways Operational Control Centre | Powered by Polygon, Sui, Alchemy & IPFS</p>
+        </footer>
+    </div>
+
+    <script src="js/websocket.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

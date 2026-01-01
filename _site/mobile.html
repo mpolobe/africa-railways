@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel Mobile | Track Monitoring</title>
+    <style>
+        body { background: #0a0e1a; color: white; font-family: sans-serif; text-align: center; padding: 50px 20px; }
+        .logo { width: 100px; animation: pulse 3s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+        .status-box { background: #16203a; border: 1px solid #FFB800; border-radius: 10px; padding: 20px; margin: 20px auto; max-width: 400px; }
+        .btn { display: inline-block; background: #FFB800; color: #000; padding: 15px 30px; border-radius: 5px; text-decoration: none; font-weight: bold; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <nav style="background: rgba(0,0,0,0.9); padding: 15px; border-bottom: 2px solid #D4AF37; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000;">
+        <a href="index.html" style="color: #D4AF37; text-decoration: none; font-weight: bold; font-size: 14px;">🏠 SOVEREIGN HUB</a>
+        <div>
+            <button onclick="alert('Redirecting to zkLogin...')" style="background: #D4AF37; color: black; border: none; padding: 5px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">LOGIN</button>
+            <button onclick="location.reload()" style="background: transparent; color: white; border: 1px solid #444; padding: 5px 10px; border-radius: 5px; margin-left: 10px; font-size: 12px;">LOGOUT</button>
+        </div>
+    </nav>
+        <a href="index.html" style="color: #D4AF37; text-decoration: none; font-weight: bold; font-size: 14px;">← HOME</a>
+        <div>
+            <button onclick="alert('Redirecting to zkLogin...')" style="background: #D4AF37; color: black; border: none; padding: 5px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">LOGIN</button>
+            <button onclick="location.reload()" style="background: transparent; color: white; border: 1px solid #444; padding: 5px 10px; border-radius: 5px; margin-left: 10px; font-size: 12px;">LOGOUT</button>
+        </div>
+    </nav>
+    <img src="sentinel-logo.png" class="logo">
+    <h1>Sentinel Mobile v1.0.4</h1>
+    <div class="status-box">
+        <p style="color:#FFB800;">● PRODUCTION CONNECTED</p>
+        <p>Sui Mainnet Node: [ACTIVE]</p>
+        <p>Digits AI Ledger: [SYNCED]</p>
+    </div>
+    <div class="status-box" style="border-color: #00FF00;">
+        <h3>🚨 Reporting Tool v1.0</h3>
+        <p>Ready for Track Manifests & Safety Logs</p>
+    </div>
+    <p>Secure monitoring for Engine Drivers and Sentinel Staff.</p>
+    <div style="margin: 20px 0;">
+        <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https://africa-railways.vercel.app/mobile.html&choe=UTF-8" 
+             alt="Scan to Download" style="border: 5px solid white; border-radius: 10px;">
+        <p style="font-size: 12px; color: #888;">Scan to Share with Field Staff</p>
+    </div>
+    <a href="#" class="btn">Download Sentinel APK</a>
+</body>
+</html>

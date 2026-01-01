@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Africa Railways | Building the Digital Spine of Africa</title>
+    <meta name="description" content="Learn about Africa Railways and the Africoin Wallet - modernizing African rail travel with blockchain technology and digital payments.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --navy: #0a0e1a;
+            --gold: #FFB800;
+            --cyan: #00D4FF;
+            --white: #ffffff;
+            --surface: #16203a;
+            --text-gray: #aaa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--navy);
+            color: var(--white);
+            line-height: 1.8;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 8%;
+            background: rgba(10,14,26,0.95);
+            border-bottom: 1px solid #222;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--gold);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+        
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+        
+        .hero {
+            padding: 100px 8% 60px;
+            text-align: center;
+            background: radial-gradient(circle at center, #16203a 0%, #0a0e1a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M0 50 L100 50" stroke="rgba(255,184,0,0.05)" stroke-width="1"/><path d="M50 0 L50 100" stroke="rgba(255,184,0,0.05)" stroke-width="1"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-tag {
+            color: var(--gold);
+            font-weight: bold;
+            letter-spacing: 4px;
+            border: 1px solid var(--gold);
+            padding: 8px 20px;
+            display: inline-block;
+            margin-bottom: 30px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+        
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+        
+        .hero p {
+            color: var(--text-gray);
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto 40px;
+        }
+        
+        .content-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 20px;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-header h2 {
+            font-size: 2.5rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+        
+        .section-header p {
+            color: var(--text-gray);
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 35px;
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            color: var(--cyan);
+            margin-bottom: 15px;
+        }
+        
+        .feature-card p {
+            color: var(--text-gray);
+            line-height: 1.8;
+        }
+        
+        .feature-card ul {
+            margin-top: 15px;
+            padding-left: 20px;
+        }
+        
+        .feature-card li {
+            color: #ddd;
+            margin-bottom: 10px;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(255, 184, 0, 0.1), rgba(0, 212, 255, 0.1));
+            border: 2px solid var(--gold);
+            border-radius: 16px;
+            padding: 50px;
+            text-align: center;
+            margin: 60px 0;
+        }
+        
+        .highlight-box h2 {
+            font-size: 2rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+        
+        .highlight-box p {
+            font-size: 1.2rem;
+            color: #ddd;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            line-height: 1.8;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .stat-card {
+            background: var(--surface);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--gold);
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .cta-section {
+            background: var(--surface);
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 50px;
+            text-align: center;
+            margin: 60px 0;
+        }
+        
+        .cta-section h2 {
+            font-size: 2rem;
+            color: var(--white);
+            margin-bottom: 20px;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .cta-button.primary {
+            background: var(--gold);
+            color: var(--navy);
+        }
+        
+        .cta-button.primary:hover {
+            background: #FFC933;
+            transform: translateY(-2px);
+        }
+        
+        .cta-button.secondary {
+            background: transparent;
+            border: 2px solid var(--cyan);
+            color: var(--cyan);
+        }
+        
+        .cta-button.secondary:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+        
+        .contact-info {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-gray);
+        }
+        
+        .contact-item i {
+            color: var(--gold);
+            font-size: 1.2rem;
+        }
+        
+        .contact-item a {
+            color: var(--cyan);
+            text-decoration: none;
+        }
+        
+        .contact-item a:hover {
+            text-decoration: underline;
+        }
+        
+        footer {
+            background: rgba(10,14,26,0.95);
+            border-top: 1px solid #222;
+            padding: 40px 8%;
+            text-align: center;
+            color: var(--text-gray);
+            margin-top: 80px;
+        }
+        
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px 5%;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+            
+            .hero {
+                padding: 60px 5% 40px;
+            }
+            
+            .content-section {
+                padding: 60px 15px;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .highlight-box, .cta-section {
+                padding: 30px 20px;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo"><i class="fas fa-train"></i> Africa Railways</a>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="/dashboard.html">Sentinel Portal</a></li>
+            <li><a href="/occ">OCC Dashboard</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-tag">Building the Digital Spine of Africa</div>
+            <h1>About <span style="color: var(--gold)">Africa Railways</span></h1>
+            <p>Modernizing African rail travel through blockchain technology, digital payments, and real-time operations management.</p>
+        </div>
+    </section>
+
+    <div class="content-section">
+        <div class="section-header">
+            <h2>Africoin Wallet: Your Digital Companion</h2>
+            <p>Welcome to the future of African rail travel. The Africoin Wallet is the official digital payment and logistics platform connecting passengers, workers, and shippers across Africa's railway network.</p>
+        </div>
+
+        <div class="highlight-box">
+            <h2>Our Mission</h2>
+            <p>Built on state-of-the-art blockchain technology, Africoin is designed to modernize Africa's most strategic railways. Our mission is to enhance safety, improve reliability, and provide financial inclusion for every traveler and worker across the continent's rail network.</p>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-value">1,860km</span>
+                    <span class="stat-label">Dar-Kapiri Corridor</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">54</span>
+                    <span class="stat-label">African Nations</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">24/7</span>
+                    <span class="stat-label">OCC Monitoring</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">Real-Time</span>
+                    <span class="stat-label">Train Tracking</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>Key Features</h2>
+            <p>Comprehensive digital solutions for modern railway operations</p>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <span class="feature-icon">🎫</span>
+                <h3>Smart Ticketing & Payments</h3>
+                <p>Purchase Africa Railways tickets instantly using Africoin or local mobile money. No more queues at the station—your QR code ticket is stored securely in your wallet.</p>
+                <ul>
+                    <li>Instant ticket purchase</li>
+                    <li>QR code verification</li>
+                    <li>Mobile money integration</li>
+                    <li>Secure blockchain storage</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">📍</span>
+                <h3>Live Train Tracking</h3>
+                <p>Powered by real-time IoT sensors from the Africa Railways Operations Command Center (OCC). Know exactly where your train is, see predictive arrival times, and receive instant alerts about delays or schedule changes.</p>
+                <ul>
+                    <li>Real-time GPS tracking</li>
+                    <li>Predictive arrival times</li>
+                    <li>Delay notifications</li>
+                    <li>Route visualization</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">💰</span>
+                <h3>Transparent Payroll</h3>
+                <p>For Africa Railways staff, receive your earnings via a secure, blockchain-backed smart contract. Zero late payments, full transparency, and instant access to your funds.</p>
+                <ul>
+                    <li>Smart contract payments</li>
+                    <li>Zero delays</li>
+                    <li>Full transparency</li>
+                    <li>Instant fund access</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">📦</span>
+                <h3>Freight & Logistics</h3>
+                <p>Shippers can track copper and cargo shipments from mine to port. Access digital bills of lading and real-time status updates directly from your smartphone.</p>
+                <ul>
+                    <li>End-to-end tracking</li>
+                    <li>Digital documentation</li>
+                    <li>Real-time updates</li>
+                    <li>Mine-to-port visibility</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🌍</span>
+                <h3>Cross-Border Simplicity</h3>
+                <p>Seamlessly handle currency exchange and digital customs declarations at border crossings like Tunduma/Nakonde.</p>
+                <ul>
+                    <li>Automatic currency conversion</li>
+                    <li>Digital customs forms</li>
+                    <li>Multi-country support</li>
+                    <li>Simplified documentation</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🛡️</span>
+                <h3>Safety & Security</h3>
+                <p>Advanced monitoring through our Sentinel Portal ensures worker safety and incident reporting across the entire railway network.</p>
+                <ul>
+                    <li>Real-time safety monitoring</li>
+                    <li>Incident reporting</li>
+                    <li>Worker protection</li>
+                    <li>Emergency response</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <h2>Why Choose Africoin?</h2>
+            <p>We're not just building a payment system—we're creating the digital infrastructure that will power Africa's railway renaissance. From the TAZARA corridor to railways across the continent, Africoin provides the technology foundation for safe, reliable, and inclusive rail travel.</p>
+        </div>
+
+        <div class="cta-section">
+            <h2>Ready to Experience the Future of Rail Travel?</h2>
+            <p style="color: var(--text-gray); margin-bottom: 30px;">Join thousands of passengers, workers, and shippers already using Africoin Wallet</p>
+            
+            <div class="cta-buttons">
+                <a href="https://www.africarailways.com/" class="cta-button primary" target="_blank">
+                    <i class="fas fa-globe"></i>
+                    Visit Our Website
+                </a>
+                <a href="/occ" class="cta-button secondary">
+                    <i class="fas fa-dashboard"></i>
+                    OCC Dashboard
+                </a>
+                <a href="/dashboard.html" class="cta-button secondary">
+                    <i class="fas fa-shield-alt"></i>
+                    Sentinel Portal
+                </a>
+            </div>
+
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>Support: <a href="mailto:ben.mpolokoso@gmail.com">ben.mpolokoso@gmail.com</a></span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-globe"></i>
+                    <span><a href="https://www.africarailways.com/" target="_blank">www.africarailways.com</a></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header" style="margin-top: 80px;">
+            <h2>Our Technology Stack</h2>
+            <p>Built on cutting-edge blockchain and IoT infrastructure</p>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <span class="feature-icon">⛓️</span>
+                <h3>Blockchain Foundation</h3>
+                <p>Powered by Sui blockchain for fast, secure, and scalable transactions across the African continent.</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">📡</span>
+                <h3>IoT Integration</h3>
+                <p>Real-time sensors and GPS tracking provide live data to our Operations Command Center.</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🤖</span>
+                <h3>AI-Powered Insights</h3>
+                <p>Machine learning algorithms predict delays, optimize routes, and enhance operational efficiency.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Africa Railways. Building the Digital Spine of Africa.</p>
+        <p style="margin-top: 10px; font-size: 0.85rem;">
+            <a href="/" style="color: var(--gold); text-decoration: none;">Home</a> | 
+            <a href="/about.html" style="color: var(--gold); text-decoration: none;">About</a> | 
+            <a href="/blog" style="color: var(--gold); text-decoration: none;">Blog</a> | 
+            <a href="/privacy-policy.html" style="color: var(--gold); text-decoration: none;">Privacy</a> | 
+            <a href="/terms-of-service.html" style="color: var(--gold); text-decoration: none;">Terms</a>
+        </p>
+    </footer>
+</body>
+</html>

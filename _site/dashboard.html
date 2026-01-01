@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><title>Sentinel Portal</title>
+    <style>
+        :root { --navy: #0a0e1a; --gold: #FFB800; --surface: #16203a; }
+        body { background: var(--navy); color: white; font-family: sans-serif; margin: 0; }
+        nav { padding: 20px; background: #0d121f; display: flex; align-items: center; border-bottom: 1px solid #222; }
+        .sentinel-logo { height: 40px; margin-right: 15px; animation: pulse 3s infinite; }
+        @keyframes pulse {
+            0%, 100% { filter: drop-shadow(0 0 2px var(--gold)); transform: scale(1); }
+            50% { filter: drop-shadow(0 0 12px var(--gold)); transform: scale(1.05); }
+        }
+        .container { padding: 40px; max-width: 1600px; margin: 0 auto; }
+        .card { background: var(--surface); padding: 25px; border-radius: 10px; border: 1px solid #333; }
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px; }
+        @media (max-width: 1024px) { .dashboard-grid { grid-template-columns: 1fr; } }
+        
+        /* Map Styles */
+        .map-container { 
+            background: var(--surface); 
+            padding: 25px; 
+            border-radius: 10px; 
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .map-title {
+            color: var(--gold);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #africa-map {
+            width: 100%;
+            max-width: 400px;
+            filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.2));
+        }
+        .country {
+            fill: #333;
+            stroke: #666;
+            stroke-width: 1;
+            transition: fill 0.3s ease, stroke 0.3s ease;
+        }
+        .country:hover {
+            fill: #444;
+            cursor: pointer;
+        }
+        .country.active {
+            fill: rgba(255, 184, 0, 0.3);
+            stroke: var(--gold);
+            stroke-width: 2;
+            animation: pulse-country 2s ease-in-out infinite;
+        }
+        
+        /* The Pulse Effect for Activity */
+        .active-region {
+            fill: #60a5fa !important;
+            stroke: #fff !important;
+            stroke-width: 2;
+            filter: drop-shadow(0 0 15px #60a5fa);
+            animation: pulse-map 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-country {
+            0%, 100% { 
+                fill: rgba(255, 184, 0, 0.3);
+                stroke-width: 2;
+            }
+            50% { 
+                fill: rgba(255, 184, 0, 0.5);
+                stroke-width: 3;
+            }
+        }
+        
+        @keyframes pulse-map {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .railway-route {
+            fill: none;
+            stroke: #60a5fa;
+            stroke-width: 2;
+            stroke-dasharray: 5, 5;
+            animation: dash 20s linear infinite;
+            opacity: 0.7;
+        }
+        .railway-route.active {
+            stroke: var(--gold);
+            stroke-width: 3;
+            opacity: 1;
+            animation: dash 3s linear infinite, pulse-route 2s ease-in-out infinite;
+        }
+        @keyframes dash {
+            to { stroke-dashoffset: -100; }
+        }
+        @keyframes pulse-route {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .city-marker {
+            fill: #00FF88;
+            stroke: #fff;
+            stroke-width: 1.5;
+            transition: all 0.3s ease;
+        }
+        .city-marker:hover {
+            r: 6;
+            fill: var(--gold);
+        }
+        .city-marker.active {
+            animation: pulse-city 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse-city {
+            0%, 100% { 
+                r: 4; 
+                opacity: 1;
+                fill: #00FF88;
+            }
+            50% { 
+                r: 7; 
+                opacity: 0.7;
+                fill: var(--gold);
+            }
+        }
+        .city-label {
+            fill: #fff;
+            font-size: 11px;
+            font-weight: 600;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+        #map-status {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: #60a5fa;
+            text-align: center;
+            padding: 8px 16px;
+            background: rgba(96, 165, 250, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(96, 165, 250, 0.3);
+        }
+        #map-status.active {
+            color: var(--gold);
+            background: rgba(255, 184, 0, 0.1);
+            border-color: rgba(255, 184, 0, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        .map-legend {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        .legend-route {
+            background: #60a5fa;
+        }
+        .legend-active {
+            background: var(--gold);
+        }
+        .legend-city {
+            background: #00FF88;
+        }
+    </style>
+</head>
+<body>
+    <nav style="display: flex; align-items: center; justify-content: space-between; padding: 15px 25px; background: rgba(0, 0, 0, 0.3); border-bottom: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); margin-bottom: 20px;">
+        <a href="index.html" style="color: #60a5fa; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 8px; font-family: sans-serif;">
+            <span>←</span> Back to Sovereign Hub
+        </a>
+        <div style="display: flex; gap: 20px; align-items: center;">
+            <a href="https://scroll-waitlist-exchange-1-nnjr.vercel.app/" target="_blank" style="color: #00D4FF; text-decoration: none; font-weight: 500; font-family: sans-serif; font-size: 0.9rem;">Africoin Exchange</a>
+            <a href="/whitepaper.html" style="color: #FFB800; text-decoration: none; font-weight: 500; font-family: sans-serif; font-size: 0.9rem;">Whitepaper</a>
+        </div>
+    </nav>
+    <nav><img src="sentinel-logo.png" class="sentinel-logo"> SENTINEL WORKER PORTAL</nav>
+    <div class="container">
+        <div class="card">
+            <h2 style="color:var(--gold)">System Active</h2>
+            <p>Sui Mainnet Connectivity: [STABLE]</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Live Map View -->
+            <div class="map-container">
+                <h3 class="map-title">📍 Network Operations</h3>
+                <svg id="africa-map" viewBox="0 0 800 800">
+                    <!-- Simplified Africa Outline -->
+                    <path d="M300,100 L500,100 L600,300 L550,600 L400,750 L200,600 L150,300 Z" 
+                          fill="#1a1a1a" stroke="#444" stroke-width="2" />
+                    
+                    <!-- Zambia -->
+                    <path id="map-zambia" class="country active" 
+                          d="M380,500 L420,500 L430,540 L390,540 Z" />
+                    
+                    <!-- Kenya -->
+                    <path id="map-kenya" class="country active" 
+                          d="M480,420 L520,420 L510,460 L470,460 Z" />
+                    
+                    <!-- Tanzania -->
+                    <path id="map-tanzania" class="country" 
+                          d="M460,460 L500,460 L490,500 L450,500 Z" />
+                    
+                    <!-- South Africa -->
+                    <path id="map-south-africa" class="country" 
+                          d="M360,640 L440,640 L450,680 L410,720 L330,720 L320,680 Z" />
+                    
+                    <!-- Railway Routes -->
+                    <!-- Lusaka to Nairobi (Main Spine) -->
+                    <path class="railway-route active" id="route-lusaka-nairobi" 
+                          d="M405,520 Q440,490 495,440" />
+                    
+                    <!-- Lusaka to Dar es Salaam -->
+                    <path class="railway-route" id="route-lusaka-dar" 
+                          d="M405,520 Q430,490 475,480" />
+                    
+                    <!-- Lusaka to Johannesburg -->
+                    <path class="railway-route" id="route-lusaka-joburg" 
+                          d="M405,520 Q390,580 385,660" />
+                    
+                    <!-- City Markers -->
+                    <circle class="city-marker active" cx="405" cy="520" r="4" id="marker-lusaka" />
+                    <text class="city-label" x="405" y="510">Lusaka</text>
+                    
+                    <circle class="city-marker active" cx="495" cy="440" r="4" id="marker-nairobi" />
+                    <text class="city-label" x="495" y="430">Nairobi</text>
+                    
+                    <circle class="city-marker" cx="475" cy="480" r="3" id="marker-dar" />
+                    <text class="city-label" x="475" y="470">Dar es Salaam</text>
+                    
+                    <circle class="city-marker" cx="385" cy="660" r="3" id="marker-joburg" />
+                    <text class="city-label" x="385" y="650">Johannesburg</text>
+                </svg>
+                
+                <div class="map-legend">
+                    <div class="legend-item">
+                        <div class="legend-color legend-route"></div>
+                        <span>Railway Route</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color legend-active"></div>
+                        <span>Active Transit</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color legend-city"></div>
+                        <span>Hub City</span>
+                    </div>
+                </div>
+                
+                <div id="map-status">Standing by for network events...</div>
+            </div>
+
+            <!-- Live Activity Feed -->
+            <div class="card">             <div class="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-800/50">                 <h3 class="text-xl font-bold text-yellow-500">🛰️ Live Activity Feed</h3>                 <span id="engine-heartbeat" class="text-xs font-mono text-green-400">● ENGINE CONNECTED</span>             </div>             <div id="activity-log" class="p-4 h-64 overflow-y-auto font-mono text-sm space-y-2 text-slate-300 bg-black/20">                 <div class="text-slate-500 italic">Waiting for Sui network events...</div>             </div>             <div class="px-6 py-3 bg-slate-800/30 border-t border-slate-800 flex gap-4">                 <div class="text-xs text-slate-400">Total Supply: <span id="portal-supply" class="text-white">--</span> AFRC</div>                 <div class="text-xs text-slate-400">Minted: <span id="portal-minted" class="text-white">--</span></div>             </div>         </div>         <script>             async function fetchSentinel() {                 try {                     const res = await fetch('https://api.africarailways.com/health');                     const data = await res.json();                     document.getElementById('engine-heartbeat').className = "text-xs font-mono text-green-400 animate-pulse";                     document.getElementById('portal-supply').innerText = data.total_supply;                     document.getElementById('portal-minted').innerText = data.minted_count;                     if (data.recent_events && data.recent_events.length > 0) {                         const log = document.getElementById('activity-log');                         log.innerHTML = "";                         data.recent_events.forEach(ev => {                             const d = document.createElement('div');                             d.className = "border-l-2 border-yellow-500 pl-3 py-1 bg-yellow-500/5";                             d.innerHTML = `<span class="text-yellow-600">[${new Date().toLocaleTimeString()}]</span> ${ev.message}`;                             log.prepend(d);                         });                     }                 } catch(e) {                     document.getElementById('engine-heartbeat').className = "text-xs font-mono text-red-500";                     document.getElementById('engine-heartbeat').innerText = "○ ENGINE DISCONNECTED";                 }             }             setInterval(fetchSentinel, 3000);             fetchSentinel();
+             
+             // Map interaction and live updates
+             function updateMapStatus(message, isActive = false) {
+                 const statusEl = document.getElementById('map-status');
+                 statusEl.textContent = message;
+                 statusEl.className = isActive ? 'active' : '';
+             }
+             
+             // Simulate route activity based on events
+             function activateRoute(routeId) {
+                 const route = document.getElementById(routeId);
+                 if (route) {
+                     route.classList.add('active');
+                     setTimeout(() => route.classList.remove('active'), 5000);
+                 }
+             }
+             
+             // Activate city marker
+             function activateCity(cityId) {
+                 const marker = document.getElementById(cityId);
+                 if (marker) {
+                     marker.classList.add('active');
+                     setTimeout(() => marker.classList.remove('active'), 3000);
+                 }
+             }
+             
+             // Listen for events and update map
+             async function syncMapWithEvents() {
+                 try {
+                     const res = await fetch('https://api.africarailways.com/health');
+                     const data = await res.json();
+                     
+                     if (data.event_count > 0) {
+                         updateMapStatus(`🚂 ${data.event_count} active operations`, true);
+                         
+                         // Randomly activate routes for demo
+                         const routes = ['route-lusaka-nairobi', 'route-lusaka-dar', 'route-lusaka-joburg'];
+                         const randomRoute = routes[Math.floor(Math.random() * routes.length)];
+                         activateRoute(randomRoute);
+                         
+                         // Activate corresponding cities and regions
+                         if (randomRoute.includes('nairobi')) {
+                             activateCity('marker-nairobi');
+                             activateCity('marker-lusaka');
+                             activateRegion('map-kenya');
+                             activateRegion('map-zambia');
+                         } else if (randomRoute.includes('dar')) {
+                             activateCity('marker-dar');
+                             activateCity('marker-lusaka');
+                             activateRegion('map-tanzania');
+                             activateRegion('map-zambia');
+                         } else if (randomRoute.includes('joburg')) {
+                             activateCity('marker-joburg');
+                             activateCity('marker-lusaka');
+                             activateRegion('map-south-africa');
+                             activateRegion('map-zambia');
+                         }
+                     } else {
+                         updateMapStatus('Standing by for network events...', false);
+                     }
+                 } catch(e) {
+                     updateMapStatus('⚠️ Connection lost', false);
+                 }
+             }
+             
+             // Activate region with pulse effect
+             function activateRegion(countryId) {
+                 const country = document.getElementById(countryId);
+                 if (country) {
+                     country.classList.add('active-region');
+                     setTimeout(() => country.classList.remove('active-region'), 4000);
+                 }
+             }
+             
+             // Country hover interactions
+             document.querySelectorAll('.country').forEach(country => {
+                 country.addEventListener('click', function() {
+                     const countryName = this.id.replace('map-', '').replace('-', ' ');
+                     updateMapStatus(`📍 ${countryName.toUpperCase()} - Railway Hub`, true);
+                     activateRegion(this.id);
+                 });
+             });
+             
+             // City marker interactions
+             document.querySelectorAll('.city-marker').forEach(marker => {
+                 marker.addEventListener('click', function() {
+                     const cityName = this.id.replace('marker-', '');
+                     updateMapStatus(`🏙️ ${cityName.toUpperCase()} - Operations Center`, true);
+                     activateCity(this.id);
+                 });
+             });
+             
+             setInterval(syncMapWithEvents, 5000);
+             syncMapWithEvents();
+         </script>
+            </div>
+        </div>
+    </div>
+    
+    <footer style="padding: 40px 8%; border-top: 1px solid #222; background: #0a0e1a; text-align: center; color: #888; margin-top: 60px;">
+        <p style="color:#888; margin-bottom: 20px; font-size: 0.9rem;">
+            <a href="/" style="color:#aaa; text-decoration: none; margin: 0 15px;">Home</a> |
+            <a href="/terms-of-service.html" style="color:#aaa; text-decoration: none; margin: 0 15px;">Terms of Service</a> |
+            <a href="/privacy-policy.html" style="color:#aaa; text-decoration: none; margin: 0 15px;">Privacy Policy</a> |
+            <a href="/whitepaper.html" style="color:#aaa; text-decoration: none; margin: 0 15px;">Whitepaper</a>
+        </p>
+        <p style="color:#888; font-size: 0.75rem;">
+            Built for Africa, By Africa 🌍
+        </p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,249 @@
+# BrowserStack Integration Example for Codemagic
+# Add this workflow to your codemagic.yaml file
+
+workflows:
+  # BrowserStack Device Testing - Railways App
+  browserstack-test-railways:
+    name: BrowserStack Test - Railways
+    max_build_duration: 60
+    instance_type: linux_x2
+    environment:
+      groups:
+        - railways_credentials
+        - browserstack_credentials  # Add this group
+      vars:
+        APP_VARIANT: railways
+        PACKAGE_NAME: com.mpolobe.railways
+        EXPO_PROJECT_ID: 82efeb87-20c5-45b4-b945-65d4b9074c32
+      node: 18.19.0
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'test/*'
+          include: true
+        - pattern: 'qa/*'
+          include: true
+    scripts:
+      - name: Install dependencies
+        script: |
+          cd SmartphoneApp
+          npm install --legacy-peer-deps
+      
+      - name: Install EAS CLI
+        script: |
+          npm install -g eas-cli
+      
+      - name: Build Android APK for testing
+        script: |
+          cd SmartphoneApp
+          export EXPO_TOKEN=$EXPO_TOKEN
+          APP_VARIANT=railways eas build --platform android --profile preview --non-interactive --no-wait
+          
+          # Wait for build to complete (or use webhook)
+          echo "Build submitted to EAS. Check status at:"
+          echo "https://expo.dev/accounts/mpolobe/projects/africa-railways/builds"
+      
+      - name: Download APK from EAS
+        script: |
+          # This assumes you have the build URL or ID
+          # You can get this from EAS CLI or webhook
+          cd SmartphoneApp
+          
+          # Get latest build
+          BUILD_ID=$(eas build:list --platform android --limit 1 --json | jq -r '.[0].id')
+          BUILD_URL=$(eas build:list --platform android --limit 1 --json | jq -r '.[0].artifacts.buildUrl')
+          
+          echo "Downloading build: $BUILD_ID"
+          curl -o app.apk "$BUILD_URL"
+      
+      - name: Upload APK to BrowserStack
+        script: |
+          cd SmartphoneApp
+          
+          echo "Uploading APK to BrowserStack..."
+          UPLOAD_RESPONSE=$(curl -u "$BROWSERSTACK_USERNAME:$BROWSERSTACK_ACCESS_KEY" \
+            -X POST "https://api-cloud.browserstack.com/app-automate/upload" \
+            -F "file=@app.apk")
+          
+          echo "Upload response: $UPLOAD_RESPONSE"
+          
+          # Extract app_url from response
+          APP_URL=$(echo $UPLOAD_RESPONSE | jq -r '.app_url')
+          echo "App URL: $APP_URL"
+          
+          # Save for next step
+          echo "$APP_URL" > browserstack_app_url.txt
+      
+      - name: Run BrowserStack Tests
+        script: |
+          cd SmartphoneApp
+          APP_URL=$(cat browserstack_app_url.txt)
+          
+          echo "Running tests on BrowserStack..."
+          echo "App URL: $APP_URL"
+          
+          # Example: Run Appium tests
+          # npm run test:e2e -- --app-url "$APP_URL"
+          
+          # Or use BrowserStack REST API to trigger tests
+          curl -u "$BROWSERSTACK_USERNAME:$BROWSERSTACK_ACCESS_KEY" \
+            -X POST "https://api-cloud.browserstack.com/app-automate/v2/build" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"devices\": [
+                \"Samsung Galaxy S21-11.0\",
+                \"Google Pixel 6-12.0\",
+                \"OnePlus 9-11.0\"
+              ],
+              \"app\": \"$APP_URL\",
+              \"project\": \"Africa Railways\",
+              \"build\": \"Railways App - Build $BUILD_NUMBER\"
+            }"
+      
+      - name: Get Test Results
+        script: |
+          echo "Fetching test results from BrowserStack..."
+          
+          # Get recent builds
+          curl -u "$BROWSERSTACK_USERNAME:$BROWSERSTACK_ACCESS_KEY" \
+            "https://api-cloud.browserstack.com/app-automate/builds.json?limit=1"
+    
+    artifacts:
+      - SmartphoneApp/app.apk
+      - SmartphoneApp/browserstack_*.txt
+    
+    publishing:
+      email:
+        recipients:
+          - mpolobe@example.com
+        notify:
+          success: true
+          failure: true
+
+  # BrowserStack Manual Testing Upload
+  browserstack-upload-only:
+    name: Upload to BrowserStack (Manual Testing)
+    max_build_duration: 30
+    instance_type: linux_x2
+    environment:
+      groups:
+        - railways_credentials
+        - browserstack_credentials
+      vars:
+        APP_VARIANT: railways
+      node: 18.19.0
+    triggering:
+      events:
+        - tag
+      tag_patterns:
+        - pattern: 'browserstack-*'
+          include: true
+    scripts:
+      - name: Install dependencies
+        script: |
+          cd SmartphoneApp
+          npm install --legacy-peer-deps
+          npm install -g eas-cli
+      
+      - name: Build APK
+        script: |
+          cd SmartphoneApp
+          export EXPO_TOKEN=$EXPO_TOKEN
+          APP_VARIANT=railways eas build --platform android --profile preview --non-interactive
+      
+      - name: Upload to BrowserStack
+        script: |
+          cd SmartphoneApp
+          
+          # Find the APK
+          APK_PATH=$(find . -name "*.apk" | head -1)
+          
+          if [ -z "$APK_PATH" ]; then
+            echo "❌ No APK found"
+            exit 1
+          fi
+          
+          echo "📱 Uploading $APK_PATH to BrowserStack..."
+          
+          UPLOAD_RESPONSE=$(curl -u "$BROWSERSTACK_USERNAME:$BROWSERSTACK_ACCESS_KEY" \
+            -X POST "https://api-cloud.browserstack.com/app-automate/upload" \
+            -F "file=@$APK_PATH")
+          
+          echo "✅ Upload complete!"
+          echo "$UPLOAD_RESPONSE" | jq '.'
+          
+          APP_URL=$(echo $UPLOAD_RESPONSE | jq -r '.app_url')
+          
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🎉 App uploaded to BrowserStack!"
+          echo ""
+          echo "App URL: $APP_URL"
+          echo ""
+          echo "Test manually at:"
+          echo "https://app-live.browserstack.com/"
+          echo ""
+          echo "Or run automated tests with:"
+          echo "APP_URL=$APP_URL npm run test:e2e"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    
+    artifacts:
+      - SmartphoneApp/**/*.apk
+    
+    publishing:
+      email:
+        recipients:
+          - mpolobe@example.com
+        notify:
+          success: true
+          failure: true
+
+  # BrowserStack Integration Test (Post-Build)
+  post-build-browserstack-test:
+    name: Post-Build BrowserStack Test
+    max_build_duration: 45
+    instance_type: linux_x2
+    environment:
+      groups:
+        - browserstack_credentials
+      node: 18.19.0
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+    scripts:
+      - name: Check BrowserStack Connection
+        script: |
+          echo "Testing BrowserStack API connection..."
+          
+          # Get account plan
+          curl -u "$BROWSERSTACK_USERNAME:$BROWSERSTACK_ACCESS_KEY" \
+            "https://api.browserstack.com/app-automate/plan.json" | jq '.'
+          
+          echo ""
+          echo "✅ BrowserStack connection successful!"
+      
+      - name: List Recent Uploads
+        script: |
+          echo "Recent app uploads:"
+          
+          curl -u "$BROWSERSTACK_USERNAME:$BROWSERSTACK_ACCESS_KEY" \
+            "https://api-cloud.browserstack.com/app-automate/recent_apps" | jq '.'
+      
+      - name: List Recent Test Runs
+        script: |
+          echo "Recent test builds:"
+          
+          curl -u "$BROWSERSTACK_USERNAME:$BROWSERSTACK_ACCESS_KEY" \
+            "https://api-cloud.browserstack.com/app-automate/builds.json?limit=5" | jq '.'
+    
+    publishing:
+      email:
+        recipients:
+          - mpolobe@example.com
+        notify:
+          success: true
+          failure: true
