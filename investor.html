@@ -10,6 +10,11 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Sui dApp Kit and dependencies -->
+    <script src="https://unpkg.com/@mysten/sui@latest/dist/index.global.js"></script>
+    <script src="https://unpkg.com/@mysten/dapp-kit@latest/dist/index.global.js"></script>
+    <script src="https://unpkg.com/@tanstack/react-query@latest/build/umd/index.production.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@mysten/dapp-kit@latest/dist/index.css">
     <style>
         :root {
             --navy: #0a0e1a;
@@ -365,13 +370,43 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
         const { AlertCircle, ChevronRight, TrendingUp, Shield, Users, Zap } = lucide;
+        
+        // Import Sui dApp Kit hooks
+        const { 
+            WalletProvider, 
+            SuiClientProvider, 
+            useCurrentAccount,
+            useConnectWallet,
+            useSignAndExecuteTransaction,
+            useWallets,
+            createNetworkConfig
+        } = window['@mysten/dapp-kit'];
+        
+        const { getFullnodeUrl } = window['@mysten/sui/client'];
+        const { Transaction } = window['@mysten/sui/transactions'];
+        const { QueryClient, QueryClientProvider } = window['@tanstack/react-query'];
+
+        // Configure network
+        const { networkConfig } = createNetworkConfig({
+            mainnet: { url: getFullnodeUrl('mainnet') },
+            testnet: { url: getFullnodeUrl('testnet') },
+        });
+        
+        const queryClient = new QueryClient();
 
         function ARailInvestorPortal() {
             const [investAmount, setInvestAmount] = useState(500);
-            const [walletConnected, setWalletConnected] = useState(false);
-            const [walletAddress, setWalletAddress] = useState('');
             const [isInvesting, setIsInvesting] = useState(false);
             const [txStatus, setTxStatus] = useState('');
+            
+            // Use dApp Kit hooks
+            const currentAccount = useCurrentAccount();
+            const { mutate: connect } = useConnectWallet();
+            const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+            const wallets = useWallets();
+            
+            const walletConnected = !!currentAccount;
+            const walletAddress = currentAccount?.address || '';
 
             // REAL-TIME DATA: December 31, 2025
             const suiPrice = 1.44; 
@@ -387,30 +422,35 @@
             const calculateEquity = (sui) => ((sui / totalRaise) * equityOffered).toFixed(4);
             const calculateUSD = (sui) => (sui * suiPrice).toLocaleString(undefined, { minimumFractionDigits: 2 });
 
-            // Connect to Sui Wallet
-            const connectWallet = async () => {
-                try {
-                    if (typeof window.suiWallet !== 'undefined') {
-                        const accounts = await window.suiWallet.requestPermissions();
-                        if (accounts && accounts.length > 0) {
-                            setWalletConnected(true);
-                            setWalletAddress(accounts[0]);
+            // Connect to Sui Wallet using dApp Kit
+            const connectWallet = () => {
+                if (wallets.length === 0) {
+                    setTxStatus('No Sui wallets detected. Please install Sui Wallet or Suiet.');
+                    setTimeout(() => setTxStatus(''), 5000);
+                    return;
+                }
+                
+                // Connect to the first available wallet (or Slush if available)
+                const preferredWallet = wallets.find(w => w.name === 'Slush') || wallets[0];
+                
+                connect(
+                    { wallet: preferredWallet },
+                    {
+                        onSuccess: () => {
                             setTxStatus('Wallet connected successfully!');
                             setTimeout(() => setTxStatus(''), 3000);
+                        },
+                        onError: (error) => {
+                            console.error('Wallet connection error:', error);
+                            setTxStatus('Failed to connect wallet');
+                            setTimeout(() => setTxStatus(''), 3000);
                         }
-                    } else {
-                        setTxStatus('Please install Sui Wallet extension');
-                        setTimeout(() => setTxStatus(''), 5000);
                     }
-                } catch (error) {
-                    console.error('Wallet connection error:', error);
-                    setTxStatus('Failed to connect wallet');
-                    setTimeout(() => setTxStatus(''), 3000);
-                }
+                );
             };
 
-            // Execute Investment Transaction
-            const executeInvestment = async () => {
+            // Execute Investment Transaction using dApp Kit
+            const executeInvestment = () => {
                 if (!walletConnected) {
                     setTxStatus('Please connect your wallet first');
                     return;
@@ -427,47 +467,50 @@
 
                 try {
                     // Convert SUI to MIST (1 SUI = 1,000,000,000 MIST)
-                    const amountInMist = investAmount * 1_000_000_000;
+                    const amountInMist = BigInt(investAmount * 1_000_000_000);
+
+                    // Create transaction using new Transaction class
+                    const tx = new Transaction();
+                    
+                    tx.moveCall({
+                        target: `${PACKAGE_ID}::fundraising::invest`,
+                        arguments: [
+                            tx.object(FUND_OBJECT_ID),
+                            tx.pure.u64(amountInMist)
+                        ],
+                    });
 
                     setTxStatus('Awaiting wallet approval...');
                     
-                    // Check if Sui Wallet is available
-                    if (typeof window.suiWallet !== 'undefined') {
-                        // Create transaction block using @mysten/sui.js pattern
-                        const tx = {
-                            kind: 'moveCall',
-                            data: {
-                                packageObjectId: PACKAGE_ID,
-                                module: 'fundraising',
-                                function: 'invest',
-                                typeArguments: [],
-                                arguments: [
-                                    FUND_OBJECT_ID,
-                                    amountInMist
-                                ],
-                                gasBudget: 10000000,
+                    // Sign and execute using dApp Kit hook
+                    signAndExecuteTransaction(
+                        {
+                            transaction: tx,
+                            chain: 'sui:mainnet',
+                        },
+                        {
+                            onSuccess: (result) => {
+                                console.log('Transaction successful:', result);
+                                setTxStatus(`✅ Success! TX: ${result.digest.substring(0, 10)}...`);
+                                setTimeout(() => {
+                                    setTxStatus('Investment complete! Check your wallet for Receipt NFT');
+                                    setIsInvesting(false);
+                                }, 2000);
+                            },
+                            onError: (error) => {
+                                console.error('Transaction failed:', error);
+                                setTxStatus(`❌ Transaction failed: ${error.message}`);
+                                setIsInvesting(false);
+                                setTimeout(() => setTxStatus(''), 5000);
                             }
-                        };
-
-                        const result = await window.suiWallet.signAndExecuteTransactionBlock({
-                            transactionBlock: tx,
-                        });
-                        
-                        setTxStatus(`✅ Success! TX: ${result.digest.substring(0, 10)}...`);
-                        setTimeout(() => {
-                            setTxStatus('Investment complete! Check your wallet for Receipt NFT');
-                        }, 2000);
-                    } else {
-                        // Demo mode for testing without wallet
-                        setTxStatus('Demo Mode: Simulating blockchain transaction...');
-                        
-                        // Simulate transaction delay
-                        await new Promise(resolve => setTimeout(resolve, 2000));
-                        
-                        const mockTxHash = '0x' + Math.random().toString(16).substring(2, 12);
-                        setTxStatus(`✅ Demo Success! TX: ${mockTxHash}...`);
-                        
-                        setTimeout(() => {
+                        }
+                    );
+                } catch (error) {
+                    console.error('Investment error:', error);
+                    setTxStatus(`❌ Error: ${error.message}`);
+                    setIsInvesting(false);
+                    setTimeout(() => setTxStatus(''), 5000);
+                }
                             setTxStatus(`Investment of ${investAmount} SUI recorded! You would receive an Equity Receipt NFT representing ${calculateEquity(investAmount)}% equity.`);
                         }, 2000);
                     }
@@ -658,8 +701,21 @@
             );
         }
 
+        // Wrap app with required providers
+        function App() {
+            return (
+                <QueryClientProvider client={queryClient}>
+                    <SuiClientProvider networks={networkConfig} defaultNetwork="mainnet">
+                        <WalletProvider autoConnect={true}>
+                            <ARailInvestorPortal />
+                        </WalletProvider>
+                    </SuiClientProvider>
+                </QueryClientProvider>
+            );
+        }
+
         const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<ARailInvestorPortal />);
+        root.render(<App />);
     </script>
 </body>
 </html>
