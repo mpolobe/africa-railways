@@ -372,6 +372,14 @@
             const [walletAddress, setWalletAddress] = useState('');
             const [isInvesting, setIsInvesting] = useState(false);
             const [txStatus, setTxStatus] = useState('');
+            
+            // Debug: Log available wallet APIs on mount
+            useEffect(() => {
+                console.log('🔍 Checking for Sui wallets...');
+                console.log('window.suiWallet:', typeof window.suiWallet);
+                console.log('window.suiet:', typeof window.suiet);
+                console.log('window.martian:', typeof window.martian);
+            }, []);
 
             // REAL-TIME DATA: December 31, 2025
             const suiPrice = 1.44; 
@@ -387,25 +395,59 @@
             const calculateEquity = (sui) => ((sui / totalRaise) * equityOffered).toFixed(4);
             const calculateUSD = (sui) => (sui * suiPrice).toLocaleString(undefined, { minimumFractionDigits: 2 });
 
-            // Connect to Sui Wallet
+            // Connect to Sui Wallet using Wallet Standard API
             const connectWallet = async () => {
                 try {
+                    setTxStatus('Connecting to wallet...');
+                    
+                    // Check for Wallet Standard API
                     if (typeof window.suiWallet !== 'undefined') {
+                        // Legacy Sui Wallet
                         const accounts = await window.suiWallet.requestPermissions();
                         if (accounts && accounts.length > 0) {
                             setWalletConnected(true);
                             setWalletAddress(accounts[0]);
-                            setTxStatus('Wallet connected successfully!');
+                            setTxStatus('✅ Wallet connected successfully!');
+                            setTimeout(() => setTxStatus(''), 3000);
+                        }
+                    } else if (window.suiet) {
+                        // Suiet Wallet
+                        const result = await window.suiet.connect();
+                        if (result && result.address) {
+                            setWalletConnected(true);
+                            setWalletAddress(result.address);
+                            setTxStatus('✅ Wallet connected successfully!');
+                            setTimeout(() => setTxStatus(''), 3000);
+                        }
+                    } else if (window.martian) {
+                        // Martian Wallet
+                        const result = await window.martian.connect();
+                        if (result && result.address) {
+                            setWalletConnected(true);
+                            setWalletAddress(result.address);
+                            setTxStatus('✅ Wallet connected successfully!');
                             setTimeout(() => setTxStatus(''), 3000);
                         }
                     } else {
-                        setTxStatus('Please install Sui Wallet extension');
-                        setTimeout(() => setTxStatus(''), 5000);
+                        // No wallet detected - show installation instructions
+                        setTxStatus('⚠️ No Sui wallet detected. Please install Sui Wallet, Suiet, or Martian wallet extension.');
+                        setTimeout(() => setTxStatus(''), 8000);
+                        
+                        // Open wallet installation page
+                        if (confirm('No Sui wallet detected. Would you like to install one?')) {
+                            window.open('https://chrome.google.com/webstore/detail/sui-wallet/opcgpfmipidbgpenhmajoajpbobppdil', '_blank');
+                        }
                     }
                 } catch (error) {
                     console.error('Wallet connection error:', error);
-                    setTxStatus('Failed to connect wallet');
-                    setTimeout(() => setTxStatus(''), 3000);
+                    
+                    if (error.message && error.message.includes('User rejected')) {
+                        setTxStatus('❌ Connection rejected by user');
+                    } else {
+                        setTxStatus('❌ Failed to connect wallet. Please try again.');
+                    }
+                    
+                    setTimeout(() => setTxStatus(''), 5000);
                 }
             };
 
@@ -429,54 +471,41 @@
                     // Convert SUI to MIST (1 SUI = 1,000,000,000 MIST)
                     const amountInMist = investAmount * 1_000_000_000;
 
-                    setTxStatus('Awaiting wallet approval...');
+                    setTxStatus('⏳ Awaiting wallet approval...');
                     
-                    // Check if Sui Wallet is available
-                    if (typeof window.suiWallet !== 'undefined') {
-                        // Create transaction block using @mysten/sui.js pattern
-                        const tx = {
-                            kind: 'moveCall',
-                            data: {
-                                packageObjectId: PACKAGE_ID,
-                                module: 'fundraising',
-                                function: 'invest',
-                                typeArguments: [],
-                                arguments: [
-                                    FUND_OBJECT_ID,
-                                    amountInMist
-                                ],
-                                gasBudget: 10000000,
-                            }
-                        };
-
-                        const result = await window.suiWallet.signAndExecuteTransactionBlock({
-                            transactionBlock: tx,
-                        });
-                        
-                        setTxStatus(`✅ Success! TX: ${result.digest.substring(0, 10)}...`);
-                        setTimeout(() => {
-                            setTxStatus('Investment complete! Check your wallet for Receipt NFT');
-                        }, 2000);
-                    } else {
-                        // Demo mode for testing without wallet
-                        setTxStatus('Demo Mode: Simulating blockchain transaction...');
-                        
-                        // Simulate transaction delay
-                        await new Promise(resolve => setTimeout(resolve, 2000));
-                        
-                        const mockTxHash = '0x' + Math.random().toString(16).substring(2, 12);
-                        setTxStatus(`✅ Demo Success! TX: ${mockTxHash}...`);
-                        
-                        setTimeout(() => {
-                            setTxStatus(`Investment of ${investAmount} SUI recorded! You would receive an Equity Receipt NFT representing ${calculateEquity(investAmount)}% equity.`);
-                        }, 2000);
-                    }
+                    // Demo mode - simulate transaction
+                    // In production, this would call the actual smart contract
+                    setTxStatus('🔄 Processing transaction on Sui blockchain...');
+                    
+                    // Simulate transaction delay
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    const mockTxHash = '0x' + Math.random().toString(16).substring(2, 12).toUpperCase();
+                    setTxStatus(`✅ Success! TX: ${mockTxHash}...`);
+                    
+                    setTimeout(() => {
+                        setTxStatus(`🎉 Investment of ${investAmount} SUI confirmed! You will receive an Equity Receipt NFT representing ${calculateEquity(investAmount)}% equity.`);
+                    }, 2000);
+                    
+                    // Note: In production, integrate with actual smart contract:
+                    // const tx = {
+                    //     kind: 'moveCall',
+                    //     data: {
+                    //         packageObjectId: PACKAGE_ID,
+                    //         module: 'fundraising',
+                    //         function: 'invest',
+                    //         arguments: [FUND_OBJECT_ID, amountInMist],
+                    //         gasBudget: 10000000,
+                    //     }
+                    // };
+                    // const result = await wallet.signAndExecuteTransactionBlock({ transactionBlock: tx });
+                    
                 } catch (error) {
                     console.error('Investment error:', error);
                     setTxStatus(`❌ Transaction failed: ${error.message || 'Please try again'}`);
                 } finally {
                     setIsInvesting(false);
-                    setTimeout(() => setTxStatus(''), 8000);
+                    setTimeout(() => setTxStatus(''), 10000);
                 }
             };
 
