@@ -1,0 +1,56 @@
+# Jekyll configuration for GitHub Pages
+# This configuration ensures proper build of the Africa Railways documentation site
+
+# Site settings
+title: Africa Railways
+description: Digital Spine Infrastructure for African Railways
+baseurl: ""
+url: "https://mpolobe.github.io/africa-railways"
+
+# Build settings
+markdown: kramdown
+
+# Exclude directories and files from processing
+exclude:
+  - google-cloud-sdk/
+  - node_modules/
+  - vendor/
+  - bin/
+  - backend/
+  - scripts/
+  - build-scripts/
+  - .github/
+  - "*.sh"
+  - "*.py"
+  - "*.go"
+  - go.mod
+  - go.sum
+  - package.json
+  - package-lock.json
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - LICENSE
+  - Makefile
+  - Dockerfile*
+  - docker-compose*.yml
+  - .gitignore
+  - .env*
+  - eas.json
+  - app.config.js
+  - hardhat.config.js
+  - codemagic.yaml
+  - firebase.json
+  - railway.json
+  - vercel.json
+  - "*.toml"
+  - "*.log"
+  - "*.tar.gz"
+  - test*.py
+  - monitor
+  - relayer
+
+# Include only the necessary files for the documentation site
+include:
+  - docs/
+  - "*.html"
