@@ -669,26 +669,6 @@ def ussd_callback():
                     response = f"END ❌ Investment Error\n\n"
                     response += "System error. Please contact support.\n"
                     response += "Email: investors@africarailways.com"
-                    response = f"END ✅ Investment Confirmed!\n\n"
-                    response += f"Amount: {sui_amount} SUI\n"
-                    response += f"Equity: {equity_percent:.4f}%\n"
-                    response += f"TX: {tx_digest[:10]}...\n\n"
-                    response += "Certificate NFT sent to your wallet.\n"
-                    response += "Welcome to ARAIL! 🚂💎"
-                    clear_session(session_id)
-                else:
-                    error_msg = result
-                    logger.error(f"❌ Investment failed: {error_msg}")
-                    
-                    response = f"END ❌ Investment Failed\n\n"
-                    response += "An error occurred. Please try again.\n"
-                    response += "Contact: investors@africarailways.com"
-                    
-                except Exception as invest_error:
-                    logger.error(f"Investment execution error: {str(invest_error)}", exc_info=True)
-                    response = f"END ❌ Investment Error\n\n"
-                    response += "System error. Please contact support.\n"
-                    response += "Email: investors@africarailways.com"
         
         # ============================================
         # WALLET CHECK
