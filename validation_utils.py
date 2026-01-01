@@ -163,7 +163,8 @@ def sanitize_input(input_string: str, max_length: int = 100) -> str:
     
     # Remove potentially dangerous characters
     # Keep only alphanumeric, spaces, and basic punctuation
-    sanitized = re.sub(r'[^\w\s\+\-\.]', '', input_string)
+    # For USSD: also keep * for menu navigation
+    sanitized = re.sub(r'[^\w\s\+\-\.\*]', '', input_string)
     
     # Truncate to max length
     sanitized = sanitized[:max_length]
