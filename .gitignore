@@ -88,5 +88,9 @@ config.json
 CODEMAGIC_CREDENTIALS.md
 CODEMAGIC_ENV_REFERENCE.txt
 
+# Jekyll build output
+_site/
+.jekyll-cache/
+.sass-cache/
 # Google Cloud SDK (should be installed in CI/CD, not committed)
 google-cloud-sdk/
