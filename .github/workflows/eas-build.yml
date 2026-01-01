@@ -1,7 +1,27 @@
 name: EAS Build (Manual Only)
 
 on:
-  # Disabled automatic triggers - use "Build Both Apps" workflow instead
+  # ============================================================================
+  # AUTOMATIC TRIGGERS DISABLED - Using Codemagic for Builds
+  # ============================================================================
+  # This workflow requires manual triggering to prevent unnecessary Expo builds.
+  #
+  # WHY MANUAL-ONLY:
+  # - Expo EAS builds consume credits on external systems
+  # - Automatic builds were exhausting monthly credit allowance
+  # - Codemagic handles all production builds successfully without errors
+  #
+  # WHEN TO USE THIS WORKFLOW:
+  # - Testing specific build configurations
+  # - Emergency builds when Codemagic is unavailable
+  # - One-off platform-specific builds
+  #
+  # FOR REGULAR BUILDS, USE CODEMAGIC:
+  # - Configuration: codemagic.yaml in repository root
+  # - Automatic builds on push to main
+  # - No credit exhaustion issues
+  # - All builds completing successfully
+  # ============================================================================
   # push:
   #   branches: ["main"]
   #   paths:
