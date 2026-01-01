@@ -14,6 +14,45 @@ from datetime import datetime
 import hashlib
 import hmac
 
+# Configure logging first
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+# Input validation module
+try:
+    from validation import (
+        validate_phone_number,
+        validate_sui_address,
+        validate_sui_amount,
+        validate_session_id,
+        sanitize_user_input
+    )
+    VALIDATION_AVAILABLE = True
+    logger.info("✅ Input validation module loaded")
+except ImportError as e:
+    VALIDATION_AVAILABLE = False
+    logger.warning(f"⚠️  Validation module not available: {e}")
+    # Provide fallback validation functions
+    def validate_phone_number(phone): return True, None
+    def validate_sui_address(addr): return True, None
+    def validate_sui_amount(amt): return True, None
+    def validate_session_id(sid): return True, None
+    def sanitize_user_input(inp, max_len=100): return str(inp)[:max_len]
+
+# Redis client for session management
+try:
+    from redis_client import get_redis_client
+    redis_client = get_redis_client()
+    REDIS_AVAILABLE = redis_client.is_connected()
+    logger.info(f"✅ Redis client initialized ({'connected' if REDIS_AVAILABLE else 'using fallback'})")
+except Exception as e:
+    REDIS_AVAILABLE = False
+    redis_client = None
+    logger.warning(f"⚠️  Redis client not available: {e}")
+
 # Sui blockchain integration - THE ENGINE
 try:
     from sui_logic import (
@@ -76,12 +115,8 @@ if not SUI_AVAILABLE:
 app = Flask(__name__)
 CORS(app)
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+# Session storage fallback (used when Redis unavailable)
+sessions = {}
 
 # Configuration
 SUI_RPC_URL = os.environ.get('SUI_RPC_URL', 'https://fullnode.mainnet.sui.io:443')
@@ -97,9 +132,6 @@ ALLOWED_IPS = [
     '3.8.0.0/16',
     '18.202.0.0/16',
 ]
-
-# Session storage (in production, use Redis)
-sessions = {}
 
 # Current SUI price (update via API in production)
 SUI_PRICE = 1.44
@@ -130,20 +162,85 @@ def verify_signature(request_data, signature):
     return hmac.compare_digest(signature, expected_signature)
 
 def get_session_data(session_id):
-    """Retrieve session data"""
-    return sessions.get(session_id, {})
+    """Retrieve session data with Redis fallback"""
+    try:
+        # Validate session ID
+        if VALIDATION_AVAILABLE:
+            is_valid, error = validate_session_id(session_id)
+            if not is_valid:
+                logger.warning(f"Invalid session ID: {error}")
+                return {}
+        
+        # Try Redis first
+        if redis_client:
+            data = redis_client.get(f"session:{session_id}")
+            if data:
+                logger.debug(f"Session retrieved from Redis: {session_id}")
+                return data
+        
+        # Fallback to in-memory
+        return sessions.get(session_id, {})
+        
+    except Exception as e:
+        logger.error(f"Error retrieving session {session_id}: {str(e)}")
+        # Fallback to in-memory on error
+        return sessions.get(session_id, {})
 
 def set_session_data(session_id, data):
-    """Store session data"""
-    sessions[session_id] = {
-        **data,
-        'last_updated': datetime.now().isoformat()
-    }
+    """Store session data with Redis fallback"""
+    try:
+        # Validate session ID
+        if VALIDATION_AVAILABLE:
+            is_valid, error = validate_session_id(session_id)
+            if not is_valid:
+                logger.warning(f"Invalid session ID: {error}")
+                return False
+        
+        # Add timestamp
+        session_data = {
+            **data,
+            'last_updated': datetime.now().isoformat()
+        }
+        
+        # Try Redis first (30 minute expiration for USSD sessions)
+        if redis_client:
+            success = redis_client.set(f"session:{session_id}", session_data, expire=1800)
+            if success:
+                logger.debug(f"Session stored in Redis: {session_id}")
+                return True
+        
+        # Fallback to in-memory
+        sessions[session_id] = session_data
+        logger.debug(f"Session stored in memory: {session_id}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Error storing session {session_id}: {str(e)}")
+        # Fallback to in-memory on error
+        sessions[session_id] = {**data, 'last_updated': datetime.now().isoformat()}
+        return False
 
 def clear_session(session_id):
-    """Clear session data"""
-    if session_id in sessions:
-        del sessions[session_id]
+    """Clear session data with Redis fallback"""
+    try:
+        # Try Redis first
+        if redis_client:
+            redis_client.delete(f"session:{session_id}")
+            logger.debug(f"Session cleared from Redis: {session_id}")
+        
+        # Also clear from fallback storage
+        if session_id in sessions:
+            del sessions[session_id]
+            logger.debug(f"Session cleared from memory: {session_id}")
+        
+        return True
+        
+    except Exception as e:
+        logger.error(f"Error clearing session {session_id}: {str(e)}")
+        # Try to at least clear from memory
+        if session_id in sessions:
+            del sessions[session_id]
+        return False
 
 # Removed - now using backend/sui_integration.py
 
@@ -153,6 +250,13 @@ def book_ticket(phone_number, route, train_id):
     Returns: (success, ticket_id, error_message)
     """
     try:
+        # Validate phone number
+        if VALIDATION_AVAILABLE:
+            is_valid, error = validate_phone_number(phone_number)
+            if not is_valid:
+                logger.warning(f"Invalid phone number for ticket booking: {error}")
+                return False, None, f"Invalid phone number: {error}"
+        
         logger.info(f"Booking ticket for {phone_number}: {route}, train {train_id}")
         
         # In production:
@@ -165,53 +269,80 @@ def book_ticket(phone_number, route, train_id):
         return True, ticket_id, None
         
     except Exception as e:
-        logger.error(f"Error booking ticket: {str(e)}")
-        return False, None, str(e)
+        logger.error(f"Error booking ticket: {str(e)}", exc_info=True)
+        return False, None, "An error occurred while booking your ticket. Please try again."
 
 @app.route('/health', methods=['GET'])
 def health_check():
-    """Health check endpoint"""
-    return jsonify({
-        'status': 'healthy',
-        'service': 'ARAIL USSD Gateway',
-        'version': '1.0.0',
-        'timestamp': datetime.now().isoformat(),
-        'sui_integration': SUI_AVAILABLE
-    })
+    """Health check endpoint with system status"""
+    try:
+        redis_status = "connected" if (redis_client and redis_client.is_connected()) else "fallback"
+        
+        return jsonify({
+            'status': 'healthy',
+            'service': 'ARAIL USSD Gateway',
+            'version': '1.0.0',
+            'timestamp': datetime.now().isoformat(),
+            'integrations': {
+                'sui_blockchain': SUI_AVAILABLE,
+                'sms_notifications': SMS_AVAILABLE,
+                'input_validation': VALIDATION_AVAILABLE,
+                'redis_session': redis_status
+            }
+        }), 200
+    except Exception as e:
+        logger.error(f"Health check error: {str(e)}")
+        return jsonify({
+            'status': 'degraded',
+            'error': 'Health check failed',
+            'timestamp': datetime.now().isoformat()
+        }), 500
 
 @app.route('/ussd', methods=['POST'])
 def ussd_callback():
     """
     Main USSD callback handler for *384*26621#
     """
-    # Get client IP
-    client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
-    
-    # Validate IP (disabled in development)
-    if not validate_ip(client_ip):
-        logger.warning(f"Unauthorized request from {client_ip}")
-        return make_response("Forbidden", 403)
-    
-    # Get parameters from Africa's Talking
-    session_id = request.values.get("sessionId", "")
-    service_code = request.values.get("serviceCode", "")
-    phone_number = request.values.get("phoneNumber", "")
-    text = request.values.get("text", "")
-    network_code = request.values.get("networkCode", "")
-    
-    # Log request
-    logger.info(f"USSD Request - Session: {session_id}, Phone: {phone_number}, Text: '{text}'")
-    
-    # Get session data
-    session_data = get_session_data(session_id)
-    
-    # Parse user input
-    text_array = text.split('*') if text else []
-    level = len(text_array)
-    
-    response = ""
-    
     try:
+        # Get client IP
+        client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+        
+        # Validate IP (disabled in development)
+        if not validate_ip(client_ip):
+            logger.warning(f"Unauthorized request from {client_ip}")
+            return make_response("Forbidden", 403)
+        
+        # Get parameters from Africa's Talking
+        session_id = request.values.get("sessionId", "")
+        service_code = request.values.get("serviceCode", "")
+        phone_number = request.values.get("phoneNumber", "")
+        text = request.values.get("text", "")
+        network_code = request.values.get("networkCode", "")
+        
+        # Validate phone number
+        if VALIDATION_AVAILABLE and phone_number:
+            is_valid, error = validate_phone_number(phone_number)
+            if not is_valid:
+                logger.warning(f"Invalid phone number {phone_number}: {error}")
+                response = f"END Error: {error}\n\nPlease contact support."
+                resp = make_response(response, 200)
+                resp.headers['Content-Type'] = 'text/plain'
+                return resp
+        
+        # Sanitize user input
+        text = sanitize_user_input(text, max_length=50)
+        
+        # Log request
+        logger.info(f"USSD Request - Session: {session_id}, Phone: {phone_number}, Text: '{text}'")
+        
+        # Get session data
+        session_data = get_session_data(session_id)
+        
+        # Parse user input
+        text_array = text.split('*') if text else []
+        level = len(text_array)
+        
+        response = ""
         # ============================================
         # MAIN MENU (Initial Dial)
         # ============================================
@@ -332,42 +463,112 @@ def ussd_callback():
             # THIS IS THE CRITICAL BRIDGE: USSD → Sui Blockchain → SMS
             sui_amount = session_data.get('sui_amount', 100)
             
-            logger.info(f"🚀 INVESTMENT TRIGGER: {phone_number} investing {sui_amount} SUI")
-            logger.info(f"   Step 1: Calling execute_investment() from sui_logic.py")
-            
-            # Step 1: Execute on-chain transaction
-            success, result = execute_investment(phone_number, sui_amount)
-            
-            if success:
-                tx_digest = result
-                equity_percent = (sui_amount / 350000) * 10
-                
-                logger.info(f"✅ Investment successful: {tx_digest}")
-                logger.info(f"   Step 2: Sending SMS confirmation")
-                
-                # Step 2: Send SMS confirmation (THE CLOSED LOOP)
-                if SMS_AVAILABLE:
-                    sms_sent = send_investment_success_sms(phone_number, sui_amount, tx_digest)
-                    if sms_sent:
-                        logger.info(f"📱 SMS sent to {phone_number}")
-                    else:
-                        logger.warning(f"⚠️  SMS failed for {phone_number}")
-                
-                response = f"END ✅ Investment Confirmed!\n\n"
-                response += f"Amount: {sui_amount} SUI\n"
-                response += f"Equity: {equity_percent:.4f}%\n"
-                response += f"TX: {tx_digest[:10]}...\n\n"
-                if SMS_AVAILABLE:
-                    response += "Check your SMS for details.\n"
-                response += "Welcome to ARAIL! 🚂💎"
-                clear_session(session_id)
+            # Validate amount
+            if VALIDATION_AVAILABLE:
+                is_valid, error = validate_sui_amount(sui_amount)
+                if not is_valid:
+                    logger.warning(f"Invalid SUI amount {sui_amount}: {error}")
+                    response = f"END ❌ Invalid Amount\n\n{error}\n"
+                    response += "Please try again or contact support."
+                    clear_session(session_id)
+                else:
+                    # Proceed with investment
+                    logger.info(f"🚀 INVESTMENT TRIGGER: {phone_number} investing {sui_amount} SUI")
+                    logger.info(f"   Step 1: Calling execute_investment() from sui_logic.py")
+                    
+                    try:
+                        # Step 1: Execute on-chain transaction
+                        success, result = execute_investment(phone_number, sui_amount)
+                        
+                        if success:
+                            tx_digest = result
+                            equity_percent = (sui_amount / 350000) * 10
+                            
+                            logger.info(f"✅ Investment successful: {tx_digest}")
+                            logger.info(f"   Step 2: Sending SMS confirmation")
+                            
+                            # Step 2: Send SMS confirmation (THE CLOSED LOOP)
+                            try:
+                                if SMS_AVAILABLE:
+                                    sms_sent = send_investment_success_sms(phone_number, sui_amount, tx_digest)
+                                    if sms_sent:
+                                        logger.info(f"📱 SMS sent to {phone_number}")
+                                    else:
+                                        logger.warning(f"⚠️  SMS failed for {phone_number}")
+                            except Exception as sms_error:
+                                logger.error(f"SMS sending error: {str(sms_error)}")
+                                # Don't fail the transaction if SMS fails
+                            
+                            response = f"END ✅ Investment Confirmed!\n\n"
+                            response += f"Amount: {sui_amount} SUI\n"
+                            response += f"Equity: {equity_percent:.4f}%\n"
+                            response += f"TX: {tx_digest[:10]}...\n\n"
+                            if SMS_AVAILABLE:
+                                response += "Check your SMS for details.\n"
+                            response += "Welcome to ARAIL! 🚂💎"
+                            clear_session(session_id)
+                        else:
+                            error_msg = result
+                            logger.error(f"❌ Investment failed: {error_msg}")
+                            
+                            response = f"END ❌ Investment Failed\n\n"
+                            response += "An error occurred. Please try again.\n"
+                            response += "Contact: investors@africarailways.com"
+                            
+                    except Exception as invest_error:
+                        logger.error(f"Investment execution error: {str(invest_error)}", exc_info=True)
+                        response = f"END ❌ Investment Error\n\n"
+                        response += "System error. Please contact support.\n"
+                        response += "Email: investors@africarailways.com"
             else:
-                error_msg = result
-                logger.error(f"❌ Investment failed: {error_msg}")
+                # Validation not available, proceed anyway
+                logger.info(f"🚀 INVESTMENT TRIGGER: {phone_number} investing {sui_amount} SUI")
+                logger.info(f"   Step 1: Calling execute_investment() from sui_logic.py")
                 
-                response = f"END ❌ Investment Failed\n\n"
-                response += f"Error: {error_msg[:50]}\n"
-                response += "Please contact investors@africarailways.com"
+                try:
+                    # Step 1: Execute on-chain transaction
+                    success, result = execute_investment(phone_number, sui_amount)
+                    
+                    if success:
+                        tx_digest = result
+                        equity_percent = (sui_amount / 350000) * 10
+                        
+                        logger.info(f"✅ Investment successful: {tx_digest}")
+                        logger.info(f"   Step 2: Sending SMS confirmation")
+                        
+                        # Step 2: Send SMS confirmation (THE CLOSED LOOP)
+                        try:
+                            if SMS_AVAILABLE:
+                                sms_sent = send_investment_success_sms(phone_number, sui_amount, tx_digest)
+                                if sms_sent:
+                                    logger.info(f"📱 SMS sent to {phone_number}")
+                                else:
+                                    logger.warning(f"⚠️  SMS failed for {phone_number}")
+                        except Exception as sms_error:
+                            logger.error(f"SMS sending error: {str(sms_error)}")
+                            # Don't fail the transaction if SMS fails
+                        
+                        response = f"END ✅ Investment Confirmed!\n\n"
+                        response += f"Amount: {sui_amount} SUI\n"
+                        response += f"Equity: {equity_percent:.4f}%\n"
+                        response += f"TX: {tx_digest[:10]}...\n\n"
+                        if SMS_AVAILABLE:
+                            response += "Check your SMS for details.\n"
+                        response += "Welcome to ARAIL! 🚂💎"
+                        clear_session(session_id)
+                    else:
+                        error_msg = result
+                        logger.error(f"❌ Investment failed: {error_msg}")
+                        
+                        response = f"END ❌ Investment Failed\n\n"
+                        response += "An error occurred. Please try again.\n"
+                        response += "Contact: investors@africarailways.com"
+                        
+                except Exception as invest_error:
+                    logger.error(f"Investment execution error: {str(invest_error)}", exc_info=True)
+                    response = f"END ❌ Investment Error\n\n"
+                    response += "System error. Please contact support.\n"
+                    response += "Email: investors@africarailways.com"
         
         elif text == "2*2":
             # Invest 500 SUI
@@ -390,32 +591,104 @@ def ussd_callback():
             # THIS IS THE CRITICAL BRIDGE: USSD → Sui Blockchain
             sui_amount = session_data.get('sui_amount', 500)
             
-            logger.info(f"🚀 INVESTMENT TRIGGER: {phone_number} investing {sui_amount} SUI")
-            logger.info(f"   Calling execute_investment() from sui_logic.py")
-            
-            # Execute on-chain transaction
-            success, result = execute_investment(phone_number, sui_amount)
-            
-            if success:
-                tx_digest = result
-                equity_percent = (sui_amount / 350000) * 10
-                
-                logger.info(f"✅ Investment successful: {tx_digest}")
-                
-                response = f"END ✅ Investment Confirmed!\n\n"
-                response += f"Amount: {sui_amount} SUI\n"
-                response += f"Equity: {equity_percent:.4f}%\n"
-                response += f"TX: {tx_digest[:10]}...\n\n"
-                response += "Certificate NFT sent to your wallet.\n"
-                response += "Welcome to ARAIL! 🚂💎"
-                clear_session(session_id)
+            # Validate amount
+            if VALIDATION_AVAILABLE:
+                is_valid, error = validate_sui_amount(sui_amount)
+                if not is_valid:
+                    logger.warning(f"Invalid SUI amount {sui_amount}: {error}")
+                    response = f"END ❌ Invalid Amount\n\n{error}\n"
+                    response += "Please try again or contact support."
+                    clear_session(session_id)
+                else:
+                    # Proceed with investment
+                    logger.info(f"🚀 INVESTMENT TRIGGER: {phone_number} investing {sui_amount} SUI")
+                    logger.info(f"   Calling execute_investment() from sui_logic.py")
+                    
+                    try:
+                        # Execute on-chain transaction
+                        success, result = execute_investment(phone_number, sui_amount)
+                        
+                        if success:
+                            tx_digest = result
+                            equity_percent = (sui_amount / 350000) * 10
+                            
+                            logger.info(f"✅ Investment successful: {tx_digest}")
+                            
+                            response = f"END ✅ Investment Confirmed!\n\n"
+                            response += f"Amount: {sui_amount} SUI\n"
+                            response += f"Equity: {equity_percent:.4f}%\n"
+                            response += f"TX: {tx_digest[:10]}...\n\n"
+                            response += "Certificate NFT sent to your wallet.\n"
+                            response += "Welcome to ARAIL! 🚂💎"
+                            clear_session(session_id)
+                        else:
+                            error_msg = result
+                            logger.error(f"❌ Investment failed: {error_msg}")
+                            
+                            response = f"END ❌ Investment Failed\n\n"
+                            response += "An error occurred. Please try again.\n"
+                            response += "Contact: investors@africarailways.com"
+                            
+                    except Exception as invest_error:
+                        logger.error(f"Investment execution error: {str(invest_error)}", exc_info=True)
+                        response = f"END ❌ Investment Error\n\n"
+                        response += "System error. Please contact support.\n"
+                        response += "Email: investors@africarailways.com"
             else:
-                error_msg = result
-                logger.error(f"❌ Investment failed: {error_msg}")
+                # Validation not available, proceed anyway
+                logger.info(f"🚀 INVESTMENT TRIGGER: {phone_number} investing {sui_amount} SUI")
+                logger.info(f"   Calling execute_investment() from sui_logic.py")
                 
-                response = f"END ❌ Investment Failed\n\n"
-                response += f"Error: {error_msg[:50]}\n"
-                response += "Please contact investors@africarailways.com"
+                try:
+                    # Execute on-chain transaction
+                    success, result = execute_investment(phone_number, sui_amount)
+                    
+                    if success:
+                        tx_digest = result
+                        equity_percent = (sui_amount / 350000) * 10
+                        
+                        logger.info(f"✅ Investment successful: {tx_digest}")
+                        
+                        response = f"END ✅ Investment Confirmed!\n\n"
+                        response += f"Amount: {sui_amount} SUI\n"
+                        response += f"Equity: {equity_percent:.4f}%\n"
+                        response += f"TX: {tx_digest[:10]}...\n\n"
+                        response += "Certificate NFT sent to your wallet.\n"
+                        response += "Welcome to ARAIL! 🚂💎"
+                        clear_session(session_id)
+                    else:
+                        error_msg = result
+                        logger.error(f"❌ Investment failed: {error_msg}")
+                        
+                        response = f"END ❌ Investment Failed\n\n"
+                        response += "An error occurred. Please try again.\n"
+                        response += "Contact: investors@africarailways.com"
+                        
+                except Exception as invest_error:
+                    logger.error(f"Investment execution error: {str(invest_error)}", exc_info=True)
+                    response = f"END ❌ Investment Error\n\n"
+                    response += "System error. Please contact support.\n"
+                    response += "Email: investors@africarailways.com"
+                    response = f"END ✅ Investment Confirmed!\n\n"
+                    response += f"Amount: {sui_amount} SUI\n"
+                    response += f"Equity: {equity_percent:.4f}%\n"
+                    response += f"TX: {tx_digest[:10]}...\n\n"
+                    response += "Certificate NFT sent to your wallet.\n"
+                    response += "Welcome to ARAIL! 🚂💎"
+                    clear_session(session_id)
+                else:
+                    error_msg = result
+                    logger.error(f"❌ Investment failed: {error_msg}")
+                    
+                    response = f"END ❌ Investment Failed\n\n"
+                    response += "An error occurred. Please try again.\n"
+                    response += "Contact: investors@africarailways.com"
+                    
+                except Exception as invest_error:
+                    logger.error(f"Investment execution error: {str(invest_error)}", exc_info=True)
+                    response = f"END ❌ Investment Error\n\n"
+                    response += "System error. Please contact support.\n"
+                    response += "Email: investors@africarailways.com"
         
         # ============================================
         # WALLET CHECK
