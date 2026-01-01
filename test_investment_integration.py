@@ -44,22 +44,22 @@ class TestSecurity:
     def test_ip_validation_allowed(self):
         """Test IP validation for allowed IPs"""
         # Test valid IPs from Africa's Talking
-        assert validate_ip('52.48.80.10') == True
-        assert validate_ip('54.76.100.200') == True
-        assert validate_ip('3.8.50.100') == True
-        assert validate_ip('18.202.150.100') == True
+        assert validate_ip('52.48.80.10') is True
+        assert validate_ip('54.76.100.200') is True
+        assert validate_ip('3.8.50.100') is True
+        assert validate_ip('18.202.150.100') is True
     
     def test_ip_validation_denied(self):
         """Test IP validation denies unauthorized IPs"""
-        assert validate_ip('1.2.3.4') == False
-        assert validate_ip('192.168.1.1') == False
-        assert validate_ip('10.0.0.1') == False
+        assert validate_ip('1.2.3.4') is False
+        assert validate_ip('192.168.1.1') is False
+        assert validate_ip('10.0.0.1') is False
     
     def test_ip_validation_invalid_format(self):
         """Test IP validation handles invalid formats"""
-        assert validate_ip('not-an-ip') == False
-        assert validate_ip('') == False
-        assert validate_ip('999.999.999.999') == False
+        assert validate_ip('not-an-ip') is False
+        assert validate_ip('') is False
+        assert validate_ip('999.999.999.999') is False
     
     def test_rate_limiting_allows_normal_traffic(self):
         """Test rate limiting allows normal traffic"""
@@ -68,7 +68,7 @@ class TestSecurity:
         # First 10 requests should succeed
         for i in range(10):
             allowed, retry_after = check_rate_limit(phone)
-            assert allowed == True
+            assert allowed is True
             assert retry_after == 0
     
     def test_rate_limiting_blocks_excessive_requests(self):
@@ -81,7 +81,7 @@ class TestSecurity:
         
         # 11th request should be blocked
         allowed, retry_after = check_rate_limit(phone)
-        assert allowed == False
+        assert allowed is False
         assert retry_after > 0
     
     def test_rate_limiting_per_phone(self):
@@ -95,11 +95,11 @@ class TestSecurity:
         
         # phone1 should be blocked
         allowed, _ = check_rate_limit(phone1)
-        assert allowed == False
+        assert allowed is False
         
         # phone2 should still be allowed
         allowed, _ = check_rate_limit(phone2)
-        assert allowed == True
+        assert allowed is True
     
     def test_session_cleanup(self):
         """Test session cleanup removes old sessions"""

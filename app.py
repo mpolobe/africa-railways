@@ -229,7 +229,7 @@ def check_rate_limit(phone_number):
     if request_count >= RATE_LIMIT_MAX_REQUESTS:
         oldest_request = min(rate_limit_storage[phone_number])
         retry_after = int((oldest_request + RATE_LIMIT_WINDOW - now).total_seconds())
-        logger.warning(f"Rate limit exceeded for {phone_number}: {request_count} requests in window")
+        logger.warning(f"Rate limit exceeded for {phone_number[-4:]}: {request_count} requests in window")
         return False, max(retry_after, 1)
     
     # Add current request timestamp
@@ -280,7 +280,7 @@ def book_ticket(phone_number, route, train_id):
     Returns: (success, ticket_id, error_message)
     """
     try:
-        logger.info(f"Booking ticket for {phone_number}: {route}, train {train_id}")
+        logger.info(f"Booking ticket for {phone_number[-4:]}: {route}, train {train_id}")
         
         # In production:
         # 1. Check seat availability
