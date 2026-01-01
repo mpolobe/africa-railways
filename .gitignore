@@ -3,6 +3,10 @@
 .ash_history
 .DS_Store
 node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 
 # GCP Service Account Keys
 *-key.json
@@ -79,3 +83,6 @@ config.json
 .env.railway
 CODEMAGIC_CREDENTIALS.md
 CODEMAGIC_ENV_REFERENCE.txt
+
+# Google Cloud SDK (should be installed in CI/CD, not committed)
+google-cloud-sdk/

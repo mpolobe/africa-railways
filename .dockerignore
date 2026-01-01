@@ -1,0 +1,77 @@
+# Git
+.git/
+.github/
+.gitignore
+
+# Dependencies
+node_modules/
+SmartphoneApp/node_modules/
+
+# Google Cloud SDK (install in container instead)
+google-cloud-sdk/
+
+# Build artifacts
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+bin/
+dist/
+build/
+
+# Logs
+logs/
+*.log
+*.pid
+nohup.out
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Service account keys
+*-key.json
+*_key.json
+service-account*.json
+credentials.json
+web-viewer-key.json
+google-play-service-account.json
+google-play-*.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation (not needed in container)
+*.md
+!README.md
+
+# Test files
+*-test.html
+test-*.html
+backend/tests/
+backend/examples/
+
+# Temporary files
+*.bak
+*.old
+*.tmp
+support-bundle-*.tar.gz
