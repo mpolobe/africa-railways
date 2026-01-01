@@ -11,8 +11,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
@@ -102,7 +102,9 @@ func (pm *PolicyManager) checkSponsorship(req SponsoredTransactionRequest) (bool
 	if err != nil {
 		return false, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -170,10 +172,29 @@ func (pm *PolicyManager) EstimateGasWithPolicy(
 }
 
 // toCallMsg converts map to ethereum.CallMsg
-func toCallMsg(msg map[string]interface{}) types.LegacyTx {
+func toCallMsg(msg map[string]interface{}) ethereum.CallMsg {
 	// This is a simplified version
 	// In production, properly parse all fields
-	return types.LegacyTx{}
+	callMsg := ethereum.CallMsg{}
+	
+	// Parse from, to, data, value if present
+	if fromStr, ok := msg["from"].(string); ok {
+		callMsg.From = common.HexToAddress(fromStr)
+	}
+	if toStr, ok := msg["to"].(string); ok {
+		to := common.HexToAddress(toStr)
+		callMsg.To = &to
+	}
+	if dataStr, ok := msg["data"].(string); ok {
+		callMsg.Data = common.FromHex(dataStr)
+	}
+	if valueStr, ok := msg["value"].(string); ok {
+		value := new(big.Int)
+		value.SetString(valueStr[2:], 16) // Remove "0x" prefix and parse hex
+		callMsg.Value = value
+	}
+	
+	return callMsg
 }
 
 // SponsorshipInfo contains information about transaction sponsorship
