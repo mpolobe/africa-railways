@@ -234,40 +234,10 @@ func weiToEther(wei *big.Int) string {
 	return ether.Text('f', 6)
 }
 
-// getGasBalance returns the balance in POL (Polygon native token)
-func getGasBalance(client *ethclient.Client, account common.Address) *big.Float {
-	balance, err := client.BalanceAt(context.Background(), account, nil)
-	if err != nil {
-		return big.NewFloat(0)
-	}
-	// Convert wei to POL (18 decimals)
-	fbalance := new(big.Float)
-	fbalance.SetString(balance.String())
-	polValue := new(big.Float).Quo(fbalance, big.NewFloat(1e18))
-	return polValue
-}
-
 func weiToGwei(wei *big.Int) string {
 	gwei := new(big.Float).Quo(
 		new(big.Float).SetInt(wei),
 		big.NewFloat(1e9),
 	)
 	return gwei.Text('f', 2)
-}
-
-func waitForReceipt(ctx context.Context, client *ethclient.Client, txHash common.Hash) (*types.Receipt, error) {
-	ticker := time.NewTicker(2 * time.Second)
-	defer ticker.Stop()
-
-	for {
-		select {
-		case <-ctx.Done():
-			return nil, ctx.Err()
-		case <-ticker.C:
-			receipt, err := client.TransactionReceipt(ctx, txHash)
-			if err == nil {
-				return receipt, nil
-			}
-		}
-	}
 }
