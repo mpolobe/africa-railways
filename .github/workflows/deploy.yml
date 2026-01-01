@@ -14,7 +14,7 @@ permissions:
   actions: read
 
 env:
-  GO_VERSION: '1.21'
+  GO_VERSION: '1.24.1'
   NODE_VERSION: '20'
 
 jobs:
@@ -30,6 +30,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
+          cache: false  # Use manual cache configuration below
 
       - name: Cache Go modules
         uses: actions/cache@v4
@@ -37,7 +38,7 @@ jobs:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('backend/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
@@ -88,6 +89,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
+          cache: false  # Use manual cache configuration below
 
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v4
@@ -95,6 +97,9 @@ jobs:
           version: latest
           working-directory: backend
           args: --timeout=5m
+          skip-cache: false
+          skip-pkg-cache: false
+          skip-build-cache: false
         # Removed continue-on-error to fail fast on linting issues
 
       - name: Check Go formatting
@@ -156,6 +161,8 @@ jobs:
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
           exit-code: '1'
+          # Skip version check to prevent warnings from version mismatches
+          skip-version-check: 'true'
         # Removed continue-on-error to fail on critical vulnerabilities
 
       - name: Upload Trivy results to GitHub Security

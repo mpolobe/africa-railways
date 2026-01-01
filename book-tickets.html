@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎫 Book Tickets - Africa Railways</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --navy: #0a0e1a;
+            --gold: #FFB800;
+            --cyan: #00D4FF;
+            --white: #ffffff;
+            --surface: #16203a;
+            --green: #10b981;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--navy);
+            color: var(--white);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--surface) 0%, #1a2642 100%);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .back-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--gold);
+        }
+        
+        .booking-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: var(--surface);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #333;
+        }
+        
+        .card h2 {
+            color: var(--gold);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+        
+        .swap-button {
+            background: var(--gold);
+            border: none;
+            color: var(--navy);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin: 10px auto;
+            display: block;
+            width: 40px;
+            height: 40px;
+            transition: all 0.3s;
+        }
+        
+        .swap-button:hover {
+            transform: rotate(180deg);
+        }
+        
+        .class-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .class-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #333;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .class-option:hover {
+            border-color: var(--gold);
+        }
+        
+        .class-option.selected {
+            border-color: var(--gold);
+            background: rgba(255, 184, 0, 0.1);
+        }
+        
+        .class-option .price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--gold);
+            margin-top: 5px;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #333;
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+        
+        .book-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--gold) 0%, #ff9500 100%);
+            color: var(--navy);
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        
+        .book-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 184, 0, 0.4);
+        }
+        
+        .book-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .status-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .status-message.success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+        
+        .status-message.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+        
+        .info-box {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        
+        @media (max-width: 768px) {
+            .booking-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .class-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const STATIONS = [
+            { id: '1', name: 'Cairo Ramses', city: 'Cairo', country: 'Egypt' },
+            { id: '2', name: 'Cape Town Central', city: 'Cape Town', country: 'South Africa' },
+            { id: '3', name: 'Nairobi Terminus', city: 'Nairobi', country: 'Kenya' },
+            { id: '4', name: 'Casablanca Voyageurs', city: 'Casablanca', country: 'Morocco' },
+            { id: '5', name: 'Lagos Terminus', city: 'Lagos', country: 'Nigeria' },
+            { id: '6', name: 'Addis Ababa Furi-Labu', city: 'Addis Ababa', country: 'Ethiopia' },
+            { id: '7', name: 'Dakar Station', city: 'Dakar', country: 'Senegal' },
+            { id: '8', name: 'Dar es Salaam Station', city: 'Dar es Salaam', country: 'Tanzania' },
+            { id: '9', name: 'Algiers Central', city: 'Algiers', country: 'Algeria' },
+            { id: '10', name: 'Lusaka Central', city: 'Lusaka', country: 'Zambia' },
+            { id: '11', name: 'Luanda Bungo', city: 'Luanda', country: 'Angola' },
+            { id: '12', name: 'Accra Central', city: 'Accra', country: 'Ghana' },
+            { id: '13', name: 'Kampala Station', city: 'Kampala', country: 'Uganda' },
+            { id: '14', name: 'Khartoum Central', city: 'Khartoum', country: 'Sudan' },
+            { id: '15', name: 'Abidjan Terminus', city: 'Abidjan', country: 'Ivory Coast' },
+        ];
+
+        const CLASSES = [
+            { id: 'economy', name: 'Economy', price: 50, icon: '💺' },
+            { id: 'business', name: 'Business', price: 120, icon: '🛋️' },
+            { id: 'first', name: 'First Class', price: 200, icon: '👑' },
+        ];
+
+        function BookingApp() {
+            const [from, setFrom] = useState('');
+            const [to, setTo] = useState('');
+            const [date, setDate] = useState('');
+            const [passengers, setPassengers] = useState(1);
+            const [selectedClass, setSelectedClass] = useState('economy');
+            const [status, setStatus] = useState('');
+            const [isBooking, setIsBooking] = useState(false);
+
+            const selectedClassData = CLASSES.find(c => c.id === selectedClass);
+            const totalPrice = selectedClassData ? selectedClassData.price * passengers : 0;
+
+            const swapStations = () => {
+                const temp = from;
+                setFrom(to);
+                setTo(temp);
+            };
+
+            const handleBooking = async () => {
+                if (!from || !to || !date) {
+                    setStatus('error:Please fill in all fields');
+                    return;
+                }
+
+                if (from === to) {
+                    setStatus('error:Departure and arrival stations must be different');
+                    return;
+                }
+
+                setIsBooking(true);
+                setStatus('');
+
+                try {
+                    // Simulate booking process
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+
+                    // In production, this would call the blockchain smart contract
+                    const bookingRef = 'AFRC-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+                    
+                    setStatus(`success:✅ Booking confirmed! Reference: ${bookingRef}`);
+                    
+                    // Reset form after 3 seconds
+                    setTimeout(() => {
+                        setFrom('');
+                        setTo('');
+                        setDate('');
+                        setPassengers(1);
+                        setSelectedClass('economy');
+                        setStatus('');
+                    }, 5000);
+                } catch (error) {
+                    setStatus('error:❌ Booking failed. Please try again.');
+                } finally {
+                    setIsBooking(false);
+                }
+            };
+
+            const fromStation = STATIONS.find(s => s.id === from);
+            const toStation = STATIONS.find(s => s.id === to);
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <div>
+                            <h1>🎫 Book Train Tickets</h1>
+                            <p style={{ color: '#94a3b8', marginTop: '5px' }}>
+                                Travel across Africa with blockchain-verified tickets
+                            </p>
+                        </div>
+                        <a href="/" className="back-button">
+                            <i className="fas fa-arrow-left"></i>
+                            Back to Home
+                        </a>
+                    </div>
+
+                    <div className="booking-grid">
+                        <div className="card">
+                            <h2>Journey Details</h2>
+                            
+                            <div className="form-group">
+                                <label>From</label>
+                                <select value={from} onChange={(e) => setFrom(e.target.value)}>
+                                    <option value="">Select departure station</option>
+                                    {STATIONS.map(station => (
+                                        <option key={station.id} value={station.id}>
+                                            {station.name} - {station.city}, {station.country}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <button className="swap-button" onClick={swapStations} title="Swap stations">
+                                ⇅
+                            </button>
+
+                            <div className="form-group">
+                                <label>To</label>
+                                <select value={to} onChange={(e) => setTo(e.target.value)}>
+                                    <option value="">Select arrival station</option>
+                                    {STATIONS.map(station => (
+                                        <option key={station.id} value={station.id}>
+                                            {station.name} - {station.city}, {station.country}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Travel Date</label>
+                                <input 
+                                    type="date" 
+                                    value={date} 
+                                    onChange={(e) => setDate(e.target.value)}
+                                    min={new Date().toISOString().split('T')[0]}
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Number of Passengers</label>
+                                <input 
+                                    type="number" 
+                                    value={passengers} 
+                                    onChange={(e) => setPassengers(Math.max(1, parseInt(e.target.value) || 1))}
+                                    min="1"
+                                    max="10"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Travel Class</label>
+                                <div className="class-options">
+                                    {CLASSES.map(cls => (
+                                        <div 
+                                            key={cls.id}
+                                            className={`class-option ${selectedClass === cls.id ? 'selected' : ''}`}
+                                            onClick={() => setSelectedClass(cls.id)}
+                                        >
+                                            <div style={{ fontSize: '2rem' }}>{cls.icon}</div>
+                                            <div>{cls.name}</div>
+                                            <div className="price">{cls.price} AFRC</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className="card">
+                                <h2>Booking Summary</h2>
+                                
+                                {from && to && (
+                                    <>
+                                        <div className="summary-item">
+                                            <span>Route</span>
+                                            <span style={{ textAlign: 'right' }}>
+                                                {fromStation?.city} → {toStation?.city}
+                                            </span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span>Date</span>
+                                            <span>{date || 'Not selected'}</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span>Passengers</span>
+                                            <span>{passengers}</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span>Class</span>
+                                            <span>{selectedClassData?.name}</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span>Price per ticket</span>
+                                            <span>{selectedClassData?.price} AFRC</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span>Total</span>
+                                            <span>{totalPrice} AFRC</span>
+                                        </div>
+                                    </>
+                                )}
+
+                                {(!from || !to) && (
+                                    <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>
+                                        Select your journey details to see the summary
+                                    </p>
+                                )}
+
+                                <button 
+                                    className="book-button"
+                                    onClick={handleBooking}
+                                    disabled={!from || !to || !date || isBooking}
+                                >
+                                    {isBooking ? 'Processing...' : `Book Now - ${totalPrice} AFRC`}
+                                </button>
+
+                                {status && (
+                                    <div className={`status-message ${status.split(':')[0]}`}>
+                                        {status.split(':')[1]}
+                                    </div>
+                                )}
+
+                                <div className="info-box">
+                                    <strong>💡 Payment Info:</strong><br/>
+                                    Tickets are paid with AFRC tokens. Make sure you have sufficient balance in your wallet.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<BookingApp />);
+    </script>
+</body>
+</html>

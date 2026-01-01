@@ -5,6 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🚂 Africa Railways - Operational Control Centre</title>
     <link rel="stylesheet" href="css/dashboard.css">
+    <script>
+        // Check authentication before loading page
+        (function() {
+            const authToken = sessionStorage.getItem('occ_auth_token');
+            const authExpiry = sessionStorage.getItem('occ_auth_expiry');
+            
+            if (!authToken || !authExpiry) {
+                // Not authenticated, redirect to login
+                window.location.href = 'occ-login.html';
+                return;
+            }
+            
+            const expiryTime = parseInt(authExpiry);
+            if (Date.now() >= expiryTime) {
+                // Token expired, clear and redirect
+                sessionStorage.removeItem('occ_auth_token');
+                sessionStorage.removeItem('occ_auth_expiry');
+                sessionStorage.removeItem('occ_user_email');
+                window.location.href = 'occ-login.html';
+                return;
+            }
+        })();
+    </script>
 </head>
 <body>
     <div class="dashboard-container">
@@ -15,6 +38,12 @@
                 <p class="subtitle">Operational Control Centre</p>
             </div>
             <div class="header-right">
+                <div class="user-info" id="user-info" style="margin-right: 20px; display: flex; align-items: center; gap: 10px;">
+                    <span style="color: #94a3b8; font-size: 0.9rem;">👤 <span id="user-email">--</span></span>
+                    <button onclick="handleLogout()" style="background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+                        Logout
+                    </button>
+                </div>
                 <div class="status-indicator" id="connection-status">
                     <span class="status-dot"></span>
                     <span class="status-text">Connecting...</span>
@@ -507,5 +536,24 @@
 
     <script src="js/websocket.js"></script>
     <script src="js/dashboard.js"></script>
+    <script>
+        // Display user email on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const userEmail = sessionStorage.getItem('occ_user_email');
+            if (userEmail) {
+                document.getElementById('user-email').textContent = userEmail;
+            }
+        });
+
+        // Logout function
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.removeItem('occ_auth_token');
+                sessionStorage.removeItem('occ_auth_expiry');
+                sessionStorage.removeItem('occ_user_email');
+                window.location.href = 'occ-login.html';
+            }
+        }
+    </script>
 </body>
 </html>

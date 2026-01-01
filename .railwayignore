@@ -1,0 +1,70 @@
+# Railway build exclusions
+# This file tells Railway what to exclude from builds
+
+# Google Cloud SDK (799MB, 31k+ files - causes UTF-8 errors)
+google-cloud-sdk/
+
+# Git
+.git/
+.github/
+
+# Dependencies (will be installed during build)
+node_modules/
+SmartphoneApp/node_modules/
+
+# Build artifacts
+bin/
+dist/
+build/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Logs
+logs/
+*.log
+*.pid
+
+# Environment files (use Railway env vars instead)
+.env
+.env.*
+!.env.example
+
+# Service account keys (use Railway secrets)
+*-key.json
+*_key.json
+service-account*.json
+credentials.json
+web-viewer-key.json
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+*.md
+!README.md
+
+# Test files
+*-test.html
+test-*.html
+backend/tests/
+backend/examples/
+
+# Temporary files
+*.bak
+*.old
+support-bundle-*.tar.gz

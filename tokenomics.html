@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFRC Tokenomics - Africoin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        :root { --navy: #0a0e1a; --gold: #FFB800; --cyan: #00D4FF; --white: #ffffff; --surface: #16203a; }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(10,14,26,0.95); border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+        .logo { font-size: 1.4rem; font-weight: 800; color: var(--gold); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .nav-links { display: flex; list-style: none; gap: 30px; margin: 0; align-items: center; }
+        .nav-links a { color: var(--white); text-decoration: none; font-size: 0.9rem; transition: 0.3s; font-weight: 500; }
+        .nav-links a:hover { color: var(--gold); }
+        .cta-nav { background: linear-gradient(135deg, var(--gold), #ff9500); color: var(--navy); padding: 10px 20px; border-radius: 8px; font-weight: 700; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 80px 20px; }
+        h1 { font-size: clamp(2.5rem, 5vw, 4rem); margin: 0 0 20px; font-weight: 900; text-align: center; background: linear-gradient(135deg, var(--gold), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h2 { color: var(--gold); margin-top: 60px; margin-bottom: 30px; font-size: 2rem; }
+        h3 { color: var(--cyan); margin-top: 30px; margin-bottom: 20px; font-size: 1.5rem; }
+        .hero { text-align: center; margin-bottom: 60px; }
+        .hero p { color: #aaa; font-size: 1.2rem; max-width: 700px; margin: 0 auto 40px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-bottom: 60px; }
+        .stat-card { background: var(--surface); padding: 30px; border-radius: 15px; border: 1px solid #333; text-align: center; transition: all 0.3s; }
+        .stat-card:hover { border-color: var(--gold); transform: translateY(-5px); }
+        .stat-value { font-size: 2.5rem; font-weight: 900; color: var(--gold); display: block; margin-bottom: 10px; }
+        .stat-label { color: var(--cyan); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+        .section { background: var(--surface); padding: 40px; border-radius: 15px; border: 1px solid #333; margin-bottom: 40px; }
+        .distribution-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 30px; }
+        .allocation-item { background: rgba(10,14,26,0.5); padding: 25px; border-radius: 12px; border-left: 4px solid var(--gold); }
+        .allocation-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .allocation-name { font-size: 1.2rem; font-weight: 700; color: var(--white); }
+        .allocation-percentage { font-size: 1.5rem; font-weight: 900; color: var(--gold); }
+        .allocation-amount { color: #aaa; font-size: 0.9rem; margin-bottom: 10px; }
+        .allocation-description { color: #ccc; font-size: 0.9rem; line-height: 1.6; }
+        .progress-bar { height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin-top: 15px; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--cyan)); border-radius: 10px; transition: width 1s ease; }
+        .vesting-timeline { position: relative; padding-left: 40px; margin-top: 30px; }
+        .vesting-item { position: relative; padding: 20px; margin-bottom: 30px; background: rgba(10,14,26,0.5); border-radius: 12px; border-left: 3px solid var(--cyan); }
+        .vesting-item::before { content: ''; position: absolute; left: -26px; top: 25px; width: 12px; height: 12px; background: var(--cyan); border-radius: 50%; border: 3px solid var(--navy); }
+        .vesting-date { color: var(--gold); font-weight: 700; font-size: 1.1rem; margin-bottom: 10px; }
+        .vesting-details { color: #ccc; font-size: 0.95rem; }
+        .utility-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 30px; }
+        .utility-card { background: rgba(10,14,26,0.5); padding: 25px; border-radius: 12px; border: 1px solid #333; transition: all 0.3s; }
+        .utility-card:hover { border-color: var(--cyan); transform: translateY(-3px); }
+        .utility-icon { font-size: 2.5rem; margin-bottom: 15px; }
+        .utility-title { color: var(--gold); font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; }
+        .utility-desc { color: #ccc; font-size: 0.9rem; line-height: 1.6; }
+        .chart-container { max-width: 600px; margin: 40px auto; padding: 30px; background: rgba(10,14,26,0.5); border-radius: 15px; }
+        .highlight-box { background: linear-gradient(135deg, rgba(255,184,0,0.1), rgba(0,212,255,0.1)); border: 2px solid var(--gold); border-radius: 12px; padding: 30px; margin: 40px 0; }
+        .highlight-box h3 { margin-top: 0; color: var(--gold); }
+        .cta-button { display: inline-block; padding: 15px 40px; background: linear-gradient(135deg, var(--gold), #ff9500); color: var(--navy); text-decoration: none; border-radius: 8px; font-weight: 700; transition: all 0.3s; margin-top: 20px; }
+        .cta-button:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255,184,0,0.4); }
+        footer { padding: 40px 8%; border-top: 1px solid #222; background: #0a0e1a; text-align: center; color: #888; margin-top: 80px; }
+        @media (max-width: 768px) {
+            nav { flex-direction: column; gap: 15px; padding: 15px 5%; }
+            .nav-links { flex-direction: column; gap: 15px; text-align: center; }
+            .container { padding: 60px 20px; }
+            .stats-grid, .distribution-grid, .utility-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo"><i class="fas fa-train"></i> Africoin <span style="color:var(--cyan)">Spine</span></a>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/tokenomics.html">Tokenomics</a></li>
+            <li><a href="/ido-dashboard.html">IDO Dashboard</a></li>
+            <li><a href="/whitelist.html" class="cta-nav">Join Whitelist</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <h1>AFRC Tokenomics</h1>
+            <p>Built on transparency and sustainability. Discover the economic model powering Africa's Digital Railway infrastructure.</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-value">10B</span>
+                <span class="stat-label">Total Supply</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">1%</span>
+                <span class="stat-label">Burn Per Transaction</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">$0.01</span>
+                <span class="stat-label">IDO Price</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">20%</span>
+                <span class="stat-label">Public Sale</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-chart-pie"></i> Token Distribution</h2>
+            <p style="color:#aaa; font-size: 1.1rem; margin-bottom: 40px;">Fair and strategic allocation designed for long-term sustainability and community growth.</p>
+            
+            <div class="chart-container">
+                <canvas id="distributionChart"></canvas>
+            </div>
+
+            <div class="distribution-grid">
+                <div class="allocation-item">
+                    <div class="allocation-header">
+                        <span class="allocation-name">Community & Sentinels</span>
+                        <span class="allocation-percentage">45%</span>
+                    </div>
+                    <div class="allocation-amount">4,500,000,000 AFRC</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 45%;"></div></div>
+                    <div class="allocation-description">Rewards for 2,000+ track workers, staking incentives, and community governance participation. Vested over 36 months with 6-month cliff.</div>
+                </div>
+
+                <div class="allocation-item">
+                    <div class="allocation-header">
+                        <span class="allocation-name">Public Sale (IDO)</span>
+                        <span class="allocation-percentage">20%</span>
+                    </div>
+                    <div class="allocation-amount">2,000,000,000 AFRC</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 20%;"></div></div>
+                    <div class="allocation-description">Available through Initial DEX Offering at $0.01 per token. 10% unlocked at TGE, remaining vested over 12 months.</div>
+                </div>
+
+                <div class="allocation-item">
+                    <div class="allocation-header">
+                        <span class="allocation-name">Ecosystem Fund</span>
+                        <span class="allocation-percentage">20%</span>
+                    </div>
+                    <div class="allocation-amount">2,000,000,000 AFRC</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 20%;"></div></div>
+                    <div class="allocation-description">Infrastructure development, partnerships, liquidity provision, and ecosystem growth. Managed by DAO after 12 months.</div>
+                </div>
+
+                <div class="allocation-item">
+                    <div class="allocation-header">
+                        <span class="allocation-name">Core Tech Staff</span>
+                        <span class="allocation-percentage">8%</span>
+                    </div>
+                    <div class="allocation-amount">800,000,000 AFRC</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 8%;"></div></div>
+                    <div class="allocation-description">Team allocation with 12-month cliff and 36-month linear vesting to ensure long-term commitment.</div>
+                </div>
+
+                <div class="allocation-item">
+                    <div class="allocation-header">
+                        <span class="allocation-name">Strategic Partners</span>
+                        <span class="allocation-percentage">5%</span>
+                    </div>
+                    <div class="allocation-amount">500,000,000 AFRC</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 5%;"></div></div>
+                    <div class="allocation-description">Railway operators, government entities, and strategic investors. Vested over 24 months with 6-month cliff.</div>
+                </div>
+
+                <div class="allocation-item">
+                    <div class="allocation-header">
+                        <span class="allocation-name">Reserve Fund</span>
+                        <span class="allocation-percentage">2%</span>
+                    </div>
+                    <div class="allocation-amount">200,000,000 AFRC</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 2%;"></div></div>
+                    <div class="allocation-description">Emergency reserve for unforeseen circumstances, network security, and future expansion opportunities.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-calendar-alt"></i> Vesting Schedules</h2>
+            <p style="color:#aaa; font-size: 1.1rem; margin-bottom: 30px;">Carefully designed unlock schedules to prevent market dumping and ensure sustainable growth.</p>
+            
+            <div class="vesting-timeline">
+                <div class="vesting-item">
+                    <div class="vesting-date"><i class="fas fa-rocket"></i> Token Generation Event (TGE)</div>
+                    <div class="vesting-details">
+                        <strong>Public Sale:</strong> 10% unlocked (200M AFRC)<br>
+                        <strong>Ecosystem Fund:</strong> 5% unlocked for initial liquidity (100M AFRC)<br>
+                        <strong>All Other Allocations:</strong> 0% unlocked (cliff period begins)
+                    </div>
+                </div>
+
+                <div class="vesting-item">
+                    <div class="vesting-date"><i class="fas fa-clock"></i> Month 6 (Post-TGE)</div>
+                    <div class="vesting-details">
+                        <strong>Community & Sentinels:</strong> Cliff ends, linear vesting begins (125M AFRC/month for 30 months)<br>
+                        <strong>Strategic Partners:</strong> Cliff ends, linear vesting begins (27.8M AFRC/month for 18 months)
+                    </div>
+                </div>
+
+                <div class="vesting-item">
+                    <div class="vesting-date"><i class="fas fa-unlock"></i> Month 12 (Post-TGE)</div>
+                    <div class="vesting-details">
+                        <strong>Public Sale:</strong> Fully vested (all 2B AFRC unlocked)<br>
+                        <strong>Core Tech Staff:</strong> Cliff ends, linear vesting begins (22.2M AFRC/month for 36 months)<br>
+                        <strong>Ecosystem Fund:</strong> DAO governance begins
+                    </div>
+                </div>
+
+                <div class="vesting-item">
+                    <div class="vesting-date"><i class="fas fa-chart-line"></i> Month 24 (Post-TGE)</div>
+                    <div class="vesting-details">
+                        <strong>Strategic Partners:</strong> Fully vested<br>
+                        <strong>Ecosystem Fund:</strong> 50% distributed through DAO proposals
+                    </div>
+                </div>
+
+                <div class="vesting-item">
+                    <div class="vesting-date"><i class="fas fa-check-circle"></i> Month 36 (Post-TGE)</div>
+                    <div class="vesting-details">
+                        <strong>Community & Sentinels:</strong> Fully vested<br>
+                        <strong>Core Tech Staff:</strong> 66% vested (continues to month 48)
+                    </div>
+                </div>
+
+                <div class="vesting-item">
+                    <div class="vesting-date"><i class="fas fa-flag-checkered"></i> Month 48 (Post-TGE)</div>
+                    <div class="vesting-details">
+                        <strong>Core Tech Staff:</strong> Fully vested<br>
+                        <strong>All Allocations:</strong> Complete distribution achieved
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-coins"></i> Token Utility</h2>
+            <p style="color:#aaa; font-size: 1.1rem; margin-bottom: 30px;">AFRC powers the entire Africa Railways ecosystem with multiple use cases.</p>
+            
+            <div class="utility-grid">
+                <div class="utility-card">
+                    <div class="utility-icon">🎫</div>
+                    <div class="utility-title">Ticket Purchases</div>
+                    <div class="utility-desc">Pay for train tickets across 54 African nations using AFRC tokens. Instant booking with blockchain verification.</div>
+                </div>
+
+                <div class="utility-card">
+                    <div class="utility-icon">💰</div>
+                    <div class="utility-title">Staking Rewards</div>
+                    <div class="utility-desc">Stake AFRC to earn passive income. 12% APY for long-term holders supporting network security.</div>
+                </div>
+
+                <div class="utility-card">
+                    <div class="utility-icon">🛡️</div>
+                    <div class="utility-title">Sentinel Rewards</div>
+                    <div class="utility-desc">Track workers earn AFRC through Proof-of-Safety reporting. Incentivizing infrastructure security.</div>
+                </div>
+
+                <div class="utility-card">
+                    <div class="utility-icon">🗳️</div>
+                    <div class="utility-title">Governance Rights</div>
+                    <div class="utility-desc">Vote on protocol upgrades, fee structures, and ecosystem fund allocation. 1 AFRC = 1 vote.</div>
+                </div>
+
+                <div class="utility-card">
+                    <div class="utility-icon">🔥</div>
+                    <div class="utility-title">Deflationary Burns</div>
+                    <div class="utility-desc">1% of every freight transaction is permanently burned, reducing supply and increasing scarcity.</div>
+                </div>
+
+                <div class="utility-card">
+                    <div class="utility-icon">💎</div>
+                    <div class="utility-title">Liquidity Mining</div>
+                    <div class="utility-desc">Provide liquidity on DEXs and earn additional AFRC rewards from ecosystem fund.</div>
+                </div>
+
+                <div class="utility-card">
+                    <div class="utility-icon">🌍</div>
+                    <div class="utility-title">Cross-Border Payments</div>
+                    <div class="utility-desc">Settle international freight payments instantly without forex fees or intermediaries.</div>
+                </div>
+
+                <div class="utility-card">
+                    <div class="utility-icon">🎁</div>
+                    <div class="utility-title">Loyalty Program</div>
+                    <div class="utility-desc">Frequent travelers earn AFRC cashback on every journey. Redeem for discounts and upgrades.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <h3><i class="fas fa-fire"></i> Burn Mechanism & Deflationary Model</h3>
+            <p style="color:#ccc; line-height: 1.8; margin-bottom: 20px;">
+                Africoin employs a unique 1% burn mechanism on every freight transaction, making AFRC inherently deflationary. As the railway network processes more cargo, more tokens are permanently removed from circulation, creating upward price pressure for remaining tokens.
+            </p>
+            <p style="color:#aaa; line-height: 1.8;">
+                <strong style="color:var(--gold)">Example:</strong> A $100,000 freight shipment paid in AFRC triggers the burn of $1,000 worth of tokens. At scale, with billions in annual freight volume, this mechanism significantly reduces supply over time.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-lock"></i> Smart Contract Security</h2>
+            <p style="color:#aaa; font-size: 1.1rem; margin-bottom: 20px;">
+                AFRC token contracts undergo rigorous security audits before mainnet launch. View our comprehensive audit reports and security measures.
+            </p>
+            <a href="/audits.html" class="cta-button">View Audit Reports <i class="fas fa-shield-alt"></i></a>
+        </div>
+
+        <div style="text-align: center; margin-top: 60px;">
+            <h2 style="margin-bottom: 20px;">Ready to Participate?</h2>
+            <p style="color:#aaa; font-size: 1.1rem; margin-bottom: 30px;">Join the whitelist for early access to the AFRC IDO</p>
+            <a href="/whitelist.html" class="cta-button" style="font-size: 1.2rem; padding: 20px 50px;">
+                Join Whitelist Now <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 Africoin Spine Infrastructure Project. All rights reserved.</p>
+        <p style="font-size: 0.85rem; margin-top: 10px;">
+            <a href="/privacy-policy.html" style="color:#aaa; text-decoration:none; margin: 0 10px;">Privacy Policy</a> | 
+            <a href="/terms-of-service.html" style="color:#aaa; text-decoration:none; margin: 0 10px;">Terms of Service</a> | 
+            <a href="/whitepaper.html" style="color:#aaa; text-decoration:none; margin: 0 10px;">Whitepaper</a>
+        </p>
+    </footer>
+
+    <script>
+        // Distribution Chart
+        const ctx = document.getElementById('distributionChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Community & Sentinels (45%)', 'Public Sale (20%)', 'Ecosystem Fund (20%)', 'Core Tech Staff (8%)', 'Strategic Partners (5%)', 'Reserve Fund (2%)'],
+                datasets: [{
+                    data: [45, 20, 20, 8, 5, 2],
+                    backgroundColor: [
+                        '#FFB800',
+                        '#00D4FF',
+                        '#8b5cf6',
+                        '#ec4899',
+                        '#10b981',
+                        '#f59e0b'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#0a0e1a'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#ffffff',
+                            padding: 15,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'AFRC Token Distribution',
+                        color: '#FFB800',
+                        font: {
+                            size: 18,
+                            weight: 'bold'
+                        },
+                        padding: 20
+                    }
+                }
+            }
+        });
+
+        // Animate progress bars on scroll
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const fills = entry.target.querySelectorAll('.progress-fill');
+                    fills.forEach(fill => {
+                        fill.style.width = fill.style.width;
+                    });
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.distribution-grid').forEach(grid => {
+            observer.observe(grid);
+        });
+    </script>
+</body>
+</html>

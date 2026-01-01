@@ -13,6 +13,10 @@ import logging
 from datetime import datetime
 import hashlib
 import hmac
+import socket
+
+# Import validation utilities
+from validation_utils import validate_phone_number, validate_sui_amount, sanitize_input
 
 # Sui blockchain integration - THE ENGINE
 try:
@@ -26,6 +30,9 @@ try:
 except ImportError as e:
     SUI_AVAILABLE = False
     logger.warning(f"⚠️  Sui integration not available: {e}")
+except Exception as e:
+    SUI_AVAILABLE = False
+    logger.error(f"❌ Error loading Sui integration: {e}")
 
 # SMS notifications - THE CLOSED LOOP
 try:
@@ -39,6 +46,9 @@ try:
 except ImportError as e:
     SMS_AVAILABLE = False
     logger.warning(f"⚠️  SMS notifications not available: {e}")
+except Exception as e:
+    SMS_AVAILABLE = False
+    logger.error(f"❌ Error loading SMS notifications: {e}")
     
     # Mock SMS functions for development/testing
     def send_investment_success_sms(phone, amount, tx_digest):
@@ -199,6 +209,19 @@ def ussd_callback():
     text = request.values.get("text", "")
     network_code = request.values.get("networkCode", "")
     
+    # Validate phone number
+    is_valid, error_msg = validate_phone_number(phone_number)
+    if not is_valid:
+        logger.error(f"Invalid phone number: {phone_number} - {error_msg}")
+        response = f"END Error: {error_msg}\n\n"
+        response += "Please check your phone number and try again."
+        resp = make_response(response, 200)
+        resp.headers['Content-Type'] = 'text/plain'
+        return resp
+    
+    # Sanitize text input to prevent injection
+    text = sanitize_input(text, max_length=50)
+    
     # Log request
     logger.info(f"USSD Request - Session: {session_id}, Phone: {phone_number}, Text: '{text}'")
     
@@ -313,19 +336,28 @@ def ussd_callback():
         
         elif text == "2*1":
             # Invest 100 SUI
-            set_session_data(session_id, {
-                'flow': 'investment',
-                'sui_amount': 100,
-                'usd_value': 100 * SUI_PRICE
-            })
-            equity_percent = (100 / 350000) * 10
-            response = "CON Investment Summary:\n\n"
-            response += "Amount: 100 SUI\n"
-            response += f"USD Value: ${100 * SUI_PRICE:.2f}\n"
-            response += f"Equity: {equity_percent:.4f}%\n"
-            response += "Vesting: 12 months linear\n\n"
-            response += "1. Confirm Investment\n"
-            response += "0. Cancel"
+            sui_amount = 100
+            
+            # Validate investment amount
+            is_valid, error_msg = validate_sui_amount(sui_amount, min_amount=100, max_amount=10000)
+            if not is_valid:
+                response = f"END Error: {error_msg}\n\n"
+                response += "Please contact support for assistance."
+                clear_session(session_id)
+            else:
+                set_session_data(session_id, {
+                    'flow': 'investment',
+                    'sui_amount': sui_amount,
+                    'usd_value': sui_amount * SUI_PRICE
+                })
+                equity_percent = (sui_amount / 350000) * 10
+                response = "CON Investment Summary:\n\n"
+                response += f"Amount: {sui_amount} SUI\n"
+                response += f"USD Value: ${sui_amount * SUI_PRICE:.2f}\n"
+                response += f"Equity: {equity_percent:.4f}%\n"
+                response += "Vesting: 12 months linear\n\n"
+                response += "1. Confirm Investment\n"
+                response += "0. Cancel"
         
         elif text == "2*1*1":
             # Confirm 100 SUI investment
@@ -335,55 +367,87 @@ def ussd_callback():
             logger.info(f"🚀 INVESTMENT TRIGGER: {phone_number} investing {sui_amount} SUI")
             logger.info(f"   Step 1: Calling execute_investment() from sui_logic.py")
             
-            # Step 1: Execute on-chain transaction
-            success, result = execute_investment(phone_number, sui_amount)
-            
-            if success:
-                tx_digest = result
-                equity_percent = (sui_amount / 350000) * 10
+            try:
+                # Set socket timeout to prevent hanging connections
+                socket.setdefaulttimeout(30)
                 
-                logger.info(f"✅ Investment successful: {tx_digest}")
-                logger.info(f"   Step 2: Sending SMS confirmation")
+                # Step 1: Execute on-chain transaction
+                success, result = execute_investment(phone_number, sui_amount)
                 
-                # Step 2: Send SMS confirmation (THE CLOSED LOOP)
-                if SMS_AVAILABLE:
-                    sms_sent = send_investment_success_sms(phone_number, sui_amount, tx_digest)
-                    if sms_sent:
-                        logger.info(f"📱 SMS sent to {phone_number}")
-                    else:
-                        logger.warning(f"⚠️  SMS failed for {phone_number}")
-                
-                response = f"END ✅ Investment Confirmed!\n\n"
-                response += f"Amount: {sui_amount} SUI\n"
-                response += f"Equity: {equity_percent:.4f}%\n"
-                response += f"TX: {tx_digest[:10]}...\n\n"
-                if SMS_AVAILABLE:
-                    response += "Check your SMS for details.\n"
-                response += "Welcome to ARAIL! 🚂💎"
+                if success:
+                    tx_digest = result
+                    equity_percent = (sui_amount / 350000) * 10
+                    
+                    logger.info(f"✅ Investment successful: {tx_digest}")
+                    logger.info(f"   Step 2: Sending SMS confirmation")
+                    
+                    # Step 2: Send SMS confirmation (THE CLOSED LOOP)
+                    if SMS_AVAILABLE:
+                        try:
+                            sms_sent = send_investment_success_sms(phone_number, sui_amount, tx_digest)
+                            if sms_sent:
+                                logger.info(f"📱 SMS sent to {phone_number}")
+                            else:
+                                logger.warning(f"⚠️  SMS failed for {phone_number}")
+                        except Exception as sms_error:
+                            logger.error(f"❌ SMS error: {str(sms_error)}")
+                    
+                    response = f"END ✅ Investment Confirmed!\n\n"
+                    response += f"Amount: {sui_amount} SUI\n"
+                    response += f"Equity: {equity_percent:.4f}%\n"
+                    response += f"TX: {tx_digest[:10]}...\n\n"
+                    if SMS_AVAILABLE:
+                        response += "Check your SMS for details.\n"
+                    response += "Welcome to ARAIL! 🚂💎"
+                    clear_session(session_id)
+                else:
+                    error_msg = result
+                    logger.error(f"❌ Investment failed: {error_msg}")
+                    
+                    response = f"END ❌ Investment Failed\n\n"
+                    response += f"Error: {error_msg[:50]}\n"
+                    response += "Please contact investors@africarailways.com"
+                    
+            except socket.timeout:
+                logger.error(f"❌ Connection timeout during investment for {phone_number}")
+                response = "END ❌ Connection Timeout\n\n"
+                response += "The network is experiencing delays.\n"
+                response += "Please try again in a few minutes."
                 clear_session(session_id)
-            else:
-                error_msg = result
-                logger.error(f"❌ Investment failed: {error_msg}")
-                
-                response = f"END ❌ Investment Failed\n\n"
-                response += f"Error: {error_msg[:50]}\n"
-                response += "Please contact investors@africarailways.com"
+            except Exception as e:
+                logger.error(f"❌ Investment exception for {phone_number}: {str(e)}")
+                response = "END ❌ System Error\n\n"
+                response += "An unexpected error occurred.\n"
+                response += "Please contact support."
+                clear_session(session_id)
+            finally:
+                # Reset socket timeout to default
+                socket.setdefaulttimeout(None)
         
         elif text == "2*2":
             # Invest 500 SUI
-            set_session_data(session_id, {
-                'flow': 'investment',
-                'sui_amount': 500,
-                'usd_value': 500 * SUI_PRICE
-            })
-            equity_percent = (500 / 350000) * 10
-            response = "CON Investment Summary:\n\n"
-            response += "Amount: 500 SUI\n"
-            response += f"USD Value: ${500 * SUI_PRICE:.2f}\n"
-            response += f"Equity: {equity_percent:.4f}%\n"
-            response += "Vesting: 12 months linear\n\n"
-            response += "1. Confirm Investment\n"
-            response += "0. Cancel"
+            sui_amount = 500
+            
+            # Validate investment amount
+            is_valid, error_msg = validate_sui_amount(sui_amount, min_amount=100, max_amount=10000)
+            if not is_valid:
+                response = f"END Error: {error_msg}\n\n"
+                response += "Please contact support for assistance."
+                clear_session(session_id)
+            else:
+                set_session_data(session_id, {
+                    'flow': 'investment',
+                    'sui_amount': sui_amount,
+                    'usd_value': sui_amount * SUI_PRICE
+                })
+                equity_percent = (sui_amount / 350000) * 10
+                response = "CON Investment Summary:\n\n"
+                response += f"Amount: {sui_amount} SUI\n"
+                response += f"USD Value: ${sui_amount * SUI_PRICE:.2f}\n"
+                response += f"Equity: {equity_percent:.4f}%\n"
+                response += "Vesting: 12 months linear\n\n"
+                response += "1. Confirm Investment\n"
+                response += "0. Cancel"
         
         elif text == "2*2*1":
             # Confirm 500 SUI investment
@@ -393,29 +457,49 @@ def ussd_callback():
             logger.info(f"🚀 INVESTMENT TRIGGER: {phone_number} investing {sui_amount} SUI")
             logger.info(f"   Calling execute_investment() from sui_logic.py")
             
-            # Execute on-chain transaction
-            success, result = execute_investment(phone_number, sui_amount)
-            
-            if success:
-                tx_digest = result
-                equity_percent = (sui_amount / 350000) * 10
+            try:
+                # Set socket timeout to prevent hanging connections
+                socket.setdefaulttimeout(30)
                 
-                logger.info(f"✅ Investment successful: {tx_digest}")
+                # Execute on-chain transaction
+                success, result = execute_investment(phone_number, sui_amount)
                 
-                response = f"END ✅ Investment Confirmed!\n\n"
-                response += f"Amount: {sui_amount} SUI\n"
-                response += f"Equity: {equity_percent:.4f}%\n"
-                response += f"TX: {tx_digest[:10]}...\n\n"
-                response += "Certificate NFT sent to your wallet.\n"
-                response += "Welcome to ARAIL! 🚂💎"
+                if success:
+                    tx_digest = result
+                    equity_percent = (sui_amount / 350000) * 10
+                    
+                    logger.info(f"✅ Investment successful: {tx_digest}")
+                    
+                    response = f"END ✅ Investment Confirmed!\n\n"
+                    response += f"Amount: {sui_amount} SUI\n"
+                    response += f"Equity: {equity_percent:.4f}%\n"
+                    response += f"TX: {tx_digest[:10]}...\n\n"
+                    response += "Certificate NFT sent to your wallet.\n"
+                    response += "Welcome to ARAIL! 🚂💎"
+                    clear_session(session_id)
+                else:
+                    error_msg = result
+                    logger.error(f"❌ Investment failed: {error_msg}")
+                    
+                    response = f"END ❌ Investment Failed\n\n"
+                    response += f"Error: {error_msg[:50]}\n"
+                    response += "Please contact investors@africarailways.com"
+                    
+            except socket.timeout:
+                logger.error(f"❌ Connection timeout during investment for {phone_number}")
+                response = "END ❌ Connection Timeout\n\n"
+                response += "The network is experiencing delays.\n"
+                response += "Please try again in a few minutes."
                 clear_session(session_id)
-            else:
-                error_msg = result
-                logger.error(f"❌ Investment failed: {error_msg}")
-                
-                response = f"END ❌ Investment Failed\n\n"
-                response += f"Error: {error_msg[:50]}\n"
-                response += "Please contact investors@africarailways.com"
+            except Exception as e:
+                logger.error(f"❌ Investment exception for {phone_number}: {str(e)}")
+                response = "END ❌ System Error\n\n"
+                response += "An unexpected error occurred.\n"
+                response += "Please contact support."
+                clear_session(session_id)
+            finally:
+                # Reset socket timeout to default
+                socket.setdefaulttimeout(None)
         
         # ============================================
         # WALLET CHECK

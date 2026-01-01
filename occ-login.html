@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 OCC Login - Africa Railways</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --navy: #0a0e1a;
+            --gold: #FFB800;
+            --cyan: #00D4FF;
+            --white: #ffffff;
+            --surface: #16203a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--navy) 0%, #1a2642 100%);
+            color: var(--white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .back-home {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--white);
+            text-decoration: none;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #333;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .back-home:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--gold);
+            transform: translateX(-3px);
+        }
+        
+        .login-container {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 60px 40px;
+            max-width: 450px;
+            width: 100%;
+            border: 1px solid #333;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 40px;
+            font-size: 1rem;
+        }
+        
+        .info-box {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        
+        .info-box h3 {
+            color: var(--cyan);
+            font-size: 1rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-box p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .login-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--gold) 0%, #ff9500 100%);
+            color: var(--navy);
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 184, 0, 0.4);
+        }
+        
+        .login-button:active {
+            transform: translateY(0);
+        }
+        
+        .login-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .status-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .status-message.success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+        
+        .status-message.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+        
+        .status-message.info {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: var(--cyan);
+        }
+        
+        .features {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #333;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            text-align: left;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .feature-icon {
+            font-size: 1.5rem;
+            min-width: 30px;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--navy);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-home">
+        <i class="fas fa-arrow-left"></i>
+        Back to Home
+    </a>
+    
+    <div class="login-container">
+        <div class="logo">🚂</div>
+        <h1>OCC Access</h1>
+        <p class="subtitle">Operational Control Centre</p>
+        
+        <div class="info-box">
+            <h3>🔐 Secure Authentication</h3>
+            <p>
+                This system uses Sui zkLogin for passwordless authentication. 
+                You'll be redirected to sign in with your Google account.
+            </p>
+        </div>
+        
+        <button id="login-btn" class="login-button" onclick="initiateZkLogin()">
+            <span>🔐</span>
+            <span>Login with zkLogin</span>
+        </button>
+        
+        <div id="status-message" class="status-message"></div>
+        
+        <div class="features">
+            <div class="feature-item">
+                <span class="feature-icon">✅</span>
+                <span>No passwords required</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">🔒</span>
+                <span>Zero-knowledge proof authentication</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">⚡</span>
+                <span>Instant access to OCC dashboard</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if already authenticated
+        window.addEventListener('DOMContentLoaded', () => {
+            const authToken = sessionStorage.getItem('occ_auth_token');
+            const authExpiry = sessionStorage.getItem('occ_auth_expiry');
+            
+            if (authToken && authExpiry) {
+                const expiryTime = parseInt(authExpiry);
+                if (Date.now() < expiryTime) {
+                    // Already authenticated, redirect to OCC
+                    showStatus('Already authenticated. Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'occ.html';
+                    }, 1000);
+                    return;
+                }
+            }
+        });
+
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('status-message');
+            statusEl.textContent = message;
+            statusEl.className = `status-message ${type}`;
+            statusEl.style.display = 'block';
+        }
+
+        function hideStatus() {
+            const statusEl = document.getElementById('status-message');
+            statusEl.style.display = 'none';
+        }
+
+        async function initiateZkLogin() {
+            const loginBtn = document.getElementById('login-btn');
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<span class="spinner"></span><span>Connecting...</span>';
+            
+            hideStatus();
+            
+            try {
+                // Check if Sui zkLogin is available
+                if (typeof window.suiZkLogin === 'undefined') {
+                    // Simulate zkLogin for demo purposes
+                    showStatus('Initializing zkLogin...', 'info');
+                    
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    // In production, this would redirect to Google OAuth
+                    // For now, simulate successful authentication
+                    showStatus('Redirecting to Google authentication...', 'info');
+                    
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    // Simulate successful authentication
+                    const mockToken = 'zklogin_' + Math.random().toString(36).substring(2);
+                    const expiryTime = Date.now() + (24 * 60 * 60 * 1000); // 24 hours
+                    
+                    sessionStorage.setItem('occ_auth_token', mockToken);
+                    sessionStorage.setItem('occ_auth_expiry', expiryTime.toString());
+                    sessionStorage.setItem('occ_user_email', 'demo@africarailways.com');
+                    
+                    showStatus('✅ Authentication successful! Redirecting to OCC...', 'success');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'occ.html';
+                    }, 1500);
+                } else {
+                    // Real zkLogin implementation
+                    showStatus('Connecting to Sui zkLogin...', 'info');
+                    
+                    // Initialize zkLogin
+                    const result = await window.suiZkLogin.authenticate({
+                        provider: 'google',
+                        redirectUrl: window.location.origin + '/occ.html'
+                    });
+                    
+                    if (result.success) {
+                        sessionStorage.setItem('occ_auth_token', result.token);
+                        sessionStorage.setItem('occ_auth_expiry', result.expiry);
+                        sessionStorage.setItem('occ_user_email', result.email);
+                        
+                        showStatus('✅ Authentication successful! Redirecting...', 'success');
+                        
+                        setTimeout(() => {
+                            window.location.href = 'occ.html';
+                        }, 1000);
+                    } else {
+                        throw new Error('Authentication failed');
+                    }
+                }
+            } catch (error) {
+                console.error('zkLogin error:', error);
+                showStatus('❌ Authentication failed. Please try again.', 'error');
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<span>🔐</span><span>Login with zkLogin</span>';
+            }
+        }
+    </script>
+</body>
+</html>
