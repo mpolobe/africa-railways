@@ -10,10 +10,20 @@ from flask_cors import CORS
 import os
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 import hashlib
 import hmac
 import socket
+from collections import defaultdict
+from functools import wraps
+import ipaddress
+
+# Configure logging FIRST before any other imports that use it
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 # Import validation utilities
 from validation_utils import validate_phone_number, validate_sui_amount, sanitize_input
@@ -86,13 +96,6 @@ if not SUI_AVAILABLE:
 app = Flask(__name__)
 CORS(app)
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
-
 # Configuration
 SUI_RPC_URL = os.environ.get('SUI_RPC_URL', 'https://fullnode.mainnet.sui.io:443')
 SUI_PRIVATE_KEY = os.environ.get('SUI_PRIVATE_KEY', '')
@@ -110,20 +113,45 @@ ALLOWED_IPS = [
 
 # Session storage (in production, use Redis)
 sessions = {}
+# Session cleanup tracking
+session_last_cleanup = datetime.now()
+SESSION_MAX_AGE = timedelta(hours=1)  # Sessions expire after 1 hour
+SESSION_CLEANUP_INTERVAL = timedelta(minutes=10)  # Cleanup every 10 minutes
+
+# Rate limiting storage (in production, use Redis)
+rate_limit_storage = defaultdict(list)
+RATE_LIMIT_WINDOW = timedelta(minutes=1)  # 1 minute window
+RATE_LIMIT_MAX_REQUESTS = 10  # Max 10 requests per minute per phone number
 
 # Current SUI price (update via API in production)
 SUI_PRICE = 1.44
 
 def validate_ip(ip_address):
-    """Validate if request is from Africa's Talking"""
+    """
+    Validate if request is from Africa's Talking using proper CIDR matching
+    
+    Security: Uses ipaddress module for proper IP range validation
+    """
     if os.environ.get('FLASK_ENV') == 'development':
+        logger.debug(f"Development mode: allowing IP {ip_address}")
         return True
     
-    # Simple IP validation (use proper library in production)
-    for allowed_range in ALLOWED_IPS:
-        if ip_address.startswith(allowed_range.split('/')[0][:7]):
-            return True
-    return False
+    try:
+        # Parse the incoming IP address
+        incoming_ip = ipaddress.ip_address(ip_address)
+        
+        # Check against each allowed CIDR range
+        for allowed_range in ALLOWED_IPS:
+            network = ipaddress.ip_network(allowed_range, strict=False)
+            if incoming_ip in network:
+                logger.debug(f"IP {ip_address} matched allowed range {allowed_range}")
+                return True
+        
+        logger.warning(f"IP {ip_address} not in allowed ranges")
+        return False
+    except ValueError as e:
+        logger.error(f"Invalid IP address format: {ip_address} - {e}")
+        return False
 
 def verify_signature(request_data, signature):
     """Verify Africa's Talking request signature"""
@@ -139,8 +167,78 @@ def verify_signature(request_data, signature):
     
     return hmac.compare_digest(signature, expected_signature)
 
+def cleanup_old_sessions():
+    """
+    Remove expired sessions to prevent memory leaks
+    
+    Security: Prevents session storage from growing unbounded
+    """
+    global session_last_cleanup, sessions
+    
+    now = datetime.now()
+    if now - session_last_cleanup < SESSION_CLEANUP_INTERVAL:
+        return  # Not time to cleanup yet
+    
+    expired_count = 0
+    expired_sessions = []
+    
+    for session_id, session_data in sessions.items():
+        last_updated_str = session_data.get('last_updated')
+        if last_updated_str:
+            try:
+                last_updated = datetime.fromisoformat(last_updated_str)
+                if now - last_updated > SESSION_MAX_AGE:
+                    expired_sessions.append(session_id)
+                    expired_count += 1
+            except (ValueError, TypeError):
+                # Invalid timestamp, mark for deletion
+                expired_sessions.append(session_id)
+                expired_count += 1
+    
+    # Remove expired sessions
+    for session_id in expired_sessions:
+        del sessions[session_id]
+    
+    if expired_count > 0:
+        logger.info(f"Cleaned up {expired_count} expired sessions")
+    
+    session_last_cleanup = now
+
+def check_rate_limit(phone_number):
+    """
+    Check if phone number has exceeded rate limit
+    
+    Security: Prevents DoS attacks and abuse
+    Returns: (is_allowed: bool, retry_after_seconds: int)
+    """
+    global rate_limit_storage
+    
+    now = datetime.now()
+    cutoff_time = now - RATE_LIMIT_WINDOW
+    
+    # Clean up old entries for this phone number
+    if phone_number in rate_limit_storage:
+        rate_limit_storage[phone_number] = [
+            timestamp for timestamp in rate_limit_storage[phone_number]
+            if timestamp > cutoff_time
+        ]
+    
+    # Check if limit exceeded
+    request_count = len(rate_limit_storage[phone_number])
+    
+    if request_count >= RATE_LIMIT_MAX_REQUESTS:
+        oldest_request = min(rate_limit_storage[phone_number])
+        retry_after = int((oldest_request + RATE_LIMIT_WINDOW - now).total_seconds())
+        logger.warning(f"Rate limit exceeded for {phone_number}: {request_count} requests in window")
+        return False, max(retry_after, 1)
+    
+    # Add current request timestamp
+    rate_limit_storage[phone_number].append(now)
+    return True, 0
+
 def get_session_data(session_id):
     """Retrieve session data"""
+    cleanup_old_sessions()  # Opportunistic cleanup
     return sessions.get(session_id, {})
 
 def set_session_data(session_id, data):
@@ -154,6 +252,25 @@ def clear_session(session_id):
     """Clear session data"""
     if session_id in sessions:
         del sessions[session_id]
+
+class SocketTimeout:
+    """
+    Context manager for socket timeout operations
+    
+    Security: Ensures socket timeout is always reset even if exception occurs
+    """
+    def __init__(self, timeout_seconds=30):
+        self.timeout_seconds = timeout_seconds
+        self.old_timeout = None
+    
+    def __enter__(self):
+        self.old_timeout = socket.getdefaulttimeout()
+        socket.setdefaulttimeout(self.timeout_seconds)
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        socket.setdefaulttimeout(self.old_timeout)
+        return False  # Don't suppress exceptions
 
 # Removed - now using backend/sui_integration.py
 
@@ -193,9 +310,19 @@ def health_check():
 def ussd_callback():
     """
     Main USSD callback handler for *384*26621#
+    
+    Security improvements:
+    - IP validation with proper CIDR matching
+    - Rate limiting per phone number
+    - Input sanitization and validation
+    - Session management with automatic cleanup
     """
     # Get client IP
     client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    
+    # Split X-Forwarded-For if it contains multiple IPs
+    if ',' in client_ip:
+        client_ip = client_ip.split(',')[0].strip()
     
     # Validate IP (disabled in development)
     if not validate_ip(client_ip):
@@ -219,11 +346,22 @@ def ussd_callback():
         resp.headers['Content-Type'] = 'text/plain'
         return resp
     
+    # Check rate limit
+    is_allowed, retry_after = check_rate_limit(phone_number)
+    if not is_allowed:
+        logger.warning(f"Rate limit exceeded for {phone_number}, retry after {retry_after}s")
+        response = f"END Too many requests.\n\n"
+        response += f"Please wait {retry_after} seconds and try again.\n"
+        response += "This protects our service from abuse."
+        resp = make_response(response, 200)
+        resp.headers['Content-Type'] = 'text/plain'
+        return resp
+    
     # Sanitize text input to prevent injection
     text = sanitize_input(text, max_length=50)
     
-    # Log request
-    logger.info(f"USSD Request - Session: {session_id}, Phone: {phone_number}, Text: '{text}'")
+    # Log request (sanitized, no sensitive data)
+    logger.info(f"USSD Request - Session: {session_id[:10]}..., Phone: {phone_number[-4:]}, Text: '{text}'")
     
     # Get session data
     session_data = get_session_data(session_id)
@@ -364,65 +502,61 @@ def ussd_callback():
             # THIS IS THE CRITICAL BRIDGE: USSD → Sui Blockchain → SMS
             sui_amount = session_data.get('sui_amount', 100)
             
-            logger.info(f"🚀 INVESTMENT TRIGGER: {phone_number} investing {sui_amount} SUI")
+            logger.info(f"🚀 INVESTMENT TRIGGER: {phone_number[-4:]} investing {sui_amount} SUI")
             logger.info(f"   Step 1: Calling execute_investment() from sui_logic.py")
             
             try:
-                # Set socket timeout to prevent hanging connections
-                socket.setdefaulttimeout(30)
-                
-                # Step 1: Execute on-chain transaction
-                success, result = execute_investment(phone_number, sui_amount)
-                
-                if success:
-                    tx_digest = result
-                    equity_percent = (sui_amount / 350000) * 10
+                # Use context manager for socket timeout
+                with SocketTimeout(30):
+                    # Step 1: Execute on-chain transaction
+                    success, result = execute_investment(phone_number, sui_amount)
                     
-                    logger.info(f"✅ Investment successful: {tx_digest}")
-                    logger.info(f"   Step 2: Sending SMS confirmation")
-                    
-                    # Step 2: Send SMS confirmation (THE CLOSED LOOP)
-                    if SMS_AVAILABLE:
-                        try:
-                            sms_sent = send_investment_success_sms(phone_number, sui_amount, tx_digest)
-                            if sms_sent:
-                                logger.info(f"📱 SMS sent to {phone_number}")
-                            else:
-                                logger.warning(f"⚠️  SMS failed for {phone_number}")
-                        except Exception as sms_error:
-                            logger.error(f"❌ SMS error: {str(sms_error)}")
-                    
-                    response = f"END ✅ Investment Confirmed!\n\n"
-                    response += f"Amount: {sui_amount} SUI\n"
-                    response += f"Equity: {equity_percent:.4f}%\n"
-                    response += f"TX: {tx_digest[:10]}...\n\n"
-                    if SMS_AVAILABLE:
-                        response += "Check your SMS for details.\n"
-                    response += "Welcome to ARAIL! 🚂💎"
-                    clear_session(session_id)
-                else:
-                    error_msg = result
-                    logger.error(f"❌ Investment failed: {error_msg}")
-                    
-                    response = f"END ❌ Investment Failed\n\n"
-                    response += f"Error: {error_msg[:50]}\n"
-                    response += "Please contact investors@africarailways.com"
-                    
+                    if success:
+                        tx_digest = result
+                        equity_percent = (sui_amount / 350000) * 10
+                        
+                        logger.info(f"✅ Investment successful: {tx_digest[:10]}...")
+                        logger.info(f"   Step 2: Sending SMS confirmation")
+                        
+                        # Step 2: Send SMS confirmation (THE CLOSED LOOP)
+                        if SMS_AVAILABLE:
+                            try:
+                                sms_sent = send_investment_success_sms(phone_number, sui_amount, tx_digest)
+                                if sms_sent:
+                                    logger.info(f"📱 SMS sent to {phone_number[-4:]}")
+                                else:
+                                    logger.warning(f"⚠️  SMS failed for {phone_number[-4:]}")
+                            except Exception as sms_error:
+                                logger.error(f"❌ SMS error: {str(sms_error)}")
+                        
+                        response = f"END ✅ Investment Confirmed!\n\n"
+                        response += f"Amount: {sui_amount} SUI\n"
+                        response += f"Equity: {equity_percent:.4f}%\n"
+                        response += f"TX: {tx_digest[:10]}...\n\n"
+                        if SMS_AVAILABLE:
+                            response += "Check your SMS for details.\n"
+                        response += "Welcome to ARAIL! 🚂💎"
+                        clear_session(session_id)
+                    else:
+                        error_msg = result
+                        logger.error(f"❌ Investment failed: {error_msg[:50]}")
+                        
+                        response = f"END ❌ Investment Failed\n\n"
+                        response += f"Error: {error_msg[:50]}\n"
+                        response += "Please contact investors@africarailways.com"
+                        
             except socket.timeout:
-                logger.error(f"❌ Connection timeout during investment for {phone_number}")
+                logger.error(f"❌ Connection timeout during investment for {phone_number[-4:]}")
                 response = "END ❌ Connection Timeout\n\n"
                 response += "The network is experiencing delays.\n"
                 response += "Please try again in a few minutes."
                 clear_session(session_id)
             except Exception as e:
-                logger.error(f"❌ Investment exception for {phone_number}: {str(e)}")
+                logger.error(f"❌ Investment exception for {phone_number[-4:]}: {str(e)[:100]}")
                 response = "END ❌ System Error\n\n"
                 response += "An unexpected error occurred.\n"
                 response += "Please contact support."
                 clear_session(session_id)
-            finally:
-                # Reset socket timeout to default
-                socket.setdefaulttimeout(None)
         
         elif text == "2*2":
             # Invest 500 SUI
@@ -454,52 +588,48 @@ def ussd_callback():
             # THIS IS THE CRITICAL BRIDGE: USSD → Sui Blockchain
             sui_amount = session_data.get('sui_amount', 500)
             
-            logger.info(f"🚀 INVESTMENT TRIGGER: {phone_number} investing {sui_amount} SUI")
+            logger.info(f"🚀 INVESTMENT TRIGGER: {phone_number[-4:]} investing {sui_amount} SUI")
             logger.info(f"   Calling execute_investment() from sui_logic.py")
             
             try:
-                # Set socket timeout to prevent hanging connections
-                socket.setdefaulttimeout(30)
-                
-                # Execute on-chain transaction
-                success, result = execute_investment(phone_number, sui_amount)
-                
-                if success:
-                    tx_digest = result
-                    equity_percent = (sui_amount / 350000) * 10
+                # Use context manager for socket timeout
+                with SocketTimeout(30):
+                    # Execute on-chain transaction
+                    success, result = execute_investment(phone_number, sui_amount)
                     
-                    logger.info(f"✅ Investment successful: {tx_digest}")
-                    
-                    response = f"END ✅ Investment Confirmed!\n\n"
-                    response += f"Amount: {sui_amount} SUI\n"
-                    response += f"Equity: {equity_percent:.4f}%\n"
-                    response += f"TX: {tx_digest[:10]}...\n\n"
-                    response += "Certificate NFT sent to your wallet.\n"
-                    response += "Welcome to ARAIL! 🚂💎"
-                    clear_session(session_id)
-                else:
-                    error_msg = result
-                    logger.error(f"❌ Investment failed: {error_msg}")
-                    
-                    response = f"END ❌ Investment Failed\n\n"
-                    response += f"Error: {error_msg[:50]}\n"
-                    response += "Please contact investors@africarailways.com"
-                    
+                    if success:
+                        tx_digest = result
+                        equity_percent = (sui_amount / 350000) * 10
+                        
+                        logger.info(f"✅ Investment successful: {tx_digest[:10]}...")
+                        
+                        response = f"END ✅ Investment Confirmed!\n\n"
+                        response += f"Amount: {sui_amount} SUI\n"
+                        response += f"Equity: {equity_percent:.4f}%\n"
+                        response += f"TX: {tx_digest[:10]}...\n\n"
+                        response += "Certificate NFT sent to your wallet.\n"
+                        response += "Welcome to ARAIL! 🚂💎"
+                        clear_session(session_id)
+                    else:
+                        error_msg = result
+                        logger.error(f"❌ Investment failed: {error_msg[:50]}")
+                        
+                        response = f"END ❌ Investment Failed\n\n"
+                        response += f"Error: {error_msg[:50]}\n"
+                        response += "Please contact investors@africarailways.com"
+                        
             except socket.timeout:
-                logger.error(f"❌ Connection timeout during investment for {phone_number}")
+                logger.error(f"❌ Connection timeout during investment for {phone_number[-4:]}")
                 response = "END ❌ Connection Timeout\n\n"
                 response += "The network is experiencing delays.\n"
                 response += "Please try again in a few minutes."
                 clear_session(session_id)
             except Exception as e:
-                logger.error(f"❌ Investment exception for {phone_number}: {str(e)}")
+                logger.error(f"❌ Investment exception for {phone_number[-4:]}: {str(e)[:100]}")
                 response = "END ❌ System Error\n\n"
                 response += "An unexpected error occurred.\n"
                 response += "Please contact support."
                 clear_session(session_id)
-            finally:
-                # Reset socket timeout to default
-                socket.setdefaulttimeout(None)
         
         # ============================================
         # WALLET CHECK
@@ -651,7 +781,8 @@ def ussd_callback():
     resp = make_response(response, 200)
     resp.headers['Content-Type'] = 'text/plain'
     
-    logger.info(f"USSD Response - Session: {session_id}, Type: {response[:3]}")
+    # Log response (sanitized)
+    logger.info(f"USSD Response - Session: {session_id[:10]}..., Type: {response[:3]}")
     
     return resp
 
