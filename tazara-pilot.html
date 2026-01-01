@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚂 TAZARA Pilot - Book & Stake | Africa Railways</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --navy: #0a0e1a;
+            --gold: #FFB800;
+            --cyan: #00D4FF;
+            --white: #ffffff;
+            --surface: #16203a;
+            --green: #10b981;
+            --purple: #8b5cf6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--navy);
+            color: var(--white);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a2642 0%, var(--surface) 100%);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid #333;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--gold), var(--cyan), var(--purple));
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .pilot-badge {
+            background: linear-gradient(135deg, var(--purple), #ec4899);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        
+        .back-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--gold);
+        }
+        
+        .info-banner {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .info-banner h3 {
+            color: var(--purple);
+            margin-bottom: 10px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: var(--surface);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #333;
+        }
+        
+        .card h2 {
+            color: var(--gold);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .route-card {
+            background: rgba(0, 212, 255, 0.05);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .route-card:hover {
+            border-color: var(--cyan);
+            background: rgba(0, 212, 255, 0.1);
+        }
+        
+        .route-card.selected {
+            border-color: var(--gold);
+            background: rgba(255, 184, 0, 0.1);
+        }
+        
+        .route-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .route-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--cyan);
+        }
+        
+        .route-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+        
+        .route-details {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .subscription-tiers {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .tier-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #333;
+            padding: 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .tier-card:hover {
+            border-color: var(--purple);
+        }
+        
+        .tier-card.selected {
+            border-color: var(--gold);
+            background: rgba(255, 184, 0, 0.1);
+        }
+        
+        .tier-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .tier-price {
+            font-size: 1.5rem;
+            color: var(--gold);
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .tier-benefit {
+            color: var(--green);
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+        
+        .stake-info {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .stake-info h4 {
+            color: var(--purple);
+            margin-bottom: 10px;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #333;
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+        
+        .book-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--gold) 0%, #ff9500 100%);
+            color: var(--navy);
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        
+        .book-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 184, 0, 0.4);
+        }
+        
+        .book-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .status-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .status-message.success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+        
+        .status-message.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+        
+        .benefits-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .benefits-list li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .benefits-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--green);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .subscription-tiers {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const TAZARA_ROUTES = [
+            {
+                id: 'dar-kapiri',
+                name: 'Dar es Salaam → Kapiri Mposhi',
+                from: 'Dar es Salaam, Tanzania',
+                to: 'Kapiri Mposhi, Zambia',
+                distance: '1,860 km',
+                duration: '48 hours',
+                basePrice: 45,
+                description: 'Full TAZARA route crossing Tanzania and Zambia'
+            },
+            {
+                id: 'dar-mbeya',
+                name: 'Dar es Salaam → Mbeya',
+                from: 'Dar es Salaam, Tanzania',
+                to: 'Mbeya, Tanzania',
+                distance: '850 km',
+                duration: '22 hours',
+                basePrice: 25,
+                description: 'Southern Tanzania route'
+            },
+            {
+                id: 'mbeya-kapiri',
+                name: 'Mbeya → Kapiri Mposhi',
+                from: 'Mbeya, Tanzania',
+                to: 'Kapiri Mposhi, Zambia',
+                distance: '1,010 km',
+                duration: '26 hours',
+                basePrice: 30,
+                description: 'Cross-border route to Zambia'
+            },
+            {
+                id: 'kapiri-lusaka',
+                name: 'Kapiri Mposhi → Lusaka',
+                from: 'Kapiri Mposhi, Zambia',
+                to: 'Lusaka, Zambia',
+                distance: '200 km',
+                duration: '5 hours',
+                basePrice: 15,
+                description: 'Zambia Railways connection to capital'
+            }
+        ];
+
+        const SUBSCRIPTION_TIERS = [
+            {
+                id: 'basic',
+                name: 'Basic',
+                monthlyPrice: 10,
+                discount: 0,
+                stakingReward: 5,
+                benefits: ['Pay-per-ride', 'No commitment', '5% AFRC staking rewards']
+            },
+            {
+                id: 'frequent',
+                name: 'Frequent Rider',
+                monthlyPrice: 50,
+                discount: 15,
+                stakingReward: 12,
+                benefits: ['15% discount on all rides', '12% AFRC staking rewards', 'Priority booking', 'Flexible cancellation']
+            },
+            {
+                id: 'unlimited',
+                name: 'Unlimited',
+                monthlyPrice: 150,
+                discount: 30,
+                stakingReward: 20,
+                benefits: ['30% discount on all rides', '20% AFRC staking rewards', 'Unlimited rides', 'VIP lounge access', 'Free seat upgrades']
+            }
+        ];
+
+        function TazaraPilot() {
+            const [selectedRoute, setSelectedRoute] = useState(null);
+            const [selectedTier, setSelectedTier] = useState('basic');
+            const [passengers, setPassengers] = useState(1);
+            const [status, setStatus] = useState('');
+            const [isBooking, setIsBooking] = useState(false);
+
+            const route = TAZARA_ROUTES.find(r => r.id === selectedRoute);
+            const tier = SUBSCRIPTION_TIERS.find(t => t.id === selectedTier);
+            
+            const basePrice = route ? route.basePrice * passengers : 0;
+            const discount = tier ? (basePrice * tier.discount / 100) : 0;
+            const finalPrice = basePrice - discount;
+            const subscriptionCost = tier ? tier.monthlyPrice : 0;
+            const totalCost = finalPrice + subscriptionCost;
+            const stakingRewards = tier ? tier.stakingReward : 0;
+
+            const handleBooking = async () => {
+                if (!selectedRoute) {
+                    setStatus('error:Please select a route');
+                    return;
+                }
+
+                setIsBooking(true);
+                setStatus('');
+
+                try {
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+
+                    const bookingRef = 'TAZARA-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+                    const stakingAmount = (subscriptionCost * stakingRewards / 100).toFixed(2);
+                    
+                    setStatus(`success:✅ Booking confirmed! Reference: ${bookingRef}\\n💰 ${stakingAmount} AFRC staked and earning ${stakingRewards}% APY`);
+                    
+                    setTimeout(() => {
+                        setSelectedRoute(null);
+                        setSelectedTier('basic');
+                        setPassengers(1);
+                        setStatus('');
+                    }, 8000);
+                } catch (error) {
+                    setStatus('error:❌ Booking failed. Please try again.');
+                } finally {
+                    setIsBooking(false);
+                }
+            };
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <div className="header-content">
+                            <div>
+                                <div className="pilot-badge">🚀 PILOT PROGRAM</div>
+                                <h1>🚂 TAZARA Railway Booking</h1>
+                                <p style={{ color: '#94a3b8', fontSize: '1.1rem' }}>
+                                    Tanzania-Zambia Railway Authority • Book & Stake Model
+                                </p>
+                            </div>
+                            <a href="/" className="back-button">
+                                <i className="fas fa-arrow-left"></i>
+                                Back to Home
+                            </a>
+                        </div>
+                    </div>
+
+                    <div className="info-banner">
+                        <h3>💡 How Book & Stake Works</h3>
+                        <p>
+                            Choose a subscription tier and your booking payment is automatically staked in AFRC tokens, 
+                            earning you passive rewards while you travel. The more you ride, the more you earn!
+                        </p>
+                    </div>
+
+                    <div className="grid">
+                        <div>
+                            <div className="card">
+                                <h2>Select Your Route</h2>
+                                {TAZARA_ROUTES.map(route => (
+                                    <div 
+                                        key={route.id}
+                                        className={`route-card ${selectedRoute === route.id ? 'selected' : ''}`}
+                                        onClick={() => setSelectedRoute(route.id)}
+                                    >
+                                        <div className="route-header">
+                                            <div className="route-name">{route.name}</div>
+                                            <div className="route-price">${route.basePrice} AFRC</div>
+                                        </div>
+                                        <div className="route-details">
+                                            📍 {route.from} → {route.to}<br/>
+                                            🛤️ {route.distance} • ⏱️ {route.duration}<br/>
+                                            {route.description}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="card" style={{ marginTop: '20px' }}>
+                                <h2>Choose Subscription Tier</h2>
+                                <div className="subscription-tiers">
+                                    {SUBSCRIPTION_TIERS.map(tier => (
+                                        <div 
+                                            key={tier.id}
+                                            className={`tier-card ${selectedTier === tier.id ? 'selected' : ''}`}
+                                            onClick={() => setSelectedTier(tier.id)}
+                                        >
+                                            <div className="tier-name">{tier.name}</div>
+                                            <div className="tier-price">${tier.monthlyPrice}/mo</div>
+                                            <div style={{ color: '#94a3b8', fontSize: '0.85rem' }}>
+                                                {tier.discount}% discount
+                                            </div>
+                                            <div className="tier-benefit">
+                                                🎁 {tier.stakingReward}% APY
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {tier && (
+                                    <div className="stake-info">
+                                        <h4>📊 Staking Benefits</h4>
+                                        <ul className="benefits-list">
+                                            {tier.benefits.map((benefit, idx) => (
+                                                <li key={idx}>{benefit}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className="card">
+                                <h2>Booking Summary</h2>
+                                
+                                <div style={{ marginBottom: '20px' }}>
+                                    <label style={{ display: 'block', marginBottom: '8px', color: '#94a3b8' }}>
+                                        Number of Passengers
+                                    </label>
+                                    <input 
+                                        type="number" 
+                                        value={passengers} 
+                                        onChange={(e) => setPassengers(Math.max(1, parseInt(e.target.value) || 1))}
+                                        min="1"
+                                        max="10"
+                                        style={{
+                                            width: '100%',
+                                            padding: '12px',
+                                            background: 'rgba(255, 255, 255, 0.05)',
+                                            border: '1px solid #333',
+                                            borderRadius: '8px',
+                                            color: 'white',
+                                            fontSize: '1rem'
+                                        }}
+                                    />
+                                </div>
+
+                                {route && (
+                                    <>
+                                        <div className="summary-item">
+                                            <span>Route</span>
+                                            <span style={{ textAlign: 'right' }}>{route.name}</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span>Passengers</span>
+                                            <span>{passengers}</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span>Base Price</span>
+                                            <span>${basePrice} AFRC</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span>Subscription</span>
+                                            <span>{tier.name} (${subscriptionCost}/mo)</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span>Discount ({tier.discount}%)</span>
+                                            <span style={{ color: 'var(--green)' }}>-${discount.toFixed(2)} AFRC</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span>Staking APY</span>
+                                            <span style={{ color: 'var(--purple)' }}>{stakingRewards}%</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span>Total</span>
+                                            <span>${totalCost.toFixed(2)} AFRC</span>
+                                        </div>
+                                    </>
+                                )}
+
+                                {!route && (
+                                    <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>
+                                        Select a route to see the summary
+                                    </p>
+                                )}
+
+                                <button 
+                                    className="book-button"
+                                    onClick={handleBooking}
+                                    disabled={!route || isBooking}
+                                >
+                                    {isBooking ? '⏳ Processing...' : `Book & Stake - $${totalCost.toFixed(2)} AFRC`}
+                                </button>
+
+                                {status && (
+                                    <div className={`status-message ${status.split(':')[0]}`}>
+                                        {status.split(':')[1]}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<TazaraPilot />);
+    </script>
+</body>
+</html>
