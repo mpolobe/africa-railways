@@ -25,6 +25,10 @@ bin/sovereign-engine
 *.dylib
 *.test
 *.out
+dist/
+build/
+.next/
+.cache/
 
 # Logs and runtime files
 logs/*.log
