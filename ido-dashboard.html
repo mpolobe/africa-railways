@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDO Dashboard - AFRC Token Sale</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --navy: #0a0e1a; --gold: #FFB800; --cyan: #00D4FF; --white: #ffffff; --surface: #16203a; --green: #10b981; }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(10,14,26,0.95); border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+        .logo { font-size: 1.4rem; font-weight: 800; color: var(--gold); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .nav-links { display: flex; list-style: none; gap: 30px; margin: 0; align-items: center; }
+        .nav-links a { color: var(--white); text-decoration: none; font-size: 0.9rem; transition: 0.3s; font-weight: 500; }
+        .nav-links a:hover { color: var(--gold); }
+        .cta-nav { background: linear-gradient(135deg, var(--gold), #ff9500); color: var(--navy); padding: 10px 20px; border-radius: 8px; font-weight: 700; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 80px 20px; }
+        h1 { font-size: clamp(2.5rem, 5vw, 4rem); margin: 0 0 20px; font-weight: 900; text-align: center; background: linear-gradient(135deg, var(--gold), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h2 { color: var(--gold); margin-top: 60px; margin-bottom: 30px; font-size: 2rem; }
+        .hero { text-align: center; margin-bottom: 60px; }
+        .hero p { color: #aaa; font-size: 1.2rem; max-width: 700px; margin: 0 auto 40px; }
+        .live-badge { display: inline-flex; align-items: center; gap: 10px; background: rgba(16,185,129,0.2); border: 2px solid var(--green); padding: 10px 25px; border-radius: 50px; font-weight: 700; color: var(--green); margin-bottom: 30px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .countdown-section { background: linear-gradient(135deg, var(--surface), #1a2540); padding: 50px; border-radius: 20px; border: 2px solid var(--gold); margin-bottom: 40px; text-align: center; }
+        .countdown-title { font-size: 1.5rem; color: var(--cyan); margin-bottom: 30px; }
+        .countdown { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
+        .countdown-item { background: rgba(10,14,26,0.8); padding: 25px; border-radius: 15px; min-width: 120px; border: 1px solid #333; }
+        .countdown-value { font-size: 3rem; font-weight: 900; color: var(--gold); display: block; line-height: 1; }
+        .countdown-label { color: #aaa; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 10px; }
+        .progress-section { background: var(--surface); padding: 50px; border-radius: 20px; border: 1px solid #333; margin-bottom: 40px; }
+        .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px; }
+        .progress-title { font-size: 2rem; color: var(--gold); font-weight: 900; }
+        .progress-percentage { font-size: 3rem; color: var(--cyan); font-weight: 900; }
+        .progress-bar-container { height: 40px; background: rgba(10,14,26,0.8); border-radius: 20px; overflow: hidden; margin-bottom: 30px; border: 2px solid #333; position: relative; }
+        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--cyan), #8b5cf6); border-radius: 20px; transition: width 1s ease; display: flex; align-items: center; justify-content: flex-end; padding-right: 20px; font-weight: 900; font-size: 1.2rem; }
+        .progress-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .progress-stat { text-align: center; padding: 20px; background: rgba(10,14,26,0.5); border-radius: 12px; }
+        .progress-stat-value { font-size: 2rem; font-weight: 900; color: var(--gold); display: block; margin-bottom: 5px; }
+        .progress-stat-label { color: #aaa; font-size: 0.85rem; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-bottom: 40px; }
+        .metric-card { background: var(--surface); padding: 30px; border-radius: 15px; border: 1px solid #333; transition: all 0.3s; }
+        .metric-card:hover { border-color: var(--gold); transform: translateY(-3px); }
+        .metric-icon { font-size: 2.5rem; margin-bottom: 15px; }
+        .metric-value { font-size: 2.5rem; font-weight: 900; color: var(--cyan); display: block; margin-bottom: 10px; }
+        .metric-label { color: var(--gold); font-size: 1.1rem; font-weight: 700; margin-bottom: 5px; }
+        .metric-change { color: var(--green); font-size: 0.9rem; font-weight: 600; }
+        .metric-change.negative { color: #ef4444; }
+        .allocation-tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 30px; }
+        .tier-card { background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(236,72,153,0.1)); border: 2px solid #8b5cf6; border-radius: 15px; padding: 30px; transition: all 0.3s; }
+        .tier-card:hover { transform: scale(1.05); border-color: var(--gold); }
+        .tier-badge { background: linear-gradient(135deg, #8b5cf6, #ec4899); color: white; padding: 8px 20px; border-radius: 20px; display: inline-block; font-weight: 700; margin-bottom: 20px; }
+        .tier-amount { font-size: 2rem; font-weight: 900; color: var(--gold); margin-bottom: 10px; }
+        .tier-details { color: #ccc; font-size: 0.9rem; line-height: 1.8; }
+        .tier-bonus { background: rgba(255,184,0,0.2); color: var(--gold); padding: 10px; border-radius: 8px; margin-top: 15px; font-weight: 700; text-align: center; }
+        .info-section { background: var(--surface); padding: 40px; border-radius: 15px; border: 1px solid #333; margin-bottom: 40px; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 30px; }
+        .info-item { display: flex; gap: 15px; }
+        .info-icon { color: var(--cyan); font-size: 1.5rem; }
+        .info-content h4 { color: var(--gold); margin: 0 0 10px 0; font-size: 1.1rem; }
+        .info-content p { color: #ccc; margin: 0; font-size: 0.95rem; line-height: 1.6; }
+        .btn { padding: 15px 40px; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+        .btn-primary { background: linear-gradient(135deg, var(--gold), #ff9500); color: var(--navy); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255,184,0,0.4); }
+        .cta-section { text-align: center; background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(236,72,153,0.2)); border: 2px solid var(--gold); border-radius: 20px; padding: 60px 40px; margin-top: 60px; }
+        .cta-section h2 { margin-top: 0; font-size: 2.5rem; }
+        footer { padding: 40px 8%; border-top: 1px solid #222; background: #0a0e1a; text-align: center; color: #888; margin-top: 80px; }
+        @media (max-width: 768px) {
+            nav { flex-direction: column; gap: 15px; padding: 15px 5%; }
+            .nav-links { flex-direction: column; gap: 15px; text-align: center; }
+            .container { padding: 60px 20px; }
+            .countdown { gap: 15px; }
+            .countdown-item { min-width: 80px; padding: 20px 15px; }
+            .countdown-value { font-size: 2rem; }
+            .progress-section, .countdown-section { padding: 30px 20px; }
+            .metrics-grid, .allocation-tiers, .info-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo"><i class="fas fa-train"></i> Africoin <span style="color:var(--cyan)">Spine</span></a>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/tokenomics.html">Tokenomics</a></li>
+            <li><a href="/audits.html">Audits</a></li>
+            <li><a href="/ido-dashboard.html">IDO Dashboard</a></li>
+            <li><a href="/whitelist.html" class="cta-nav">Join Whitelist</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <div class="live-badge">
+                <span style="width: 12px; height: 12px; background: var(--green); border-radius: 50%; animation: ping 1.5s infinite;"></span>
+                LIVE IDO IN PROGRESS
+            </div>
+            <h1>AFRC IDO Dashboard</h1>
+            <p>Real-time progress of the Africoin Initial DEX Offering. Join now to secure your allocation!</p>
+        </div>
+
+        <div class="countdown-section">
+            <div class="countdown-title">⏰ Time Remaining Until IDO Ends</div>
+            <div class="countdown">
+                <div class="countdown-item">
+                    <span class="countdown-value" id="days">05</span>
+                    <span class="countdown-label">Days</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="hours">12</span>
+                    <span class="countdown-label">Hours</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="minutes">34</span>
+                    <span class="countdown-label">Minutes</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="seconds">56</span>
+                    <span class="countdown-label">Seconds</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-header">
+                <div class="progress-title">Sale Progress</div>
+                <div class="progress-percentage" id="progressPercentage">67.5%</div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progressBar" style="width: 67.5%;">
+                    <span>$1,687,500 / $2,500,000</span>
+                </div>
+            </div>
+            <div class="progress-stats">
+                <div class="progress-stat">
+                    <span class="progress-stat-value" id="totalRaised">$1,687,500</span>
+                    <span class="progress-stat-label">Total Raised</span>
+                </div>
+                <div class="progress-stat">
+                    <span class="progress-stat-value">$2,500,000</span>
+                    <span class="progress-stat-label">Hard Cap</span>
+                </div>
+                <div class="progress-stat">
+                    <span class="progress-stat-value" id="tokensAllocated">1.35B</span>
+                    <span class="progress-stat-label">Tokens Allocated</span>
+                </div>
+                <div class="progress-stat">
+                    <span class="progress-stat-value">2B</span>
+                    <span class="progress-stat-label">Total for Sale</span>
+                </div>
+            </div>
+        </div>
+
+        <h2 style="text-align: center;"><i class="fas fa-chart-line"></i> Live Metrics</h2>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon">👥</div>
+                <span class="metric-value" id="participants">1,847</span>
+                <div class="metric-label">Participants</div>
+                <div class="metric-change">↑ 12.5% today</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">💰</div>
+                <span class="metric-value" id="avgContribution">$914</span>
+                <div class="metric-label">Average Contribution</div>
+                <div class="metric-change">↑ 8.3% today</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">⚡</div>
+                <span class="metric-value" id="lastHourRaised">$45,200</span>
+                <div class="metric-label">Raised (Last Hour)</div>
+                <div class="metric-change">↑ 23.1% vs prev hour</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">🎯</div>
+                <span class="metric-value" id="whitelistSpots">2,153</span>
+                <div class="metric-label">Whitelist Registered</div>
+                <div class="metric-change">847 slots remaining</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">🔥</div>
+                <span class="metric-value">$0.01</span>
+                <div class="metric-label">Token Price (USD)</div>
+                <div class="metric-change">Fixed IDO Price</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">📈</div>
+                <span class="metric-value">4.2x</span>
+                <div class="metric-label">Projected Listing ROI</div>
+                <div class="metric-change">Based on market analysis</div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2 style="margin-top: 0;"><i class="fas fa-trophy"></i> Allocation Tiers</h2>
+            <p style="color:#aaa; font-size: 1.1rem; margin-bottom: 30px;">Different contribution tiers unlock bonus rewards and perks</p>
+            
+            <div class="allocation-tiers">
+                <div class="tier-card">
+                    <div class="tier-badge">🥉 Bronze Tier</div>
+                    <div class="tier-amount">$100 - $500</div>
+                    <div class="tier-details">
+                        • Guaranteed allocation<br>
+                        • 5% bonus tokens<br>
+                        • Early access to staking<br>
+                        • Community Discord role
+                    </div>
+                    <div class="tier-bonus">+5% BONUS</div>
+                </div>
+
+                <div class="tier-card" style="border-color: #c0c0c0;">
+                    <div class="tier-badge" style="background: linear-gradient(135deg, #c0c0c0, #909090);">🥈 Silver Tier</div>
+                    <div class="tier-amount">$500 - $2,500</div>
+                    <div class="tier-details">
+                        • Priority allocation<br>
+                        • 10% bonus tokens<br>
+                        • VIP Discord channel<br>
+                        • Exclusive NFT airdrop<br>
+                        • Governance voting power
+                    </div>
+                    <div class="tier-bonus">+10% BONUS</div>
+                </div>
+
+                <div class="tier-card" style="border-color: var(--gold);">
+                    <div class="tier-badge" style="background: linear-gradient(135deg, var(--gold), #ff9500);">🥇 Gold Tier</div>
+                    <div class="tier-amount">$2,500+</div>
+                    <div class="tier-details">
+                        • Maximum allocation<br>
+                        • 15% bonus tokens<br>
+                        • Private strategy calls<br>
+                        • Limited edition NFT<br>
+                        • Early project access<br>
+                        • Lifetime fee discounts
+                    </div>
+                    <div class="tier-bonus">+15% BONUS</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2 style="margin-top: 0;"><i class="fas fa-info-circle"></i> IDO Details</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-calendar-alt"></i></div>
+                    <div class="info-content">
+                        <h4>Sale Period</h4>
+                        <p>February 1 - February 15, 2026<br>14 days total duration</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-coins"></i></div>
+                    <div class="info-content">
+                        <h4>Token Price</h4>
+                        <p>$0.01 per AFRC<br>Fixed price throughout IDO</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-lock"></i></div>
+                    <div class="info-content">
+                        <h4>Vesting Schedule</h4>
+                        <p>10% unlock at TGE<br>90% linear vesting over 12 months</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-chart-bar"></i></div>
+                    <div class="info-content">
+                        <h4>Listing Date</h4>
+                        <p>February 20, 2026<br>Uniswap & PancakeSwap</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-wallet"></i></div>
+                    <div class="info-content">
+                        <h4>Accepted Currencies</h4>
+                        <p>ETH, USDT, USDC, MATIC<br>On Ethereum & Polygon networks</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-user-check"></i></div>
+                    <div class="info-content">
+                        <h4>Requirements</h4>
+                        <p>Whitelist registration required<br>KYC verification mandatory</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2>Ready to Participate?</h2>
+            <p style="color:#aaa; font-size: 1.2rem; margin-bottom: 40px;">Join the whitelist now to secure your allocation in the AFRC IDO</p>
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <a href="/whitelist.html" class="btn btn-primary" style="font-size: 1.3rem; padding: 20px 50px;">
+                    <i class="fas fa-rocket"></i> Join Whitelist Now
+                </a>
+                <a href="/tokenomics.html" class="btn" style="background: transparent; border: 2px solid var(--cyan); color: var(--cyan);">
+                    <i class="fas fa-book"></i> Learn More
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 Africoin Spine Infrastructure Project. All rights reserved.</p>
+        <p style="font-size: 0.85rem; margin-top: 10px;">
+            <a href="/privacy-policy.html" style="color:#aaa; text-decoration:none; margin: 0 10px;">Privacy Policy</a> | 
+            <a href="/terms-of-service.html" style="color:#aaa; text-decoration:none; margin: 0 10px;">Terms of Service</a>
+        </p>
+    </footer>
+
+    <style>
+        @keyframes ping {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0; }
+        }
+    </style>
+
+    <script>
+        // Countdown Timer
+        function updateCountdown() {
+            const targetDate = new Date('2026-02-15T23:59:59Z').getTime();
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+
+            if (distance < 0) {
+                document.querySelector('.countdown-title').textContent = '🎉 IDO Has Ended!';
+                document.getElementById('days').textContent = '00';
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+            }
+        }
+
+        // Simulate real-time updates
+        let metricsInterval;
+        
+        function simulateUpdates() {
+            // Randomly update metrics to simulate live data
+            const participants = document.getElementById('participants');
+            const totalRaised = document.getElementById('totalRaised');
+            const tokensAllocated = document.getElementById('tokensAllocated');
+            const progressBar = document.getElementById('progressBar');
+            const progressPercentage = document.getElementById('progressPercentage');
+            const avgContribution = document.getElementById('avgContribution');
+            const lastHourRaised = document.getElementById('lastHourRaised');
+            const whitelistSpots = document.getElementById('whitelistSpots');
+
+            // Simulate small increments
+            metricsInterval = setInterval(() => {
+                // Update participants (small random increase)
+                let currentParticipants = parseInt(participants.textContent.replace(/,/g, ''));
+                currentParticipants += Math.floor(Math.random() * 3);
+                participants.textContent = currentParticipants.toLocaleString();
+
+                // Update total raised
+                let currentRaised = parseFloat(totalRaised.textContent.replace(/[$,]/g, ''));
+                currentRaised += Math.floor(Math.random() * 500) + 100;
+                totalRaised.textContent = '$' + currentRaised.toLocaleString();
+
+                // Update progress bar
+                const percentage = (currentRaised / 2500000 * 100).toFixed(1);
+                progressPercentage.textContent = percentage + '%';
+                progressBar.style.width = percentage + '%';
+                progressBar.innerHTML = '<span>$' + currentRaised.toLocaleString() + ' / $2,500,000</span>';
+
+                // Update tokens allocated
+                const tokens = (currentRaised / 0.01).toFixed(2);
+                tokensAllocated.textContent = (tokens / 1000000000).toFixed(2) + 'B';
+
+                // Update average contribution
+                const avg = Math.floor(currentRaised / currentParticipants);
+                avgContribution.textContent = '$' + avg.toLocaleString();
+
+                // Update whitelist
+                let currentWhitelist = parseInt(whitelistSpots.textContent.replace(/,/g, ''));
+                if (Math.random() > 0.7) {
+                    currentWhitelist += 1;
+                    whitelistSpots.textContent = currentWhitelist.toLocaleString();
+                }
+            }, 5000); // Update every 5 seconds
+        }
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function() {
+            if (metricsInterval) {
+                clearInterval(metricsInterval);
+            }
+        });
+
+        // Initialize
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+        simulateUpdates();
+    </script>
+</body>
+</html>

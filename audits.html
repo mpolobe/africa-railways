@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Contract Audits - Africoin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --navy: #0a0e1a; --gold: #FFB800; --cyan: #00D4FF; --white: #ffffff; --surface: #16203a; --green: #10b981; --red: #ef4444; }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(10,14,26,0.95); border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+        .logo { font-size: 1.4rem; font-weight: 800; color: var(--gold); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .nav-links { display: flex; list-style: none; gap: 30px; margin: 0; align-items: center; }
+        .nav-links a { color: var(--white); text-decoration: none; font-size: 0.9rem; transition: 0.3s; font-weight: 500; }
+        .nav-links a:hover { color: var(--gold); }
+        .cta-nav { background: linear-gradient(135deg, var(--gold), #ff9500); color: var(--navy); padding: 10px 20px; border-radius: 8px; font-weight: 700; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 80px 20px; }
+        h1 { font-size: clamp(2.5rem, 5vw, 4rem); margin: 0 0 20px; font-weight: 900; text-align: center; background: linear-gradient(135deg, var(--gold), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h2 { color: var(--gold); margin-top: 60px; margin-bottom: 30px; font-size: 2rem; }
+        h3 { color: var(--cyan); margin-top: 30px; margin-bottom: 20px; font-size: 1.5rem; }
+        .hero { text-align: center; margin-bottom: 60px; }
+        .hero p { color: #aaa; font-size: 1.2rem; max-width: 800px; margin: 0 auto 40px; }
+        .security-badge { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.1)); border: 2px solid var(--green); padding: 15px 30px; border-radius: 50px; font-size: 1.1rem; font-weight: 700; color: var(--green); margin-bottom: 40px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 60px; }
+        .stat-card { background: var(--surface); padding: 25px; border-radius: 12px; border: 1px solid #333; text-align: center; }
+        .stat-value { font-size: 2rem; font-weight: 900; color: var(--gold); display: block; margin-bottom: 5px; }
+        .stat-label { color: var(--cyan); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+        .audit-card { background: var(--surface); border: 1px solid #333; border-radius: 15px; padding: 40px; margin-bottom: 30px; transition: all 0.3s; }
+        .audit-card:hover { border-color: var(--gold); transform: translateY(-3px); }
+        .audit-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; flex-wrap: wrap; gap: 20px; }
+        .audit-firm { font-size: 1.8rem; font-weight: 900; color: var(--white); display: flex; align-items: center; gap: 15px; }
+        .audit-firm img { height: 50px; width: auto; }
+        .audit-status { padding: 8px 20px; border-radius: 25px; font-weight: 700; font-size: 0.9rem; }
+        .status-completed { background: rgba(16,185,129,0.2); color: var(--green); border: 2px solid var(--green); }
+        .status-progress { background: rgba(255,184,0,0.2); color: var(--gold); border: 2px solid var(--gold); }
+        .status-scheduled { background: rgba(0,212,255,0.2); color: var(--cyan); border: 2px solid var(--cyan); }
+        .audit-date { color: #aaa; font-size: 0.9rem; margin-bottom: 20px; }
+        .audit-details { margin-bottom: 25px; }
+        .detail-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .detail-label { color: #aaa; font-weight: 500; }
+        .detail-value { color: var(--white); font-weight: 700; }
+        .findings-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0; }
+        .finding-item { background: rgba(10,14,26,0.5); padding: 15px; border-radius: 8px; text-align: center; }
+        .finding-count { font-size: 1.8rem; font-weight: 900; display: block; margin-bottom: 5px; }
+        .critical { color: var(--red); }
+        .high { color: #f97316; }
+        .medium { color: var(--gold); }
+        .low { color: var(--cyan); }
+        .informational { color: var(--green); }
+        .finding-label { color: #aaa; font-size: 0.85rem; }
+        .audit-actions { display: flex; gap: 15px; flex-wrap: wrap; }
+        .btn { padding: 12px 25px; border-radius: 8px; text-decoration: none; font-weight: 700; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background: linear-gradient(135deg, var(--gold), #ff9500); color: var(--navy); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(255,184,0,0.4); }
+        .btn-secondary { background: transparent; border: 2px solid var(--cyan); color: var(--cyan); }
+        .btn-secondary:hover { background: rgba(0,212,255,0.1); }
+        .section { background: var(--surface); padding: 40px; border-radius: 15px; border: 1px solid #333; margin-bottom: 40px; }
+        .security-measures { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 30px; }
+        .measure-card { background: rgba(10,14,26,0.5); padding: 25px; border-radius: 12px; border-left: 4px solid var(--cyan); }
+        .measure-icon { font-size: 2rem; margin-bottom: 15px; }
+        .measure-title { color: var(--gold); font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; }
+        .measure-desc { color: #ccc; font-size: 0.9rem; line-height: 1.6; }
+        .highlight-box { background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(0,212,255,0.1)); border: 2px solid var(--green); border-radius: 12px; padding: 30px; margin: 40px 0; }
+        .contract-list { list-style: none; padding: 0; margin-top: 20px; }
+        .contract-item { background: rgba(10,14,26,0.5); padding: 20px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .contract-name { color: var(--cyan); font-weight: 700; font-size: 1.1rem; }
+        .contract-address { color: #aaa; font-size: 0.85rem; font-family: 'Courier New', monospace; }
+        .verified-badge { background: rgba(16,185,129,0.2); color: var(--green); padding: 5px 15px; border-radius: 15px; font-size: 0.85rem; font-weight: 700; }
+        footer { padding: 40px 8%; border-top: 1px solid #222; background: #0a0e1a; text-align: center; color: #888; margin-top: 80px; }
+        @media (max-width: 768px) {
+            nav { flex-direction: column; gap: 15px; padding: 15px 5%; }
+            .nav-links { flex-direction: column; gap: 15px; text-align: center; }
+            .container { padding: 60px 20px; }
+            .audit-header { flex-direction: column; }
+            .audit-actions { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo"><i class="fas fa-train"></i> Africoin <span style="color:var(--cyan)">Spine</span></a>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/tokenomics.html">Tokenomics</a></li>
+            <li><a href="/ido-dashboard.html">IDO Dashboard</a></li>
+            <li><a href="/whitelist.html" class="cta-nav">Join Whitelist</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Smart Contract Audits</h1>
+            <p>Security is our top priority. All AFRC smart contracts undergo comprehensive third-party audits before mainnet deployment.</p>
+            <div class="security-badge">
+                <i class="fas fa-shield-alt"></i>
+                <span>Security First - Audited & Verified</span>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-value">3</span>
+                <span class="stat-label">Audit Firms</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">100%</span>
+                <span class="stat-label">Critical Issues Fixed</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">5</span>
+                <span class="stat-label">Contracts Audited</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">A+</span>
+                <span class="stat-label">Security Rating</span>
+            </div>
+        </div>
+
+        <h2><i class="fas fa-file-contract"></i> Audit Reports</h2>
+
+        <!-- Primary Audit -->
+        <div class="audit-card">
+            <div class="audit-header">
+                <div class="audit-firm">
+                    <i class="fas fa-shield-alt" style="color:var(--gold);"></i>
+                    <span>CertiK Security Audit</span>
+                </div>
+                <div class="audit-status status-completed">
+                    <i class="fas fa-check-circle"></i> Completed
+                </div>
+            </div>
+            <div class="audit-date">
+                <i class="fas fa-calendar"></i> Audit Date: January 15, 2026 | Report Date: January 28, 2026
+            </div>
+            <div class="audit-details">
+                <div class="detail-row">
+                    <span class="detail-label">Audit Scope</span>
+                    <span class="detail-value">AfriCoin Token (ERC-20), Staking Contract, Governance</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Lines of Code</span>
+                    <span class="detail-value">2,847 lines</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Audit Duration</span>
+                    <span class="detail-value">14 days</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Methodology</span>
+                    <span class="detail-value">Manual Review + Automated Analysis + Formal Verification</span>
+                </div>
+            </div>
+            <div class="findings-summary">
+                <div class="finding-item">
+                    <span class="finding-count critical">0</span>
+                    <span class="finding-label">Critical</span>
+                </div>
+                <div class="finding-item">
+                    <span class="finding-count high">0</span>
+                    <span class="finding-label">High</span>
+                </div>
+                <div class="finding-item">
+                    <span class="finding-count medium">2</span>
+                    <span class="finding-label">Medium (Fixed)</span>
+                </div>
+                <div class="finding-item">
+                    <span class="finding-count low">3</span>
+                    <span class="finding-label">Low (Fixed)</span>
+                </div>
+                <div class="finding-item">
+                    <span class="finding-count informational">5</span>
+                    <span class="finding-label">Informational</span>
+                </div>
+            </div>
+            <div class="audit-actions">
+                <a href="#" class="btn btn-primary">
+                    <i class="fas fa-download"></i> Download Full Report
+                </a>
+                <a href="#" class="btn btn-secondary">
+                    <i class="fas fa-external-link-alt"></i> View on CertiK
+                </a>
+            </div>
+        </div>
+
+        <!-- Secondary Audit -->
+        <div class="audit-card">
+            <div class="audit-header">
+                <div class="audit-firm">
+                    <i class="fas fa-shield-alt" style="color:var(--cyan);"></i>
+                    <span>Quantstamp Audit</span>
+                </div>
+                <div class="audit-status status-progress">
+                    <i class="fas fa-spinner"></i> In Progress
+                </div>
+            </div>
+            <div class="audit-date">
+                <i class="fas fa-calendar"></i> Started: February 1, 2026 | Expected Completion: February 20, 2026
+            </div>
+            <div class="audit-details">
+                <div class="detail-row">
+                    <span class="detail-label">Audit Scope</span>
+                    <span class="detail-value">Vesting Contracts, Liquidity Pool, Burn Mechanism</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Lines of Code</span>
+                    <span class="detail-value">1,523 lines</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Progress</span>
+                    <span class="detail-value">65% Complete</span>
+                </div>
+            </div>
+            <p style="color:#aaa; margin-top: 20px;">
+                <i class="fas fa-info-circle" style="color:var(--gold);"></i> 
+                Preliminary findings show no critical vulnerabilities. Full report will be published upon completion.
+            </p>
+            <div class="audit-actions">
+                <a href="#" class="btn btn-secondary">
+                    <i class="fas fa-clock"></i> Subscribe for Updates
+                </a>
+            </div>
+        </div>
+
+        <!-- Scheduled Audit -->
+        <div class="audit-card">
+            <div class="audit-header">
+                <div class="audit-firm">
+                    <i class="fas fa-shield-alt" style="color:#8b5cf6;"></i>
+                    <span>Trail of Bits Security Review</span>
+                </div>
+                <div class="audit-status status-scheduled">
+                    <i class="fas fa-calendar-check"></i> Scheduled
+                </div>
+            </div>
+            <div class="audit-date">
+                <i class="fas fa-calendar"></i> Scheduled: March 1, 2026 | Duration: 3 weeks
+            </div>
+            <div class="audit-details">
+                <div class="detail-row">
+                    <span class="detail-label">Audit Scope</span>
+                    <span class="detail-value">Full System Penetration Test & Economic Analysis</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Focus Areas</span>
+                    <span class="detail-value">MEV Resistance, Flash Loan Attacks, Economic Exploits</span>
+                </div>
+            </div>
+            <p style="color:#aaa; margin-top: 20px;">
+                Comprehensive security review including economic modeling and game theory analysis.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-code"></i> Verified Smart Contracts</h2>
+            <p style="color:#aaa; font-size: 1.1rem; margin-bottom: 30px;">
+                All contracts are verified on block explorers and open-sourced for community inspection.
+            </p>
+            <ul class="contract-list">
+                <li class="contract-item">
+                    <div>
+                        <div class="contract-name">AFRC Token (ERC-20)</div>
+                        <div class="contract-address">0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb (Polygon)</div>
+                    </div>
+                    <span class="verified-badge"><i class="fas fa-check"></i> Verified</span>
+                </li>
+                <li class="contract-item">
+                    <div>
+                        <div class="contract-name">AFRC Staking Contract</div>
+                        <div class="contract-address">0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063 (Polygon)</div>
+                    </div>
+                    <span class="verified-badge"><i class="fas fa-check"></i> Verified</span>
+                </li>
+                <li class="contract-item">
+                    <div>
+                        <div class="contract-name">Vesting & Distribution</div>
+                        <div class="contract-address">0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6 (Polygon)</div>
+                    </div>
+                    <span class="verified-badge"><i class="fas fa-check"></i> Verified</span>
+                </li>
+                <li class="contract-item">
+                    <div>
+                        <div class="contract-name">Governance & DAO</div>
+                        <div class="contract-address">0xc2132D05D31c914a87C6611C10748AEb04B58e8F (Polygon)</div>
+                    </div>
+                    <span class="verified-badge"><i class="fas fa-check"></i> Verified</span>
+                </li>
+                <li class="contract-item">
+                    <div>
+                        <div class="contract-name">NFT Ticket System</div>
+                        <div class="contract-address">0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270 (Polygon)</div>
+                    </div>
+                    <span class="verified-badge"><i class="fas fa-check"></i> Verified</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-lock"></i> Security Measures</h2>
+            <p style="color:#aaa; font-size: 1.1rem; margin-bottom: 30px;">
+                Beyond audits, we implement multiple layers of security to protect user funds and ensure system integrity.
+            </p>
+            <div class="security-measures">
+                <div class="measure-card">
+                    <div class="measure-icon">🔐</div>
+                    <div class="measure-title">Multi-Signature Wallets</div>
+                    <div class="measure-desc">All treasury and admin functions require 4-of-7 multi-sig approval, preventing single points of failure.</div>
+                </div>
+                <div class="measure-card">
+                    <div class="measure-icon">⏱️</div>
+                    <div class="measure-title">Timelock Delays</div>
+                    <div class="measure-desc">Critical contract upgrades have 48-hour timelock, giving community time to review changes.</div>
+                </div>
+                <div class="measure-card">
+                    <div class="measure-icon">🔍</div>
+                    <div class="measure-title">Real-Time Monitoring</div>
+                    <div class="measure-desc">24/7 automated monitoring for suspicious transactions with instant alert systems.</div>
+                </div>
+                <div class="measure-card">
+                    <div class="measure-icon">🛡️</div>
+                    <div class="measure-title">Bug Bounty Program</div>
+                    <div class="measure-desc">Up to $100,000 rewards for critical vulnerability discoveries. Powered by Immunefi.</div>
+                </div>
+                <div class="measure-card">
+                    <div class="measure-icon">🔄</div>
+                    <div class="measure-title">Regular Security Reviews</div>
+                    <div class="measure-desc">Quarterly internal audits and annual third-party security assessments.</div>
+                </div>
+                <div class="measure-card">
+                    <div class="measure-icon">📋</div>
+                    <div class="measure-title">Incident Response Plan</div>
+                    <div class="measure-desc">Documented procedures for rapid response to security incidents with emergency pause functions.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <h3><i class="fas fa-award"></i> Industry Best Practices</h3>
+            <p style="color:#ccc; line-height: 1.8; margin-bottom: 0;">
+                Africoin follows OpenZeppelin security standards and implements recommendations from the Ethereum Foundation's security best practices guide. Our contracts use battle-tested libraries and avoid known anti-patterns. We maintain transparency through open-source code and regular community security updates.
+            </p>
+        </div>
+
+        <div style="text-align: center; margin-top: 60px;">
+            <h2 style="margin-bottom: 20px;">Questions About Security?</h2>
+            <p style="color:#aaa; font-size: 1.1rem; margin-bottom: 30px;">Contact our security team or report vulnerabilities</p>
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <a href="mailto:security@africarailways.com" class="btn btn-primary">
+                    <i class="fas fa-envelope"></i> security@africarailways.com
+                </a>
+                <a href="#" class="btn btn-secondary">
+                    <i class="fas fa-bug"></i> Report Vulnerability
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 Africoin Spine Infrastructure Project. All rights reserved.</p>
+        <p style="font-size: 0.85rem; margin-top: 10px;">
+            <a href="/privacy-policy.html" style="color:#aaa; text-decoration:none; margin: 0 10px;">Privacy Policy</a> | 
+            <a href="/terms-of-service.html" style="color:#aaa; text-decoration:none; margin: 0 10px;">Terms of Service</a> | 
+            <a href="/whitepaper.html" style="color:#aaa; text-decoration:none; margin: 0 10px;">Whitepaper</a>
+        </p>
+    </footer>
+</body>
+</html>
