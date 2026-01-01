@@ -351,6 +351,8 @@
         }
 
         // Simulate real-time updates
+        let metricsInterval;
+        
         function simulateUpdates() {
             // Randomly update metrics to simulate live data
             const participants = document.getElementById('participants');
@@ -363,7 +365,7 @@
             const whitelistSpots = document.getElementById('whitelistSpots');
 
             // Simulate small increments
-            setInterval(() => {
+            metricsInterval = setInterval(() => {
                 // Update participants (small random increase)
                 let currentParticipants = parseInt(participants.textContent.replace(/,/g, ''));
                 currentParticipants += Math.floor(Math.random() * 3);
@@ -396,6 +398,13 @@
                 }
             }, 5000); // Update every 5 seconds
         }
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function() {
+            if (metricsInterval) {
+                clearInterval(metricsInterval);
+            }
+        });
 
         // Initialize
         updateCountdown();
