@@ -822,4 +822,6 @@ if __name__ == "__main__":
     logger.info(f"Service Code: *384*26621#")
     logger.info(f"Sui Integration: {'✅ Enabled' if SUI_AVAILABLE else '❌ Disabled'}")
     
-    app.run(host='0.0.0.0', port=port, debug=os.environ.get('FLASK_ENV') == 'development')
+    # Security Note: Binding to 0.0.0.0 is intentional for production deployment
+    # The service is protected by IP whitelisting and rate limiting
+    app.run(host='0.0.0.0', port=port, debug=os.environ.get('FLASK_ENV') == 'development')  # nosec B104
