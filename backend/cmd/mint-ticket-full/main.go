@@ -52,7 +52,7 @@ func main() {
 	fmt.Println("\n📋 Step 1: Creating Ticket Metadata...")
 	
 	ticketID := fmt.Sprintf("TKT%d", time.Now().Unix())
-	metadata := TicketMetadata{
+	_ = TicketMetadata{
 		Name:        fmt.Sprintf("Africa Railways: Ticket #%s", ticketID),
 		Description: "Standard Class Ticket - Johannesburg to Cape Town",
 		Image:       "ipfs://QmYourTicketDesignCID", // Replace with actual QR code image
