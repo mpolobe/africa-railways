@@ -156,6 +156,8 @@ jobs:
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
           exit-code: '1'
+          # Skip version check to prevent warnings from version mismatches
+          skip-version-check: 'true'
         # Removed continue-on-error to fail on critical vulnerabilities
 
       - name: Upload Trivy results to GitHub Security

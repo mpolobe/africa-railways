@@ -1,8 +1,29 @@
 name: Build Both Apps
 
 on:
-  # Automatic builds disabled due to EAS credit exhaustion
-  # Re-enable after upgrading plan or January 1st reset
+  # ============================================================================
+  # AUTOMATIC BUILDS DISABLED - Using Codemagic for Builds
+  # ============================================================================
+  # This workflow is set to manual-only (workflow_dispatch) to prevent 
+  # unnecessary Expo builds that consume credits on external systems.
+  #
+  # WHY DISABLED:
+  # - EAS builds consume credits on Expo's servers
+  # - Automatic builds on every push were exhausting our monthly credits
+  # - Codemagic is now handling all builds without errors
+  #
+  # TO TRIGGER MANUALLY:
+  # - Go to Actions tab in GitHub
+  # - Select "Build Both Apps" workflow
+  # - Click "Run workflow"
+  # - Choose which apps to build (Railways/Africoin)
+  #
+  # CODEMAGIC BUILDS:
+  # - All production builds are handled by Codemagic
+  # - Configuration: codemagic.yaml
+  # - No errors or issues with Codemagic builds
+  # - Automatic builds on push to main branch
+  # ============================================================================
   # push:
   #   branches: [main]
   #   paths:

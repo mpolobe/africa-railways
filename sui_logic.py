@@ -9,8 +9,10 @@ Uses pysui - the most robust Python SDK for Sui.
 
 import os
 import logging
+import socket
 from pysui import SuiConfig, SyncClient
 from pysui.sui.sui_txn import SyncTransaction
+from validation_utils import validate_wallet_address, validate_phone_number
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -18,9 +20,21 @@ logger = logging.getLogger(__name__)
 
 # CONFIGURATION: Load your wallet & package details
 # CRITICAL: Ensure these are set in Railway.app Environment Variables
+# Security: Use Railway's Key Management for sensitive values
 PACKAGE_ID = os.environ.get('PACKAGE_ID', '0xYOUR_DEPLOYED_PACKAGE_ID')
 TREASURY_ID = os.environ.get('TREASURY_ID', '0xYOUR_SHARED_TREASURY_OBJECT_ID')
 SYSTEM_CLOCK = "0x6"  # Sui System Clock object (immutable)
+
+# Validate configuration on startup
+if PACKAGE_ID and PACKAGE_ID != '0xYOUR_DEPLOYED_PACKAGE_ID':
+    is_valid, error_msg = validate_wallet_address(PACKAGE_ID)
+    if not is_valid:
+        logger.warning(f"⚠️  PACKAGE_ID validation failed: {error_msg}")
+
+if TREASURY_ID and TREASURY_ID != '0xYOUR_SHARED_TREASURY_OBJECT_ID':
+    is_valid, error_msg = validate_wallet_address(TREASURY_ID)
+    if not is_valid:
+        logger.warning(f"⚠️  TREASURY_ID validation failed: {error_msg}")
 
 # Constants
 MIST_PER_SUI = 1_000_000_000
@@ -48,8 +62,17 @@ def execute_investment(phone_number: str, sui_amount: int):
         else:
             print(f"Investment failed: {result}")
     """
+    # Validate phone number
+    is_valid, error_msg = validate_phone_number(phone_number)
+    if not is_valid:
+        logger.error(f"Invalid phone number: {phone_number} - {error_msg}")
+        return False, f"Invalid phone number: {error_msg}"
+    
     try:
         logger.info(f"🚀 Executing investment: {sui_amount} SUI for {phone_number}")
+        
+        # Set socket timeout to prevent hanging connections
+        socket.setdefaulttimeout(30)
         
         # 1. Initialize Client (Uses active address in config)
         # The config automatically loads the keypair from ~/.sui/sui_config/client.yaml
@@ -94,10 +117,17 @@ def execute_investment(phone_number: str, sui_amount: int):
             logger.error(f"❌ Investment failed for {phone_number}: {error_msg}")
             return False, error_msg
 
+    except socket.timeout:
+        error_msg = "Connection timeout - network delays"
+        logger.error(f"❌ Investment timeout for {phone_number}: {error_msg}")
+        return False, error_msg
     except Exception as e:
         error_msg = str(e)
         logger.error(f"❌ Investment exception for {phone_number}: {error_msg}")
         return False, error_msg
+    finally:
+        # Reset socket timeout to default
+        socket.setdefaulttimeout(None)
 
 
 def check_investment_status(phone_number: str):

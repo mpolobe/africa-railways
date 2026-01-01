@@ -9,7 +9,9 @@ USSD Input → Blockchain Transaction → SMS Confirmation → Physical Device
 
 import os
 import logging
+import socket
 import africastalking
+from validation_utils import validate_phone_number
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -58,7 +60,16 @@ def send_investment_success_sms(phone_number: str, amount: int, tx_digest: str) 
         logger.warning(f"SMS not available, skipping notification for {phone_number}")
         return False
     
+    # Validate phone number
+    is_valid, error_msg = validate_phone_number(phone_number)
+    if not is_valid:
+        logger.error(f"Invalid phone number: {phone_number} - {error_msg}")
+        return False
+    
     try:
+        # Set socket timeout to prevent hanging
+        socket.setdefaulttimeout(15)
+        
         # Calculate equity percentage
         equity_percent = (amount / 350000) * 10
         
@@ -92,9 +103,15 @@ def send_investment_success_sms(phone_number: str, amount: int, tx_digest: str) 
         
         return True
         
+    except socket.timeout:
+        logger.error(f"❌ SMS timeout for {phone_number}: Connection timed out")
+        return False
     except Exception as e:
         logger.error(f"❌ SMS error for {phone_number}: {str(e)}")
         return False
+    finally:
+        # Reset socket timeout to default
+        socket.setdefaulttimeout(None)
 
 
 def send_vesting_reminder_sms(phone_number: str, claimable_tokens: int, wallet_data: dict = None) -> bool:
