@@ -358,6 +358,7 @@
             border-radius: 10px;
         }
     </style>
+    <script src="/js/wallet-detector.js"></script>
 </head>
 <body>
     <div id="root"></div>
@@ -395,47 +396,28 @@
             const calculateEquity = (sui) => ((sui / totalRaise) * equityOffered).toFixed(4);
             const calculateUSD = (sui) => (sui * suiPrice).toLocaleString(undefined, { minimumFractionDigits: 2 });
 
-            // Connect to Sui Wallet using Wallet Standard API
+            // Connect to Sui Wallet with device detection
             const connectWallet = async () => {
                 try {
                     setTxStatus('Connecting to wallet...');
                     
-                    // Check for Wallet Standard API
-                    if (typeof window.suiWallet !== 'undefined') {
-                        // Legacy Sui Wallet
-                        const accounts = await window.suiWallet.requestPermissions();
-                        if (accounts && accounts.length > 0) {
-                            setWalletConnected(true);
-                            setWalletAddress(accounts[0]);
-                            setTxStatus('✅ Wallet connected successfully!');
-                            setTimeout(() => setTxStatus(''), 3000);
-                        }
-                    } else if (window.suiet) {
-                        // Suiet Wallet
-                        const result = await window.suiet.connect();
-                        if (result && result.address) {
-                            setWalletConnected(true);
-                            setWalletAddress(result.address);
-                            setTxStatus('✅ Wallet connected successfully!');
-                            setTimeout(() => setTxStatus(''), 3000);
-                        }
-                    } else if (window.martian) {
-                        // Martian Wallet
-                        const result = await window.martian.connect();
-                        if (result && result.address) {
-                            setWalletConnected(true);
-                            setWalletAddress(result.address);
-                            setTxStatus('✅ Wallet connected successfully!');
-                            setTimeout(() => setTxStatus(''), 3000);
-                        }
+                    // Use device detector for smart routing
+                    const detector = new WalletDeviceDetector();
+                    const result = await detector.connectWallet();
+                    
+                    if (result.success) {
+                        setWalletConnected(true);
+                        setWalletAddress(result.address);
+                        setTxStatus(result.message);
+                        setTimeout(() => setTxStatus(''), 3000);
                     } else {
-                        // No wallet detected - show installation instructions
-                        setTxStatus('⚠️ No Sui wallet detected. Please install Sui Wallet, Suiet, or Martian wallet extension.');
-                        setTimeout(() => setTxStatus(''), 8000);
-                        
-                        // Open wallet installation page
-                        if (confirm('No Sui wallet detected. Would you like to install one?')) {
-                            window.open('https://chrome.google.com/webstore/detail/sui-wallet/opcgpfmipidbgpenhmajoajpbobppdil', '_blank');
+                        // Connection failed or redirecting to Slush
+                        setTxStatus(result.message);
+                        if (result.message.includes('Redirecting')) {
+                            // Will redirect to Slush for mobile/tablet users
+                            setTimeout(() => setTxStatus(''), 2000);
+                        } else {
+                            setTimeout(() => setTxStatus(''), 8000);
                         }
                     }
                 } catch (error) {

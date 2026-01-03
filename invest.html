@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invest in ARAIL - Africa's Digital Railway</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/js/wallet-detector.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
         body { font-family: 'Inter', sans-serif; }
@@ -500,23 +501,27 @@
         document.getElementById('vestingBar').style.width = `${vestingProgress}%`;
     }
 
-    // Connect wallet
+    // Connect wallet with device detection
     async function connectWallet() {
         try {
-            if (typeof window.suiWallet !== 'undefined') {
-                const accounts = await window.suiWallet.requestPermissions();
-                if (accounts && accounts.length > 0) {
-                    connectWalletBtn.textContent = `✓ ${accounts[0].substring(0, 6)}...${accounts[0].substring(accounts[0].length - 4)}`;
-                    connectWalletBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
-                    connectWalletBtn.classList.add('bg-green-600', 'hover:bg-green-700');
-                }
+            const detector = new WalletDeviceDetector();
+            const result = await detector.connectWallet();
+            
+            if (result.success) {
+                // Update button to show connected state
+                connectWalletBtn.textContent = `✓ ${result.address.substring(0, 6)}...${result.address.substring(result.address.length - 4)}`;
+                connectWalletBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                connectWalletBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+                
+                // Show success message
+                alert(result.message);
             } else {
-                // Demo mode or redirect to investor portal
-                window.location.href = '/investor.html';
+                // Connection failed or redirecting
+                console.log(result.message);
             }
         } catch (error) {
             console.error('Wallet connection error:', error);
-            alert('Please install Sui Wallet extension or visit the investor portal');
+            alert('Failed to connect wallet. Please try again.');
         }
     }
 
