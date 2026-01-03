@@ -543,7 +543,65 @@
             if (userEmail) {
                 document.getElementById('user-email').textContent = userEmail;
             }
+            
+            // Start fetching USSD stats
+            fetchUSSDStats();
+            setInterval(fetchUSSDStats, 10000); // Update every 10 seconds
         });
+
+        // Fetch USSD gateway stats
+        async function fetchUSSDStats() {
+            try {
+                const response = await fetch('https://africa-railways-production.up.railway.app/api/ussd/stats');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Update USSD metrics on dashboard
+                document.getElementById('ussd-active-sessions').textContent = data.active_sessions || 0;
+                document.getElementById('ussd-sessions-today').textContent = data.sessions_today || 0;
+                document.getElementById('ussd-success-rate').textContent = `${data.success_rate || 0}%`;
+                document.getElementById('ussd-response-time').textContent = `${data.avg_response_time_ms || 0}ms`;
+                document.getElementById('ussd-last-command').textContent = data.last_activity || 'No activity';
+                document.getElementById('ussd-uptime').textContent = data.uptime || '0h 0m';
+                
+                // Update status indicator
+                const ussdStatusIcon = document.getElementById('ussd-status');
+                if (data.status === 'operational') {
+                    ussdStatusIcon.style.color = 'var(--success-color, #10b981)';
+                    ussdStatusIcon.textContent = '●';
+                } else {
+                    ussdStatusIcon.style.color = 'var(--danger-color, #ef4444)';
+                    ussdStatusIcon.textContent = '●';
+                }
+                
+                // Update connection status in header if USSD is primary service
+                if (data.sui_integration) {
+                    console.log('✅ USSD Gateway operational with Sui integration');
+                }
+            } catch (error) {
+                console.error('Failed to fetch USSD stats:', error);
+                // Show error state
+                const ussdStatusIcon = document.getElementById('ussd-status');
+                ussdStatusIcon.style.color = 'var(--warning-color, #f59e0b)';
+                document.getElementById('ussd-last-command').textContent = 'Connection error';
+            }
+        }
+
+        // Control service function (start/stop USSD)
+        function controlService(service, action) {
+            if (service === 'ussd') {
+                if (action === 'start') {
+                    alert('USSD Gateway is already running on Railway.app');
+                } else if (action === 'stop') {
+                    if (confirm('⚠️ This will put USSD Gateway in maintenance mode.\n\nPassengers will see a maintenance message when dialing *384*26621#\n\nContinue?')) {
+                        alert('Maintenance mode feature coming soon.\n\nFor now, use Railway dashboard to stop the service.');
+                    }
+                }
+            }
+        }
 
         // Logout function
         function handleLogout() {

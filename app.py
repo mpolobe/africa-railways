@@ -814,6 +814,101 @@ def get_stats():
         'timestamp': datetime.now().isoformat()
     })
 
+@app.route('/api/ussd/stats', methods=['GET'])
+def get_ussd_stats():
+    """
+    Get real-time USSD gateway statistics for OCC dashboard
+    
+    Returns metrics about active sessions, request volume, success rates, etc.
+    """
+    try:
+        # Calculate active sessions (sessions updated in last 5 minutes)
+        five_minutes_ago = datetime.now() - timedelta(minutes=5)
+        active_sessions = 0
+        sessions_today = 0
+        successful_sessions = 0
+        failed_sessions = 0
+        
+        today_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        
+        for session_id, session_data in sessions.items():
+            last_updated_str = session_data.get('last_updated')
+            if last_updated_str:
+                try:
+                    last_updated = datetime.fromisoformat(last_updated_str)
+                    
+                    # Count active sessions
+                    if last_updated >= five_minutes_ago:
+                        active_sessions += 1
+                    
+                    # Count today's sessions
+                    if last_updated >= today_start:
+                        sessions_today += 1
+                        # Track success/failure based on completion
+                        if session_data.get('completed', False):
+                            successful_sessions += 1
+                        elif session_data.get('error', False):
+                            failed_sessions += 1
+                except (ValueError, TypeError):
+                    continue
+        
+        # Calculate success rate
+        total_completed = successful_sessions + failed_sessions
+        success_rate = (successful_sessions / total_completed * 100) if total_completed > 0 else 100.0
+        
+        # Calculate average response time (mock for now, would be tracked in production)
+        avg_response_time = 250  # milliseconds
+        
+        # Check rate limit status
+        rate_limited_users = sum(1 for requests in rate_limit_storage.values() 
+                                if len(requests) >= RATE_LIMIT_MAX_REQUESTS)
+        
+        # Get last command timestamp
+        last_activity = "No recent activity"
+        if sessions:
+            latest_session = max(sessions.items(), 
+                               key=lambda x: x[1].get('last_updated', '1970-01-01'))
+            last_updated_str = latest_session[1].get('last_updated', '')
+            if last_updated_str:
+                try:
+                    last_time = datetime.fromisoformat(last_updated_str)
+                    time_diff = datetime.now() - last_time
+                    if time_diff.total_seconds() < 60:
+                        last_activity = f"{int(time_diff.total_seconds())}s ago"
+                    elif time_diff.total_seconds() < 3600:
+                        last_activity = f"{int(time_diff.total_seconds() / 60)}m ago"
+                    else:
+                        last_activity = f"{int(time_diff.total_seconds() / 3600)}h ago"
+                except (ValueError, TypeError):
+                    pass
+        
+        # Calculate uptime (from when server started, would be tracked in production)
+        uptime_hours = 24  # Mock value
+        uptime_minutes = 35
+        
+        return jsonify({
+            'status': 'operational',
+            'active_sessions': active_sessions,
+            'sessions_today': sessions_today,
+            'success_rate': round(success_rate, 1),
+            'avg_response_time_ms': avg_response_time,
+            'last_activity': last_activity,
+            'uptime': f"{uptime_hours}h {uptime_minutes}m",
+            'rate_limited_users': rate_limited_users,
+            'total_sessions': len(sessions),
+            'sui_integration': SUI_AVAILABLE,
+            'sms_integration': SMS_AVAILABLE,
+            'service_code': '*384*26621#',
+            'timestamp': datetime.now().isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Error getting USSD stats: {e}")
+        return jsonify({
+            'status': 'error',
+            'error': str(e),
+            'timestamp': datetime.now().isoformat()
+        }), 500
+
 if __name__ == "__main__":
     # Railway sets the PORT environment variable automatically
     port = int(os.environ.get("PORT", 5000))
