@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSignAndExecuteTransaction, useCurrentAccount } from '@mysten/dapp-kit';
+import { useSignAndExecuteTransaction, useCurrentAccount, ConnectButton } from '@mysten/dapp-kit';
 import { Transaction } from '@mysten/sui/transactions';
 
 // Configuration
@@ -79,7 +79,12 @@ export function InvestmentForm() {
     <div className="max-w-4xl mx-auto">
       <div className="bg-slate-800 p-8 rounded-2xl border-2 border-blue-600 shadow-2xl">
         <h3 className="text-2xl font-bold mb-8 text-center">Investor Commitment</h3>
-        
+
+        {/* Convenient Connect Wallet Button */}
+        <div className="flex justify-center mb-8">
+          <ConnectButton />
+        </div>
+
         <div className="space-y-8">
           {/* Amount Selector */}
           <div>

@@ -1,0 +1,9 @@
+
+[package]
+name = "africoin"
+version = "0.0.1"
+published-at = "0xc68c4cfb63d702227db09c28837e75abd23bbb3adc192e3bc45fecca4dd5b7e8"
+
+[addresses]
+# Your named address now has a permanent home
+africoin = "0xc68c4cfb63d702227db09c28837e75abd23bbb3adc192e3bc45fecca4dd5b7e8"

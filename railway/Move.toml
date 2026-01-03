@@ -1,9 +1,12 @@
+
 [package]
 name = "africa_railways"
 version = "1.0.0"
+published-at = "0xc68c4cfb63d702227db09c28837e75abd23bbb3adc192e3bc45fecca4dd5b7e8"
 
 [dependencies]
 Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/mainnet" }
 
+
 [addresses]
-africa_railways = "0x0"
+africoin = "0xc68c4cfb63d702227db09c28837e75abd23bbb3adc192e3bc45fecca4dd5b7e8"
