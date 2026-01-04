@@ -219,7 +219,7 @@
                 timestamp: Date.now() - (25 * 60 * 60 * 1000) // 25 hours ago
             };
             
-            localStorage.setItem(detector.walletSessionKey, JSON.stringify(expiredSession));
+            localStorage.setItem(detector.getSessionKey(), JSON.stringify(expiredSession));
             
             const retrieved = detector.getSavedSession();
             const resultClass = !retrieved ? 'success' : 'error';

@@ -144,15 +144,14 @@ class WalletDeviceDetector {
             if (typeof window.suiWallet !== 'undefined') {
                 const accounts = await window.suiWallet.requestPermissions();
                 if (accounts && accounts.length > 0) {
-                    const address = accounts[0];
                     this.saveWalletSession({
-                        address: address,
+                        address: accounts[0],
                         wallet: 'Sui Wallet',
                         timestamp: Date.now()
                     });
                     return {
                         success: true,
-                        address: address,
+                        address: accounts[0],
                         wallet: 'Sui Wallet',
                         message: '✅ Connected via Sui Wallet'
                     };
@@ -431,6 +430,13 @@ class WalletDeviceDetector {
             success: true,
             message: 'Wallet disconnected'
         };
+    }
+
+    /**
+     * Get the wallet session key (for testing/debugging)
+     */
+    getSessionKey() {
+        return this.walletSessionKey;
     }
 }
 

@@ -551,10 +551,11 @@
                                     </button>
                                 )}
                                 <button
-                                    onClick={walletConnected ? null : connectWallet}
+                                    onClick={walletConnected ? undefined : connectWallet}
+                                    disabled={walletConnected}
                                     className={`px-6 py-2 rounded-lg font-bold transition-all shadow-lg ${
                                         walletConnected 
-                                            ? 'bg-green-600 shadow-green-900/20 cursor-default' 
+                                            ? 'bg-green-600 shadow-green-900/20 cursor-default opacity-90' 
                                             : 'bg-blue-600 hover:bg-blue-700 shadow-blue-900/40 hover:scale-105'
                                     }`}
                                 >
