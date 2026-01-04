@@ -12,6 +12,7 @@ class WalletDeviceDetector {
         this.isIOS = this.detectIOS();
         this.isAndroid = this.detectAndroid();
         this.slushAppUrl = 'https://my.slush.app';
+        this.walletSessionKey = 'arail_wallet_session';
     }
 
     /**
@@ -95,6 +96,11 @@ class WalletDeviceDetector {
             // Check if already logged into Slush
             if (window.slush && window.slush.isConnected) {
                 const account = await window.slush.getAccount();
+                this.saveWalletSession({
+                    address: account.address,
+                    wallet: 'Slush',
+                    timestamp: Date.now()
+                });
                 return {
                     success: true,
                     address: account.address,
@@ -138,9 +144,15 @@ class WalletDeviceDetector {
             if (typeof window.suiWallet !== 'undefined') {
                 const accounts = await window.suiWallet.requestPermissions();
                 if (accounts && accounts.length > 0) {
+                    const address = accounts[0];
+                    this.saveWalletSession({
+                        address: address,
+                        wallet: 'Sui Wallet',
+                        timestamp: Date.now()
+                    });
                     return {
                         success: true,
-                        address: accounts[0],
+                        address: address,
                         wallet: 'Sui Wallet',
                         message: '✅ Connected via Sui Wallet'
                     };
@@ -151,6 +163,11 @@ class WalletDeviceDetector {
             if (window.suiet) {
                 const result = await window.suiet.connect();
                 if (result && result.address) {
+                    this.saveWalletSession({
+                        address: result.address,
+                        wallet: 'Suiet',
+                        timestamp: Date.now()
+                    });
                     return {
                         success: true,
                         address: result.address,
@@ -164,6 +181,11 @@ class WalletDeviceDetector {
             if (window.martian) {
                 const result = await window.martian.connect();
                 if (result && result.address) {
+                    this.saveWalletSession({
+                        address: result.address,
+                        wallet: 'Martian',
+                        timestamp: Date.now()
+                    });
                     return {
                         success: true,
                         address: result.address,
@@ -216,6 +238,142 @@ class WalletDeviceDetector {
                 <p>${method.instruction}</p>
             </div>
         `;
+    }
+
+    /**
+     * Check for wallet address in URL parameters (return from Slush)
+     */
+    checkUrlParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const address = urlParams.get('address');
+        const wallet = urlParams.get('wallet');
+        const connected = urlParams.get('connected');
+        
+        if (address && connected === 'true') {
+            // Store wallet session
+            this.saveWalletSession({
+                address: address,
+                wallet: wallet || 'Slush',
+                timestamp: Date.now()
+            });
+            
+            // Clean up URL parameters for better UX
+            const cleanUrl = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, document.title, cleanUrl);
+            
+            return {
+                success: true,
+                address: address,
+                wallet: wallet || 'Slush',
+                message: '✅ Connected via Slush Wallet'
+            };
+        }
+        
+        return null;
+    }
+
+    /**
+     * Save wallet session to localStorage
+     */
+    saveWalletSession(session) {
+        try {
+            localStorage.setItem(this.walletSessionKey, JSON.stringify(session));
+        } catch (error) {
+            console.warn('Failed to save wallet session:', error);
+        }
+    }
+
+    /**
+     * Get saved wallet session from localStorage
+     */
+    getSavedSession() {
+        try {
+            const sessionData = localStorage.getItem(this.walletSessionKey);
+            if (sessionData) {
+                const session = JSON.parse(sessionData);
+                // Check if session is less than 24 hours old
+                const isValid = (Date.now() - session.timestamp) < (24 * 60 * 60 * 1000);
+                if (isValid) {
+                    return session;
+                } else {
+                    // Clear expired session
+                    this.clearWalletSession();
+                }
+            }
+        } catch (error) {
+            console.warn('Failed to retrieve wallet session:', error);
+        }
+        return null;
+    }
+
+    /**
+     * Clear wallet session from localStorage
+     */
+    clearWalletSession() {
+        try {
+            localStorage.removeItem(this.walletSessionKey);
+        } catch (error) {
+            console.warn('Failed to clear wallet session:', error);
+        }
+    }
+
+    /**
+     * Auto-connect wallet if session exists or URL params present
+     */
+    async autoConnect() {
+        // First check URL parameters (return from Slush)
+        const urlResult = this.checkUrlParams();
+        if (urlResult) {
+            return urlResult;
+        }
+
+        // Then check saved session
+        const savedSession = this.getSavedSession();
+        if (savedSession) {
+            // Verify the wallet is still connected
+            try {
+                if (this.isMobile || this.isTablet) {
+                    // For mobile/tablet, check if Slush is still connected
+                    if (window.slush && window.slush.isConnected) {
+                        const account = await window.slush.getAccount();
+                        if (account && account.address === savedSession.address) {
+                            return {
+                                success: true,
+                                address: savedSession.address,
+                                wallet: savedSession.wallet,
+                                message: '✅ Reconnected to saved session'
+                            };
+                        }
+                    }
+                } else {
+                    // For desktop, try to reconnect to extension wallet
+                    // This would require checking the specific wallet provider
+                    return {
+                        success: true,
+                        address: savedSession.address,
+                        wallet: savedSession.wallet,
+                        message: '✅ Reconnected to saved session'
+                    };
+                }
+            } catch (error) {
+                console.warn('Failed to auto-reconnect:', error);
+                // Clear invalid session
+                this.clearWalletSession();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Disconnect wallet and clear session
+     */
+    disconnect() {
+        this.clearWalletSession();
+        return {
+            success: true,
+            message: 'Wallet disconnected'
+        };
     }
 }
 

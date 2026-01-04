@@ -380,6 +380,26 @@
                 console.log('window.suiWallet:', typeof window.suiWallet);
                 console.log('window.suiet:', typeof window.suiet);
                 console.log('window.martian:', typeof window.martian);
+                
+                // Auto-connect wallet if returning from Slush or session exists
+                const autoConnectWallet = async () => {
+                    try {
+                        const detector = new WalletDeviceDetector();
+                        const result = await detector.autoConnect();
+                        
+                        if (result && result.success) {
+                            setWalletConnected(true);
+                            setWalletAddress(result.address);
+                            setTxStatus(result.message);
+                            setTimeout(() => setTxStatus(''), 3000);
+                            console.log('✅ Auto-connected wallet:', result);
+                        }
+                    } catch (error) {
+                        console.warn('Auto-connect failed:', error);
+                    }
+                };
+                
+                autoConnectWallet();
             }, []);
 
             // REAL-TIME DATA: December 31, 2025
@@ -491,6 +511,16 @@
                 }
             };
 
+            // Disconnect wallet
+            const disconnectWallet = () => {
+                const detector = new WalletDeviceDetector();
+                detector.disconnect();
+                setWalletConnected(false);
+                setWalletAddress('');
+                setTxStatus('Wallet disconnected');
+                setTimeout(() => setTxStatus(''), 3000);
+            };
+
             return (
                 <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white font-sans">
                     {/* Header */}
@@ -503,16 +533,27 @@
                                     <p className="text-xs text-blue-300 uppercase tracking-widest font-semibold">Africa's Digital Railway</p>
                                 </div>
                             </div>
-                            <button
-                                onClick={connectWallet}
-                                className={`px-6 py-2 rounded-lg font-bold transition-all shadow-lg ${
-                                    walletConnected 
-                                        ? 'bg-green-600 hover:bg-green-700 shadow-green-900/20' 
-                                        : 'bg-blue-600 hover:bg-blue-700 shadow-blue-900/40 hover:scale-105'
-                                }`}
-                            >
-                                {walletConnected ? `✓ ${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)} Connected` : 'Connect SUI Wallet'}
-                            </button>
+                            <div className="flex items-center gap-3">
+                                {walletConnected && (
+                                    <button
+                                        onClick={disconnectWallet}
+                                        className="px-4 py-2 text-sm text-red-400 hover:text-red-300 transition-colors"
+                                        title="Disconnect wallet"
+                                    >
+                                        Disconnect
+                                    </button>
+                                )}
+                                <button
+                                    onClick={walletConnected ? null : connectWallet}
+                                    className={`px-6 py-2 rounded-lg font-bold transition-all shadow-lg ${
+                                        walletConnected 
+                                            ? 'bg-green-600 shadow-green-900/20 cursor-default' 
+                                            : 'bg-blue-600 hover:bg-blue-700 shadow-blue-900/40 hover:scale-105'
+                                    }`}
+                                >
+                                    {walletConnected ? `✓ ${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}` : 'Connect SUI Wallet'}
+                                </button>
+                            </div>
                         </div>
                     </header>
 
