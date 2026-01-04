@@ -242,14 +242,37 @@ class WalletDeviceDetector {
 
     /**
      * Check for wallet address in URL parameters (return from Slush)
+     * 
+     * Expected URL parameters from Slush redirect:
+     * - address: The wallet address (e.g., 0x1234...)
+     * - wallet: The wallet name (optional, defaults to 'Slush')
+     * - connected: Boolean string 'true' or 'false'
+     * 
+     * Alternative formats also supported:
+     * - walletAddress: Alternative param name for address
+     * - success: Alternative param name for connected
+     * 
+     * Example return URL: 
+     * https://www.africarailways.com/investor?address=0x123...&wallet=Slush&connected=true
      */
     checkUrlParams() {
         const urlParams = new URLSearchParams(window.location.search);
-        const address = urlParams.get('address');
-        const wallet = urlParams.get('wallet');
-        const connected = urlParams.get('connected');
         
-        if (address && connected === 'true') {
+        // Try primary parameter names
+        let address = urlParams.get('address');
+        let wallet = urlParams.get('wallet');
+        let connected = urlParams.get('connected');
+        
+        // Try alternative parameter names
+        if (!address) {
+            address = urlParams.get('walletAddress') || urlParams.get('account');
+        }
+        if (!connected) {
+            connected = urlParams.get('success') || urlParams.get('status');
+        }
+        
+        // Check if connection was successful
+        if (address && (connected === 'true' || connected === '1' || connected === 'success')) {
             // Store wallet session
             this.saveWalletSession({
                 address: address,
@@ -261,11 +284,29 @@ class WalletDeviceDetector {
             const cleanUrl = window.location.origin + window.location.pathname;
             window.history.replaceState({}, document.title, cleanUrl);
             
+            console.log('✅ Wallet connected from URL params:', { address, wallet: wallet || 'Slush' });
+            
             return {
                 success: true,
                 address: address,
                 wallet: wallet || 'Slush',
                 message: '✅ Connected via Slush Wallet'
+            };
+        }
+        
+        // Check if connection failed
+        if (connected === 'false' || urlParams.get('error')) {
+            const error = urlParams.get('error') || 'Connection failed';
+            console.warn('❌ Wallet connection failed:', error);
+            
+            // Clean up URL
+            const cleanUrl = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, document.title, cleanUrl);
+            
+            return {
+                success: false,
+                error: error,
+                message: `❌ Connection failed: ${error}`
             };
         }
         
@@ -319,17 +360,23 @@ class WalletDeviceDetector {
 
     /**
      * Auto-connect wallet if session exists or URL params present
+     * This runs on page load to restore wallet connection
      */
     async autoConnect() {
         // First check URL parameters (return from Slush)
         const urlResult = this.checkUrlParams();
         if (urlResult) {
+            if (!urlResult.success) {
+                console.warn('Auto-connect from URL params failed:', urlResult.error);
+            }
             return urlResult;
         }
 
         // Then check saved session
         const savedSession = this.getSavedSession();
         if (savedSession) {
+            console.log('Found saved wallet session:', savedSession);
+            
             // Verify the wallet is still connected
             try {
                 if (this.isMobile || this.isTablet) {
@@ -345,14 +392,24 @@ class WalletDeviceDetector {
                             };
                         }
                     }
-                } else {
-                    // For desktop, try to reconnect to extension wallet
-                    // This would require checking the specific wallet provider
+                    
+                    // Slush not available or address mismatch, but session is valid
+                    // Return the saved session anyway for continuity
                     return {
                         success: true,
                         address: savedSession.address,
                         wallet: savedSession.wallet,
-                        message: '✅ Reconnected to saved session'
+                        message: '✅ Restored wallet session'
+                    };
+                } else {
+                    // For desktop, restore from saved session
+                    // Note: Extension wallets typically don't persist across page loads
+                    // so we trust the saved session
+                    return {
+                        success: true,
+                        address: savedSession.address,
+                        wallet: savedSession.wallet,
+                        message: '✅ Restored wallet session'
                     };
                 }
             } catch (error) {

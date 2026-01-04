@@ -387,12 +387,19 @@
                         const detector = new WalletDeviceDetector();
                         const result = await detector.autoConnect();
                         
-                        if (result && result.success) {
-                            setWalletConnected(true);
-                            setWalletAddress(result.address);
-                            setTxStatus(result.message);
-                            setTimeout(() => setTxStatus(''), 3000);
-                            console.log('✅ Auto-connected wallet:', result);
+                        if (result) {
+                            if (result.success) {
+                                setWalletConnected(true);
+                                setWalletAddress(result.address);
+                                setTxStatus(result.message);
+                                setTimeout(() => setTxStatus(''), 3000);
+                                console.log('✅ Auto-connected wallet:', result);
+                            } else {
+                                // Show error from failed connection attempt
+                                setTxStatus(result.message);
+                                setTimeout(() => setTxStatus(''), 5000);
+                                console.warn('❌ Auto-connect failed:', result);
+                            }
                         }
                     } catch (error) {
                         console.warn('Auto-connect failed:', error);
