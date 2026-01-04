@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet Detector Test</title>
+    <script src="js/wallet-detector.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #fff;
+        }
+        .test-section {
+            background: #16213e;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 1px solid #0f3460;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #0f3460;
+        }
+        .success { background: #1d8348 !important; }
+        .error { background: #943126 !important; }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background: #4a90e2;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #357abd;
+        }
+        .info {
+            background: #264653;
+            padding: 10px;
+            border-left: 3px solid #2a9d8f;
+            margin: 10px 0;
+        }
+        h2 {
+            color: #4a90e2;
+        }
+        code {
+            background: #0f3460;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Wallet Detector Test Suite</h1>
+    <p>Test the wallet connection and redirection functionality</p>
+
+    <div class="test-section">
+        <h2>1. Device Detection</h2>
+        <div id="device-info"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. URL Parameter Testing</h2>
+        <p>Simulate return from Slush wallet with different URL parameters:</p>
+        <button onclick="testUrlParams('success')">Test Success Case</button>
+        <button onclick="testUrlParams('error')">Test Error Case</button>
+        <button onclick="testUrlParams('alternative')">Test Alternative Params</button>
+        <div id="url-test-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Session Management</h2>
+        <button onclick="testSaveSession()">Save Test Session</button>
+        <button onclick="testGetSession()">Get Saved Session</button>
+        <button onclick="testClearSession()">Clear Session</button>
+        <button onclick="testExpiredSession()">Test Expired Session</button>
+        <div id="session-test-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Auto-Connect</h2>
+        <button onclick="testAutoConnect()">Test Auto-Connect</button>
+        <div id="autoconnect-test-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Wallet Connection Methods</h2>
+        <div class="info">
+            <strong>Note:</strong> These will show wallet installation prompts if no wallets are detected.
+        </div>
+        <button onclick="testConnect()">Test Connect Wallet</button>
+        <button onclick="testDisconnect()">Test Disconnect</button>
+        <div id="connect-test-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>6. Current Status</h2>
+        <button onclick="showCurrentStatus()">Refresh Status</button>
+        <div id="current-status"></div>
+    </div>
+
+    <script>
+        const detector = new WalletDeviceDetector();
+
+        // Test 1: Device Detection
+        function showDeviceInfo() {
+            const info = `
+                <div class="test-result">
+                    <strong>Device Type:</strong><br>
+                    - Mobile: ${detector.isMobile ? '✅' : '❌'}<br>
+                    - Tablet: ${detector.isTablet ? '✅' : '❌'}<br>
+                    - iOS: ${detector.isIOS ? '✅' : '❌'}<br>
+                    - Android: ${detector.isAndroid ? '✅' : '❌'}<br>
+                    - Supports Extensions: ${detector.supportsExtensions() ? '✅' : '❌'}
+                </div>
+                <div class="test-result">
+                    <strong>Recommended Method:</strong><br>
+                    ${JSON.stringify(detector.getRecommendedMethod(), null, 2)}
+                </div>
+            `;
+            document.getElementById('device-info').innerHTML = info;
+        }
+
+        // Test 2: URL Parameters
+        function testUrlParams(testCase) {
+            const results = document.getElementById('url-test-results');
+            
+            // Save current URL
+            const originalUrl = window.location.href;
+            
+            // Create test URLs
+            let testUrl;
+            switch(testCase) {
+                case 'success':
+                    testUrl = window.location.href + '?address=0x1234567890abcdef&wallet=Slush&connected=true';
+                    break;
+                case 'error':
+                    testUrl = window.location.href + '?connected=false&error=User%20rejected';
+                    break;
+                case 'alternative':
+                    testUrl = window.location.href + '?walletAddress=0xabcdef1234567890&success=true';
+                    break;
+            }
+            
+            // Simulate URL change
+            window.history.pushState({}, '', testUrl);
+            
+            // Test checkUrlParams
+            const result = detector.checkUrlParams();
+            
+            const resultHtml = `
+                <div class="test-result ${result && result.success ? 'success' : 'error'}">
+                    <strong>Test Case: ${testCase}</strong><br>
+                    <code>${testUrl}</code><br><br>
+                    <strong>Result:</strong><br>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                </div>
+            `;
+            
+            results.innerHTML += resultHtml;
+            
+            // Restore original URL
+            window.history.pushState({}, '', originalUrl);
+        }
+
+        // Test 3: Session Management
+        function testSaveSession() {
+            const testSession = {
+                address: '0xTEST1234567890',
+                wallet: 'Test Wallet',
+                timestamp: Date.now()
+            };
+            
+            detector.saveWalletSession(testSession);
+            
+            document.getElementById('session-test-results').innerHTML += `
+                <div class="test-result success">
+                    <strong>Session Saved:</strong><br>
+                    <pre>${JSON.stringify(testSession, null, 2)}</pre>
+                </div>
+            `;
+        }
+
+        function testGetSession() {
+            const session = detector.getSavedSession();
+            
+            const resultClass = session ? 'success' : 'error';
+            document.getElementById('session-test-results').innerHTML += `
+                <div class="test-result ${resultClass}">
+                    <strong>Retrieved Session:</strong><br>
+                    <pre>${JSON.stringify(session, null, 2)}</pre>
+                </div>
+            `;
+        }
+
+        function testClearSession() {
+            detector.clearWalletSession();
+            
+            document.getElementById('session-test-results').innerHTML += `
+                <div class="test-result success">
+                    <strong>Session Cleared</strong>
+                </div>
+            `;
+        }
+
+        function testExpiredSession() {
+            const expiredSession = {
+                address: '0xEXPIRED',
+                wallet: 'Expired Wallet',
+                timestamp: Date.now() - (25 * 60 * 60 * 1000) // 25 hours ago
+            };
+            
+            localStorage.setItem(detector.walletSessionKey, JSON.stringify(expiredSession));
+            
+            const retrieved = detector.getSavedSession();
+            const resultClass = !retrieved ? 'success' : 'error';
+            
+            document.getElementById('session-test-results').innerHTML += `
+                <div class="test-result ${resultClass}">
+                    <strong>Expired Session Test:</strong><br>
+                    Saved expired session (25h old)<br>
+                    Retrieved: ${retrieved ? 'FAIL - Session should be expired' : 'SUCCESS - Session correctly expired'}
+                </div>
+            `;
+        }
+
+        // Test 4: Auto-Connect
+        async function testAutoConnect() {
+            const result = await detector.autoConnect();
+            
+            const resultClass = result && result.success ? 'success' : 'error';
+            document.getElementById('autoconnect-test-results').innerHTML = `
+                <div class="test-result ${resultClass}">
+                    <strong>Auto-Connect Result:</strong><br>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                </div>
+            `;
+        }
+
+        // Test 5: Connect/Disconnect
+        async function testConnect() {
+            try {
+                const result = await detector.connectWallet();
+                
+                const resultClass = result.success ? 'success' : 'error';
+                document.getElementById('connect-test-results').innerHTML = `
+                    <div class="test-result ${resultClass}">
+                        <strong>Connect Result:</strong><br>
+                        <pre>${JSON.stringify(result, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('connect-test-results').innerHTML = `
+                    <div class="test-result error">
+                        <strong>Connect Error:</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function testDisconnect() {
+            const result = detector.disconnect();
+            
+            document.getElementById('connect-test-results').innerHTML += `
+                <div class="test-result success">
+                    <strong>Disconnect Result:</strong><br>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                </div>
+            `;
+        }
+
+        // Test 6: Current Status
+        function showCurrentStatus() {
+            const session = detector.getSavedSession();
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            const status = `
+                <div class="test-result">
+                    <strong>Current URL:</strong><br>
+                    <code>${window.location.href}</code>
+                </div>
+                <div class="test-result">
+                    <strong>URL Parameters:</strong><br>
+                    ${Array.from(urlParams.entries()).length > 0 
+                        ? Array.from(urlParams.entries()).map(([k,v]) => `${k}: ${v}`).join('<br>')
+                        : 'None'
+                    }
+                </div>
+                <div class="test-result ${session ? 'success' : 'error'}">
+                    <strong>Saved Session:</strong><br>
+                    ${session ? `<pre>${JSON.stringify(session, null, 2)}</pre>` : 'No session found'}
+                </div>
+                <div class="test-result">
+                    <strong>Detected Wallets:</strong><br>
+                    - Sui Wallet: ${typeof window.suiWallet !== 'undefined' ? '✅' : '❌'}<br>
+                    - Suiet: ${typeof window.suiet !== 'undefined' ? '✅' : '❌'}<br>
+                    - Martian: ${typeof window.martian !== 'undefined' ? '✅' : '❌'}<br>
+                    - Slush: ${typeof window.slush !== 'undefined' ? '✅' : '❌'}
+                </div>
+            `;
+            
+            document.getElementById('current-status').innerHTML = status;
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            showDeviceInfo();
+            showCurrentStatus();
+        });
+    </script>
+</body>
+</html>
