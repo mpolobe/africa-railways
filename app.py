@@ -5,8 +5,10 @@ Service Code: *384*26621#
 Handles ticket booking and $SENT investment via USSD
 """
 
-from flask import Flask, request, make_response, jsonify
+from flask import Flask, request, make_response, jsonify, session
 from flask_cors import CORS
+from flask_session import Session
+import redis
 import os
 import json
 import logging
@@ -96,6 +98,24 @@ if not SUI_AVAILABLE:
 app = Flask(__name__)
 CORS(app)
 
+# Redis Session Configuration for USSD state management
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'arail_spine_secret_2026')
+app.config['SESSION_TYPE'] = 'redis'
+app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_USE_SIGNER'] = True
+app.config['SESSION_KEY_PREFIX'] = 'arail:ussd:'
+
+# Try to connect to Redis, fallback to filesystem if not available
+try:
+    redis_url = os.environ.get('REDIS_URL', 'redis://localhost:6379')
+    app.config['SESSION_REDIS'] = redis.from_url(redis_url, decode_responses=True)
+    Session(app)
+    logger.info(f"✅ Redis session store connected: {redis_url}")
+except Exception as e:
+    logger.warning(f"⚠️  Redis not available, using filesystem sessions: {e}")
+    app.config['SESSION_TYPE'] = 'filesystem'
+    Session(app)
+
 # Configuration
 SUI_RPC_URL = os.environ.get('SUI_RPC_URL', 'https://fullnode.mainnet.sui.io:443')
 SUI_PRIVATE_KEY = os.environ.get('SUI_PRIVATE_KEY', '')
@@ -111,12 +131,10 @@ ALLOWED_IPS = [
     '18.202.0.0/16',
 ]
 
-# Session storage (in production, use Redis)
-sessions = {}
-# Session cleanup tracking
-session_last_cleanup = datetime.now()
-SESSION_MAX_AGE = timedelta(hours=1)  # Sessions expire after 1 hour
-SESSION_CLEANUP_INTERVAL = timedelta(minutes=10)  # Cleanup every 10 minutes
+# Redis session management (configured above with Flask-Session)
+# Sessions now stored in Redis with 5-minute TTL for automatic cleanup
+# This enables multi-server scaling across 54 African capitals
+SESSION_MAX_AGE = timedelta(minutes=5)  # Sessions expire after 5 minutes (USSD standard)
 
 # Rate limiting storage (in production, use Redis)
 rate_limit_storage = defaultdict(list)
@@ -167,42 +185,6 @@ def verify_signature(request_data, signature):
     
     return hmac.compare_digest(signature, expected_signature)
 
-def cleanup_old_sessions():
-    """
-    Remove expired sessions to prevent memory leaks
-    
-    Security: Prevents session storage from growing unbounded
-    """
-    global session_last_cleanup, sessions
-    
-    now = datetime.now()
-    if now - session_last_cleanup < SESSION_CLEANUP_INTERVAL:
-        return  # Not time to cleanup yet
-    
-    expired_count = 0
-    expired_sessions = []
-    
-    for session_id, session_data in sessions.items():
-        last_updated_str = session_data.get('last_updated')
-        if last_updated_str:
-            try:
-                last_updated = datetime.fromisoformat(last_updated_str)
-                if now - last_updated > SESSION_MAX_AGE:
-                    expired_sessions.append(session_id)
-                    expired_count += 1
-            except (ValueError, TypeError):
-                # Invalid timestamp, mark for deletion
-                expired_sessions.append(session_id)
-                expired_count += 1
-    
-    # Remove expired sessions
-    for session_id in expired_sessions:
-        del sessions[session_id]
-    
-    if expired_count > 0:
-        logger.info(f"Cleaned up {expired_count} expired sessions")
-    
-    session_last_cleanup = now
 
 def check_rate_limit(phone_number):
     """
@@ -236,22 +218,55 @@ def check_rate_limit(phone_number):
     rate_limit_storage[phone_number].append(now)
     return True, 0
 
-def get_session_data(session_id):
-    """Retrieve session data"""
-    cleanup_old_sessions()  # Opportunistic cleanup
-    return sessions.get(session_id, {})
+def get_session_data(phone_number):
+    """Retrieve session data from Redis or filesystem"""
+    try:
+        # Check if Redis is available
+        if app.config.get('SESSION_TYPE') == 'redis' and 'SESSION_REDIS' in app.config:
+            session_key = f"arail:ussd:{phone_number}"
+            session_data = app.config['SESSION_REDIS'].hgetall(session_key)
+            return session_data if session_data else {}
+        else:
+            # Fallback to filesystem sessions (Flask-Session handles this)
+            return session.get(phone_number, {})
+    except Exception as e:
+        logger.error(f"Session get error: {e}")
+        return {}
 
-def set_session_data(session_id, data):
-    """Store session data"""
-    sessions[session_id] = {
-        **data,
-        'last_updated': datetime.now().isoformat()
-    }
+def set_session_data(phone_number, data):
+    """Store session data in Redis or filesystem with 5-minute TTL"""
+    try:
+        data_with_timestamp = {
+            **data,
+            'last_updated': datetime.now().isoformat()
+        }
+        
+        # Check if Redis is available
+        if app.config.get('SESSION_TYPE') == 'redis' and 'SESSION_REDIS' in app.config:
+            session_key = f"arail:ussd:{phone_number}"
+            app.config['SESSION_REDIS'].hset(session_key, mapping=data_with_timestamp)
+            app.config['SESSION_REDIS'].expire(session_key, 300)  # 5 minutes
+        else:
+            # Fallback to filesystem sessions
+            session[phone_number] = data_with_timestamp
+            session.modified = True
+    except Exception as e:
+        logger.error(f"Session set error: {e}")
 
-def clear_session(session_id):
-    """Clear session data"""
-    if session_id in sessions:
-        del sessions[session_id]
+def clear_session(phone_number):
+    """Clear session data from Redis or filesystem"""
+    try:
+        # Check if Redis is available
+        if app.config.get('SESSION_TYPE') == 'redis' and 'SESSION_REDIS' in app.config:
+            session_key = f"arail:ussd:{phone_number}"
+            app.config['SESSION_REDIS'].delete(session_key)
+        else:
+            # Fallback to filesystem sessions
+            if phone_number in session:
+                del session[phone_number]
+                session.modified = True
+    except Exception as e:
+        logger.error(f"Session clear error: {e}")
 
 class SocketTimeout:
     """
@@ -363,8 +378,8 @@ def ussd_callback():
     # Log request (sanitized, no sensitive data)
     logger.info(f"USSD Request - Session: {session_id[:10]}..., Phone: {phone_number[-4:]}, Text: '{text}'")
     
-    # Get session data
-    session_data = get_session_data(session_id)
+    # Get session data from Redis (using phone_number as key)
+    session_data = get_session_data(phone_number)
     
     # Parse user input
     text_array = text.split('*') if text else []
@@ -397,7 +412,7 @@ def ussd_callback():
         
         elif text == "1*1":
             # Lusaka → Dar es Salaam
-            set_session_data(session_id, {
+            set_session_data(phone_number, {
                 'flow': 'booking',
                 'route': 'Lusaka → Dar es Salaam',
                 'origin': 'Lusaka',
@@ -412,7 +427,7 @@ def ussd_callback():
         
         elif text == "1*1*1":
             # Selected Express train
-            set_session_data(session_id, {
+            set_session_data(phone_number, {
                 **session_data,
                 'train': 'Express 06:00',
                 'price': 450
@@ -452,7 +467,7 @@ def ussd_callback():
                 else:
                     response += f"SMS sent to {phone_number}\n"
                 response += "Safe travels! 🚂"
-                clear_session(session_id)
+                clear_session(phone_number)
             else:
                 response = f"END ❌ Booking Failed\n\n"
                 response += f"Error: {error}\n"
@@ -481,9 +496,9 @@ def ussd_callback():
             if not is_valid:
                 response = f"END Error: {error_msg}\n\n"
                 response += "Please contact support for assistance."
-                clear_session(session_id)
+                clear_session(phone_number)
             else:
-                set_session_data(session_id, {
+                set_session_data(phone_number, {
                     'flow': 'investment',
                     'sui_amount': sui_amount,
                     'usd_value': sui_amount * SUI_PRICE
@@ -536,7 +551,7 @@ def ussd_callback():
                         if SMS_AVAILABLE:
                             response += "Check your SMS for details.\n"
                         response += "Welcome to ARAIL! 🚂💎"
-                        clear_session(session_id)
+                        clear_session(phone_number)
                     else:
                         error_msg = result
                         logger.error(f"❌ Investment failed: {error_msg[:50]}")
@@ -550,13 +565,13 @@ def ussd_callback():
                 response = "END ❌ Connection Timeout\n\n"
                 response += "The network is experiencing delays.\n"
                 response += "Please try again in a few minutes."
-                clear_session(session_id)
+                clear_session(phone_number)
             except Exception as e:
                 logger.error(f"❌ Investment exception for {phone_number[-4:]}: {str(e)[:100]}")
                 response = "END ❌ System Error\n\n"
                 response += "An unexpected error occurred.\n"
                 response += "Please contact support."
-                clear_session(session_id)
+                clear_session(phone_number)
         
         elif text == "2*2":
             # Invest 500 SUI
@@ -567,9 +582,9 @@ def ussd_callback():
             if not is_valid:
                 response = f"END Error: {error_msg}\n\n"
                 response += "Please contact support for assistance."
-                clear_session(session_id)
+                clear_session(phone_number)
             else:
-                set_session_data(session_id, {
+                set_session_data(phone_number, {
                     'flow': 'investment',
                     'sui_amount': sui_amount,
                     'usd_value': sui_amount * SUI_PRICE
@@ -609,7 +624,7 @@ def ussd_callback():
                         response += f"TX: {tx_digest[:10]}...\n\n"
                         response += "Certificate NFT sent to your wallet.\n"
                         response += "Welcome to ARAIL! 🚂💎"
-                        clear_session(session_id)
+                        clear_session(phone_number)
                     else:
                         error_msg = result
                         logger.error(f"❌ Investment failed: {error_msg[:50]}")
@@ -623,13 +638,13 @@ def ussd_callback():
                 response = "END ❌ Connection Timeout\n\n"
                 response += "The network is experiencing delays.\n"
                 response += "Please try again in a few minutes."
-                clear_session(session_id)
+                clear_session(phone_number)
             except Exception as e:
                 logger.error(f"❌ Investment exception for {phone_number[-4:]}: {str(e)[:100]}")
                 response = "END ❌ System Error\n\n"
                 response += "An unexpected error occurred.\n"
                 response += "Please contact support."
-                clear_session(session_id)
+                clear_session(phone_number)
         
         # ============================================
         # WALLET CHECK
@@ -649,7 +664,7 @@ def ussd_callback():
             
             if success and data.get('has_investment'):
                 # Store certificate ID in session for claiming
-                set_session_data(session_id, {
+                set_session_data(phone_number, {
                     'certificate_id': data.get('certificate_id'),
                     'claimable_tokens': data.get('claimable_tokens', 0)
                 })
@@ -700,7 +715,7 @@ def ussd_callback():
                     if SMS_AVAILABLE:
                         response += "Check SMS for details.\n"
                     response += "Tokens sent to your wallet! 💎"
-                    clear_session(session_id)
+                    clear_session(phone_number)
                 else:
                     error_msg = result
                     logger.error(f"❌ Claim failed: {error_msg}")
@@ -761,7 +776,7 @@ def ussd_callback():
             response += "2. Invest in $SENT Pre-Seed\n"
             response += "3. Check My Wallet\n"
             response += "4. Help & Support"
-            clear_session(session_id)
+            clear_session(phone_number)
         
         # ============================================
         # INVALID INPUT
@@ -769,13 +784,13 @@ def ussd_callback():
         else:
             response = "END Invalid selection.\n\n"
             response += "Please dial *384*26621# to try again."
-            clear_session(session_id)
+            clear_session(phone_number)
     
     except Exception as e:
         logger.error(f"Error processing USSD request: {str(e)}")
         response = "END An error occurred.\n\n"
         response += "Please try again or contact support."
-        clear_session(session_id)
+        clear_session(phone_number)
     
     # Return response with correct content type
     resp = make_response(response, 200)
