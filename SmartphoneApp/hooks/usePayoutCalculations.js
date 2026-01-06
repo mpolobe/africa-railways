@@ -16,12 +16,7 @@ export const usePayoutCalculations = (subscribers, subscriptionMRR) => {
   // Memoize commission calculations
   const commissionData = useMemo(() => {
     return calculateCommissionRevenue(subscribers);
-  }, [
-    subscribers.traderSubs,
-    subscribers.touristSubs,
-    subscribers.domesticSubs,
-    subscribers.commuterSubs,
-  ]);
+  }, [subscribers]);
 
   // Memoize payout calculations
   const payoutData = useMemo(() => {
