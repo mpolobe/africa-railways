@@ -20,7 +20,11 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy project files (excluding secrets via .dockerignore)
 COPY . .
 
+# Make validation script executable
+RUN chmod +x validate_env.py
+
 # Runtime execution
 # Note: No secrets are hardcoded here.
 # Railway will inject them into the environment automatically at runtime.
-CMD ["gunicorn", "backend.app:app", "--bind", "0.0.0.0:8080", "--workers", "4", "--timeout", "120"]
+# Validation runs first to ensure all required variables are present.
+CMD ["sh", "-c", "python validate_env.py && gunicorn backend.app:app --bind 0.0.0.0:8080 --workers 4 --timeout 120"]
