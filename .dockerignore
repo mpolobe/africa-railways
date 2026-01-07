@@ -1,14 +1,47 @@
-# Git
-.git/
+# CRITICAL SECURITY: Environment files with secrets
+.env
+.env.*
+!.env.example
+
+# Git repository
+.git
 .github/
 .gitignore
+
+# Python cache and virtual environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+env/
+.venv/
+*.egg-info/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+*.pid
+nohup.out
+
+# Service account keys and credentials
+*-key.json
+*_key.json
+service-account*.json
+credentials.json
+web-viewer-key.json
+google-play-service-account.json
+google-play-*.json
+config.json
 
 # Dependencies
 node_modules/
 SmartphoneApp/node_modules/
-
-# Google Cloud SDK (install in container instead)
-google-cloud-sdk/
 
 # Build artifacts
 *.exe
@@ -20,47 +53,21 @@ google-cloud-sdk/
 bin/
 dist/
 build/
+.next/
+.cache/
 
-# Logs
-logs/
-*.log
-*.pid
-nohup.out
-
-# Environment files
-.env
-.env.*
-!.env.example
-
-# Service account keys
-*-key.json
-*_key.json
-service-account*.json
-credentials.json
-web-viewer-key.json
-google-play-service-account.json
-google-play-*.json
-
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-venv/
-env/
-.venv/
-
-# IDE
+# IDE and editor files
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
 
-# Documentation (not needed in container)
+# Documentation (not needed in production container)
 *.md
 !README.md
 
@@ -69,9 +76,16 @@ Thumbs.db
 test-*.html
 backend/tests/
 backend/examples/
+test_*.py
 
 # Temporary files
 *.bak
 *.old
 *.tmp
 support-bundle-*.tar.gz
+
+# Google Cloud SDK (install in container if needed)
+google-cloud-sdk/
+
+# Sui blockchain local data
+sui/
