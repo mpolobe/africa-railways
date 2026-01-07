@@ -27,4 +27,4 @@ RUN chmod +x validate_env.py
 # Note: No secrets are hardcoded here.
 # Railway will inject them into the environment automatically at runtime.
 # Validation runs first to ensure all required variables are present.
-CMD ["sh", "-c", "python validate_env.py && gunicorn backend.app:app --bind 0.0.0.0:8080 --workers 4 --timeout 120"]
+CMD ["sh", "-c", "python validate_env.py && gunicorn app:app --bind 0.0.0.0:8080 --workers 4 --timeout 120"]

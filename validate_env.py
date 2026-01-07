@@ -16,27 +16,37 @@ import sys
 from typing import List, Tuple
 
 # Required environment variables for production deployment
+# Note: Some variables are optional for basic health check functionality
 REQUIRED_VARS = [
-    # Core API Keys
+    # Core API Keys (optional for health check)
+    # ("RAILWAYS_API_KEY", "Railways API authentication"),
+    # ("AFRICOIN_API_KEY", "Africoin API authentication"),
+    
+    # OTP/SMS Providers (optional for health check)
+    # ("AT_API_KEY", "Africa's Talking API key for OTP"),
+    # ("AT_USERNAME", "Africa's Talking username"),
+    # ("TWILIO_ACCOUNT_SID", "Twilio account SID for fallback OTP"),
+    # ("TWILIO_AUTH_TOKEN", "Twilio authentication token"),
+    
+    # Blockchain (optional for health check)
+    # ("SUI_RPC_URL", "Sui blockchain RPC endpoint"),
+    # ("SUI_ADMIN_ADDRESS", "Sui admin wallet address"),
+    
+    # Database (optional for health check)
+    # ("DATABASE_URL", "PostgreSQL connection string"),
+]
+
+# Optional but recommended variables for full functionality
+OPTIONAL_VARS = [
     ("RAILWAYS_API_KEY", "Railways API authentication"),
     ("AFRICOIN_API_KEY", "Africoin API authentication"),
-    
-    # OTP/SMS Providers
     ("AT_API_KEY", "Africa's Talking API key for OTP"),
     ("AT_USERNAME", "Africa's Talking username"),
     ("TWILIO_ACCOUNT_SID", "Twilio account SID for fallback OTP"),
     ("TWILIO_AUTH_TOKEN", "Twilio authentication token"),
-    
-    # Blockchain
     ("SUI_RPC_URL", "Sui blockchain RPC endpoint"),
     ("SUI_ADMIN_ADDRESS", "Sui admin wallet address"),
-    
-    # Database
     ("DATABASE_URL", "PostgreSQL connection string"),
-]
-
-# Optional but recommended variables
-OPTIONAL_VARS = [
     ("EXPO_TOKEN", "Expo build service token"),
     ("BROWSERSTACK_ACCESS_KEY", "BrowserStack testing access key"),
     ("DIGITS_SECRET", "Team access secret"),
