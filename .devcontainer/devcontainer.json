@@ -8,6 +8,10 @@
     "ghcr.io/devcontainers/features/python:1": {
       "version": "3.11"
     },
+    "ghcr.io/devcontainers/features/rust:1": {
+      "version": "latest",
+      "profile": "minimal"
+    },
     "ghcr.io/devcontainers/features/git:1": {}
   },
   "customizations": {
@@ -23,7 +27,7 @@
       }
     }
   },
-  "postCreateCommand": "go mod download && pip install --upgrade pip",
+  "postCreateCommand": "bash -c 'sudo apt-get update && sudo apt-get install -y build-essential pkg-config libssl-dev && source $HOME/.cargo/env && go mod download && pip install --upgrade pip'",
   "forwardPorts": [8080, 8082],
   "portsAttributes": {
     "8080": {
