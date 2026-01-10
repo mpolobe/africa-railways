@@ -1,46 +1,74 @@
-# 🔧 Build Troubleshooting
+# Build Troubleshooting Guide
 
-## 📊 Build Status: Failed (First Attempt)
+## 🐛 Issue: Build Using Wrong Profile
 
-**Run ID:** 20422941223  
-**Status:** ❌ Failed  
-**Duration:** ~40 seconds  
-
----
-
-## 🔍 What Happened
-
-The build failed during the "Build Railways App" step. This is common on first runs and usually due to:
-
-1. EAS CLI authentication
-2. Project configuration
-3. Missing dependencies
-4. Environment variable issues
-
----
-
-## 🎯 Quick Fix
-
-The most likely issue is that EAS needs the project to be properly initialized. Let's check a few things:
-
-### Check 1: Verify EAS Project is Linked
-
-```bash
-# Check if project is linked to EAS
-cat eas.json | grep projectId
-
-# Should show:
-# "projectId": "82efeb87-20c5-45b4-b945-65d4b9074c32" (for railways)
-# "projectId": "5fa2f2b4-5c9f-43bf-b1eb-20d90ae19185" (for africoin)
+### Symptom
+```
+Resolved "production" environment for the build.
+Environment variables loaded from the "production" build profile
 ```
 
-### Check 2: Verify app.config.js
-
-The app.config.js should have the correct project IDs in the `extra.eas.projectId` field.
+### Problem
+The build is using the generic "production" profile instead of app-specific profiles (sentinel, railways, africoin, staff).
 
 ---
 
-## 🔧 Solution: Update Workflow
+## ✅ Solution Applied
 
-The issue is likely that we need to ensure the working directory is correct. Let me create an updated workflow:
+### GitHub Actions Workflow Updated
 
+**File:** `.github/workflows/eas-build.yml`
+
+**Changes:**
+1. Changed default profile from "production" to "sentinel"
+2. Removed "production" from profile options
+3. Added all app-specific profiles (railways, africoin, sentinel, staff)
+
+**Now when triggering from GitHub Actions:**
+- Default profile: **sentinel** ✅
+- Available options: railways, africoin, sentinel, staff, development, preview
+- No longer defaults to generic "production" profile
+
+---
+
+## 🚀 Correct Build Commands
+
+### From CLI
+```bash
+cd SmartphoneApp
+eas build --profile sentinel --platform android
+```
+
+### From GitHub Actions
+1. Go to Actions tab
+2. Select "EAS Build (Manual Only)"
+3. Choose profile: **sentinel** (now default)
+4. Choose platform: **android**
+5. Run workflow
+
+### From Codemagic
+```bash
+git tag sentinel-v1.0.2
+git push origin sentinel-v1.0.2
+```
+
+---
+
+## ⚠️ Build Credits: 100% Used
+
+**You cannot start new builds until:**
+1. Upgrade EAS plan ($29/month)
+2. Use local builds (--local flag)
+3. Wait for monthly reset
+4. Use Codemagic (separate credits)
+
+---
+
+## 📊 Summary
+
+- ✅ GitHub Actions updated to use app-specific profiles
+- ✅ Default changed from "production" to "sentinel"
+- ⚠️ Build credits exhausted - need upgrade or alternative
+- ✅ All configurations correct and ready
+
+**Status:** Ready to build once credits available or using local/Codemagic

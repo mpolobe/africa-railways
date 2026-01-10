@@ -42,14 +42,17 @@ on:
           - android
           - ios
       profile:
-        description: 'Build profile'
+        description: 'Build profile (use app-specific profiles)'
         required: true
-        default: 'production'
+        default: 'sentinel'
         type: choice
         options:
+          - railways
+          - africoin
+          - sentinel
+          - staff
           - development
           - preview
-          - production
 
 env:
   NODE_VERSION: '20'
@@ -88,11 +91,12 @@ jobs:
       - name: 🚀 Build app
         run: |
           PLATFORM="${{ github.event.inputs.platform || 'all' }}"
-          PROFILE="${{ github.event.inputs.profile || 'production' }}"
+          PROFILE="${{ github.event.inputs.profile || 'sentinel' }}"
           
-          echo "🚂 Building Sovereign Hub Mobile App"
+          echo "🚂 Building Africa Railways Mobile App"
           echo "Platform: $PLATFORM"
           echo "Profile: $PROFILE"
+          echo "Note: Using app-specific profile (not generic 'production')"
           
           eas build \
             --platform $PLATFORM \
