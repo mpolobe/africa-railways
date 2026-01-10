@@ -25,10 +25,10 @@ const APP_CONFIGS = {
   },
   sentinel: {
     name: "Sentinel Portal",
-    slug: "sentinel-portal",
+    slug: "africa-railways-app", // Must match the project ID slug
     package: "com.mpolobe.sentinel",
     bundleIdentifier: "com.mpolobe.sentinel",
-    projectId: "82efeb87-20c5-45b4-b945-65d4b9074c32", // Use Railways project for now
+    projectId: "82efeb87-20c5-45b4-b945-65d4b9074c32",
     cameraPermission: "Allow Sentinel to scan track checkpoint QR codes.",
     backgroundColor: "#FFB800",
     description: "Track worker safety monitoring and reporting"
