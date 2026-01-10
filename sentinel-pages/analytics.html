@@ -27,7 +27,31 @@
     </style>
 </head>
 <body>
-    <div class="header"><div class="logo">🛡️ Sentinel</div></div>
+        <div class="header">
+        <div class="header-left">
+            <div class="logo">🛡️ Sentinel Dashboard</div>
+            <input type="text" class="search-bar" placeholder="Search..." style="width: 200px;">
+        </div>
+        <div class="header-right">
+            <div class="live-indicator">
+                <div class="live-dot"></div>
+                LIVE
+            </div>
+            <button class="icon-btn" title="Notifications">
+                🔔
+                <span class="badge">3</span>
+            </button>
+            <button class="icon-btn" onclick="window.location.href='settings.html'" title="Settings">
+                ⚙️
+            </button>
+            <button class="icon-btn" title="Profile">
+                👤
+            </button>
+            <button class="icon-btn" onclick="logout()" title="Logout" style="background: #f02849;">
+                🚪
+            </button>
+        </div>
+    </div></div>
     <div class="main-container">
         <div class="sidebar-left">
             <a href="../sentinel-dashboard.html" class="menu-item"><div class="menu-icon">📊</div><span>Dashboard</span></a>
@@ -57,5 +81,13 @@
             </div>
         </div>
     </div>
+    <script>
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('sentinel_session');
+                window.location.href = '../index.html';
+            }
+        }
+    </script>
 </body>
 </html>
