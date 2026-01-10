@@ -35,10 +35,10 @@ const APP_CONFIGS = {
   },
   staff: {
     name: "Staff Verification",
-    slug: "staff-verification",
+    slug: "africa-railways-app", // Must match the project ID slug
     package: "com.mpolobe.staff",
     bundleIdentifier: "com.mpolobe.staff",
-    projectId: "82efeb87-20c5-45b4-b945-65d4b9074c32", // Use Railways project for now
+    projectId: "82efeb87-20c5-45b4-b945-65d4b9074c32",
     cameraPermission: "Allow Staff Verification to scan passenger tickets.",
     backgroundColor: "#0066CC",
     description: "Railway staff ticket verification tool"
