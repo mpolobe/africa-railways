@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel Menu Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            background: #18191a;
+            color: #e4e6eb;
+        }
+        .test-section {
+            background: #242526;
+            border: 1px solid #3e4042;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .pass {
+            background: rgba(0, 208, 132, 0.2);
+            color: #00d084;
+        }
+        .fail {
+            background: rgba(240, 40, 73, 0.2);
+            color: #f02849;
+        }
+        h1 { color: #FFB800; }
+        h2 { color: #1877f2; }
+        button {
+            background: #1877f2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1565c0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🛡️ Sentinel Dashboard Menu Consistency Test</h1>
+    
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="test-results"></div>
+        <button onclick="runTests()">Run Tests</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Quick Navigation Test</h2>
+        <p>Click these buttons to verify navigation works:</p>
+        <button onclick="window.location.href='sentinel-dashboard.html'">Main Dashboard</button>
+        <button onclick="window.location.href='sentinel-pages/maintenance.html'">Maintenance</button>
+        <button onclick="window.location.href='sentinel-pages/notifications.html'">Notifications</button>
+        <button onclick="window.location.href='sentinel-pages/rolling-stock.html'">Rolling Stock</button>
+        <button onclick="window.location.href='sentinel-pages/bookings.html'">Bookings</button>
+    </div>
+
+    <script>
+        async function runTests() {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = '<p>Running tests...</p>';
+            
+            const tests = [];
+            const pages = [
+                'sentinel-dashboard.html',
+                'sentinel-pages/alerts.html',
+                'sentinel-pages/analytics.html',
+                'sentinel-pages/bookings.html',
+                'sentinel-pages/maintenance.html',
+                'sentinel-pages/notifications.html',
+                'sentinel-pages/payments.html',
+                'sentinel-pages/rolling-stock.html',
+                'sentinel-pages/routes.html',
+                'sentinel-pages/settings.html',
+                'sentinel-pages/users.html'
+            ];
+
+            for (const page of pages) {
+                try {
+                    const response = await fetch(page);
+                    const html = await response.text();
+                    
+                    const hasMenuItems = (html.match(/class="menu-item"/g) || []).length >= 10;
+                    const hasProfileButton = html.includes('Profile') || html.includes('openProfile');
+                    const hasLogoutFunction = html.includes('function logout()');
+                    const hasHeader = html.includes('class="header"');
+                    const hasSidebar = html.includes('sidebar-left');
+                    
+                    tests.push({
+                        page: page.split('/').pop(),
+                        hasMenuItems,
+                        hasProfileButton,
+                        hasLogoutFunction,
+                        hasHeader,
+                        hasSidebar,
+                        passed: hasMenuItems && hasProfileButton && hasLogoutFunction && hasHeader && hasSidebar
+                    });
+                } catch (error) {
+                    tests.push({
+                        page: page.split('/').pop(),
+                        error: error.message,
+                        passed: false
+                    });
+                }
+            }
+
+            // Display results
+            let html = '<h3>Test Summary</h3>';
+            const passedCount = tests.filter(t => t.passed).length;
+            const totalCount = tests.length;
+            
+            html += `<div class="test-result ${passedCount === totalCount ? 'pass' : 'fail'}">`;
+            html += `<strong>${passedCount}/${totalCount} pages passed all tests</strong>`;
+            html += '</div>';
+
+            html += '<h3>Detailed Results</h3>';
+            tests.forEach(test => {
+                html += `<div class="test-result ${test.passed ? 'pass' : 'fail'}">`;
+                html += `<strong>${test.page}</strong><br>`;
+                if (test.error) {
+                    html += `Error: ${test.error}`;
+                } else {
+                    html += `Menu Items: ${test.hasMenuItems ? '✓' : '✗'} | `;
+                    html += `Profile Button: ${test.hasProfileButton ? '✓' : '✗'} | `;
+                    html += `Logout Function: ${test.hasLogoutFunction ? '✓' : '✗'} | `;
+                    html += `Header: ${test.hasHeader ? '✓' : '✗'} | `;
+                    html += `Sidebar: ${test.hasSidebar ? '✓' : '✗'}`;
+                }
+                html += '</div>';
+            });
+
+            resultsDiv.innerHTML = html;
+        }
+
+        // Auto-run tests on load
+        window.addEventListener('DOMContentLoaded', runTests);
+    </script>
+</body>
+</html>
