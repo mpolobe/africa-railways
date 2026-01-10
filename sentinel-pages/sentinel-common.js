@@ -23,7 +23,8 @@ function generateHeader(currentPage = '') {
     <div class="header">
         <div class="header-left">
             <div class="logo">
-                🛡️ Sentinel Dashboard
+                <img src="https://fuchsia-written-horse-361.mypinata.cloud/ipfs/bafkreihazljw6e4axcfro62q4l65cy6xukenisy2h7t2aws7iyop3lebcm" alt="Sentinel Logo" class="logo-img">
+                Sentinel Dashboard
             </div>
             <input type="text" class="search-bar" placeholder="Search activities, users...">
         </div>
@@ -91,6 +92,23 @@ function generateSidebar(activePage = 'dashboard') {
 
 // Common CSS styles for all sentinel pages
 const commonStyles = `
+    .logo-img {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        animation: glow 2s ease-in-out infinite;
+        filter: drop-shadow(0 0 8px rgba(255, 184, 0, 0.6));
+    }
+
+    @keyframes glow {
+        0%, 100% {
+            filter: drop-shadow(0 0 8px rgba(255, 184, 0, 0.6));
+        }
+        50% {
+            filter: drop-shadow(0 0 16px rgba(255, 184, 0, 0.9)) drop-shadow(0 0 24px rgba(255, 184, 0, 0.5));
+        }
+    }
+
     .header-right {
         display: flex;
         align-items: center;
