@@ -1,0 +1,30 @@
+run:
+  timeout: 5m
+  skip-dirs:
+    - cmd/mint-ticket
+    - cmd/mint-ticket-full
+    - cmd/mint-sponsored-ticket
+    - cmd/invisible-ticket
+  skip-files:
+    - ".*_test\\.go$"
+
+linters:
+  enable:
+    - gofmt
+    - govet
+    - errcheck
+    - staticcheck
+    - unused
+    - gosimple
+    - ineffassign
+
+linters-settings:
+  govet:
+    check-shadowing: false
+  errcheck:
+    check-blank: false
+
+issues:
+  exclude-use-default: false
+  max-issues-per-linter: 0
+  max-same-issues: 0
