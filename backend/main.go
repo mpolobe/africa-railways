@@ -205,6 +205,10 @@ func main() {
 	mux.HandleFunc("/api/sentinel/report", sentinelReportHandler)
 	mux.HandleFunc("/api/sentinel/location", sentinelLocationHandler)
 	mux.HandleFunc("/api/sentinel/status", sentinelStatusHandler)
+	
+	// Facebook integration endpoints
+	mux.HandleFunc("/api/facebook/share", facebookShareHandler)
+	mux.HandleFunc("/api/facebook/status", facebookStatusHandler)
 
 	log.Println("🛰️  Sentinel Engine Live on :" + port)
 	log.Println("📡 WebSocket endpoint: /ws")
@@ -214,5 +218,6 @@ func main() {
 	log.Println("📰 Newsfeed API: /api/newsfeed/*")
 	log.Println("🔔 Notifications API: /api/notifications/*")
 	log.Println("📱 Sentinel Mobile API: /api/sentinel/*")
+	log.Println("📘 Facebook API: /api/facebook/*")
 	log.Fatal(http.ListenAndServe(":"+port, corsMiddleware(mux)))
 }

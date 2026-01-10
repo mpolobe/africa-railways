@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sentinel Dashboard - Africa Railways</title>
+    
+    <!-- Facebook SDK -->
+    <meta property="og:url" content="https://dashboard.africarailways.com" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Sentinel Dashboard - Africa Railways" />
+    <meta property="og:description" content="Real-time railway monitoring and sentinel network" />
+    <meta property="og:image" content="https://dashboard.africarailways.com/sentinel-logo.png" />
+    
     <style>
         * {
             margin: 0;
@@ -1700,7 +1708,37 @@
         </div>
     </div>
 
+    <!-- Facebook SDK -->
+    <script async defer crossorigin="anonymous" 
+            src="https://connect.facebook.net/en_US/sdk.js"></script>
+    
     <script>
+        // Facebook SDK Configuration
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId      : '1234567890', // Replace with your Facebook App ID
+                cookie     : true,
+                xfbml      : true,
+                version    : 'v18.0'
+            });
+            
+            FB.AppEvents.logPageView();
+            
+            // Check login status
+            FB.getLoginStatus(function(response) {
+                statusChangeCallback(response);
+            });
+        };
+
+        function statusChangeCallback(response) {
+            if (response.status === 'connected') {
+                console.log('✅ Connected to Facebook');
+                document.getElementById('fb-status')?.classList.add('connected');
+            } else {
+                console.log('⚠️ Not connected to Facebook');
+            }
+        }
+
         // WebSocket connection
         let ws;
         let reconnectInterval;
@@ -2237,8 +2275,8 @@
                         <button class="post-action" onclick="toggleComments('${post.id}')">
                             💬 Comment
                         </button>
-                        <button class="post-action">
-                            🔗 Share
+                        <button class="post-action" onclick="shareToFacebook('${post.id}')">
+                            📘 Share to Facebook
                         </button>
                     </div>
                     <div class="post-comments" id="comments-${post.id}" style="display: none;">
@@ -2477,6 +2515,150 @@
                 if (confirm('Are you sure you want to delete this post?')) {
                     console.log('Delete post:', postId);
                 }
+            }
+        }
+
+        // ============================================
+        // FACEBOOK SHARING
+        // ============================================
+
+        async function shareToFacebook(postId) {
+            const post = newsfeedPosts.find(p => p.id === postId);
+            if (!post) {
+                alert('Post not found');
+                return;
+            }
+
+            // Confirm before sharing
+            if (!confirm(`Share this post to facebook.com/afrcsentinel?\n\n"${post.content.substring(0, 100)}..."`)) {
+                return;
+            }
+
+            try {
+                // Use backend API to share (more secure)
+                const response = await fetch('/api/facebook/share', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        post_id: post.id,
+                        message: post.content
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ Successfully shared to facebook.com/afrcsentinel!');
+                    console.log('Facebook Post ID:', data.facebook_id);
+                } else {
+                    throw new Error(data.error || 'Failed to share');
+                }
+            } catch (error) {
+                console.error('Error sharing to Facebook:', error);
+                alert('❌ Failed to share to Facebook: ' + error.message);
+            }
+        }
+
+        async function publishToFacebookPage(post) {
+            try {
+                // Get page access token
+                FB.api('/me/accounts', function(response) {
+                    if (response && !response.error) {
+                        // Find the afrcsentinel page
+                        const page = response.data.find(p => 
+                            p.name.toLowerCase().includes('sentinel') || 
+                            p.id === 'YOUR_PAGE_ID' // Replace with actual page ID
+                        );
+
+                        if (page) {
+                            // Post to the page
+                            const message = `${post.content}\n\n#AfricaRailways #Sentinel #RailwaySafety`;
+                            
+                            FB.api(
+                                `/${page.id}/feed`,
+                                'POST',
+                                {
+                                    message: message,
+                                    access_token: page.access_token
+                                },
+                                function(response) {
+                                    if (response && !response.error) {
+                                        alert('✅ Successfully shared to Facebook page!');
+                                        console.log('Post ID:', response.id);
+                                    } else {
+                                        console.error('Error posting to page:', response.error);
+                                        alert('❌ Failed to share to Facebook: ' + response.error.message);
+                                    }
+                                }
+                            );
+                        } else {
+                            alert('❌ Sentinel page not found. Please make sure you have admin access to facebook.com/afrcsentinel');
+                        }
+                    } else {
+                        console.error('Error getting pages:', response.error);
+                        alert('❌ Failed to get Facebook pages');
+                    }
+                });
+            } catch (error) {
+                console.error('Error sharing to Facebook:', error);
+                alert('❌ Failed to share to Facebook');
+            }
+        }
+
+        // Alternative: Share using Facebook Share Dialog (doesn't require page access)
+        function shareToFacebookDialog(postId) {
+            const post = newsfeedPosts.find(p => p.id === postId);
+            if (!post) {
+                alert('Post not found');
+                return;
+            }
+
+            FB.ui({
+                method: 'share',
+                href: window.location.href,
+                quote: post.content,
+                hashtag: '#AfricaRailways'
+            }, function(response) {
+                if (response && !response.error_message) {
+                    alert('✅ Successfully shared to Facebook!');
+                } else {
+                    console.error('Error sharing:', response);
+                }
+            });
+        }
+
+        // Post directly to facebook.com/afrcsentinel using Page Access Token
+        async function postToSentinelPage(post) {
+            const PAGE_ID = 'YOUR_PAGE_ID'; // Replace with actual page ID
+            const PAGE_ACCESS_TOKEN = 'YOUR_PAGE_ACCESS_TOKEN'; // Replace with page access token
+
+            try {
+                const message = `${post.content}\n\n#AfricaRailways #Sentinel #RailwaySafety`;
+                
+                const response = await fetch(`https://graph.facebook.com/v18.0/${PAGE_ID}/feed`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        access_token: PAGE_ACCESS_TOKEN
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.id) {
+                    alert('✅ Successfully posted to facebook.com/afrcsentinel!');
+                    console.log('Facebook Post ID:', data.id);
+                } else {
+                    throw new Error(data.error?.message || 'Failed to post');
+                }
+            } catch (error) {
+                console.error('Error posting to Facebook:', error);
+                alert('❌ Failed to post to Facebook: ' + error.message);
             }
         }
 
