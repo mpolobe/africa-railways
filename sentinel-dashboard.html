@@ -514,6 +514,26 @@
             padding: 16px;
             border: 1px solid var(--border);
             position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .map-container.fullscreen {
+            position: fixed;
+            top: 64px;
+            left: 280px;
+            right: 0;
+            bottom: 0;
+            z-index: 999;
+            border-radius: 0;
+            margin: 0 !important;
+            max-height: calc(100vh - 64px);
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .map-container.fullscreen {
+                left: 0;
+            }
         }
 
         .map-title {
@@ -927,8 +947,13 @@
         <!-- Right Sidebar -->
         <div class="sidebar-right">
             <!-- Africa Map with Sentinel Locations -->
-            <div class="map-container" style="margin-bottom: 20px;">
-                <div class="map-title">📍 Sentinel Network</div>
+            <div class="map-container" id="map-container" style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div class="map-title" style="margin: 0;">📍 Sentinel Network</div>
+                    <button class="icon-btn" onclick="toggleMapFullscreen()" id="map-fullscreen-btn" title="Toggle Fullscreen" style="width: 32px; height: 32px; font-size: 16px;">
+                        ⛶
+                    </button>
+                </div>
                 <svg id="africa-map" viewBox="0 0 800 800">
                     <!-- Simplified Africa Outline -->
                     <path d="M300,100 L500,100 L600,300 L550,600 L400,750 L200,600 L150,300 Z" 
@@ -1419,6 +1444,24 @@
                 localStorage.removeItem('sentinel_session');
                 // Redirect to homepage
                 window.location.href = '/index.html';
+            }
+        }
+
+        // Toggle map fullscreen
+        function toggleMapFullscreen() {
+            const mapContainer = document.getElementById('map-container');
+            const fullscreenBtn = document.getElementById('map-fullscreen-btn');
+            
+            if (mapContainer.classList.contains('fullscreen')) {
+                // Exit fullscreen
+                mapContainer.classList.remove('fullscreen');
+                fullscreenBtn.innerHTML = '⛶';
+                fullscreenBtn.title = 'Expand Fullscreen';
+            } else {
+                // Enter fullscreen
+                mapContainer.classList.add('fullscreen');
+                fullscreenBtn.innerHTML = '⛶';
+                fullscreenBtn.title = 'Exit Fullscreen';
             }
         }
 
