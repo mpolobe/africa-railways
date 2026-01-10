@@ -11,6 +11,12 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
         :root {
             --primary: #1877f2;
             --secondary: #42b72a;
@@ -30,6 +36,7 @@
             background: var(--dark);
             color: var(--text-primary);
             line-height: 1.6;
+            min-height: 100vh;
         }
 
         /* Header */
@@ -111,17 +118,99 @@
             display: grid;
             grid-template-columns: 280px 1fr 320px;
             gap: 20px;
-            max-width: 1920px;
+            max-width: 100%;
+            width: 100%;
             margin: 0 auto;
             padding: 20px;
+            min-height: calc(100vh - 80px);
         }
 
-        @media (max-width: 1200px) {
+        /* Tablet Layout (iPad, medium screens) */
+        @media (max-width: 1400px) and (min-width: 769px) {
+            .main-container {
+                grid-template-columns: 240px 1fr 280px;
+                gap: 16px;
+                padding: 16px;
+            }
+            .feed {
+                max-width: 100%;
+            }
+        }
+
+        /* Mobile Layout (phones, small tablets) */
+        @media (max-width: 768px) {
             .main-container {
                 grid-template-columns: 1fr;
+                padding: 12px;
+                gap: 12px;
             }
             .sidebar-left, .sidebar-right {
                 display: none;
+            }
+            .header {
+                padding: 10px 12px;
+            }
+            .header-left {
+                gap: 10px;
+            }
+            .logo {
+                font-size: 18px;
+            }
+            .search-bar {
+                display: none;
+            }
+            .header-right {
+                gap: 8px;
+            }
+            .icon-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+            }
+            .live-indicator {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+            .feed {
+                max-width: 100%;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            .stat-card {
+                padding: 12px;
+            }
+            .stat-value {
+                font-size: 24px;
+            }
+            .card {
+                padding: 12px;
+            }
+            .card-header {
+                gap: 10px;
+            }
+            .avatar {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+            .user-name {
+                font-size: 14px;
+            }
+            .user-meta {
+                font-size: 12px;
+            }
+            .activity-content {
+                font-size: 14px;
+            }
+        }
+
+        /* Large Desktop - Full Width */
+        @media (min-width: 1920px) {
+            .main-container {
+                max-width: 100%;
+                padding: 24px;
             }
         }
 
@@ -166,8 +255,9 @@
 
         /* Feed */
         .feed {
-            max-width: 680px;
-            margin: 0 auto;
+            max-width: 100%;
+            width: 100%;
+            margin: 0;
         }
 
         .card {
