@@ -1,5 +1,8 @@
 run:
   timeout: 5m
+  # Only lint main backend code, skip cmd utilities
+  skip-dirs:
+    - cmd
 
 linters:
   enable:
@@ -22,10 +25,3 @@ issues:
   exclude-use-default: false
   max-issues-per-linter: 0
   max-same-issues: 0
-  exclude-dirs:
-    - cmd/mint-ticket
-    - cmd/mint-ticket-full
-    - cmd/mint-sponsored-ticket
-    - cmd/invisible-ticket
-  exclude-files:
-    - ".*_test\\.go$"
