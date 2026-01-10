@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rolling Stock - Sentinel Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1877f2;
+            --secondary: #42b72a;
+            --dark: #18191a;
+            --surface: #242526;
+            --hover: #3a3b3c;
+            --border: #3e4042;
+            --text-primary: #e4e6eb;
+            --text-secondary: #b0b3b8;
+            --gold: #FFB800;
+            --success: #00d084;
+            --danger: #f02849;
+            --warning: #FFA500;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: var(--hover);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 20px;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--border);
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 4px;
+            background: var(--hover);
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        .view-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .view-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .stat-icon {
+            font-size: 32px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .stat-change {
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .stat-change.positive {
+            color: var(--success);
+        }
+
+        .stat-change.negative {
+            color: var(--danger);
+        }
+
+        .filters {
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .filter-select {
+            background: var(--hover);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            background: var(--hover);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        /* Card View */
+        .rolling-stock-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .stock-card {
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .stock-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border-color: var(--gold);
+        }
+
+        .stock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .stock-id {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .stock-type {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-operational {
+            background: rgba(0, 208, 132, 0.2);
+            color: var(--success);
+        }
+
+        .status-maintenance {
+            background: rgba(255, 165, 0, 0.2);
+            color: var(--warning);
+        }
+
+        .status-depot {
+            background: rgba(176, 179, 184, 0.2);
+            color: var(--text-secondary);
+        }
+
+        .status-inactive {
+            background: rgba(240, 40, 73, 0.2);
+            color: var(--danger);
+        }
+
+        .stock-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .stock-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .last-service {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            background: var(--primary);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .action-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* List View */
+        .rolling-stock-list {
+            display: none;
+        }
+
+        .rolling-stock-list.active {
+            display: block;
+        }
+
+        .rolling-stock-grid.active {
+            display: grid;
+        }
+
+        .list-table {
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 120px;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--hover);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 120px;
+            gap: 16px;
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .table-row:hover {
+            background: var(--hover);
+        }
+
+        .table-cell {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .rolling-stock-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-header,
+            .table-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .table-header {
+                display: none;
+            }
+
+            .table-cell::before {
+                content: attr(data-label);
+                font-weight: 600;
+                margin-right: 8px;
+                color: var(--text-secondary);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <a href="../sentinel-dashboard.html" class="back-btn">←</a>
+            <div class="page-title">🚃 Rolling Stock</div>
+        </div>
+        <div class="header-right">
+            <div class="view-toggle">
+                <button class="view-btn active" onclick="switchView('grid')">📱 Cards</button>
+                <button class="view-btn" onclick="switchView('list')">📋 List</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Stats Overview -->
+        <div class="stats-overview">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value" id="total-stock">45</div>
+                        <div class="stat-label">Total Rolling Stock</div>
+                    </div>
+                    <div class="stat-icon">🚂</div>
+                </div>
+                <div class="stat-change positive">↑ 2 added this month</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value" id="operational-stock">32</div>
+                        <div class="stat-label">On Tracks</div>
+                    </div>
+                    <div class="stat-icon">✅</div>
+                </div>
+                <div class="stat-change positive">↑ 71% operational</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value" id="depot-stock">13</div>
+                        <div class="stat-label">In Depot</div>
+                    </div>
+                    <div class="stat-icon">🏢</div>
+                </div>
+                <div class="stat-change">29% in storage</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value" id="maintenance-stock">3</div>
+                        <div class="stat-label">Under Maintenance</div>
+                    </div>
+                    <div class="stat-icon">🔧</div>
+                </div>
+                <div class="stat-change negative">↓ 2 less than last week</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <span class="filter-label">Filter:</span>
+            <select class="filter-select" id="status-filter" onchange="filterStock()">
+                <option value="all">All Status</option>
+                <option value="operational">Operational</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="depot">In Depot</option>
+                <option value="inactive">Inactive</option>
+            </select>
+            <select class="filter-select" id="type-filter" onchange="filterStock()">
+                <option value="all">All Types</option>
+                <option value="locomotive">Locomotive</option>
+                <option value="passenger">Passenger Car</option>
+                <option value="freight">Freight Car</option>
+                <option value="dining">Dining Car</option>
+            </select>
+            <input type="text" class="search-box" id="search-box" placeholder="Search by ID, route, or location..." oninput="filterStock()">
+        </div>
+
+        <!-- Card View -->
+        <div class="rolling-stock-grid active" id="grid-view">
+            <!-- Cards will be inserted here by JavaScript -->
+        </div>
+
+        <!-- List View -->
+        <div class="rolling-stock-list" id="list-view">
+            <div class="list-table">
+                <div class="table-header">
+                    <div>Stock ID</div>
+                    <div>Type</div>
+                    <div>Status</div>
+                    <div>Location</div>
+                    <div>Route</div>
+                    <div>Last Service</div>
+                    <div>Actions</div>
+                </div>
+                <div id="list-content">
+                    <!-- Rows will be inserted here by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock rolling stock data
+        const rollingStockData = [
+            {
+                id: 'LOC-001',
+                type: 'Locomotive',
+                status: 'operational',
+                location: 'Lusaka Station',
+                route: 'Lusaka-Livingstone',
+                capacity: '2000 HP',
+                manufacturer: 'GE Transportation',
+                yearBuilt: 2018,
+                lastService: '2 days ago',
+                mileage: '125,430 km'
+            },
+            {
+                id: 'LOC-002',
+                type: 'Locomotive',
+                status: 'operational',
+                location: 'Kapiri Mposhi',
+                route: 'TAZARA Line',
+                capacity: '2200 HP',
+                manufacturer: 'Siemens',
+                yearBuilt: 2020,
+                lastService: '1 week ago',
+                mileage: '89,200 km'
+            },
+            {
+                id: 'PC-015',
+                type: 'Passenger Car',
+                status: 'operational',
+                location: 'Livingstone',
+                route: 'Lusaka-Livingstone',
+                capacity: '72 seats',
+                manufacturer: 'Bombardier',
+                yearBuilt: 2019,
+                lastService: '5 days ago',
+                mileage: '98,500 km'
+            },
+            {
+                id: 'PC-023',
+                type: 'Passenger Car',
+                status: 'maintenance',
+                location: 'Kabwe Workshop',
+                route: 'N/A',
+                capacity: '72 seats',
+                manufacturer: 'Bombardier',
+                yearBuilt: 2017,
+                lastService: 'In progress',
+                mileage: '156,800 km'
+            },
+            {
+                id: 'FC-042',
+                type: 'Freight Car',
+                status: 'operational',
+                location: 'Ndola',
+                route: 'Copper Belt Line',
+                capacity: '60 tons',
+                manufacturer: 'FreightCar America',
+                yearBuilt: 2016,
+                lastService: '3 weeks ago',
+                mileage: '203,400 km'
+            },
+            {
+                id: 'DC-008',
+                type: 'Dining Car',
+                status: 'depot',
+                location: 'Lusaka Depot',
+                route: 'N/A',
+                capacity: '48 seats',
+                manufacturer: 'Alstom',
+                yearBuilt: 2019,
+                lastService: '1 month ago',
+                mileage: '67,200 km'
+            },
+            {
+                id: 'LOC-003',
+                type: 'Locomotive',
+                status: 'maintenance',
+                location: 'Kabwe Workshop',
+                route: 'N/A',
+                capacity: '1800 HP',
+                manufacturer: 'GE Transportation',
+                yearBuilt: 2015,
+                lastService: 'In progress',
+                mileage: '287,600 km'
+            },
+            {
+                id: 'PC-031',
+                type: 'Passenger Car',
+                status: 'operational',
+                location: 'Choma',
+                route: 'Lusaka-Livingstone',
+                capacity: '64 seats',
+                manufacturer: 'CAF',
+                yearBuilt: 2021,
+                lastService: '1 week ago',
+                mileage: '45,300 km'
+            }
+        ];
+
+        let filteredData = [...rollingStockData];
+
+        function renderGridView() {
+            const gridView = document.getElementById('grid-view');
+            gridView.innerHTML = filteredData.map(stock => `
+                <div class="stock-card" onclick="viewStockDetails('${stock.id}')">
+                    <div class="stock-header">
+                        <div>
+                            <div class="stock-id">${stock.id}</div>
+                            <div class="stock-type">${stock.type}</div>
+                        </div>
+                        <span class="status-badge status-${stock.status}">${stock.status.toUpperCase()}</span>
+                    </div>
+                    <div class="stock-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Location</div>
+                            <div class="detail-value">${stock.location}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Route</div>
+                            <div class="detail-value">${stock.route}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Capacity</div>
+                            <div class="detail-value">${stock.capacity}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Mileage</div>
+                            <div class="detail-value">${stock.mileage}</div>
+                        </div>
+                    </div>
+                    <div class="stock-footer">
+                        <div class="last-service">Last service: ${stock.lastService}</div>
+                        <button class="action-btn" onclick="event.stopPropagation(); viewStockDetails('${stock.id}')">View Details</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderListView() {
+            const listContent = document.getElementById('list-content');
+            listContent.innerHTML = filteredData.map(stock => `
+                <div class="table-row" onclick="viewStockDetails('${stock.id}')">
+                    <div class="table-cell" data-label="Stock ID">${stock.id}</div>
+                    <div class="table-cell" data-label="Type">${stock.type}</div>
+                    <div class="table-cell" data-label="Status">
+                        <span class="status-badge status-${stock.status}">${stock.status.toUpperCase()}</span>
+                    </div>
+                    <div class="table-cell" data-label="Location">${stock.location}</div>
+                    <div class="table-cell" data-label="Route">${stock.route}</div>
+                    <div class="table-cell" data-label="Last Service">${stock.lastService}</div>
+                    <div class="table-cell" data-label="Actions">
+                        <button class="action-btn" onclick="event.stopPropagation(); viewStockDetails('${stock.id}')">View</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function switchView(view) {
+            const gridView = document.getElementById('grid-view');
+            const listView = document.getElementById('list-view');
+            const buttons = document.querySelectorAll('.view-btn');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            if (view === 'grid') {
+                gridView.classList.add('active');
+                listView.classList.remove('active');
+                buttons[0].classList.add('active');
+                renderGridView();
+            } else {
+                gridView.classList.remove('active');
+                listView.classList.add('active');
+                buttons[1].classList.add('active');
+                renderListView();
+            }
+        }
+
+        function filterStock() {
+            const statusFilter = document.getElementById('status-filter').value;
+            const typeFilter = document.getElementById('type-filter').value;
+            const searchBox = document.getElementById('search-box').value.toLowerCase();
+
+            filteredData = rollingStockData.filter(stock => {
+                const matchesStatus = statusFilter === 'all' || stock.status === statusFilter;
+                const matchesType = typeFilter === 'all' || stock.type.toLowerCase() === typeFilter;
+                const matchesSearch = searchBox === '' || 
+                    stock.id.toLowerCase().includes(searchBox) ||
+                    stock.location.toLowerCase().includes(searchBox) ||
+                    stock.route.toLowerCase().includes(searchBox);
+
+                return matchesStatus && matchesType && matchesSearch;
+            });
+
+            // Re-render current view
+            if (document.getElementById('grid-view').classList.contains('active')) {
+                renderGridView();
+            } else {
+                renderListView();
+            }
+        }
+
+        function viewStockDetails(stockId) {
+            const stock = rollingStockData.find(s => s.id === stockId);
+            if (stock) {
+                alert(`Detailed view for ${stock.id}\n\nType: ${stock.type}\nStatus: ${stock.status}\nLocation: ${stock.location}\nRoute: ${stock.route}\nCapacity: ${stock.capacity}\nManufacturer: ${stock.manufacturer}\nYear Built: ${stock.yearBuilt}\nMileage: ${stock.mileage}\nLast Service: ${stock.lastService}`);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGridView();
+        });
+    </script>
+</body>
+</html>

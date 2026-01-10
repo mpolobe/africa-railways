@@ -38,8 +38,8 @@ var (
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)
 			return
@@ -175,16 +175,44 @@ func main() {
 	// Validate environment variables
 	port := validateEnvironment()
 
+	// Initialize newsfeed database
+	if err := InitNewsfeedDB(); err != nil {
+		log.Printf("⚠️  Newsfeed DB initialization failed: %v", err)
+		log.Println("   Continuing with in-memory storage")
+	}
+
+	// Initialize notifications
+	InitNotifications()
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/ws", wsHandler)
 	mux.HandleFunc("/add-event", addEventHandler)
 	mux.HandleFunc("/health", healthHandler)
 	mux.HandleFunc("/api/reports", reportsHandler)
+	
+	// Newsfeed endpoints
+	mux.HandleFunc("/api/newsfeed/posts", newsfeedPostsHandler)
+	mux.HandleFunc("/api/newsfeed/comments", newsfeedCommentsHandler)
+	mux.HandleFunc("/api/newsfeed/like", newsfeedLikeHandler)
+	
+	// Notification endpoints
+	mux.HandleFunc("/api/notifications", notificationsHandler)
+	mux.HandleFunc("/api/notifications/action", notificationActionHandler)
+	mux.HandleFunc("/api/notifications/count", notificationCountHandler)
+	
+	// Sentinel mobile app endpoints
+	mux.HandleFunc("/api/sentinel/alert", sentinelAlertHandler)
+	mux.HandleFunc("/api/sentinel/report", sentinelReportHandler)
+	mux.HandleFunc("/api/sentinel/location", sentinelLocationHandler)
+	mux.HandleFunc("/api/sentinel/status", sentinelStatusHandler)
 
 	log.Println("🛰️  Sentinel Engine Live on :" + port)
 	log.Println("📡 WebSocket endpoint: /ws")
 	log.Println("📩 Add event endpoint: /add-event")
 	log.Println("💚 Health check: /health")
 	log.Println("📊 Reports API: /api/reports")
+	log.Println("📰 Newsfeed API: /api/newsfeed/*")
+	log.Println("🔔 Notifications API: /api/notifications/*")
+	log.Println("📱 Sentinel Mobile API: /api/sentinel/*")
 	log.Fatal(http.ListenAndServe(":"+port, corsMiddleware(mux)))
 }

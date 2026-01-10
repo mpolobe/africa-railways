@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maintenance - Sentinel Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1877f2;
+            --secondary: #42b72a;
+            --dark: #18191a;
+            --surface: #242526;
+            --hover: #3a3b3c;
+            --border: #3e4042;
+            --text-primary: #e4e6eb;
+            --text-secondary: #b0b3b8;
+            --gold: #FFB800;
+            --success: #00d084;
+            --danger: #f02849;
+            --warning: #FFA500;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: var(--hover);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 20px;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--border);
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .add-btn {
+            padding: 10px 20px;
+            background: var(--primary);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: opacity 0.2s;
+        }
+
+        .add-btn:hover {
+            opacity: 0.9;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 4px;
+            background: var(--hover);
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        .view-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .view-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .stat-icon {
+            font-size: 32px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .stat-change {
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .stat-change.positive {
+            color: var(--success);
+        }
+
+        .stat-change.negative {
+            color: var(--danger);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.2s;
+            margin-bottom: -2px;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .filters {
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .filter-select {
+            background: var(--hover);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            background: var(--hover);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        /* Card View */
+        .maintenance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 16px;
+        }
+
+        .maintenance-card {
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .maintenance-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border-color: var(--gold);
+        }
+
+        .maintenance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .maintenance-id {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .maintenance-stock {
+            font-size: 14px;
+            color: var(--gold);
+            margin-top: 4px;
+        }
+
+        .priority-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .priority-high {
+            background: rgba(240, 40, 73, 0.2);
+            color: var(--danger);
+        }
+
+        .priority-medium {
+            background: rgba(255, 165, 0, 0.2);
+            color: var(--warning);
+        }
+
+        .priority-low {
+            background: rgba(0, 208, 132, 0.2);
+            color: var(--success);
+        }
+
+        .maintenance-type {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--hover);
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+
+        .maintenance-details {
+            margin-bottom: 16px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .detail-label {
+            color: var(--text-secondary);
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--hover);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        .maintenance-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .technician {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            background: var(--primary);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .action-btn:hover {
+            opacity: 0.9;
+        }
+
+        .action-btn.complete {
+            background: var(--success);
+        }
+
+        /* List View */
+        .maintenance-list {
+            display: none;
+        }
+
+        .maintenance-list.active {
+            display: block;
+        }
+
+        .maintenance-grid.active {
+            display: grid;
+        }
+
+        .list-table {
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 120px;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--hover);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 120px;
+            gap: 16px;
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .table-row:hover {
+            background: var(--hover);
+        }
+
+        .table-cell {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .maintenance-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-header,
+            .table-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .table-header {
+                display: none;
+            }
+
+            .table-cell::before {
+                content: attr(data-label);
+                font-weight: 600;
+                margin-right: 8px;
+                color: var(--text-secondary);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <a href="../sentinel-dashboard.html" class="back-btn">←</a>
+            <div class="page-title">🔧 Maintenance</div>
+        </div>
+        <div class="header-right">
+            <button class="add-btn" onclick="scheduleNewMaintenance()">
+                <span>+</span> Schedule Maintenance
+            </button>
+            <div class="view-toggle">
+                <button class="view-btn active" onclick="switchView('grid')">📱 Cards</button>
+                <button class="view-btn" onclick="switchView('list')">📋 List</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Stats Overview -->
+        <div class="stats-overview">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value" id="total-maintenance">8</div>
+                        <div class="stat-label">Active Maintenance</div>
+                    </div>
+                    <div class="stat-icon">🔧</div>
+                </div>
+                <div class="stat-change">3 in workshop, 5 scheduled</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value" id="completed-maintenance">12</div>
+                        <div class="stat-label">Completed This Month</div>
+                    </div>
+                    <div class="stat-icon">✅</div>
+                </div>
+                <div class="stat-change positive">↑ 20% from last month</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value" id="avg-time">4.2</div>
+                        <div class="stat-label">Avg. Days to Complete</div>
+                    </div>
+                    <div class="stat-icon">⏱️</div>
+                </div>
+                <div class="stat-change positive">↓ 0.5 days improvement</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value" id="overdue">2</div>
+                        <div class="stat-label">Overdue</div>
+                    </div>
+                    <div class="stat-icon">⚠️</div>
+                </div>
+                <div class="stat-change negative">Requires attention</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('all')">All</button>
+            <button class="tab" onclick="switchTab('in-progress')">In Progress</button>
+            <button class="tab" onclick="switchTab('scheduled')">Scheduled</button>
+            <button class="tab" onclick="switchTab('completed')">Completed</button>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <span class="filter-label">Filter:</span>
+            <select class="filter-select" id="priority-filter" onchange="filterMaintenance()">
+                <option value="all">All Priorities</option>
+                <option value="high">High Priority</option>
+                <option value="medium">Medium Priority</option>
+                <option value="low">Low Priority</option>
+            </select>
+            <select class="filter-select" id="type-filter" onchange="filterMaintenance()">
+                <option value="all">All Types</option>
+                <option value="routine">Routine</option>
+                <option value="repair">Repair</option>
+                <option value="inspection">Inspection</option>
+                <option value="upgrade">Upgrade</option>
+            </select>
+            <input type="text" class="search-box" id="search-box" placeholder="Search by ID, stock, or technician..." oninput="filterMaintenance()">
+        </div>
+
+        <!-- Card View -->
+        <div class="maintenance-grid active" id="grid-view">
+            <!-- Cards will be inserted here by JavaScript -->
+        </div>
+
+        <!-- List View -->
+        <div class="maintenance-list" id="list-view">
+            <div class="list-table">
+                <div class="table-header">
+                    <div>Maintenance ID</div>
+                    <div>Stock</div>
+                    <div>Type</div>
+                    <div>Priority</div>
+                    <div>Status</div>
+                    <div>Technician</div>
+                    <div>Actions</div>
+                </div>
+                <div id="list-content">
+                    <!-- Rows will be inserted here by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock maintenance data
+        const maintenanceData = [
+            {
+                id: 'MNT-2024-001',
+                stockId: 'LOC-001',
+                stockType: 'Locomotive',
+                type: 'Routine',
+                priority: 'medium',
+                status: 'in-progress',
+                description: 'Regular 6-month service and inspection',
+                startDate: '2024-01-08',
+                estimatedCompletion: '2024-01-12',
+                progress: 65,
+                technician: 'James Phiri',
+                location: 'Kabwe Workshop',
+                cost: 'ZMW 45,000'
+            },
+            {
+                id: 'MNT-2024-002',
+                stockId: 'PC-023',
+                stockType: 'Passenger Car',
+                type: 'Repair',
+                priority: 'high',
+                status: 'in-progress',
+                description: 'Brake system replacement',
+                startDate: '2024-01-09',
+                estimatedCompletion: '2024-01-11',
+                progress: 80,
+                technician: 'Mary Banda',
+                location: 'Kabwe Workshop',
+                cost: 'ZMW 28,000'
+            },
+            {
+                id: 'MNT-2024-003',
+                stockId: 'LOC-003',
+                stockType: 'Locomotive',
+                type: 'Repair',
+                priority: 'high',
+                status: 'in-progress',
+                description: 'Engine overhaul and transmission repair',
+                startDate: '2024-01-05',
+                estimatedCompletion: '2024-01-15',
+                progress: 45,
+                technician: 'Peter Mwale',
+                location: 'Kabwe Workshop',
+                cost: 'ZMW 120,000'
+            },
+            {
+                id: 'MNT-2024-004',
+                stockId: 'FC-018',
+                stockType: 'Freight Car',
+                type: 'Inspection',
+                priority: 'low',
+                status: 'scheduled',
+                description: 'Annual safety inspection',
+                startDate: '2024-01-15',
+                estimatedCompletion: '2024-01-16',
+                progress: 0,
+                technician: 'Not assigned',
+                location: 'Lusaka Depot',
+                cost: 'ZMW 5,000'
+            },
+            {
+                id: 'MNT-2024-005',
+                stockId: 'PC-031',
+                stockType: 'Passenger Car',
+                type: 'Routine',
+                priority: 'medium',
+                status: 'scheduled',
+                description: 'Interior refurbishment and cleaning',
+                startDate: '2024-01-18',
+                estimatedCompletion: '2024-01-20',
+                progress: 0,
+                technician: 'Sarah Tembo',
+                location: 'Lusaka Depot',
+                cost: 'ZMW 15,000'
+            },
+            {
+                id: 'MNT-2024-006',
+                stockId: 'DC-008',
+                stockType: 'Dining Car',
+                type: 'Upgrade',
+                priority: 'low',
+                status: 'scheduled',
+                description: 'Kitchen equipment upgrade',
+                startDate: '2024-01-22',
+                estimatedCompletion: '2024-01-25',
+                progress: 0,
+                technician: 'Not assigned',
+                location: 'Lusaka Depot',
+                cost: 'ZMW 35,000'
+            },
+            {
+                id: 'MNT-2023-089',
+                stockId: 'LOC-005',
+                stockType: 'Locomotive',
+                type: 'Routine',
+                priority: 'medium',
+                status: 'completed',
+                description: 'Quarterly maintenance check',
+                startDate: '2023-12-28',
+                estimatedCompletion: '2024-01-02',
+                progress: 100,
+                technician: 'James Phiri',
+                location: 'Kabwe Workshop',
+                cost: 'ZMW 38,000'
+            },
+            {
+                id: 'MNT-2023-090',
+                stockId: 'PC-012',
+                stockType: 'Passenger Car',
+                type: 'Repair',
+                priority: 'high',
+                status: 'completed',
+                description: 'Air conditioning system repair',
+                startDate: '2024-01-03',
+                estimatedCompletion: '2024-01-05',
+                progress: 100,
+                technician: 'Mary Banda',
+                location: 'Kabwe Workshop',
+                cost: 'ZMW 22,000'
+            }
+        ];
+
+        let filteredData = [...maintenanceData];
+        let currentTab = 'all';
+
+        function renderGridView() {
+            const gridView = document.getElementById('grid-view');
+            gridView.innerHTML = filteredData.map(maint => `
+                <div class="maintenance-card" onclick="viewMaintenanceDetails('${maint.id}')">
+                    <div class="maintenance-header">
+                        <div>
+                            <div class="maintenance-id">${maint.id}</div>
+                            <div class="maintenance-stock">${maint.stockId} - ${maint.stockType}</div>
+                        </div>
+                        <span class="priority-badge priority-${maint.priority}">${maint.priority.toUpperCase()}</span>
+                    </div>
+                    <div class="maintenance-type">${maint.type}</div>
+                    <div class="maintenance-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Status:</span>
+                            <span class="detail-value">${maint.status.replace('-', ' ').toUpperCase()}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Location:</span>
+                            <span class="detail-value">${maint.location}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Start Date:</span>
+                            <span class="detail-value">${maint.startDate}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Est. Completion:</span>
+                            <span class="detail-value">${maint.estimatedCompletion}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Cost:</span>
+                            <span class="detail-value">${maint.cost}</span>
+                        </div>
+                    </div>
+                    ${maint.status === 'in-progress' ? `
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${maint.progress}%"></div>
+                        </div>
+                        <div class="progress-text">${maint.progress}% Complete</div>
+                    ` : ''}
+                    <div class="maintenance-footer">
+                        <div class="technician">👤 ${maint.technician}</div>
+                        <button class="action-btn ${maint.status === 'completed' ? 'complete' : ''}" 
+                                onclick="event.stopPropagation(); viewMaintenanceDetails('${maint.id}')">
+                            ${maint.status === 'completed' ? 'View Report' : 'View Details'}
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderListView() {
+            const listContent = document.getElementById('list-content');
+            listContent.innerHTML = filteredData.map(maint => `
+                <div class="table-row" onclick="viewMaintenanceDetails('${maint.id}')">
+                    <div class="table-cell" data-label="Maintenance ID">${maint.id}</div>
+                    <div class="table-cell" data-label="Stock">${maint.stockId}</div>
+                    <div class="table-cell" data-label="Type">${maint.type}</div>
+                    <div class="table-cell" data-label="Priority">
+                        <span class="priority-badge priority-${maint.priority}">${maint.priority.toUpperCase()}</span>
+                    </div>
+                    <div class="table-cell" data-label="Status">${maint.status.replace('-', ' ').toUpperCase()}</div>
+                    <div class="table-cell" data-label="Technician">${maint.technician}</div>
+                    <div class="table-cell" data-label="Actions">
+                        <button class="action-btn" onclick="event.stopPropagation(); viewMaintenanceDetails('${maint.id}')">View</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function switchView(view) {
+            const gridView = document.getElementById('grid-view');
+            const listView = document.getElementById('list-view');
+            const buttons = document.querySelectorAll('.view-btn');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            if (view === 'grid') {
+                gridView.classList.add('active');
+                listView.classList.remove('active');
+                buttons[0].classList.add('active');
+                renderGridView();
+            } else {
+                gridView.classList.remove('active');
+                listView.classList.add('active');
+                buttons[1].classList.add('active');
+                renderListView();
+            }
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            filterMaintenance();
+        }
+
+        function filterMaintenance() {
+            const priorityFilter = document.getElementById('priority-filter').value;
+            const typeFilter = document.getElementById('type-filter').value;
+            const searchBox = document.getElementById('search-box').value.toLowerCase();
+
+            filteredData = maintenanceData.filter(maint => {
+                const matchesTab = currentTab === 'all' || maint.status === currentTab;
+                const matchesPriority = priorityFilter === 'all' || maint.priority === priorityFilter;
+                const matchesType = typeFilter === 'all' || maint.type.toLowerCase() === typeFilter;
+                const matchesSearch = searchBox === '' || 
+                    maint.id.toLowerCase().includes(searchBox) ||
+                    maint.stockId.toLowerCase().includes(searchBox) ||
+                    maint.technician.toLowerCase().includes(searchBox);
+
+                return matchesTab && matchesPriority && matchesType && matchesSearch;
+            });
+
+            // Re-render current view
+            if (document.getElementById('grid-view').classList.contains('active')) {
+                renderGridView();
+            } else {
+                renderListView();
+            }
+        }
+
+        function viewMaintenanceDetails(maintId) {
+            const maint = maintenanceData.find(m => m.id === maintId);
+            if (maint) {
+                alert(`Maintenance Details: ${maint.id}\n\nStock: ${maint.stockId} - ${maint.stockType}\nType: ${maint.type}\nPriority: ${maint.priority}\nStatus: ${maint.status}\nDescription: ${maint.description}\nStart Date: ${maint.startDate}\nEst. Completion: ${maint.estimatedCompletion}\nProgress: ${maint.progress}%\nTechnician: ${maint.technician}\nLocation: ${maint.location}\nCost: ${maint.cost}`);
+            }
+        }
+
+        function scheduleNewMaintenance() {
+            alert('Schedule New Maintenance\n\nThis would open a form to schedule new maintenance work.');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGridView();
+        });
+    </script>
+</body>
+</html>
