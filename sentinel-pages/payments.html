@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payments - Sentinel Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; width: 100%; overflow-x: hidden; }
+        :root {
+            --primary: #1877f2; --secondary: #42b72a; --dark: #18191a;
+            --surface: #242526; --hover: #3a3b3c; --border: #3e4042;
+            --text-primary: #e4e6eb; --text-secondary: #b0b3b8;
+            --gold: #FFB800; --success: #00d084; --danger: #f02849;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--dark); color: var(--text-primary); line-height: 1.6; min-height: 100vh;
+        }
+        .header {
+            background: var(--surface); border-bottom: 1px solid var(--border);
+            padding: 12px 20px; position: sticky; top: 0; z-index: 1000;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo { font-size: 24px; font-weight: bold; color: var(--gold); display: flex; align-items: center; gap: 8px; }
+        .main-container {
+            display: grid; grid-template-columns: 280px 1fr;
+            gap: 20px; max-width: 100%; width: 100%; margin: 0 auto; padding: 20px;
+        }
+        .sidebar-left { position: sticky; top: 80px; height: fit-content; }
+        .menu-item {
+            display: flex; align-items: center; gap: 12px; padding: 12px;
+            border-radius: 8px; cursor: pointer; color: var(--text-primary);
+            text-decoration: none; transition: background 0.2s;
+        }
+        .menu-item:hover { background: var(--hover); }
+        .menu-item.active { background: var(--hover); font-weight: 600; }
+        .menu-icon {
+            font-size: 20px; width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--hover); border-radius: 50%;
+        }
+        .content { max-width: 100%; width: 100%; }
+        .page-header {
+            margin-bottom: 24px; padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .page-title { font-size: 28px; font-weight: bold; margin-bottom: 8px; }
+        .page-subtitle { color: var(--text-secondary); font-size: 14px; }
+        .card {
+            background: var(--surface); border-radius: 8px; padding: 16px;
+            margin-bottom: 16px; border: 1px solid var(--border);
+        }
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px; margin-bottom: 24px;
+        }
+        .stat-card {
+            background: var(--surface); border-radius: 8px; padding: 20px;
+            border: 1px solid var(--border); text-align: center;
+        }
+        .stat-value { font-size: 32px; font-weight: bold; color: var(--gold); margin-bottom: 8px; }
+        .stat-label { font-size: 14px; color: var(--text-secondary); }
+        .table-container { overflow-x: auto; }
+        table {
+            width: 100%; border-collapse: collapse;
+            background: var(--surface); border-radius: 8px;
+        }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: var(--hover); font-weight: 600; color: var(--text-secondary); font-size: 13px; }
+        tr:hover { background: var(--hover); }
+        .status-badge {
+            padding: 4px 12px; border-radius: 12px; font-size: 12px;
+            font-weight: 600; display: inline-block;
+        }
+        .status-completed { background: rgba(0, 208, 132, 0.2); color: var(--success); }
+        .status-pending { background: rgba(255, 165, 0, 0.2); color: #FFA500; }
+        .status-failed { background: rgba(240, 40, 73, 0.2); color: var(--danger); }
+        @media (max-width: 768px) {
+            .main-container { grid-template-columns: 1fr; }
+            .sidebar-left { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🛡️ Sentinel</div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-left">
+            <a href="../sentinel-dashboard.html" class="menu-item">
+                <div class="menu-icon">📊</div><span>Dashboard</span>
+            </a>
+            <a href="bookings.html" class="menu-item">
+                <div class="menu-icon">🎫</div><span>Bookings</span>
+            </a>
+            <a href="payments.html" class="menu-item active">
+                <div class="menu-icon">💰</div><span>Payments</span>
+            </a>
+            <a href="users.html" class="menu-item">
+                <div class="menu-icon">👥</div><span>Users</span>
+            </a>
+            <a href="routes.html" class="menu-item">
+                <div class="menu-icon">🚂</div><span>Routes</span>
+            </a>
+            <a href="analytics.html" class="menu-item">
+                <div class="menu-icon">📈</div><span>Analytics</span>
+            </a>
+            <a href="alerts.html" class="menu-item">
+                <div class="menu-icon">⚠️</div><span>Alerts</span>
+            </a>
+            <a href="settings.html" class="menu-item">
+                <div class="menu-icon">🔧</div><span>Settings</span>
+            </a>
+        </div>
+
+        <div class="content">
+            <div class="page-header">
+                <div class="page-title">💰 Payments & Transactions</div>
+                <div class="page-subtitle">Monitor all payment activities and revenue</div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">ZMW 45,280</div>
+                    <div class="stat-label">Today's Revenue</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">ZMW 1.2M</div>
+                    <div class="stat-label">Monthly Revenue</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">156</div>
+                    <div class="stat-label">Transactions Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">98.5%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 16px;">Recent Transactions</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>Customer</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Date & Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payments-table"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const payments = [
+            { id: 'TXN001', customer: 'John Mwamba', amount: 'ZMW 850', method: 'Mobile Money', date: '2026-01-10 14:30', status: 'completed' },
+            { id: 'TXN002', customer: 'Sarah Banda', amount: 'ZMW 450', method: 'Card', date: '2026-01-10 14:25', status: 'completed' },
+            { id: 'TXN003', customer: 'David Phiri', amount: 'ZMW 1200', method: 'AFRC Token', date: '2026-01-10 14:20', status: 'pending' },
+            { id: 'TXN004', customer: 'Grace Tembo', amount: 'ZMW 180', method: 'Mobile Money', date: '2026-01-10 14:15', status: 'completed' },
+            { id: 'TXN005', customer: 'Peter Zulu', amount: 'ZMW 950', method: 'Card', date: '2026-01-10 14:10', status: 'completed' },
+            { id: 'TXN006', customer: 'Mary Chanda', amount: 'ZMW 120', method: 'Mobile Money', date: '2026-01-10 14:05', status: 'failed' },
+            { id: 'TXN007', customer: 'James Mulenga', amount: 'ZMW 680', method: 'AFRC Token', date: '2026-01-10 14:00', status: 'completed' },
+            { id: 'TXN008', customer: 'Ruth Sakala', amount: 'ZMW 320', method: 'Card', date: '2026-01-10 13:55', status: 'completed' },
+        ];
+
+        const tbody = document.getElementById('payments-table');
+        tbody.innerHTML = payments.map(payment => `
+            <tr>
+                <td><strong>${payment.id}</strong></td>
+                <td>${payment.customer}</td>
+                <td><strong>${payment.amount}</strong></td>
+                <td>${payment.method}</td>
+                <td>${payment.date}</td>
+                <td><span class="status-badge status-${payment.status}">${payment.status.toUpperCase()}</span></td>
+            </tr>
+        `).join('');
+    </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users - Sentinel Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --primary: #1877f2; --dark: #18191a; --surface: #242526; --hover: #3a3b3c; --border: #3e4042; --text-primary: #e4e6eb; --text-secondary: #b0b3b8; --gold: #FFB800; --success: #00d084; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--dark); color: var(--text-primary); min-height: 100vh; }
+        .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 20px; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 24px; font-weight: bold; color: var(--gold); }
+        .main-container { display: grid; grid-template-columns: 280px 1fr; gap: 20px; padding: 20px; }
+        .sidebar-left { position: sticky; top: 80px; height: fit-content; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 8px; color: var(--text-primary); text-decoration: none; transition: background 0.2s; }
+        .menu-item:hover { background: var(--hover); }
+        .menu-item.active { background: var(--hover); font-weight: 600; }
+        .menu-icon { font-size: 20px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--hover); border-radius: 50%; }
+        .page-title { font-size: 28px; font-weight: bold; margin-bottom: 24px; }
+        .card { background: var(--surface); border-radius: 8px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border); }
+        .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+        .user-card { background: var(--hover); padding: 16px; border-radius: 8px; text-align: center; }
+        .user-avatar { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--success)); margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; }
+        @media (max-width: 768px) { .main-container { grid-template-columns: 1fr; } .sidebar-left { display: none; } }
+    </style>
+</head>
+<body>
+    <div class="header"><div class="logo">🛡️ Sentinel</div></div>
+    <div class="main-container">
+        <div class="sidebar-left">
+            <a href="../sentinel-dashboard.html" class="menu-item"><div class="menu-icon">📊</div><span>Dashboard</span></a>
+            <a href="bookings.html" class="menu-item"><div class="menu-icon">🎫</div><span>Bookings</span></a>
+            <a href="payments.html" class="menu-item"><div class="menu-icon">💰</div><span>Payments</span></a>
+            <a href="users.html" class="menu-item active"><div class="menu-icon">👥</div><span>Users</span></a>
+            <a href="routes.html" class="menu-item"><div class="menu-icon">🚂</div><span>Routes</span></a>
+            <a href="analytics.html" class="menu-item"><div class="menu-icon">📈</div><span>Analytics</span></a>
+            <a href="alerts.html" class="menu-item"><div class="menu-icon">⚠️</div><span>Alerts</span></a>
+            <a href="settings.html" class="menu-item"><div class="menu-icon">🔧</div><span>Settings</span></a>
+        </div>
+        <div class="content">
+            <div class="page-title">👥 User Management</div>
+            <div class="card">
+                <h3 style="margin-bottom: 16px;">All Users (2,847)</h3>
+                <div class="user-grid" id="users-grid"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const users = [
+            { name: 'John Mwamba', role: 'Passenger', status: 'Active' },
+            { name: 'Sarah Banda', role: 'Agent', status: 'Active' },
+            { name: 'David Phiri', role: 'Conductor', status: 'Active' },
+            { name: 'Grace Tembo', role: 'Passenger', status: 'Active' },
+            { name: 'Peter Zulu', role: 'Station Master', status: 'Inactive' },
+            { name: 'Mary Chanda', role: 'Passenger', status: 'Active' },
+        ];
+        document.getElementById('users-grid').innerHTML = users.map(u => `
+            <div class="user-card">
+                <div class="user-avatar">${u.name.charAt(0)}</div>
+                <div style="font-weight: 600; margin-bottom: 4px;">${u.name}</div>
+                <div style="font-size: 13px; color: var(--text-secondary);">${u.role}</div>
+                <div style="font-size: 12px; color: var(--success); margin-top: 8px;">${u.status}</div>
+            </div>
+        `).join('');
+    </script>
+</body>
+</html>
