@@ -27,6 +27,7 @@
     },
     "production": {
       "autoIncrement": true,
+      "node": "20.18.0",
       "android": {
         "buildType": "apk"
       },
@@ -37,6 +38,7 @@
     },
     "railways": {
       "extends": "production",
+      "node": "20.18.0",
       "android": {
         "buildType": "apk"
       },
@@ -48,6 +50,7 @@
     },
     "africoin": {
       "extends": "production",
+      "node": "20.18.0",
       "android": {
         "buildType": "apk"
       },
@@ -59,6 +62,7 @@
     },
     "sentinel": {
       "extends": "production",
+      "node": "20.18.0",
       "android": {
         "buildType": "apk"
       },
@@ -71,6 +75,7 @@
     },
     "staff": {
       "extends": "production",
+      "node": "20.18.0",
       "android": {
         "buildType": "apk"
       },

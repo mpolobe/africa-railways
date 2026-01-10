@@ -118,7 +118,7 @@ module.exports = {
     // Android Configuration
     android: {
       package: config.package,
-      versionCode: 1,
+      // versionCode removed - managed by EAS remote versioning
       permissions: [
         "CAMERA", 
         "ACCESS_FINE_LOCATION",
