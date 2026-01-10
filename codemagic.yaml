@@ -618,7 +618,7 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       groups:
-        - sentinel_credentials
+        - railways_credentials
       vars:
         APP_VARIANT: sentinel
         PACKAGE_NAME: com.mpolobe.sentinel
@@ -679,7 +679,7 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       groups:
-        - sentinel_credentials
+        - railways_credentials
         - ios_credentials
       vars:
         APP_VARIANT: sentinel
@@ -743,7 +743,7 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       groups:
-        - staff_credentials
+        - railways_credentials
       vars:
         APP_VARIANT: staff
         PACKAGE_NAME: com.mpolobe.staff
@@ -804,7 +804,7 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       groups:
-        - staff_credentials
+        - railways_credentials
         - ios_credentials
       vars:
         APP_VARIANT: staff
