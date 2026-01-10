@@ -508,15 +508,323 @@
         }
 
         /* Map Container */
-        .map-preview {
-            background: var(--hover);
+        .map-container {
+            background: var(--surface);
             border-radius: 8px;
-            height: 200px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .map-title {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--gold);
+        }
+
+        #africa-map {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.2));
+        }
+
+        .country {
+            fill: #333;
+            stroke: #666;
+            stroke-width: 1;
+            transition: fill 0.3s ease;
+        }
+
+        .country:hover {
+            fill: #444;
+            cursor: pointer;
+        }
+
+        .country.active {
+            fill: rgba(255, 184, 0, 0.3);
+            stroke: var(--gold);
+            stroke-width: 2;
+        }
+
+        .railway-route {
+            fill: none;
+            stroke: #60a5fa;
+            stroke-width: 2;
+            stroke-dasharray: 5, 5;
+            animation: dash 20s linear infinite;
+            opacity: 0.7;
+        }
+
+        .railway-route.active {
+            stroke: var(--gold);
+            stroke-width: 3;
+            opacity: 1;
+        }
+
+        @keyframes dash {
+            to { stroke-dashoffset: -100; }
+        }
+
+        .city-marker {
+            fill: #00FF88;
+            stroke: #fff;
+            stroke-width: 1.5;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .city-marker:hover {
+            r: 6;
+            fill: var(--gold);
+        }
+
+        .city-label {
+            fill: #fff;
+            font-size: 11px;
+            font-weight: 600;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+
+        /* Sentinel Markers */
+        .sentinel-marker {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sentinel-marker circle {
+            fill: var(--success);
+            stroke: #fff;
+            stroke-width: 2;
+        }
+
+        .sentinel-marker:hover circle {
+            fill: var(--gold);
+            r: 8;
+            filter: drop-shadow(0 0 8px var(--gold));
+        }
+
+        .sentinel-marker.active circle {
+            fill: var(--primary);
+            animation: pulse-marker 2s infinite;
+        }
+
+        @keyframes pulse-marker {
+            0%, 100% { r: 6; opacity: 1; }
+            50% { r: 8; opacity: 0.7; }
+        }
+
+        /* Chat Window */
+        .chat-window {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            max-height: 500px;
+            background: var(--surface);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            display: none;
+            flex-direction: column;
+            z-index: 2000;
+            animation: slideUp 0.3s ease;
+        }
+
+        .chat-window.active {
+            display: flex;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .chat-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--hover);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .chat-user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             display: flex;
             align-items: center;
             justify-content: center;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .chat-close {
+            background: none;
+            border: none;
             color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .chat-close:hover {
+            background: var(--border);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            max-height: 350px;
+        }
+
+        .chat-message {
+            margin-bottom: 12px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-message.sent {
+            flex-direction: row-reverse;
+        }
+
+        .chat-message-content {
+            max-width: 70%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .chat-message.received .chat-message-content {
+            background: var(--hover);
+            color: var(--text-primary);
+        }
+
+        .chat-message.sent .chat-message-content {
+            background: var(--primary);
+            color: white;
+        }
+
+        .chat-message-time {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .chat-input-container {
+            padding: 12px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--hover);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 10px 16px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .chat-send-btn {
+            background: var(--primary);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            font-size: 18px;
+            transition: background 0.2s;
+        }
+
+        .chat-send-btn:hover {
+            background: #1565c0;
+        }
+
+        .chat-send-btn:disabled {
+            background: var(--hover);
+            cursor: not-allowed;
+        }
+
+        /* Map Legend */
+        .map-legend {
+            display: flex;
+            gap: 16px;
             margin-top: 12px;
+            flex-wrap: wrap;
+            font-size: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+
+        .legend-route {
+            background: #60a5fa;
+        }
+
+        .legend-active {
+            background: var(--gold);
+        }
+
+        .legend-sentinel {
+            background: var(--success);
+            border-radius: 50%;
+        }
+
+        /* Mobile adjustments for chat */
+        @media (max-width: 768px) {
+            .chat-window {
+                width: calc(100% - 24px);
+                right: 12px;
+                bottom: 12px;
+                max-height: 70vh;
+            }
         }
     </style>
 </head>
@@ -615,16 +923,94 @@
 
         <!-- Right Sidebar -->
         <div class="sidebar-right">
-            <!-- Online Users -->
+            <!-- Africa Map with Sentinel Locations -->
+            <div class="map-container" style="margin-bottom: 20px;">
+                <div class="map-title">📍 Sentinel Network</div>
+                <svg id="africa-map" viewBox="0 0 800 800">
+                    <!-- Simplified Africa Outline -->
+                    <path d="M300,100 L500,100 L600,300 L550,600 L400,750 L200,600 L150,300 Z" 
+                          fill="#1a1a1a" stroke="#444" stroke-width="2" />
+                    
+                    <!-- Zambia -->
+                    <path id="map-zambia" class="country active" 
+                          d="M380,500 L420,500 L430,540 L390,540 Z" />
+                    
+                    <!-- Kenya -->
+                    <path id="map-kenya" class="country active" 
+                          d="M480,420 L520,420 L510,460 L470,460 Z" />
+                    
+                    <!-- Tanzania -->
+                    <path id="map-tanzania" class="country" 
+                          d="M460,460 L500,460 L490,500 L450,500 Z" />
+                    
+                    <!-- South Africa -->
+                    <path id="map-south-africa" class="country" 
+                          d="M360,640 L440,640 L450,680 L410,720 L330,720 L320,680 Z" />
+                    
+                    <!-- Railway Routes -->
+                    <path class="railway-route active" id="route-lusaka-nairobi" 
+                          d="M405,520 Q440,490 495,440" />
+                    <path class="railway-route" id="route-lusaka-dar" 
+                          d="M405,520 Q430,490 475,480" />
+                    <path class="railway-route" id="route-lusaka-joburg" 
+                          d="M405,520 Q390,580 385,660" />
+                    
+                    <!-- City Markers -->
+                    <circle class="city-marker active" cx="405" cy="520" r="4" />
+                    <text class="city-label" x="405" y="510">Lusaka</text>
+                    
+                    <circle class="city-marker active" cx="495" cy="440" r="4" />
+                    <text class="city-label" x="495" y="430">Nairobi</text>
+                    
+                    <circle class="city-marker" cx="475" cy="480" r="3" />
+                    <text class="city-label" x="475" y="470">Dar es Salaam</text>
+                    
+                    <circle class="city-marker" cx="385" cy="660" r="3" />
+                    <text class="city-label" x="385" y="650">Johannesburg</text>
+                    
+                    <!-- Sentinel Markers (will be added dynamically) -->
+                    <g id="sentinel-markers"></g>
+                </svg>
+                
+                <div class="map-legend">
+                    <div class="legend-item">
+                        <div class="legend-color legend-sentinel"></div>
+                        <span>Sentinel</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color legend-route"></div>
+                        <span>Route</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color legend-active"></div>
+                        <span>Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- All Sentinels List -->
             <div class="online-users">
-                <div class="section-title">Online Now (<span id="online-count">0</span>)</div>
-                <div id="online-users-list">
-                    <!-- Online users will be inserted here -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div class="section-title" style="margin: 0;">All Sentinels (<span id="total-sentinels">0</span>)</div>
+                    <select id="status-filter" style="background: var(--hover); border: 1px solid var(--border); color: var(--text-primary); padding: 4px 8px; border-radius: 6px; font-size: 12px; cursor: pointer;">
+                        <option value="all">All</option>
+                        <option value="online">Online</option>
+                        <option value="offline">Offline</option>
+                        <option value="away">Away</option>
+                    </select>
+                </div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">
+                    <span style="color: var(--success);">● <span id="online-count">0</span> Online</span> • 
+                    <span style="color: var(--text-secondary);">○ <span id="offline-count">0</span> Offline</span> • 
+                    <span style="color: #FFA500;">◐ <span id="away-count">0</span> Away</span>
+                </div>
+                <div id="sentinels-list" style="max-height: 400px; overflow-y: auto;">
+                    <!-- Sentinels will be inserted here -->
                 </div>
             </div>
 
             <!-- System Status -->
-            <div class="card">
+            <div class="card" style="margin-top: 20px;">
                 <div class="section-title">System Status</div>
                 <div style="font-size: 14px; color: var(--text-secondary);">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
@@ -644,6 +1030,29 @@
                         <span style="color: var(--success);">● Synced</span>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Chat Window (hidden by default) -->
+        <div class="chat-window" id="chat-window">
+            <div class="chat-header">
+                <div class="chat-user-info">
+                    <div class="chat-avatar" id="chat-avatar">
+                        <div class="status-dot"></div>
+                    </div>
+                    <div>
+                        <div class="user-name-small" id="chat-user-name">Sentinel</div>
+                        <div class="user-status" id="chat-user-status">Online</div>
+                    </div>
+                </div>
+                <button class="chat-close" onclick="closeChat()">×</button>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <!-- Messages will be inserted here -->
+            </div>
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..." onkeypress="handleChatKeyPress(event)">
+                <button class="chat-send-btn" onclick="sendMessage()">➤</button>
             </div>
         </div>
     </div>
@@ -722,45 +1131,195 @@
             }
         }
 
-        // Mock data generators
-        const mockUsers = [
-            { name: 'John Mwamba', role: 'Passenger', location: 'Lusaka' },
-            { name: 'Sarah Banda', role: 'Agent', location: 'Dar es Salaam' },
-            { name: 'David Phiri', role: 'Conductor', location: 'Kapiri Mposhi' },
-            { name: 'Grace Tembo', role: 'Passenger', location: 'Ndola' },
-            { name: 'Peter Zulu', role: 'Station Master', location: 'Kitwe' },
-            { name: 'Mary Chanda', role: 'Passenger', location: 'Kabwe' },
-            { name: 'James Mulenga', role: 'Agent', location: 'Livingstone' },
-            { name: 'Ruth Sakala', role: 'Passenger', location: 'Choma' }
+        // Sentinel data with GPS coordinates
+        const allSentinels = [
+            { id: 1, name: 'John Mwamba', role: 'Track Inspector', location: 'Lusaka Station', status: 'online', lat: 405, lng: 520, lastSeen: new Date() },
+            { id: 2, name: 'Sarah Banda', role: 'Safety Officer', location: 'Kapiri Mposhi', status: 'online', lat: 410, lng: 510, lastSeen: new Date() },
+            { id: 3, name: 'David Phiri', role: 'Signal Operator', location: 'Ndola Junction', status: 'away', lat: 395, lng: 495, lastSeen: new Date(Date.now() - 300000) },
+            { id: 4, name: 'Grace Tembo', role: 'Track Inspector', location: 'Kitwe', status: 'online', lat: 390, lng: 490, lastSeen: new Date() },
+            { id: 5, name: 'Peter Zulu', role: 'Station Master', location: 'Kabwe', status: 'offline', lat: 400, lng: 530, lastSeen: new Date(Date.now() - 7200000) },
+            { id: 6, name: 'Mary Chanda', role: 'Safety Officer', location: 'Livingstone', status: 'online', lat: 380, lng: 580, lastSeen: new Date() },
+            { id: 7, name: 'James Mulenga', role: 'Track Inspector', location: 'Choma', status: 'offline', lat: 385, lng: 560, lastSeen: new Date(Date.now() - 3600000) },
+            { id: 8, name: 'Ruth Sakala', role: 'Signal Operator', location: 'Nairobi Hub', status: 'online', lat: 495, lng: 440, lastSeen: new Date() },
+            { id: 9, name: 'Moses Banda', role: 'Track Inspector', location: 'Dar es Salaam', status: 'away', lat: 475, lng: 480, lastSeen: new Date(Date.now() - 600000) },
+            { id: 10, name: 'Alice Mbewe', role: 'Safety Officer', location: 'Mombasa', status: 'online', lat: 505, lng: 450, lastSeen: new Date() },
+            { id: 11, name: 'Patrick Lungu', role: 'Station Master', location: 'Johannesburg', status: 'offline', lat: 385, lng: 660, lastSeen: new Date(Date.now() - 10800000) },
+            { id: 12, name: 'Elizabeth Phiri', role: 'Track Inspector', location: 'Pretoria', status: 'online', lat: 390, lng: 650, lastSeen: new Date() }
         ];
 
         const mockActivities = [
             { type: 'booking', action: 'booked a ticket', route: 'Lusaka → Dar es Salaam' },
             { type: 'payment', action: 'completed payment', amount: 'ZMW 450' },
-            { type: 'alert', action: 'reported an issue', details: 'Delayed departure' },
-            { type: 'system', action: 'system update', details: 'Route optimization completed' }
+            { type: 'alert', action: 'reported an issue', details: 'Track maintenance needed' },
+            { type: 'system', action: 'system update', details: 'Safety check completed' }
         ];
 
-        // Initialize online users
-        function initializeOnlineUsers() {
-            const container = document.getElementById('online-users-list');
-            const onlineUsers = mockUsers.slice(0, 6);
+        let currentChatSentinel = null;
+        let currentFilter = 'all';
+
+        // Initialize sentinels list
+        function initializeSentinels() {
+            renderSentinels();
+            renderSentinelMarkers();
+            updateSentinelCounts();
+        }
+
+        // Render sentinels based on filter
+        function renderSentinels() {
+            const container = document.getElementById('sentinels-list');
+            const filteredSentinels = currentFilter === 'all' 
+                ? allSentinels 
+                : allSentinels.filter(s => s.status === currentFilter);
             
-            container.innerHTML = onlineUsers.map(user => `
-                <div class="user-item">
-                    <div class="user-avatar">
-                        ${user.name.charAt(0)}
-                        <div class="status-dot"></div>
+            container.innerHTML = filteredSentinels.map(sentinel => {
+                const statusColor = sentinel.status === 'online' ? 'var(--success)' : 
+                                   sentinel.status === 'away' ? '#FFA500' : 'var(--text-secondary)';
+                const statusSymbol = sentinel.status === 'online' ? '●' : 
+                                    sentinel.status === 'away' ? '◐' : '○';
+                
+                return `
+                    <div class="user-item" onclick="openChat(${sentinel.id})" style="cursor: pointer;">
+                        <div class="user-avatar" style="position: relative;">
+                            ${sentinel.name.charAt(0)}
+                            ${sentinel.status === 'online' ? '<div class="status-dot"></div>' : ''}
+                        </div>
+                        <div class="user-details">
+                            <div class="user-name-small">${sentinel.name}</div>
+                            <div class="user-status">
+                                <span style="color: ${statusColor};">${statusSymbol}</span> 
+                                ${sentinel.role} • ${sentinel.location}
+                            </div>
+                        </div>
                     </div>
-                    <div class="user-details">
-                        <div class="user-name-small">${user.name}</div>
-                        <div class="user-status">${user.role} • ${user.location}</div>
+                `;
+            }).join('');
+        }
+
+        // Render sentinel markers on map
+        function renderSentinelMarkers() {
+            const markersContainer = document.getElementById('sentinel-markers');
+            markersContainer.innerHTML = allSentinels.map(sentinel => {
+                const fillColor = sentinel.status === 'online' ? '#00d084' : 
+                                 sentinel.status === 'away' ? '#FFA500' : '#666';
+                
+                return `
+                    <g class="sentinel-marker ${sentinel.status === 'online' ? 'active' : ''}" 
+                       onclick="openChat(${sentinel.id})" 
+                       style="cursor: pointer;">
+                        <circle cx="${sentinel.lat}" cy="${sentinel.lng}" r="6" 
+                                fill="${fillColor}" stroke="#fff" stroke-width="2"/>
+                        <title>${sentinel.name} - ${sentinel.status}</title>
+                    </g>
+                `;
+            }).join('');
+        }
+
+        // Update sentinel counts
+        function updateSentinelCounts() {
+            const online = allSentinels.filter(s => s.status === 'online').length;
+            const offline = allSentinels.filter(s => s.status === 'offline').length;
+            const away = allSentinels.filter(s => s.status === 'away').length;
+            
+            document.getElementById('online-count').textContent = online;
+            document.getElementById('offline-count').textContent = offline;
+            document.getElementById('away-count').textContent = away;
+            document.getElementById('total-sentinels').textContent = allSentinels.length;
+            document.getElementById('active-users').textContent = online;
+        }
+
+        // Status filter change handler
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('status-filter').addEventListener('change', (e) => {
+                currentFilter = e.target.value;
+                renderSentinels();
+            });
+        });
+
+        // Chat functions
+        function openChat(sentinelId) {
+            const sentinel = allSentinels.find(s => s.id === sentinelId);
+            if (!sentinel) return;
+            
+            currentChatSentinel = sentinel;
+            const chatWindow = document.getElementById('chat-window');
+            const chatAvatar = document.getElementById('chat-avatar');
+            const chatUserName = document.getElementById('chat-user-name');
+            const chatUserStatus = document.getElementById('chat-user-status');
+            const chatMessages = document.getElementById('chat-messages');
+            
+            // Update chat header
+            chatAvatar.textContent = sentinel.name.charAt(0);
+            chatUserName.textContent = sentinel.name;
+            chatUserStatus.textContent = `${sentinel.status.charAt(0).toUpperCase() + sentinel.status.slice(1)} • ${sentinel.location}`;
+            
+            // Load chat history (mock)
+            chatMessages.innerHTML = `
+                <div class="chat-message received">
+                    <div>
+                        <div class="chat-message-content">
+                            Hello! I'm currently at ${sentinel.location}. All systems operational.
+                        </div>
+                        <div class="chat-message-time">10:30 AM</div>
                     </div>
                 </div>
-            `).join('');
+                <div class="chat-message sent">
+                    <div>
+                        <div class="chat-message-content">
+                            Great! Keep up the good work. Report any issues immediately.
+                        </div>
+                        <div class="chat-message-time">10:32 AM</div>
+                    </div>
+                </div>
+            `;
+            
+            chatWindow.classList.add('active');
+            document.getElementById('chat-input').focus();
+        }
 
-            document.getElementById('online-count').textContent = onlineUsers.length;
-            document.getElementById('active-users').textContent = onlineUsers.length;
+        function closeChat() {
+            document.getElementById('chat-window').classList.remove('active');
+            currentChatSentinel = null;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (!message || !currentChatSentinel) return;
+            
+            const chatMessages = document.getElementById('chat-messages');
+            const messageEl = document.createElement('div');
+            messageEl.className = 'chat-message sent';
+            messageEl.innerHTML = `
+                <div>
+                    <div class="chat-message-content">${message}</div>
+                    <div class="chat-message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageEl);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            input.value = '';
+            
+            // Simulate response after 2 seconds
+            setTimeout(() => {
+                const responseEl = document.createElement('div');
+                responseEl.className = 'chat-message received';
+                responseEl.innerHTML = `
+                    <div>
+                        <div class="chat-message-content">Message received. Will update you shortly.</div>
+                        <div class="chat-message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                    </div>
+                `;
+                chatMessages.appendChild(responseEl);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 2000);
+        }
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
         }
 
         // Add activity to feed
@@ -852,7 +1411,7 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            initializeOnlineUsers();
+            initializeSentinels();
             
             // Generate initial activities
             for (let i = 0; i < 5; i++) {
@@ -864,6 +1423,20 @@
             
             // Connect WebSocket
             connectWebSocket();
+            
+            // Update sentinel statuses periodically (simulate status changes)
+            setInterval(() => {
+                // Randomly change a sentinel's status
+                const randomSentinel = allSentinels[Math.floor(Math.random() * allSentinels.length)];
+                const statuses = ['online', 'offline', 'away'];
+                const newStatus = statuses[Math.floor(Math.random() * statuses.length)];
+                randomSentinel.status = newStatus;
+                randomSentinel.lastSeen = new Date();
+                
+                renderSentinels();
+                renderSentinelMarkers();
+                updateSentinelCounts();
+            }, 30000); // Update every 30 seconds
             
             // Update time ago every minute
             setInterval(() => {
