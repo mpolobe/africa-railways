@@ -25,9 +25,16 @@ Africa Railways provides the blockchain-verified data infrastructure layer for r
 
 ## Technical Architecture
 * **Primary Ledger:** Sui blockchain (866 TPS, sub-second finality) for payment rail
-* **Governance Token:** $SENT on Polygon (0xD267554628E954E2070D189859f13768B0424694)
+* **Payment Token:** $AFC (Africoin) on Sui - Primary ERC-20 payment contract for ticket purchases
+* **Reward Token:** $AFRC (Africa Rail Credits) on Polygon - Loyalty rewards and staking
+* **Governance Token:** $SENT on Polygon (0xD267554628E954E2070D189859f13768B0424694) - Infrastructure governance
 * **Data Layer:** Go ingestion engine with IoT sensor integration
 * **Mobile Interface:** React Native apps for worker reporting and passenger ticketing
+
+## Smart Contracts
+* **AFC Token (Sui)**: Primary payment currency for railway tickets and services
+* **AFRC Token (Polygon)**: 0xD267554628E954E2070D189859f13768B0424694 - Loyalty rewards
+* **SENT Token (Polygon)**: 0xD267554628E954E2070D189859f13768B0424694 - Governance and signaling data rewards
 
 ## Active Deployments
 - **TAZARA Railway**: 1,860 km Zambia-Tanzania corridor (Mukuba Service resumed Feb 2026)

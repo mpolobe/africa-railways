@@ -244,6 +244,31 @@
             color: #94a3b8;
         }
         
+        .payment-banner {
+            background: linear-gradient(135deg, rgba(255, 184, 0, 0.15), rgba(0, 212, 255, 0.15));
+            border: 2px solid var(--gold);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .payment-banner h3 {
+            color: var(--gold);
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .payment-banner p {
+            color: #94a3b8;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .payment-banner strong {
+            color: var(--cyan);
+        }
+        
         @media (max-width: 768px) {
             .booking-grid {
                 grid-template-columns: 1fr;
@@ -328,7 +353,7 @@
                     await new Promise(resolve => setTimeout(resolve, 2000));
 
                     // In production, this would call the blockchain smart contract
-                    const bookingRef = 'AFRC-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+                    const bookingRef = 'AFC-' + Math.random().toString(36).substring(2, 10).toUpperCase();
                     
                     setStatus(`success:✅ Booking confirmed! Reference: ${bookingRef}`);
                     
@@ -364,6 +389,17 @@
                             <i className="fas fa-arrow-left"></i>
                             Back to Home
                         </a>
+                    </div>
+
+                    <div className="payment-banner">
+                        <h3>💳 Payment & Rewards</h3>
+                        <p>
+                            Pay for your cross-border journey seamlessly with <strong>$AFC (Africoin)</strong>. 
+                            Use your <strong>$AFRC (Africa Rail Credits)</strong> balance for cabin upgrades and station lounge access.
+                        </p>
+                        <p style={{ marginTop: '10px', fontSize: '0.9rem' }}>
+                            Earn AFRC rewards on every journey • Stake for 12% APY • Vote on governance
+                        </p>
                     </div>
 
                     <div className="booking-grid">
@@ -430,7 +466,7 @@
                                         >
                                             <div style={{ fontSize: '2rem' }}>{cls.icon}</div>
                                             <div>{cls.name}</div>
-                                            <div className="price">{cls.price} AFRC</div>
+                                            <div className="price">{cls.price} AFC</div>
                                         </div>
                                     ))}
                                 </div>
@@ -463,11 +499,11 @@
                                         </div>
                                         <div className="summary-item">
                                             <span>Price per ticket</span>
-                                            <span>{selectedClassData?.price} AFRC</span>
+                                            <span>{selectedClassData?.price} AFC</span>
                                         </div>
                                         <div className="summary-item">
                                             <span>Total</span>
-                                            <span>{totalPrice} AFRC</span>
+                                            <span>{totalPrice} AFC</span>
                                         </div>
                                     </>
                                 )}
@@ -483,7 +519,7 @@
                                     onClick={handleBooking}
                                     disabled={!from || !to || !date || isBooking}
                                 >
-                                    {isBooking ? 'Processing...' : `Book Now - ${totalPrice} AFRC`}
+                                    {isBooking ? 'Processing...' : `Book Now - ${totalPrice} AFC`}
                                 </button>
 
                                 {status && (
@@ -494,7 +530,7 @@
 
                                 <div className="info-box">
                                     <strong>💡 Payment Info:</strong><br/>
-                                    Tickets are paid with AFRC tokens. Make sure you have sufficient balance in your wallet.
+                                    Tickets are paid with AFC (Africoin) tokens. AFRC (Africa Rail Credits) are loyalty rewards and cannot be used for ticket purchases.
                                 </div>
                             </div>
                         </div>

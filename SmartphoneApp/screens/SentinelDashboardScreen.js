@@ -140,6 +140,18 @@ export default function SentinelDashboardScreen({ navigation }) {
         <Text style={styles.headerSubtitle}>Revenue & Growth Analytics</Text>
       </View>
 
+      {/* Token Rewards Banner */}
+      <View style={styles.rewardsBanner}>
+        <Text style={styles.rewardsBannerTitle}>💰 Worker Rewards</Text>
+        <Text style={styles.rewardsBannerText}>
+          Workers receive <Text style={styles.tokenHighlight}>$SENT</Text> for signaling data and{' '}
+          <Text style={styles.tokenHighlight}>$AFRC</Text> bonuses for safety milestones.
+        </Text>
+        <Text style={styles.rewardsBannerSubtext}>
+          Track your earnings in the Rewards tab
+        </Text>
+      </View>
+
       {/* Month Selector */}
       <View style={styles.monthSelector}>
         <TouchableOpacity
@@ -407,6 +419,36 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     fontSize: 16,
     color: '#E0E7FF',
+  },
+  rewardsBanner: {
+    backgroundColor: '#FEF3C7',
+    borderLeftWidth: 4,
+    borderLeftColor: '#F59E0B',
+    padding: 16,
+    marginHorizontal: 16,
+    marginTop: 16,
+    borderRadius: 8,
+  },
+  rewardsBannerTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#92400E',
+    marginBottom: 8,
+  },
+  rewardsBannerText: {
+    fontSize: 14,
+    color: '#78350F',
+    lineHeight: 20,
+  },
+  rewardsBannerSubtext: {
+    fontSize: 12,
+    color: '#92400E',
+    marginTop: 8,
+    fontStyle: 'italic',
+  },
+  tokenHighlight: {
+    fontWeight: 'bold',
+    color: '#B45309',
   },
   monthSelector: {
     flexDirection: 'row',
