@@ -623,7 +623,7 @@ workflows:
         APP_VARIANT: sentinel
         PACKAGE_NAME: com.mpolobe.sentinel
         EXPO_PROJECT_ID: 82efeb87-20c5-45b4-b945-65d4b9074c32
-      node: 18.19.0
+      node: 20.18.0
     cache:
       cache_paths:
         - $HOME/.npm
@@ -685,7 +685,7 @@ workflows:
         APP_VARIANT: sentinel
         BUNDLE_ID: com.mpolobe.sentinel
         EXPO_PROJECT_ID: 82efeb87-20c5-45b4-b945-65d4b9074c32
-      node: 18.19.0
+      node: 20.18.0
       xcode: 15.0
       cocoapods: default
     cache:

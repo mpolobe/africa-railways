@@ -49,7 +49,8 @@ jest.mock('@mysten/sui/transactions', () => ({
 }));
 
 // Silence the warning: Animated: `useNativeDriver` is not supported
-jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
+// Updated for React Native 0.81.5 - path changed in newer versions
+jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper', () => ({}), { virtual: true });
 
 // Mock AsyncStorage
 jest.mock('@react-native-async-storage/async-storage', () => ({
