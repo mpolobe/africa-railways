@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel ($SENT) - The Digital Spine of Africa's Railway Revolution</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --navy: #0a0e1a;
+            --gold: #FFB800;
+            --cyan: #00D4FF;
+            --white: #ffffff;
+            --surface: #16203a;
+            --green: #10b981;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--navy);
+            color: var(--white);
+            line-height: 1.6;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 8%;
+            background: rgba(10,14,26,0.95);
+            border-bottom: 1px solid #222;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--gold);
+            text-decoration: none;
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            align-items: center;
+        }
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .nav-links a:hover { color: var(--gold); }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 20px;
+        }
+        .hero {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+        .golden-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--gold), #ff9500);
+            color: var(--navy);
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 800;
+            margin-bottom: 30px;
+        }
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 20px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--gold), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            color: #aaa;
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+        .stat-card {
+            background: var(--surface);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #333;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--gold);
+            display: block;
+        }
+        .stat-label {
+            color: var(--cyan);
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        .section {
+            margin: 80px 0;
+        }
+        h2 {
+            color: var(--gold);
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .pillar-card {
+            background: linear-gradient(135deg, rgba(255,184,0,0.1), rgba(255,184,0,0.05));
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            padding: 40px;
+        }
+        .pillar-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .pillar-card h3 {
+            color: var(--gold);
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+        .pillar-card p {
+            color: #ccc;
+            line-height: 1.7;
+        }
+        .token-specs {
+            background: var(--surface);
+            padding: 50px;
+            border-radius: 20px;
+            border: 2px solid var(--cyan);
+        }
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .spec-item {
+            padding: 20px;
+            background: rgba(10,14,26,0.5);
+            border-radius: 12px;
+        }
+        .spec-label {
+            color: var(--cyan);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        .spec-value {
+            color: var(--gold);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .cta-section {
+            text-align: center;
+            background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(236,72,153,0.2));
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            padding: 60px 40px;
+            margin-top: 80px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, var(--gold), #ff9500);
+            color: var(--navy);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255,184,0,0.4);
+        }
+        @media (max-width: 768px) {
+            .container { padding: 60px 20px; }
+            .stats-grid, .pillars-grid, .specs-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo"><i class="fas fa-train"></i> Africoin <span style="color:var(--cyan)">Spine</span></a>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/tokenomics.html">Tokenomics</a></li>
+            <li><a href="/ido-dashboard.html">IDO</a></li>
+            <li><a href="/whitelist.html">Whitelist</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <div class="golden-badge">🏆 THE GOLDEN AGE OF AFRICAN RAIL</div>
+            <h1>Sentinel ($SENT)</h1>
+            <p><strong>The Digital Spine of Africa's Railway Revolution</strong><br>
+            Powering $2.2B+ in railway modernization with blockchain-verified operations</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-value">Feb 10</span>
+                <div class="stat-label">TAZARA Resumed</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">K100M</span>
+                <div class="stat-label">ZRL Funding</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">€50M</span>
+                <div class="stat-label">EU RSSP</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">$753M</span>
+                <div class="stat-label">Lobito Corridor</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Real-World Integration Pillars</h2>
+            <div class="pillars-grid">
+                <div class="pillar-card">
+                    <div class="pillar-icon">🚂</div>
+                    <h3>TAZARA Mukuba Resumption</h3>
+                    <p><strong>February 10, 2026:</strong> Cross-border passenger service between Dar es Salaam and New Kapiri Mposhi officially resumed.</p>
+                    <p style="margin-top: 15px;"><strong>Sentinel Solution:</strong> Cross-border settlement layer with AFC stablecoin eliminates 3-8% currency exchange losses.</p>
+                </div>
+
+                <div class="pillar-card">
+                    <div class="pillar-icon">💰</div>
+                    <h3>ZRL K100M Recapitalization</h3>
+                    <p><strong>K100M + €50M:</strong> Zambia Railways modernizing signaling and telecommunications between Livingstone and Ndola.</p>
+                    <p style="margin-top: 15px;"><strong>Sentinel Solution:</strong> Digital Signal Layer with blockchain-verified track occupancy replaces manual systems.</p>
+                </div>
+
+                <div class="pillar-card">
+                    <div class="pillar-icon">🌍</div>
+                    <h3>Lobito Corridor Bridge</h3>
+                    <p><strong>$753M Secured:</strong> Angola-DRC-Zambia connection for copper/cobalt exports to Atlantic markets.</p>
+                    <p style="margin-top: 15px;"><strong>Sentinel Solution:</strong> Digital interoperability for 54-country African Railway network with multi-currency settlement.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Token Specifications</h2>
+            <div class="token-specs">
+                <div class="specs-grid">
+                    <div class="spec-item">
+                        <div class="spec-label">Token Name</div>
+                        <div class="spec-value">Sentinel</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Ticker</div>
+                        <div class="spec-value">$SENT</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Network</div>
+                        <div class="spec-value">Polygon</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Total Supply</div>
+                        <div class="spec-value">5B SENT</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">IDO Allocation</div>
+                        <div class="spec-value">20%</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Hard Cap</div>
+                        <div class="spec-value">$25,000</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📚 Documentation & Resources</h2>
+            <div class="pillars-grid">
+                <div class="pillar-card" style="background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(0,212,255,0.05)); border-color: var(--cyan);">
+                    <div class="pillar-icon">📖</div>
+                    <h3 style="color: var(--cyan);">Litepaper</h3>
+                    <p>Complete investment-grade documentation with token economics, roadmap, and team details.</p>
+                    <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <a href="https://github.com/mpolobe/africa-railways/blob/main/SENT_LITEPAPER.md" target="_blank" style="display: inline-block; padding: 10px 20px; background: var(--cyan); color: var(--navy); text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.9rem;">📄 View Online</a>
+                        <a href="https://raw.githubusercontent.com/mpolobe/africa-railways/main/SENT_LITEPAPER.md" download="SENT_Litepaper.md" style="display: inline-block; padding: 10px 20px; background: rgba(0,212,255,0.2); color: var(--cyan); text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.9rem; border: 1px solid var(--cyan);">⬇️ Download MD</a>
+                    </div>
+                </div>
+
+                <div class="pillar-card" style="background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(139,92,246,0.05)); border-color: #8b5cf6;">
+                    <div class="pillar-icon">📋</div>
+                    <h3 style="color: #8b5cf6;">Whitepaper</h3>
+                    <p>Technical whitepaper detailing the Africoin Continental Logistics Protocol and Proof-of-Safety.</p>
+                    <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <a href="https://github.com/mpolobe/africa-railways/blob/main/WHITEPAPER.md" target="_blank" style="display: inline-block; padding: 10px 20px; background: #8b5cf6; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.9rem;">📄 View Online</a>
+                        <a href="https://raw.githubusercontent.com/mpolobe/africa-railways/main/WHITEPAPER.md" download="Africoin_Whitepaper.md" style="display: inline-block; padding: 10px 20px; background: rgba(139,92,246,0.2); color: #8b5cf6; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.9rem; border: 1px solid #8b5cf6;">⬇️ Download MD</a>
+                    </div>
+                </div>
+
+                <div class="pillar-card" style="background: linear-gradient(135deg, rgba(255,184,0,0.1), rgba(255,184,0,0.05)); border-color: var(--gold);">
+                    <div class="pillar-icon">💎</div>
+                    <h3>Tokenomics</h3>
+                    <p>Detailed token distribution, vesting schedules, and economic model for $SENT.</p>
+                    <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <a href="https://github.com/mpolobe/africa-railways/blob/main/TOKENOMICS.md" target="_blank" style="display: inline-block; padding: 10px 20px; background: var(--gold); color: var(--navy); text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.9rem;">📄 View Online</a>
+                        <a href="https://raw.githubusercontent.com/mpolobe/africa-railways/main/TOKENOMICS.md" download="SENT_Tokenomics.md" style="display: inline-block; padding: 10px 20px; background: rgba(255,184,0,0.2); color: var(--gold); text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.9rem; border: 1px solid var(--gold);">⬇️ Download MD</a>
+                    </div>
+                </div>
+
+                <div class="pillar-card" style="background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(16,185,129,0.05)); border-color: var(--green);">
+                    <div class="pillar-icon">🏗️</div>
+                    <h3 style="color: var(--green);">Infrastructure One-Pager</h3>
+                    <p>Sector-aligned documentation with 2026 TAZARA, ZRL, and Lobito Corridor milestones.</p>
+                    <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <a href="https://github.com/mpolobe/africa-railways/blob/main/SENT_INFRASTRUCTURE_ONEPAGER.md" target="_blank" style="display: inline-block; padding: 10px 20px; background: var(--green); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.9rem;">📄 View Online</a>
+                        <a href="https://raw.githubusercontent.com/mpolobe/africa-railways/main/SENT_INFRASTRUCTURE_ONEPAGER.md" download="SENT_Infrastructure_OnePager.md" style="display: inline-block; padding: 10px 20px; background: rgba(16,185,129,0.2); color: var(--green); text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.9rem; border: 1px solid var(--green);">⬇️ Download MD</a>
+                    </div>
+                </div>
+
+                <div class="pillar-card" style="background: linear-gradient(135deg, rgba(236,72,153,0.1), rgba(236,72,153,0.05)); border-color: #ec4899;">
+                    <div class="pillar-icon">🚀</div>
+                    <h3 style="color: #ec4899;">PinkSale Configuration</h3>
+                    <p>Complete technical setup guide for PinkSale IDO with exact form inputs and parameters.</p>
+                    <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <a href="https://github.com/mpolobe/africa-railways/blob/main/PINKSALE_CONFIGURATION.md" target="_blank" style="display: inline-block; padding: 10px 20px; background: #ec4899; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.9rem;">📄 View Online</a>
+                        <a href="https://raw.githubusercontent.com/mpolobe/africa-railways/main/PINKSALE_CONFIGURATION.md" download="PinkSale_Configuration.md" style="display: inline-block; padding: 10px 20px; background: rgba(236,72,153,0.2); color: #ec4899; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.9rem; border: 1px solid #ec4899;">⬇️ Download MD</a>
+                    </div>
+                </div>
+
+                <div class="pillar-card" style="background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(245,158,11,0.05)); border-color: #f59e0b;">
+                    <div class="pillar-icon">📊</div>
+                    <h3 style="color: #f59e0b;">Project Profile</h3>
+                    <p>Complete project overview with partnerships, traction, team, and 2026-2028 roadmap.</p>
+                    <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <a href="https://github.com/mpolobe/africa-railways/blob/main/PROJECT_PROFILE.md" target="_blank" style="display: inline-block; padding: 10px 20px; background: #f59e0b; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.9rem;">📄 View Online</a>
+                        <a href="https://raw.githubusercontent.com/mpolobe/africa-railways/main/PROJECT_PROFILE.md" download="Africa_Railways_Project_Profile.md" style="display: inline-block; padding: 10px 20px; background: rgba(245,158,11,0.2); color: #f59e0b; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.9rem; border: 1px solid #f59e0b;">⬇️ Download MD</a>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(255,184,0,0.1); border-radius: 15px; border: 1px solid var(--gold);">
+                <p style="color: var(--gold); font-size: 1.1rem; margin-bottom: 15px;">
+                    <strong>💡 Note:</strong> All documents are available in Markdown format for easy reading and sharing.
+                </p>
+                <p style="color: #aaa; font-size: 0.95rem;">
+                    For PDF versions, you can use online converters like <a href="https://www.markdowntopdf.com/" target="_blank" style="color: var(--cyan);">markdowntopdf.com</a> or view directly on GitHub with better formatting.
+                </p>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2>Join the Railway Revolution</h2>
+            <p style="color: #aaa; font-size: 1.1rem; margin-bottom: 30px;">
+                This is not a crypto moonshot. This is infrastructure equity.
+            </p>
+            <a href="/whitelist.html" class="btn">🚀 Join Whitelist</a>
+            <a href="/sentinel-login.html" class="btn" style="background: var(--surface); color: var(--gold);">🛡️ Sentinel Portal</a>
+            <a href="https://github.com/mpolobe/africa-railways" target="_blank" class="btn" style="background: var(--surface); color: var(--cyan);">💻 View GitHub</a>
+        </div>
+    </div>
+</body>
+</html>
