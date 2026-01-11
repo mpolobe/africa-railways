@@ -388,9 +388,13 @@ Commit 2: 4b5168b5
 Message: "docs: Add local build testing guide to save Codemagic credits"
 Files: 1 file changed, 479 insertions(+)
 
-Commit 3: [Pending]
+Commit 3: 35a5680a
 Message: "feat: Add Sentinel login system and fix notifications button"
-Files: 2 files (sentinel-login.html created, sentinel-dashboard.html updated)
+Files: 3 files changed, 1059 insertions(+)
+
+Commit 4: ff7d20b9
+Message: "feat: Add Facebook page to Join Our Community section"
+Files: 1 file changed, 6 insertions(+)
 ```
 
 ---
@@ -536,9 +540,10 @@ Name: Sarah Banda
 ### Official Channels
 - **Website**: [africa-railways.vercel.app](https://africa-railways.vercel.app)
 - **GitHub**: [github.com/mpolobe/africa-railways](https://github.com/mpolobe/africa-railways)
+- **Facebook**: [facebook.com/africarailways](https://facebook.com/africarailways)
+- **Twitter**: [@BenMpolokoso](https://x.com/BenMpolokoso)
+- **Telegram**: [@Africoin_Official](https://t.me/Africoin_Official)
 - **Email**: contact@africarailways.com
-- **Telegram**: @AfricoinCommunity (to be created)
-- **Twitter**: @AfricaRailways (to be created)
 
 ### Build Status
 - **Codemagic**: [codemagic.io](https://codemagic.io)
