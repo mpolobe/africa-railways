@@ -3,11 +3,11 @@
 ## Post 1: The Vision (LinkedIn/X)
 🌍 **Connecting a Continent: Introducing the Digital Spine.** 🚂
 
-I am proud to announce the launch of the **Africa Railways (AFRC)** ecosystem. We aren't just building tracks; we are building a sovereign digital economy for all 54 African nations.
+I am proud to announce the launch of the **Africa Railways** ecosystem. We aren't just building tracks; we are building a sovereign digital economy for all 54 African nations.
 
 🔹 **The Tech:** A high-throughput Sui Move ledger for real-time revenue sharing.
 🔹 **The Safety:** Our "Sentinel" Mobile Suite empowers track workers to secure the line via blockchain-signed safety reports.
-🔹 **The Economics:** A 10B AFRC supply with a 1% burn mechanism tied to physical freight movement.
+🔹 **The Economics:** Dual-token model - $AFC (Africoin) for payments, $AFRC (Africa Rail Credits) for rewards. 10B AFRC supply with a 1% burn mechanism tied to physical freight movement.
 
 From Lusaka to the world, we are laying the tracks for the 2026 Continental Rollout.
 
