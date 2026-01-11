@@ -1433,7 +1433,7 @@
                 <div class="live-dot"></div>
                 LIVE
             </div>
-            <button class="icon-btn" title="Notifications">
+            <button class="icon-btn" onclick="window.location.href='sentinel-pages/notifications.html'" title="Notifications">
                 🔔
                 <span class="badge" id="notification-count">5</span>
             </button>
@@ -1443,6 +1443,10 @@
             <button class="icon-btn" onclick="window.location.href='sentinel-pages/settings.html'" title="Profile">
                 👤
             </button>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 0 12px; background: var(--hover); border-radius: 20px; height: 40px;">
+                <span style="font-size: 12px; color: var(--text-secondary);" id="user-display-name">Loading...</span>
+                <span style="font-size: 10px; padding: 2px 8px; background: var(--gold); color: var(--dark); border-radius: 10px; font-weight: 600;" id="user-role-badge">ADMIN</span>
+            </div>
             <button class="icon-btn" onclick="logout()" title="Logout" style="background: var(--danger);">
                 🚪
             </button>
@@ -2111,10 +2115,10 @@
         // Logout function
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
-                // Clear any session data if needed
+                // Clear session data
                 localStorage.removeItem('sentinel_session');
-                // Redirect to homepage
-                window.location.href = '/index.html';
+                // Redirect to login page
+                window.location.href = 'sentinel-login.html';
             }
         }
 
@@ -2189,12 +2193,63 @@
         // NEWSFEED FUNCTIONALITY
         // ============================================
 
-        let currentUser = {
-            id: 'admin-1',
-            type: 'admin',
-            name: 'Railway Admin',
-            avatar: ''
-        };
+        // Load user from session or redirect to login
+        let currentUser = null;
+
+        function loadUserSession() {
+            const session = localStorage.getItem('sentinel_session');
+            if (!session) {
+                // No session, redirect to login
+                window.location.href = 'sentinel-login.html';
+                return null;
+            }
+
+            try {
+                const userData = JSON.parse(session);
+                
+                // Check if session is still valid (less than 24 hours old)
+                const loginTime = new Date(userData.loginTime);
+                const now = new Date();
+                const hoursSinceLogin = (now - loginTime) / (1000 * 60 * 60);
+
+                if (hoursSinceLogin >= 24) {
+                    // Session expired
+                    localStorage.removeItem('sentinel_session');
+                    window.location.href = 'sentinel-login.html';
+                    return null;
+                }
+
+                // Map user type to dashboard permissions
+                let userType = 'staff';
+                if (userData.type === 'super_admin') {
+                    userType = 'admin';
+                } else if (userData.type === 'demo') {
+                    userType = 'demo';
+                } else if (userData.type === 'staff') {
+                    userType = 'staff';
+                }
+
+                return {
+                    id: userData.id,
+                    type: userType,
+                    name: userData.name,
+                    avatar: userData.avatar || '',
+                    username: userData.username || ''
+                };
+            } catch (e) {
+                // Invalid session data
+                localStorage.removeItem('sentinel_session');
+                window.location.href = 'sentinel-login.html';
+                return null;
+            }
+        }
+
+        // Initialize current user
+        currentUser = loadUserSession();
+        if (!currentUser) {
+            // Will redirect to login, stop execution
+            throw new Error('No valid session');
+        }
 
         let newsfeedPosts = [];
         let newsfeedOffset = 0;
