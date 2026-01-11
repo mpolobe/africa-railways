@@ -7,6 +7,7 @@ import HomeScreen from '../screens/HomeScreen';
 import ScanTicketScreen from '../screens/ScanTicketScreen';
 import TicketDetailsScreen from '../screens/TicketDetailsScreen';
 import SchedulesScreen from '../screens/SchedulesScreen';
+import TicketBookingScreen from '../screens/TicketBookingScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 
 const Stack = createStackNavigator();
@@ -65,6 +66,15 @@ export const AppNavigator = () => {
           component={SchedulesScreen}
           options={{
             title: 'Train Schedules',
+            headerShown: true,
+          }}
+        />
+        
+        <Stack.Screen 
+          name="TicketBooking" 
+          component={TicketBookingScreen}
+          options={{
+            title: 'Book Ticket',
             headerShown: true,
           }}
         />
