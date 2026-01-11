@@ -7,7 +7,7 @@
 
 ## Executive Summary
 
-$SENT is not a speculative crypto token—it is the **digital signal layer** powering Africa's railway modernization. As TAZARA resumes cross-border services and Zambia Railways executes its €50M EU-backed modernization, $SENT provides the blockchain-verified data infrastructure that makes these billion-dollar projects operationally viable.
+$SENT is the **blockchain-verified signaling interoperability layer** for SADC regional railway integration. As TAZARA resumes cross-border services (Mukuba Service, Feb 2026) and Zambia Railways executes its €50M EU Railway Sector Support Programme, $SENT provides the tamper-proof track occupancy ledger and GPS-tagged digital twin infrastructure that enables multi-operator "Open Access" models and automated One-Stop Border Post (OSBP) settlement across the LAPSSET Corridor, Lobito Atlantic Railway, and Durban-Lubumbashi Block Train routes.
 
 ---
 
@@ -21,13 +21,13 @@ $SENT is not a speculative crypto token—it is the **digital signal layer** pow
 
 ### The Sentinel Solution
 
-**Real-Time Equipment Health Monitoring**
+**Blockchain-Verified Signaling Ledger**
 
-$SENT powers the $AFRC rewards system that incentivizes 2,000+ track workers to digitally report:
-- Rolling stock condition (daily inspections)
-- Track integrity (automated sensors)
-- Signal functionality (blockchain-verified logs)
-- Maintenance completion (timestamped records)
+$SENT provides the tamper-proof data layer for ZRL's signaling modernization mandate, enabling:
+- **Track Occupancy Verification**: GPS-tagged train positions with blockchain timestamps for collision prevention
+- **Signal State Logging**: Immutable record of signal changes for "Open Access" multi-operator compliance
+- **Rolling Stock Telemetry**: IoT sensor integration for predictive maintenance (40% downtime reduction target)
+- **Worker Incentive Alignment**: Performance-based operational incentives distributed via smart contracts to 2,000+ track workers providing GPS-verified infrastructure condition reports
 
 **Value Proposition for CCECC**:
 - High-fidelity operational data for rehabilitation planning
@@ -146,44 +146,49 @@ Cost Reduction: 35% in logistics overhead
 
 ## 4. The "Alpha Node" Map: Visual Infrastructure
 
-### Node Alpha: Kapiri Mposhi
+### Node Alpha: Kapiri Mposhi (13.97°S, 28.67°E)
 **Label**: "Sentinel Cross-Border Settlement Point"
 
-**Significance**:
-- TAZARA and ZRL intersection
-- Gateway to Tanzania (Indian Ocean)
-- Strategic hub for Copperbelt exports
+**Geospatial Significance**:
+- TAZARA-ZRL interchange (1,067mm gauge intersection)
+- Gateway to Dar es Salaam Port (Indian Ocean) via 1,860km TAZARA corridor
+- Strategic hub for Copperbelt copper exports (Chingola, Kitwe, Ndola mining region)
+- SADC North-South Corridor node (Durban-Lubumbashi route)
 
 **$SENT Infrastructure**:
-- Payment gateway for cross-border tickets
-- Freight settlement terminal
-- Worker rewards distribution center
+- Multi-currency freight settlement terminal (ZMW/TZS/USD automated reconciliation)
+- Cross-border customs pre-clearance integration (OSBP digital documentation)
+- Performance-based incentive distribution center for track maintenance workers
 
-### The Spine: Chingola to Luacano
-**Label**: "Powered by $SENT Data Logistics"
+### The Spine: Chingola to Luacano (Lobito Corridor Western Extension)
+**Label**: "Powered by $SENT Geospatial Digital Twin"
 
-**Significance**:
-- New Lobito Corridor connection
-- Copper mining region (Copperbelt)
-- Western export route to Atlantic
-
-**$SENT Infrastructure**:
-- Cargo tracking sensors
-- Automated weighbridge data
-- Customs pre-clearance system
-
-### Port Access: Dar es Salaam
-**Label**: "AFC Integrated Ticketing Hub"
-
-**Significance**:
-- Indian Ocean port access
-- International passenger gateway
-- Regional trade hub
+**Geospatial Significance**:
+- Lobito Atlantic Railway connection ($753M secured funding, late 2025)
+- Copperbelt mining region (Chingola 12.53°S, 27.85°E to Luacano border crossing)
+- Western export route to Lobito Port, Angola (Atlantic Ocean access)
+- Reduces Copperbelt-to-port transit from 45 days (Durban) to 7 days (Lobito)
 
 **$SENT Infrastructure**:
-- Multi-currency ticket sales (AFC stablecoin)
-- Tourist visa integration
-- Hotel/transport booking platform
+- GPS-tagged cargo tracking (real-time mineral chain of custody verification)
+- Automated weighbridge data integration (blockchain-verified tonnage for customs)
+- OSBP digital customs clearance (Angola-DRC-Zambia tri-border automation)
+- Track condition monitoring via worker-submitted GPS-verified reports
+
+### Port Access: Dar es Salaam (6.82°S, 39.27°E)
+**Label**: "SADC Regional Integration Hub - AFC Settlement Layer"
+
+**Geospatial Significance**:
+- Indian Ocean deep-water port (Tanzania's primary maritime gateway)
+- TAZARA eastern terminus (1,860km from Kapiri Mposhi)
+- LAPSSET Corridor connection point (Kenya-Ethiopia-South Sudan integration)
+- EAC (East African Community) customs union node
+
+**$SENT Infrastructure**:
+- Multi-currency settlement layer (TZS/KES/UGX/USD automated conversion via AFC stablecoin)
+- Port-to-rail cargo tracking integration (blockchain-verified bill of lading)
+- Cross-border passenger ticketing (SADC visa automation for regional travelers)
+- Real-time train arrival data for port logistics coordination
 
 ---
 

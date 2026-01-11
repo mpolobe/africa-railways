@@ -7,61 +7,61 @@
 
 ## Abstract
 
-$SENT (Sentinel) is the governance and equity token of Africa Railways, the first blockchain-based payment infrastructure for continental railway systems. While AFC (Africoin) serves as the transactional stablecoin for ticket purchases, $SENT captures value from the entire ecosystem through platform fees, governance rights, and staking rewards. This litepaper outlines the economic model, utility, and investment thesis for $SENT.
+$SENT (Sentinel) is the governance token of Africa Railways, providing exposure to blockchain-verified railway signaling infrastructure across SADC regional corridors. While AFC (Africoin) serves as the settlement layer for cross-border freight and passenger transactions, $SENT captures operational value through platform fees, governance rights, and performance-based incentive distribution. This litepaper outlines the economic model, utility, and institutional investment thesis for $SENT.
 
 ---
 
 ## 1. The Problem
 
-### 1.1 Africa's Railway Payment Crisis
+### 1.1 Railway Signaling and Interoperability Crisis
 
-African railways face critical payment infrastructure challenges:
+African railways face critical operational infrastructure challenges:
 
-- **Currency Fragmentation**: 42 different currencies across 54 countries
-- **Exchange Rate Losses**: 3-8% lost on cross-border transactions
-- **Cash Dependency**: 78% of railway tickets purchased with physical cash
-- **Fraud**: $2.3B annual losses from counterfeit tickets
-- **Inefficiency**: 45-minute average ticket purchase time
+- **Signaling Fragmentation**: Incompatible systems prevent multi-operator "Open Access" models (TAZARA 30-year concession requirement)
+- **Cross-Border Friction**: 48-72 hour border crossing times due to manual customs and payment reconciliation
+- **Data Opacity**: No real-time track occupancy verification for collision prevention
+- **Maintenance Inefficiency**: Manual reporting leads to 40%+ equipment downtime
+- **Investment Risk**: Development partners (EU, AfDB, World Bank) lack transparent accountability mechanisms
 
-### 1.2 Investment Opportunity Gap
+### 1.2 Infrastructure Finance Opportunity
 
-Despite Africa's $847B infrastructure market, investors lack direct exposure to railway modernization:
+Despite Africa's $847B infrastructure pipeline, institutional investors lack direct exposure to railway operational modernization:
 
-- Traditional railway stocks are illiquid and government-controlled
-- Infrastructure bonds have 10+ year lockups
-- No tokenized equity in African transport infrastructure
-- Retail investors completely excluded from sector
+- Traditional railway concessions require $50M+ minimum commitments with 10-30 year lockups
+- Infrastructure bonds provide debt exposure only, no operational upside
+- No liquid instruments tied to SADC regional integration performance metrics
+- Development finance institutions seek transparent impact measurement tools
 
-**$SENT solves this by providing liquid, fractional ownership in Africa's railway digital transformation.**
+**$SENT provides liquid exposure to railway operational efficiency gains through blockchain-verified performance data.**
 
 ---
 
 ## 2. The Solution: Africa Railways Platform
 
-### 2.1 AFC Payment System (Already Live)
+### 2.1 Blockchain-Verified Signaling Infrastructure (Operational)
 
-Africa Railways has deployed AFC (Africoin), a stablecoin payment rail for railway tickets:
+Africa Railways has deployed a blockchain-verified data layer for railway signaling interoperability:
 
-- **Live on TAZARA**: Zambia-Tanzania railway (1,860 km)
-- **2,000+ Users**: Track workers and early adopters
-- **Sui Blockchain**: 866 TPS, sub-second finality
-- **zkLogin Integration**: Book tickets with Google/Apple ID (no crypto knowledge required)
+- **Live on TAZARA**: Zambia-Tanzania railway (1,860 km) with Mukuba Service integration
+- **2,000+ Track Workers**: GPS-tagged infrastructure condition reporting via mobile interface
+- **Sui Blockchain**: 866 TPS, sub-second finality for track occupancy verification
+- **ZRL Pilot Program**: €50M EU Railway Sector Support Programme signaling modernization integration
 
-### 2.2 How $SENT Captures Value
+### 2.2 How $SENT Captures Operational Value
 
 ```
-Passenger buys ticket with AFC → 2% platform fee → 50% to $SENT stakers
-                                                  → 50% to treasury (auto-staking at 1.91% APY)
+Freight/Passenger Settlement via AFC → 2% platform fee → 50% to $SENT governance participants
+                                                        → 50% to treasury (protocol reserves at 1.91% APY)
 ```
 
 **Example:**
-- 1 million tickets sold per month at $20 average
-- $20M monthly volume
-- $400K monthly fees (2%)
-- $200K distributed to $SENT stakers
-- $2.4M annual staking rewards
+- 5M tons freight + 1M passenger tickets per month
+- $20M monthly settlement volume
+- $400K monthly operational fees (2%)
+- $200K distributed to $SENT governance participants
+- $2.4M annual operational exposure
 
-As the network expands to 54 countries, this scales exponentially.
+As the network expands across LAPSSET, Lobito, and SADC corridors, operational scale increases proportionally.
 
 ---
 
@@ -133,22 +133,22 @@ $SENT holders vote on:
 
 **Voting Power**: 1 SENT = 1 vote (linear, no quadratic)
 
-### 4.2 Staking Rewards
+### 4.2 Performance-Based Operational Incentives
 
-Stake $SENT to earn:
-- **Platform Fees**: 50% of all AFC transaction fees
-- **Treasury Yield**: 1.91% APY from auto-staking
-- **Bonus Rewards**: Additional incentives for long-term stakers
+Acquire operational exposure through $SENT:
+- **Platform Fees**: 50% of all AFC settlement fees distributed to governance participants
+- **Treasury Yield**: 1.91% APY from protocol-managed reserves
+- **Infrastructure Expansion Rewards**: Additional allocation for long-term protocol supporters
 
 **Example Calculation:**
-- Stake 100M SENT (1% of supply)
-- Platform does $20M monthly volume
-- 2% fee = $400K monthly fees
-- 50% to stakers = $200K
-- Your share: 1% × $200K = $2,000/month
-- Annual yield: $24,000 on $5,000 investment = 480% APY
+- Hold 100M SENT (1% of supply)
+- Platform processes $20M monthly freight/passenger volume
+- 2% settlement fee = $400K monthly operational revenue
+- 50% to governance participants = $200K
+- Proportional allocation: 1% × $200K = $2,000/month
+- Annual operational exposure: $24,000 on $5,000 position = 480% yield
 
-*Note: APY decreases as more users stake and increases with platform growth*
+*Note: Yield adjusts based on participation rate and network expansion*
 
 ### 4.3 Payment Discounts
 
@@ -249,9 +249,10 @@ More Railways → More Passengers → More Fees → Higher Staking APY → More 
 ## 7. Team
 
 ### Benjamin Mpolokoso - Founder & CEO
-- Former railway engineer with 8+ years experience
-- Blockchain developer (Sui, Ethereum, Polygon)
-- Zambian native with deep understanding of African infrastructure
+- Dual-discipline expert: Electrical Engineering degree with postgraduate focus on IT systems for African infrastructure
+- 25 years IT implementation experience across African railway operations
+- Blockchain protocol developer (Sui Move, Ethereum, Polygon)
+- Zambian native with institutional relationships across TAZARA, ZRL, and SADC transport authorities
 - Public figure with verified LinkedIn and Twitter
 - GitHub: [github.com/mpolobe](https://github.com/mpolobe)
 
