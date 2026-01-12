@@ -1,24 +1,37 @@
 {
   "name": "africa-railways-data-integration",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Production data integration: Website → Airtable → Africoin → AI",
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node pipeline.js",
+    "pipeline": "node pipeline.js",
+    "pipeline:schedule": "node pipeline.js --schedule",
+    "pipeline:api": "node pipeline.js --api",
+    "pipeline:insights": "node pipeline.js --insights",
     "sync": "node index.js",
     "sync:api": "node sync-api.js",
     "sync:scrape": "node sync-scrape.js",
     "sync:all": "node sync-all.js",
-    "test": "node test-integration.js",
-    "monitor": "node monitor.js"
+    "scrape": "node scraper.js",
+    "scrape:all": "node scraper.js all",
+    "scrape:tazara": "node scraper.js tazara",
+    "scrape:kenya": "node scraper.js kenya",
+    "deploy": "node deploy.js",
+    "monitor": "node monitor.js",
+    "monitor:json": "node monitor.js --json",
+    "health": "node monitor.js --json",
+    "test": "node test-integration.js"
   },
   "keywords": [
     "railway",
     "airtable",
     "africoin",
     "ai",
-    "integration"
+    "integration",
+    "scraping",
+    "pipeline"
   ],
   "author": "Africa Railways",
   "license": "MIT",
@@ -27,6 +40,7 @@
     "cheerio": "^1.0.0-rc.12",
     "airtable": "^0.12.2",
     "dotenv": "^16.3.1",
-    "node-cron": "^3.0.3"
+    "node-cron": "^3.0.3",
+    "openai": "^4.20.0"
   }
 }

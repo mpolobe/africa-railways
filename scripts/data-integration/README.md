@@ -23,7 +23,6 @@ Copy `.env.example` to `.env` and configure:
 
 ```bash
 cp .env.example .env
-nano .env
 ```
 
 Required variables:
@@ -43,17 +42,25 @@ AFRICOIN_API_KEY=your_africoin_api_key
 OPENAI_API_KEY=your_openai_api_key
 ```
 
-### 3. Run Integration
+### 3. Deploy
 
 ```bash
-# Scenario A: API Integration
-npm run sync:api
+npm run deploy
+```
 
-# Scenario B: Web Scraping
-npm run sync:scrape
+This validates your environment, tests connections, and generates deployment configs.
 
-# Unified Pipeline (Website → Airtable → Africoin → AI)
-npm run sync:all
+### 4. Run Pipeline
+
+```bash
+# Run once
+npm run pipeline
+
+# Run with AI insights
+npm run pipeline:insights
+
+# Run on schedule (every 6 hours)
+npm run pipeline:schedule
 ```
 
 ## Architecture
@@ -69,7 +76,7 @@ npm run sync:all
            │                        │
            ▼                        ▼
     ┌──────────────┐        ┌──────────────┐
-    │  sync-api.js │        │sync-scrape.js│
+    │  sync-api.js │        │  scraper.js  │
     │  (axios)     │        │  (cheerio)   │
     └──────┬───────┘        └──────┬───────┘
            │                        │
@@ -77,8 +84,8 @@ npm run sync:all
                         │
                         ▼
                 ┌───────────────┐
-                │  airtable.js  │
-                │  (upsert)     │
+                │  pipeline.js  │
+                │  (orchestrator)│
                 └───────┬───────┘
                         │
                         ▼
@@ -96,102 +103,218 @@ npm run sync:all
     └──────────────┘         └──────────────┘
 ```
 
-## Scenario A: API Integration
+## Available Commands
 
-Use when the railway website provides JSON/XML endpoints.
+### Pipeline Commands
 
-### Features
-- Fetch data from REST APIs
-- Transform JSON to Airtable format
-- Incremental sync (only new data)
-- Batch processing with rate limiting
+| Command | Description |
+|---------|-------------|
+| `npm run pipeline` | Run full pipeline once |
+| `npm run pipeline:schedule` | Run pipeline on schedule |
+| `npm run pipeline:api` | Use API integration (Scenario A) |
+| `npm run pipeline:insights` | Show AI insights after sync |
 
-### Endpoints Supported
-- `/api/schedules` - Train schedules
-- `/api/bookings` - Ticket bookings
-- `/api/stations` - Station information
-- `/api/trains` - Train fleet data
+### Scraping Commands
 
-### Usage
+| Command | Description |
+|---------|-------------|
+| `npm run scrape` | Scrape from generic source |
+| `npm run scrape:all` | Scrape from all configured sources |
+| `npm run scrape:tazara` | Scrape TAZARA railway |
+| `npm run scrape:kenya` | Scrape Kenya Railways |
 
-```bash
-node sync-api.js
+### Sync Commands
+
+| Command | Description |
+|---------|-------------|
+| `npm run sync` | Run basic sync |
+| `npm run sync:api` | Sync via API |
+| `npm run sync:scrape` | Sync via scraping |
+| `npm run sync:all` | Sync all data types |
+
+### Monitoring Commands
+
+| Command | Description |
+|---------|-------------|
+| `npm run deploy` | Run deployment checks |
+| `npm run monitor` | View health report |
+| `npm run health` | Get health status as JSON |
+
+## Pipeline Steps
+
+The unified pipeline (`pipeline.js`) executes these steps:
+
+1. **Fetch Data** - Scrape website or call API
+2. **Save to Airtable** - Upsert records with deduplication
+3. **Sync to Africoin** - Send data to Africoin backend
+4. **AI Analysis** - Generate insights with ChatGPT
+
+Example output:
+```
+Africa Railways Data Pipeline
+==================================================
+Website -> Airtable -> Africoin -> AI
+==================================================
+
+[1/4] Fetching data from source...
+  OK: 25 schedules, 12 stations
+
+[2/4] Saving to Airtable...
+  OK: Schedules (5 new, 20 updated)
+      Stations (2 new, 10 updated)
+
+[3/4] Syncing to Africoin backend...
+  OK: Data synced to Africoin
+
+[4/4] Running AI analysis...
+  OK: Analysis complete
+
+==================================================
+Pipeline Summary
+==================================================
+Duration: 4523ms
+Steps: 4/4 successful
 ```
 
-### Example API Response
+## Web Scraping (Scenario B)
 
-```json
-{
-  "schedules": [
-    {
-      "id": "SCH-001",
-      "train_id": "TRN-001",
-      "origin": "Dar es Salaam",
-      "destination": "Kapiri Mposhi",
-      "departure_time": "2026-01-15T08:00:00Z",
-      "arrival_time": "2026-01-15T20:00:00Z",
-      "price_economy": 50,
-      "price_business": 120,
-      "status": "Active"
-    }
-  ]
-}
-```
+The `scraper.js` module supports multiple railway websites:
 
-## Scenario B: Web Scraping
+### Configured Sources
 
-Use when the railway website only has HTML pages.
+| Source | Website | Data Types |
+|--------|---------|------------|
+| `tazara` | tazarasite.com | Schedules, Stations |
+| `kenya` | metrokenya.co.ke | Schedules |
+| `southafrica` | shosholozameyl.co.za | Schedules |
+| `generic` | Configurable | Schedules, Stations |
 
-### Features
-- Scrape data using Cheerio
-- Customizable CSS selectors
-- Generic scraper for any page
-- News and updates scraping
-
-### Pages Supported
-- `/train-schedules` - Train schedules
-- `/stations` - Station list
-- `/fleet` - Train fleet
-- `/news` - News and updates
-
-### Usage
-
-```bash
-node sync-scrape.js
-```
-
-### Customizing Selectors
-
-Edit `fetchSchedules.js` to match your website's HTML structure:
+### Custom Scraping
 
 ```javascript
-$('.schedule-row').each((_, el) => {
-  schedules.push({
-    trainNumber: $(el).find('.train-no').text().trim(),
-    origin: $(el).find('.origin').text().trim(),
-    destination: $(el).find('.destination').text().trim(),
-    departureTime: $(el).find('.departure').text().trim(),
-    arrivalTime: $(el).find('.arrival').text().trim(),
-  });
-});
+import { scrapeCustom } from './scraper.js';
+
+const data = await scrapeCustom(
+  'https://example.com/schedules',
+  '.schedule-row',
+  {
+    trainNumber: '.train-no',
+    origin: '.from',
+    destination: '.to',
+    departureTime: '.depart',
+  }
+);
 ```
 
-### Finding Selectors
+### Adding New Sources
 
-1. Open the website in Chrome/Firefox
-2. Right-click on the data you want → "Inspect"
-3. Find the CSS class or ID
-4. Update the selector in the script
+Edit `scraper.js` and add to `SCRAPER_CONFIGS`:
 
-Example HTML:
-```html
-<div class="schedule-row">
-  <span class="train-no">TRN-001</span>
-  <span class="origin">Dar es Salaam</span>
-  <span class="destination">Kapiri Mposhi</span>
-  <span class="departure">08:00</span>
-  <span class="arrival">20:00</span>
-</div>
+```javascript
+const SCRAPER_CONFIGS = {
+  // ... existing configs
+  
+  newrailway: {
+    baseURL: 'https://newrailway.com',
+    schedules: {
+      path: '/timetable',
+      container: '.timetable-row',
+      fields: {
+        trainNumber: '.train-id',
+        origin: '.from-station',
+        destination: '.to-station',
+        departureTime: '.departure',
+        arrivalTime: '.arrival',
+      },
+    },
+  },
+};
+```
+
+## Monitoring
+
+### Health Report
+
+```bash
+npm run monitor
+```
+
+Output:
+```
+Africa Railways Data Integration - Health Report
+=======================================================
+
+Status: [OK] Healthy
+
+Health Checks:
+  [OK] recent_sync: Last sync: 15 minutes ago
+  [OK] consecutive_failures: Consecutive failures: 0
+  [OK] error_rate: Error rate: 2.5%
+
+Metrics:
+  Total Syncs: 156
+  Success Rate: 97.5%
+  Avg Duration: 3245ms
+  Avg Records: 28
+  Last Sync: 2026-01-12T18:30:00.000Z
+  Last Success: 2026-01-12T18:30:00.000Z
+
+Recent Syncs:
+  [OK] 1/12/2026, 6:30:00 PM - 28 records, 3245ms
+  [OK] 1/12/2026, 12:30:00 PM - 25 records, 2987ms
+  [OK] 1/12/2026, 6:30:00 AM - 30 records, 3512ms
+```
+
+### Alert Thresholds
+
+| Metric | Threshold | Level |
+|--------|-----------|-------|
+| Consecutive Failures | >= 3 | Critical |
+| Error Rate | > 10% | Warning |
+| Sync Age | > 1 hour | Warning |
+
+### JSON Health Export
+
+```bash
+npm run health > health.json
+```
+
+## Deployment
+
+### PM2 (Recommended)
+
+```bash
+# Deploy generates ecosystem.config.cjs
+npm run deploy
+
+# Start with PM2
+pm2 start ecosystem.config.cjs
+pm2 save
+pm2 startup
+```
+
+### Systemd
+
+```bash
+# Deploy generates service file
+npm run deploy
+
+# Install service
+sudo cp africa-railways-pipeline.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable africa-railways-pipeline
+sudo systemctl start africa-railways-pipeline
+```
+
+### Docker
+
+```dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+CMD ["npm", "run", "pipeline:schedule"]
 ```
 
 ## Airtable Client
@@ -199,7 +322,6 @@ Example HTML:
 The `airtable.js` module provides:
 
 ### Upsert Records
-Update if exists, create if not:
 ```javascript
 import { upsertRecords } from './airtable.js';
 
@@ -208,7 +330,6 @@ const results = await upsertRecords('Schedules', records, 'Schedule ID');
 ```
 
 ### Batch Create
-Create multiple records efficiently:
 ```javascript
 import { batchCreate } from './airtable.js';
 
@@ -216,7 +337,6 @@ const created = await batchCreate('Schedules', records);
 ```
 
 ### Query Records
-Fetch data with filters:
 ```javascript
 import { queryRecords } from './airtable.js';
 
@@ -227,264 +347,98 @@ const schedules = await queryRecords('Schedules', {
 });
 ```
 
-## Unified Pipeline
-
-The `sync-all.js` script runs the complete pipeline:
-
-1. **Scrape Website** → Fetch schedules using `fetchSchedules()`
-2. **Sync to Airtable** → Upsert records with `upsertRecords()`
-3. **Sync to Africoin** → Send data to Africoin backend
-4. **AI Processing** → Analyze with ChatGPT
-
-```bash
-npm run sync:all
-```
-
-Output:
-```
-🚀 Africa Railways Data Integration Pipeline
-════════════════════════════════════════════════════════════
-Website → Airtable → Africoin → AI Intelligence
-════════════════════════════════════════════════════════════
-
-📊 Syncing Schedules...
-✅ Fetched 25 schedules from website
-✅ Schedules: 5 created, 20 updated
-
-💰 Syncing to Africoin backend...
-✅ Data synced to Africoin
-
-🤖 Processing with AI Intelligence...
-
-🧠 AI Insights:
-Analysis of the railway schedules shows:
-1. Peak travel times are 08:00-10:00 and 17:00-19:00
-2. Dar es Salaam - Kapiri Mposhi route has highest demand
-3. Recommend adding capacity during peak hours
-
-════════════════════════════════════════════════════════════
-✅ Integration pipeline completed successfully
-
-Summary:
-  Schedules synced: 25
-  Africoin: Synced
-  AI Processing: Completed
-```
-
-## Scheduling
-
-### Using Cron (Linux/Mac)
-
-```bash
-# Edit crontab
-crontab -e
-
-# Run every 15 minutes
-*/15 * * * * cd /path/to/scripts/data-integration && npm run sync:all
-
-# Run daily at 2 AM
-0 2 * * * cd /path/to/scripts/data-integration && npm run sync:all
-```
-
-### Using PM2
-
-```bash
-# Install PM2
-npm install -g pm2
-
-# Start with cron
-pm2 start sync-all.js --cron "*/15 * * * *"
-
-# Save configuration
-pm2 save
-pm2 startup
-```
-
-### Using Node-Cron
-
-Create `scheduler.js`:
-```javascript
-import cron from 'node-cron';
-import { syncAll } from './sync-all.js';
-
-// Run every 15 minutes
-cron.schedule('*/15 * * * *', async () => {
-  console.log('Running scheduled sync...');
-  await syncAll();
-});
-
-console.log('Scheduler started');
-```
-
-Run:
-```bash
-node scheduler.js
-```
-
 ## Error Handling
 
 ### Automatic Retries
 
-The integration includes automatic retry logic:
-```javascript
-const MAX_RETRIES = 3;
-let retries = 0;
-
-while (retries < MAX_RETRIES) {
-  try {
-    await syncSchedules();
-    break;
-  } catch (error) {
-    retries++;
-    console.log(`Retry ${retries}/${MAX_RETRIES}...`);
-    await sleep(1000 * retries); // Exponential backoff
-  }
-}
-```
+All HTTP requests include retry logic with exponential backoff:
+- 3 retry attempts
+- 2 second initial delay
+- Doubles on each retry
 
 ### Rate Limiting
 
-Respects Airtable's rate limits:
-```javascript
-// 200ms delay between batches
-await new Promise(resolve => setTimeout(resolve, 200));
-```
+Respects Airtable's limits:
+- 5 requests/second
+- 10 records per batch
+- 200ms delay between batches
 
-### Timeout Configuration
-
-Set in `.env`:
-```bash
-TIMEOUT_MS=30000  # 30 seconds
-```
-
-## Monitoring
-
-### View Logs
+### Continue on Error
 
 ```bash
-# Real-time logs
-tail -f logs/integration.log
-
-# Last 100 lines
-tail -n 100 logs/integration.log
-
-# Search for errors
-grep "ERROR" logs/integration.log
-```
-
-### Health Check
-
-Create `monitor.js`:
-```javascript
-import { queryRecords } from './airtable.js';
-
-async function checkHealth() {
-  const schedules = await queryRecords('Schedules', { maxRecords: 1 });
-  
-  if (schedules.length > 0) {
-    console.log('✅ Integration healthy');
-    console.log(`Last sync: ${schedules[0]['Departure Time']}`);
-  } else {
-    console.log('❌ No data found');
-  }
-}
-
-checkHealth();
-```
-
-## Troubleshooting
-
-### "AIRTABLE_API_KEY not found"
-
-**Solution:** Create `.env` file with your API key:
-```bash
-echo "AIRTABLE_API_KEY=your_key" > .env
-```
-
-### "Cannot find module 'cheerio'"
-
-**Solution:** Install dependencies:
-```bash
-npm install
-```
-
-### "No schedules found"
-
-**Solution:** Check CSS selectors match your website:
-1. Inspect the website HTML
-2. Update selectors in `fetchSchedules.js`
-3. Test with: `node fetchSchedules.js`
-
-### "Rate limit exceeded"
-
-**Solution:** Increase delay between batches:
-```javascript
-await new Promise(resolve => setTimeout(resolve, 500)); // 500ms
-```
-
-## Best Practices
-
-### 1. Test Before Production
-
-```bash
-# Test with small dataset
-node sync-all.js
-
-# Check Airtable for data
-# Verify no duplicates
-```
-
-### 2. Monitor Sync Health
-
-```bash
-# Set up alerts for failures
-# Check logs daily
-# Monitor Airtable record counts
-```
-
-### 3. Backup Data
-
-```bash
-# Export Airtable data regularly
-# Keep backup of .env file (securely)
-```
-
-### 4. Optimize Performance
-
-```bash
-# Use incremental sync (only new data)
-# Batch operations (10 records at a time)
-# Cache frequently accessed data
+# Continue pipeline even if a step fails
+node pipeline.js --continue
 ```
 
 ## Security
 
 ### API Keys
 
-- ✅ Store in `.env` file
-- ✅ Add `.env` to `.gitignore`
-- ❌ Never commit API keys to git
-- ❌ Never share keys in chat/messages
+- Store in `.env` file
+- Add `.env` to `.gitignore`
+- Never commit keys to git
 
-### Rate Limiting
+### Environment Variables
 
-- Respect Airtable's 5 requests/second limit
-- Use 200ms delay between batches
-- Implement exponential backoff for retries
+```bash
+# Required
+AIRTABLE_API_KEY=key_xxxxx
+AIRTABLE_BASE_ID=app_xxxxx
 
-### Data Validation
+# Optional
+AFRICA_RAIL_BASE_URL=https://...
+AFRICOIN_API_URL=https://...
+AFRICOIN_API_KEY=xxx
+OPENAI_API_KEY=sk-xxx
 
-- Validate data before syncing
-- Check for required fields
-- Handle missing data gracefully
+# Feature flags
+ENABLE_AI_ANALYSIS=true
+ENABLE_AFRICOIN_SYNC=true
+```
 
-## Support
+## Troubleshooting
 
-For issues or questions:
-- Check logs in `logs/integration.log`
-- Review Airtable API docs: https://airtable.com/developers
-- Review Cheerio docs: https://cheerio.js.org
-- Contact the development team
+### "AIRTABLE_API_KEY not found"
+
+Create `.env` file:
+```bash
+echo "AIRTABLE_API_KEY=your_key" > .env
+echo "AIRTABLE_BASE_ID=your_base" >> .env
+```
+
+### "No schedules found"
+
+1. Check CSS selectors match website HTML
+2. Inspect website structure
+3. Update selectors in `scraper.js`
+4. Test: `npm run scrape`
+
+### "Rate limit exceeded"
+
+Increase delay in `airtable.js`:
+```javascript
+await new Promise(resolve => setTimeout(resolve, 500));
+```
+
+### Connection Errors
+
+Run deployment check:
+```bash
+npm run deploy
+```
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `pipeline.js` | Main orchestrator |
+| `scraper.js` | Web scraping module |
+| `airtable.js` | Airtable client |
+| `monitor.js` | Health monitoring |
+| `deploy.js` | Deployment checks |
+| `sync-api.js` | API integration |
+| `sync-scrape.js` | Scraping integration |
+| `sync-all.js` | Legacy unified sync |
 
 ## License
 
