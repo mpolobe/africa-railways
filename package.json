@@ -26,7 +26,10 @@
     "airtable:sync:transactions": "node scripts/airtable-sync/sync-transactions.js",
     "airtable:sync:all": "node scripts/airtable-sync/sync-all.js",
     "airtable:monitor": "node scripts/airtable-sync/monitor.js report",
-    "airtable:health": "node scripts/airtable-sync/monitor.js health"
+    "airtable:health": "node scripts/airtable-sync/monitor.js health",
+    "railway:assistant": "node scripts/airtable-sync/railway-assistant.js interactive",
+    "railway:query": "node scripts/airtable-sync/railway-assistant.js query",
+    "railway:examples": "node scripts/airtable-sync/railway-assistant.js examples"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^6.1.0",
