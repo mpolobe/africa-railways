@@ -771,9 +771,6 @@
                 }
             };
 
-            const fromStation = STATIONS.find(s => s.id === from);
-            const toStation = STATIONS.find(s => s.id === to);
-
             return (
                 <div className="container">
                     <div className="header">
@@ -843,9 +840,9 @@
                             </div>
 
                             {/* Station count info */}
-                            {stationData && (
+                            {stationData?.metadata && (
                                 <div style={{ marginBottom: '20px', padding: '10px 15px', background: 'rgba(0,212,255,0.1)', borderRadius: '8px', fontSize: '0.85rem', color: '#94a3b8' }}>
-                                    📊 {stationData.metadata.totalStations.toLocaleString()} stations across {stationData.metadata.totalCountries} countries
+                                    📊 {stationData.metadata.totalStations?.toLocaleString() || '7,258'} stations across {stationData.metadata.totalCountries || 31} countries
                                 </div>
                             )}
                             
