@@ -19,6 +19,68 @@ const OUTPUT_DIR = path.join(__dirname, '../../data');
 const OUTPUT_FILE = path.join(OUTPUT_DIR, 'stations.json');
 
 /**
+ * Determine country from coordinates (rough approximation)
+ */
+function getCountryFromCoords(lat, lng) {
+  // Rough bounding boxes for African countries
+  const countries = [
+    { name: 'South Africa', latMin: -35, latMax: -22, lngMin: 16, lngMax: 33 },
+    { name: 'Kenya', latMin: -5, latMax: 5, lngMin: 33, lngMax: 42 },
+    { name: 'Tanzania', latMin: -12, latMax: -1, lngMin: 29, lngMax: 41 },
+    { name: 'Egypt', latMin: 22, latMax: 32, lngMin: 24, lngMax: 37 },
+    { name: 'Morocco', latMin: 27, latMax: 36, lngMin: -13, lngMax: -1 },
+    { name: 'Nigeria', latMin: 4, latMax: 14, lngMin: 2, lngMax: 15 },
+    { name: 'Ethiopia', latMin: 3, latMax: 15, lngMin: 33, lngMax: 48 },
+    { name: 'Ghana', latMin: 4, latMax: 12, lngMin: -4, lngMax: 2 },
+    { name: 'Algeria', latMin: 18, latMax: 38, lngMin: -9, lngMax: 12 },
+    { name: 'Tunisia', latMin: 30, latMax: 38, lngMin: 7, lngMax: 12 },
+    { name: 'Sudan', latMin: 8, latMax: 23, lngMin: 21, lngMax: 39 },
+    { name: 'DR Congo', latMin: -14, latMax: 6, lngMin: 12, lngMax: 32 },
+    { name: 'Zambia', latMin: -18, latMax: -8, lngMin: 21, lngMax: 34 },
+    { name: 'Zimbabwe', latMin: -23, latMax: -15, lngMin: 25, lngMax: 34 },
+    { name: 'Mozambique', latMin: -27, latMax: -10, lngMin: 30, lngMax: 41 },
+    { name: 'Angola', latMin: -18, latMax: -4, lngMin: 11, lngMax: 24 },
+    { name: 'Botswana', latMin: -27, latMax: -17, lngMin: 19, lngMax: 30 },
+    { name: 'Namibia', latMin: -29, latMax: -17, lngMin: 11, lngMax: 26 },
+    { name: 'Uganda', latMin: -2, latMax: 5, lngMin: 29, lngMax: 35 },
+    { name: 'Senegal', latMin: 12, latMax: 17, lngMin: -18, lngMax: -11 },
+    { name: 'Ivory Coast', latMin: 4, latMax: 11, lngMin: -9, lngMax: -2 },
+    { name: 'Cameroon', latMin: 1, latMax: 14, lngMin: 8, lngMax: 17 },
+    { name: 'Libya', latMin: 19, latMax: 34, lngMin: 9, lngMax: 26 },
+    { name: 'Mali', latMin: 10, latMax: 25, lngMin: -12, lngMax: 5 },
+  ];
+  
+  for (const country of countries) {
+    if (lat >= country.latMin && lat <= country.latMax &&
+        lng >= country.lngMin && lng <= country.lngMax) {
+      return country.name;
+    }
+  }
+  return 'Other African Region';
+}
+
+/**
+ * Get city name from station name (extract location hints)
+ */
+function getCityFromName(name, lat, lng) {
+  // Common city patterns in station names
+  const cityPatterns = [
+    /^(.+?)\s+(Station|Terminal|Terminus|Depot|Junction|Yard|Central)$/i,
+    /^(.+?)\s*[-–]\s*(.+)$/,
+  ];
+  
+  for (const pattern of cityPatterns) {
+    const match = name.match(pattern);
+    if (match) {
+      return match[1].trim();
+    }
+  }
+  
+  // Use station name as city if no pattern matches
+  return name.split(/[-–,]/)[0].trim() || 'Unknown City';
+}
+
+/**
  * Fetch all stations from Airtable
  */
 async function fetchStationsFromAirtable() {
@@ -28,40 +90,49 @@ async function fetchStationsFromAirtable() {
     apiKey: process.env.AIRTABLE_API_KEY,
   });
   
-  const base = Airtable.base(process.env.AIRTABLE_INFRASTRUCTURE_BASE_ID || process.env.AIRTABLE_BASE_ID);
+  const base = Airtable.base(process.env.AIRTABLE_BASE_ID);
   
-  console.log('Fetching stations from Airtable...');
+  console.log('Fetching stations from Airtable Rail_Stations table...');
   
   const stations = [];
   
-  await base('Stations').select({
-    // Adjust field names based on your Airtable schema
+  await base('Rail_Stations').select({
     fields: [
-      'Station ID',
+      'Station_ID',
       'Name',
-      'City',
+      'Lat',
+      'Long',
       'Country',
-      'Type',
+      'Corridor',
       'Status',
-      'Latitude',
-      'Longitude',
-      'Facilities',
-      'Rail Line',
     ],
     filterByFormula: '{Status} = "Active"',
   }).eachPage((records, fetchNextPage) => {
     records.forEach(record => {
+      const name = record.get('Name') || 'Unknown Station';
+      const lat = record.get('Lat');
+      const lng = record.get('Long');
+      const airtableCountry = record.get('Country');
+      
+      // Determine country from coordinates if not properly set
+      let country = airtableCountry;
+      if (!country || country === 'Africa Region') {
+        country = lat && lng ? getCountryFromCoords(lat, lng) : 'Unknown Country';
+      }
+      
+      // Extract city from station name
+      const city = getCityFromName(name, lat, lng);
+      
       stations.push({
-        id: record.get('Station ID') || record.id,
-        name: record.get('Name') || 'Unknown Station',
-        city: record.get('City') || 'Unknown City',
-        country: record.get('Country') || 'Unknown Country',
-        type: record.get('Type') || 'Station',
+        id: record.get('Station_ID') || record.id,
+        name: name,
+        city: city,
+        country: country,
+        type: record.get('Corridor') ? 'Corridor Station' : 'Station',
         status: record.get('Status') || 'Active',
-        latitude: record.get('Latitude') || null,
-        longitude: record.get('Longitude') || null,
-        facilities: record.get('Facilities') || '',
-        railLine: record.get('Rail Line') || '',
+        latitude: lat || null,
+        longitude: lng || null,
+        corridor: record.get('Corridor') || '',
       });
     });
     fetchNextPage();
