@@ -290,7 +290,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState, useEffect, useMemo } = React;
 
         const CLASSES = [
             { id: 'economy', name: 'Economy', priceUSD: 50, priceAFC: 50, priceLocal: 'TZS 130,000', icon: '💺' },
@@ -298,28 +298,183 @@
             { id: 'first', name: 'First Class', priceUSD: 200, priceAFC: 200, priceLocal: 'TZS 520,000', icon: '👑' },
         ];
 
-        // Cascading Station Selector Component
-        function StationSelector({ label, value, onChange, otherValue }) {
-            const [stationData, setStationData] = useState(null);
+        // Simple Search Station Selector Component
+        function SimpleStationSelector({ label, value, onChange, otherValue, stationData }) {
+            const [searchTerm, setSearchTerm] = useState('');
+            const [isOpen, setIsOpen] = useState(false);
+            const [highlightedIndex, setHighlightedIndex] = useState(0);
+
+            // Flatten all stations for simple search
+            const allStations = useMemo(() => {
+                if (!stationData) return [];
+                const stations = [];
+                for (const country of stationData.countries) {
+                    for (const city of country.cities) {
+                        for (const station of city.stations) {
+                            stations.push({
+                                ...station,
+                                city: city.name,
+                                country: country.name,
+                                searchText: `${station.name} ${city.name} ${country.name}`.toLowerCase(),
+                            });
+                        }
+                    }
+                }
+                return stations;
+            }, [stationData]);
+
+            // Filter stations based on search
+            const filteredStations = useMemo(() => {
+                if (!searchTerm || searchTerm.length < 2) return [];
+                const term = searchTerm.toLowerCase();
+                return allStations
+                    .filter(s => s.searchText.includes(term) && s.id !== otherValue)
+                    .slice(0, 20); // Limit to 20 results
+            }, [searchTerm, allStations, otherValue]);
+
+            // Get selected station details
+            const selectedStation = allStations.find(s => s.id === value);
+
+            const handleSelect = (station) => {
+                onChange(station.id);
+                setSearchTerm('');
+                setIsOpen(false);
+            };
+
+            const handleKeyDown = (e) => {
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    setHighlightedIndex(i => Math.min(i + 1, filteredStations.length - 1));
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    setHighlightedIndex(i => Math.max(i - 1, 0));
+                } else if (e.key === 'Enter' && filteredStations[highlightedIndex]) {
+                    e.preventDefault();
+                    handleSelect(filteredStations[highlightedIndex]);
+                } else if (e.key === 'Escape') {
+                    setIsOpen(false);
+                }
+            };
+
+            return (
+                <div className="station-selector" style={{ position: 'relative' }}>
+                    <label style={{ display: 'block', marginBottom: '8px', color: '#94a3b8', fontSize: '0.9rem', fontWeight: '600' }}>
+                        {label}
+                    </label>
+                    
+                    <input
+                        type="text"
+                        placeholder="Type to search stations..."
+                        value={searchTerm}
+                        onChange={(e) => {
+                            setSearchTerm(e.target.value);
+                            setIsOpen(true);
+                            setHighlightedIndex(0);
+                        }}
+                        onFocus={() => setIsOpen(true)}
+                        onBlur={() => setTimeout(() => setIsOpen(false), 200)}
+                        onKeyDown={handleKeyDown}
+                        style={{ 
+                            width: '100%', 
+                            padding: '12px', 
+                            background: 'rgba(255,255,255,0.05)', 
+                            border: selectedStation ? '1px solid var(--gold)' : '1px solid #333', 
+                            borderRadius: '8px', 
+                            color: 'white', 
+                            fontSize: '1rem' 
+                        }}
+                    />
+
+                    {/* Dropdown Results */}
+                    {isOpen && filteredStations.length > 0 && (
+                        <div style={{
+                            position: 'absolute',
+                            top: '100%',
+                            left: 0,
+                            right: 0,
+                            background: '#1a2642',
+                            border: '1px solid #333',
+                            borderRadius: '8px',
+                            marginTop: '4px',
+                            maxHeight: '300px',
+                            overflowY: 'auto',
+                            zIndex: 100,
+                            boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
+                        }}>
+                            {filteredStations.map((station, index) => (
+                                <div
+                                    key={station.id}
+                                    onClick={() => handleSelect(station)}
+                                    style={{
+                                        padding: '12px 15px',
+                                        cursor: 'pointer',
+                                        borderBottom: '1px solid #333',
+                                        background: index === highlightedIndex ? 'rgba(255,184,0,0.1)' : 'transparent',
+                                    }}
+                                    onMouseEnter={() => setHighlightedIndex(index)}
+                                >
+                                    <div style={{ fontWeight: '600', color: 'white' }}>{station.name}</div>
+                                    <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+                                        {station.city}, {station.country}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Selected Station Display */}
+                    {selectedStation && (
+                        <div style={{ 
+                            marginTop: '8px', 
+                            padding: '10px 12px', 
+                            background: 'rgba(255,184,0,0.1)', 
+                            borderRadius: '6px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                        }}>
+                            <div>
+                                <span style={{ color: 'var(--gold)', fontWeight: '600' }}>📍 {selectedStation.name}</span>
+                                <span style={{ color: '#94a3b8', marginLeft: '10px', fontSize: '0.85rem' }}>
+                                    {selectedStation.city}, {selectedStation.country}
+                                </span>
+                            </div>
+                            <button 
+                                onClick={() => onChange('')}
+                                style={{ 
+                                    background: 'none', 
+                                    border: 'none', 
+                                    color: '#94a3b8', 
+                                    cursor: 'pointer',
+                                    fontSize: '1.2rem',
+                                }}
+                            >
+                                ✕
+                            </button>
+                        </div>
+                    )}
+
+                    {searchTerm.length > 0 && searchTerm.length < 2 && (
+                        <div style={{ marginTop: '8px', color: '#94a3b8', fontSize: '0.85rem' }}>
+                            Type at least 2 characters to search...
+                        </div>
+                    )}
+
+                    {searchTerm.length >= 2 && filteredStations.length === 0 && (
+                        <div style={{ marginTop: '8px', color: '#94a3b8', fontSize: '0.85rem' }}>
+                            No stations found for "{searchTerm}"
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // Advanced Cascading Station Selector Component
+        function AdvancedStationSelector({ label, value, onChange, otherValue, stationData }) {
             const [selectedCountry, setSelectedCountry] = useState('');
             const [selectedCity, setSelectedCity] = useState('');
             const [selectedStation, setSelectedStation] = useState('');
-            const [loading, setLoading] = useState(true);
             const [searchTerm, setSearchTerm] = useState('');
-
-            // Load station data
-            useEffect(() => {
-                fetch('/data/stations.json')
-                    .then(res => res.json())
-                    .then(data => {
-                        setStationData(data);
-                        setLoading(false);
-                    })
-                    .catch(err => {
-                        console.error('Failed to load stations:', err);
-                        setLoading(false);
-                    });
-            }, []);
 
             // Sync external value changes
             useEffect(() => {
@@ -374,7 +529,7 @@
             // Get selected station details
             const selectedStationData = stations.find(s => s.id === selectedStation);
 
-            if (loading) {
+            if (!stationData) {
                 return (
                     <div className="form-group">
                         <label>{label}</label>
@@ -471,6 +626,7 @@
             const [selectedClass, setSelectedClass] = useState('economy');
             const [status, setStatus] = useState('');
             const [isBooking, setIsBooking] = useState(false);
+            const [searchMode, setSearchMode] = useState('simple'); // 'simple' or 'advanced'
 
             // Load station data for summary display
             useEffect(() => {
@@ -479,6 +635,13 @@
                     .then(data => setStationData(data))
                     .catch(err => console.error('Failed to load stations:', err));
             }, []);
+
+            // Reset selections when switching modes
+            const handleModeChange = (mode) => {
+                setSearchMode(mode);
+                setFrom('');
+                setTo('');
+            };
 
             const selectedClassData = CLASSES.find(c => c.id === selectedClass);
             const totalPriceUSD = selectedClassData ? selectedClassData.priceUSD * passengers : 0;
@@ -577,25 +740,98 @@
 
                     <div className="booking-grid">
                         <div className="card">
-                            <h2>Journey Details</h2>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                <h2 style={{ margin: 0 }}>Journey Details</h2>
+                                
+                                {/* Search Mode Toggle */}
+                                <div style={{ display: 'flex', gap: '5px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', padding: '4px' }}>
+                                    <button
+                                        onClick={() => handleModeChange('simple')}
+                                        style={{
+                                            padding: '8px 16px',
+                                            border: 'none',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '0.85rem',
+                                            fontWeight: '600',
+                                            background: searchMode === 'simple' ? 'var(--gold)' : 'transparent',
+                                            color: searchMode === 'simple' ? 'var(--navy)' : '#94a3b8',
+                                            transition: 'all 0.2s',
+                                        }}
+                                    >
+                                        🔍 Simple
+                                    </button>
+                                    <button
+                                        onClick={() => handleModeChange('advanced')}
+                                        style={{
+                                            padding: '8px 16px',
+                                            border: 'none',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '0.85rem',
+                                            fontWeight: '600',
+                                            background: searchMode === 'advanced' ? 'var(--gold)' : 'transparent',
+                                            color: searchMode === 'advanced' ? 'var(--navy)' : '#94a3b8',
+                                            transition: 'all 0.2s',
+                                        }}
+                                    >
+                                        🗂️ Advanced
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Station count info */}
+                            {stationData && (
+                                <div style={{ marginBottom: '20px', padding: '10px 15px', background: 'rgba(0,212,255,0.1)', borderRadius: '8px', fontSize: '0.85rem', color: '#94a3b8' }}>
+                                    📊 {stationData.metadata.totalStations.toLocaleString()} stations across {stationData.metadata.totalCountries} countries
+                                </div>
+                            )}
                             
-                            <StationSelector 
-                                label="From (Departure)" 
-                                value={from} 
-                                onChange={setFrom}
-                                otherValue={to}
-                            />
+                            {searchMode === 'simple' ? (
+                                <>
+                                    <SimpleStationSelector 
+                                        label="From (Departure)" 
+                                        value={from} 
+                                        onChange={setFrom}
+                                        otherValue={to}
+                                        stationData={stationData}
+                                    />
 
-                            <button className="swap-button" onClick={swapStations} title="Swap stations">
-                                ⇅
-                            </button>
+                                    <button className="swap-button" onClick={swapStations} title="Swap stations">
+                                        ⇅
+                                    </button>
 
-                            <StationSelector 
-                                label="To (Arrival)" 
-                                value={to} 
-                                onChange={setTo}
-                                otherValue={from}
-                            />
+                                    <SimpleStationSelector 
+                                        label="To (Arrival)" 
+                                        value={to} 
+                                        onChange={setTo}
+                                        otherValue={from}
+                                        stationData={stationData}
+                                    />
+                                </>
+                            ) : (
+                                <>
+                                    <AdvancedStationSelector 
+                                        label="From (Departure)" 
+                                        value={from} 
+                                        onChange={setFrom}
+                                        otherValue={to}
+                                        stationData={stationData}
+                                    />
+
+                                    <button className="swap-button" onClick={swapStations} title="Swap stations">
+                                        ⇅
+                                    </button>
+
+                                    <AdvancedStationSelector 
+                                        label="To (Arrival)" 
+                                        value={to} 
+                                        onChange={setTo}
+                                        otherValue={from}
+                                        stationData={stationData}
+                                    />
+                                </>
+                            )}
 
                             <div className="form-group">
                                 <label>Travel Date</label>
