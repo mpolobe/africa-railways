@@ -56,31 +56,49 @@ type APIKey struct {
 }
 
 var (
-	operatorsData *OperatorsData
-	apiKeys       = make(map[string]*APIKey)
-	apiKeysMu     sync.RWMutex
-	operatorsOnce sync.Once
+	operatorsData  *OperatorsData
+	apiKeys        = make(map[string]*APIKey)
+	apiKeysMu      sync.RWMutex
+	operatorsOnce  sync.Once
+	operatorsError error
 )
 
 // loadOperators loads operators from JSON file
 func loadOperators() error {
-	var loadErr error
 	operatorsOnce.Do(func() {
-		data, err := os.ReadFile("data/operators.json")
+		// Try multiple paths for flexibility
+		paths := []string{
+			"data/operators.json",
+			"../data/operators.json",
+			"/workspaces/africa-railways/data/operators.json",
+		}
+
+		var data []byte
+		var err error
+		var usedPath string
+		for _, path := range paths {
+			data, err = os.ReadFile(path)
+			if err == nil {
+				usedPath = path
+				break
+			}
+		}
 		if err != nil {
-			loadErr = fmt.Errorf("failed to read operators.json: %w", err)
+			operatorsError = fmt.Errorf("failed to read operators.json: %w", err)
+			log.Printf("❌ %v", operatorsError)
 			return
 		}
 
 		operatorsData = &OperatorsData{}
 		if err := json.Unmarshal(data, operatorsData); err != nil {
-			loadErr = fmt.Errorf("failed to parse operators.json: %w", err)
+			operatorsError = fmt.Errorf("failed to parse operators.json: %w", err)
+			log.Printf("❌ %v", operatorsError)
 			return
 		}
 
-		log.Printf("✅ Loaded %d operators from data/operators.json", len(operatorsData.Operators))
+		log.Printf("✅ Loaded %d operators from %s", len(operatorsData.Operators), usedPath)
 	})
-	return loadErr
+	return operatorsError
 }
 
 // generateAPIKey creates a secure random API key
