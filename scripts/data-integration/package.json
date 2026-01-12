@@ -5,6 +5,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "sync": "node index.js",
     "sync:api": "node sync-api.js",
     "sync:scrape": "node sync-scrape.js",
     "sync:all": "node sync-all.js",
