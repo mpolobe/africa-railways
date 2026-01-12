@@ -292,31 +292,178 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        const STATIONS = [
-            { id: '1', name: 'Cairo Ramses', city: 'Cairo', country: 'Egypt' },
-            { id: '2', name: 'Cape Town Central', city: 'Cape Town', country: 'South Africa' },
-            { id: '3', name: 'Nairobi Terminus', city: 'Nairobi', country: 'Kenya' },
-            { id: '4', name: 'Casablanca Voyageurs', city: 'Casablanca', country: 'Morocco' },
-            { id: '5', name: 'Lagos Terminus', city: 'Lagos', country: 'Nigeria' },
-            { id: '6', name: 'Addis Ababa Furi-Labu', city: 'Addis Ababa', country: 'Ethiopia' },
-            { id: '7', name: 'Dakar Station', city: 'Dakar', country: 'Senegal' },
-            { id: '8', name: 'Dar es Salaam Station', city: 'Dar es Salaam', country: 'Tanzania' },
-            { id: '9', name: 'Algiers Central', city: 'Algiers', country: 'Algeria' },
-            { id: '10', name: 'Lusaka Central', city: 'Lusaka', country: 'Zambia' },
-            { id: '11', name: 'Luanda Bungo', city: 'Luanda', country: 'Angola' },
-            { id: '12', name: 'Accra Central', city: 'Accra', country: 'Ghana' },
-            { id: '13', name: 'Kampala Station', city: 'Kampala', country: 'Uganda' },
-            { id: '14', name: 'Khartoum Central', city: 'Khartoum', country: 'Sudan' },
-            { id: '15', name: 'Abidjan Terminus', city: 'Abidjan', country: 'Ivory Coast' },
-        ];
-
         const CLASSES = [
             { id: 'economy', name: 'Economy', priceUSD: 50, priceAFC: 50, priceLocal: 'TZS 130,000', icon: '💺' },
             { id: 'business', name: 'Business', priceUSD: 120, priceAFC: 120, priceLocal: 'TZS 312,000', icon: '🛋️' },
             { id: 'first', name: 'First Class', priceUSD: 200, priceAFC: 200, priceLocal: 'TZS 520,000', icon: '👑' },
         ];
 
+        // Cascading Station Selector Component
+        function StationSelector({ label, value, onChange, otherValue }) {
+            const [stationData, setStationData] = useState(null);
+            const [selectedCountry, setSelectedCountry] = useState('');
+            const [selectedCity, setSelectedCity] = useState('');
+            const [selectedStation, setSelectedStation] = useState('');
+            const [loading, setLoading] = useState(true);
+            const [searchTerm, setSearchTerm] = useState('');
+
+            // Load station data
+            useEffect(() => {
+                fetch('/data/stations.json')
+                    .then(res => res.json())
+                    .then(data => {
+                        setStationData(data);
+                        setLoading(false);
+                    })
+                    .catch(err => {
+                        console.error('Failed to load stations:', err);
+                        setLoading(false);
+                    });
+            }, []);
+
+            // Sync external value changes
+            useEffect(() => {
+                if (value && stationData) {
+                    // Find station in data and set dropdowns
+                    for (const country of stationData.countries) {
+                        for (const city of country.cities) {
+                            const station = city.stations.find(s => s.id === value);
+                            if (station) {
+                                setSelectedCountry(country.id);
+                                setSelectedCity(city.id);
+                                setSelectedStation(station.id);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }, [value, stationData]);
+
+            const handleCountryChange = (countryId) => {
+                setSelectedCountry(countryId);
+                setSelectedCity('');
+                setSelectedStation('');
+                onChange('');
+            };
+
+            const handleCityChange = (cityId) => {
+                setSelectedCity(cityId);
+                setSelectedStation('');
+                onChange('');
+            };
+
+            const handleStationChange = (stationId) => {
+                setSelectedStation(stationId);
+                onChange(stationId);
+            };
+
+            // Get available options
+            const countries = stationData?.countries || [];
+            const cities = selectedCountry 
+                ? countries.find(c => c.id === selectedCountry)?.cities || []
+                : [];
+            const stations = selectedCity
+                ? cities.find(c => c.id === selectedCity)?.stations || []
+                : [];
+
+            // Filter stations if search term exists
+            const filteredStations = searchTerm
+                ? stations.filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase()))
+                : stations;
+
+            // Get selected station details
+            const selectedStationData = stations.find(s => s.id === selectedStation);
+
+            if (loading) {
+                return (
+                    <div className="form-group">
+                        <label>{label}</label>
+                        <div style={{ padding: '12px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', color: '#94a3b8' }}>
+                            Loading stations...
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="station-selector">
+                    <label style={{ display: 'block', marginBottom: '8px', color: '#94a3b8', fontSize: '0.9rem', fontWeight: '600' }}>
+                        {label}
+                    </label>
+                    
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
+                        {/* Country Dropdown */}
+                        <select 
+                            value={selectedCountry} 
+                            onChange={(e) => handleCountryChange(e.target.value)}
+                            style={{ padding: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid #333', borderRadius: '8px', color: 'white', fontSize: '0.9rem' }}
+                        >
+                            <option value="">Select Country</option>
+                            {countries.map(country => (
+                                <option key={country.id} value={country.id}>
+                                    {country.name}
+                                </option>
+                            ))}
+                        </select>
+
+                        {/* City Dropdown */}
+                        <select 
+                            value={selectedCity} 
+                            onChange={(e) => handleCityChange(e.target.value)}
+                            disabled={!selectedCountry}
+                            style={{ padding: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid #333', borderRadius: '8px', color: 'white', fontSize: '0.9rem', opacity: selectedCountry ? 1 : 0.5 }}
+                        >
+                            <option value="">Select City</option>
+                            {cities.map(city => (
+                                <option key={city.id} value={city.id}>
+                                    {city.name} ({city.stations.length} stations)
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Station Dropdown with Search */}
+                    {selectedCity && stations.length > 3 && (
+                        <input
+                            type="text"
+                            placeholder="Search stations..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            style={{ width: '100%', padding: '8px 12px', background: 'rgba(255,255,255,0.05)', border: '1px solid #333', borderRadius: '8px', color: 'white', fontSize: '0.85rem', marginBottom: '10px' }}
+                        />
+                    )}
+
+                    <select 
+                        value={selectedStation} 
+                        onChange={(e) => handleStationChange(e.target.value)}
+                        disabled={!selectedCity}
+                        style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.05)', border: selectedStation ? '1px solid var(--gold)' : '1px solid #333', borderRadius: '8px', color: 'white', fontSize: '1rem', opacity: selectedCity ? 1 : 0.5 }}
+                    >
+                        <option value="">Select Station</option>
+                        {filteredStations.map(station => (
+                            <option 
+                                key={station.id} 
+                                value={station.id}
+                                disabled={station.id === otherValue}
+                            >
+                                {station.name} ({station.type})
+                            </option>
+                        ))}
+                    </select>
+
+                    {/* Selected Station Info */}
+                    {selectedStationData && (
+                        <div style={{ marginTop: '8px', padding: '8px 12px', background: 'rgba(255,184,0,0.1)', borderRadius: '6px', fontSize: '0.85rem' }}>
+                            <span style={{ color: 'var(--gold)' }}>📍 {selectedStationData.name}</span>
+                            <span style={{ color: '#94a3b8', marginLeft: '10px' }}>{selectedStationData.type}</span>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
         function BookingApp() {
+            const [stationData, setStationData] = useState(null);
             const [from, setFrom] = useState('');
             const [to, setTo] = useState('');
             const [date, setDate] = useState('');
@@ -325,9 +472,34 @@
             const [status, setStatus] = useState('');
             const [isBooking, setIsBooking] = useState(false);
 
+            // Load station data for summary display
+            useEffect(() => {
+                fetch('/data/stations.json')
+                    .then(res => res.json())
+                    .then(data => setStationData(data))
+                    .catch(err => console.error('Failed to load stations:', err));
+            }, []);
+
             const selectedClassData = CLASSES.find(c => c.id === selectedClass);
             const totalPriceUSD = selectedClassData ? selectedClassData.priceUSD * passengers : 0;
             const totalPriceAFC = selectedClassData ? selectedClassData.priceAFC * passengers : 0;
+
+            // Find station details for summary
+            const findStation = (stationId) => {
+                if (!stationData || !stationId) return null;
+                for (const country of stationData.countries) {
+                    for (const city of country.cities) {
+                        const station = city.stations.find(s => s.id === stationId);
+                        if (station) {
+                            return { ...station, city: city.name, country: country.name };
+                        }
+                    }
+                }
+                return null;
+            };
+
+            const fromStation = findStation(from);
+            const toStation = findStation(to);
 
             const swapStations = () => {
                 const temp = from;
@@ -407,33 +579,23 @@
                         <div className="card">
                             <h2>Journey Details</h2>
                             
-                            <div className="form-group">
-                                <label>From</label>
-                                <select value={from} onChange={(e) => setFrom(e.target.value)}>
-                                    <option value="">Select departure station</option>
-                                    {STATIONS.map(station => (
-                                        <option key={station.id} value={station.id}>
-                                            {station.name} - {station.city}, {station.country}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+                            <StationSelector 
+                                label="From (Departure)" 
+                                value={from} 
+                                onChange={setFrom}
+                                otherValue={to}
+                            />
 
                             <button className="swap-button" onClick={swapStations} title="Swap stations">
                                 ⇅
                             </button>
 
-                            <div className="form-group">
-                                <label>To</label>
-                                <select value={to} onChange={(e) => setTo(e.target.value)}>
-                                    <option value="">Select arrival station</option>
-                                    {STATIONS.map(station => (
-                                        <option key={station.id} value={station.id}>
-                                            {station.name} - {station.city}, {station.country}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+                            <StationSelector 
+                                label="To (Arrival)" 
+                                value={to} 
+                                onChange={setTo}
+                                otherValue={from}
+                            />
 
                             <div className="form-group">
                                 <label>Travel Date</label>

@@ -1,0 +1,964 @@
+{
+  "countries": [
+    {
+      "id": "algeria",
+      "name": "Algeria",
+      "cities": [
+        {
+          "id": "algeria-algiers",
+          "name": "Algiers",
+          "stations": [
+            {
+              "id": "DZ-ALG-001",
+              "name": "Algiers Central",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "algeria-constantine",
+          "name": "Constantine",
+          "stations": [
+            {
+              "id": "DZ-CST-001",
+              "name": "Constantine Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "algeria-oran",
+          "name": "Oran",
+          "stations": [
+            {
+              "id": "DZ-ORN-001",
+              "name": "Oran Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "angola",
+      "name": "Angola",
+      "cities": [
+        {
+          "id": "angola-lobito",
+          "name": "Lobito",
+          "stations": [
+            {
+              "id": "AO-LBT-001",
+              "name": "Lobito Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "angola-luanda",
+          "name": "Luanda",
+          "stations": [
+            {
+              "id": "AO-LUA-001",
+              "name": "Luanda Bungo",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "botswana",
+      "name": "Botswana",
+      "cities": [
+        {
+          "id": "botswana-francistown",
+          "name": "Francistown",
+          "stations": [
+            {
+              "id": "BW-FRT-001",
+              "name": "Francistown Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "botswana-gaborone",
+          "name": "Gaborone",
+          "stations": [
+            {
+              "id": "BW-GBE-001",
+              "name": "Gaborone Station",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cameroon",
+      "name": "Cameroon",
+      "cities": [
+        {
+          "id": "cameroon-douala",
+          "name": "Douala",
+          "stations": [
+            {
+              "id": "CM-DLA-001",
+              "name": "Douala Station",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "cameroon-yaounde",
+          "name": "Yaounde",
+          "stations": [
+            {
+              "id": "CM-YDE-001",
+              "name": "Yaounde Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dr-congo",
+      "name": "DR Congo",
+      "cities": [
+        {
+          "id": "dr-congo-kinshasa",
+          "name": "Kinshasa",
+          "stations": [
+            {
+              "id": "CD-KIN-001",
+              "name": "Kinshasa Central",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "dr-congo-lubumbashi",
+          "name": "Lubumbashi",
+          "stations": [
+            {
+              "id": "CD-LUB-001",
+              "name": "Lubumbashi Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "egypt",
+      "name": "Egypt",
+      "cities": [
+        {
+          "id": "egypt-alexandria",
+          "name": "Alexandria",
+          "stations": [
+            {
+              "id": "EG-ALX-001",
+              "name": "Alexandria Misr",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "egypt-aswan",
+          "name": "Aswan",
+          "stations": [
+            {
+              "id": "EG-ASW-001",
+              "name": "Aswan Station",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "egypt-cairo",
+          "name": "Cairo",
+          "stations": [
+            {
+              "id": "EG-CAI-002",
+              "name": "Cairo Giza",
+              "type": "Station",
+              "coordinates": null
+            },
+            {
+              "id": "EG-CAI-001",
+              "name": "Cairo Ramses",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "egypt-luxor",
+          "name": "Luxor",
+          "stations": [
+            {
+              "id": "EG-LXR-001",
+              "name": "Luxor Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ethiopia",
+      "name": "Ethiopia",
+      "cities": [
+        {
+          "id": "ethiopia-addis-ababa",
+          "name": "Addis Ababa",
+          "stations": [
+            {
+              "id": "ET-ADD-001",
+              "name": "Addis Ababa Furi",
+              "type": "Terminal",
+              "coordinates": null
+            },
+            {
+              "id": "ET-ADD-002",
+              "name": "Addis Ababa Lebu",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "ethiopia-dire-dawa",
+          "name": "Dire Dawa",
+          "stations": [
+            {
+              "id": "ET-DJI-001",
+              "name": "Dire Dawa Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ghana",
+      "name": "Ghana",
+      "cities": [
+        {
+          "id": "ghana-accra",
+          "name": "Accra",
+          "stations": [
+            {
+              "id": "GH-ACC-001",
+              "name": "Accra Central",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "ghana-kumasi",
+          "name": "Kumasi",
+          "stations": [
+            {
+              "id": "GH-KUM-001",
+              "name": "Kumasi Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "ghana-takoradi",
+          "name": "Takoradi",
+          "stations": [
+            {
+              "id": "GH-TKD-001",
+              "name": "Takoradi Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ivory-coast",
+      "name": "Ivory Coast",
+      "cities": [
+        {
+          "id": "ivory-coast-abidjan",
+          "name": "Abidjan",
+          "stations": [
+            {
+              "id": "CI-ABJ-001",
+              "name": "Abidjan Terminus",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "ivory-coast-bouake",
+          "name": "Bouake",
+          "stations": [
+            {
+              "id": "CI-BKE-001",
+              "name": "Bouake Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kenya",
+      "name": "Kenya",
+      "cities": [
+        {
+          "id": "kenya-kisumu",
+          "name": "Kisumu",
+          "stations": [
+            {
+              "id": "KE-KSM-001",
+              "name": "Kisumu Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "kenya-mombasa",
+          "name": "Mombasa",
+          "stations": [
+            {
+              "id": "KE-MBA-002",
+              "name": "Mombasa Port",
+              "type": "Freight",
+              "coordinates": null
+            },
+            {
+              "id": "KE-MBA-001",
+              "name": "Mombasa Terminus",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "kenya-nairobi",
+          "name": "Nairobi",
+          "stations": [
+            {
+              "id": "KE-NBI-002",
+              "name": "Nairobi Central",
+              "type": "Station",
+              "coordinates": null
+            },
+            {
+              "id": "KE-NBI-003",
+              "name": "Nairobi South",
+              "type": "Station",
+              "coordinates": null
+            },
+            {
+              "id": "KE-NBI-001",
+              "name": "Nairobi Terminus",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "kenya-nakuru",
+          "name": "Nakuru",
+          "stations": [
+            {
+              "id": "KE-NKR-001",
+              "name": "Nakuru Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "morocco",
+      "name": "Morocco",
+      "cities": [
+        {
+          "id": "morocco-casablanca",
+          "name": "Casablanca",
+          "stations": [
+            {
+              "id": "MA-CAS-002",
+              "name": "Casablanca Port",
+              "type": "Station",
+              "coordinates": null
+            },
+            {
+              "id": "MA-CAS-001",
+              "name": "Casablanca Voyageurs",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "morocco-marrakech",
+          "name": "Marrakech",
+          "stations": [
+            {
+              "id": "MA-MRK-001",
+              "name": "Marrakech Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "morocco-rabat",
+          "name": "Rabat",
+          "stations": [
+            {
+              "id": "MA-RAB-001",
+              "name": "Rabat Ville",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "morocco-tangier",
+          "name": "Tangier",
+          "stations": [
+            {
+              "id": "MA-TNG-001",
+              "name": "Tangier Ville",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mozambique",
+      "name": "Mozambique",
+      "cities": [
+        {
+          "id": "mozambique-beira",
+          "name": "Beira",
+          "stations": [
+            {
+              "id": "MZ-BRA-001",
+              "name": "Beira Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "mozambique-maputo",
+          "name": "Maputo",
+          "stations": [
+            {
+              "id": "MZ-MPT-001",
+              "name": "Maputo Central",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "namibia",
+      "name": "Namibia",
+      "cities": [
+        {
+          "id": "namibia-walvis-bay",
+          "name": "Walvis Bay",
+          "stations": [
+            {
+              "id": "NA-WAL-001",
+              "name": "Walvis Bay Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "namibia-windhoek",
+          "name": "Windhoek",
+          "stations": [
+            {
+              "id": "NA-WDH-001",
+              "name": "Windhoek Station",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nigeria",
+      "name": "Nigeria",
+      "cities": [
+        {
+          "id": "nigeria-abuja",
+          "name": "Abuja",
+          "stations": [
+            {
+              "id": "NG-ABJ-001",
+              "name": "Abuja Central",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "nigeria-ibadan",
+          "name": "Ibadan",
+          "stations": [
+            {
+              "id": "NG-IBD-001",
+              "name": "Ibadan Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "nigeria-kano",
+          "name": "Kano",
+          "stations": [
+            {
+              "id": "NG-KAN-001",
+              "name": "Kano Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "nigeria-lagos",
+          "name": "Lagos",
+          "stations": [
+            {
+              "id": "NG-LAG-002",
+              "name": "Lagos Apapa",
+              "type": "Freight",
+              "coordinates": null
+            },
+            {
+              "id": "NG-LAG-001",
+              "name": "Lagos Terminus",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "senegal",
+      "name": "Senegal",
+      "cities": [
+        {
+          "id": "senegal-dakar",
+          "name": "Dakar",
+          "stations": [
+            {
+              "id": "SN-DKR-001",
+              "name": "Dakar Station",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "senegal-thies",
+          "name": "Thies",
+          "stations": [
+            {
+              "id": "SN-THS-001",
+              "name": "Thies Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "south-africa",
+      "name": "South Africa",
+      "cities": [
+        {
+          "id": "south-africa-cape-town",
+          "name": "Cape Town",
+          "stations": [
+            {
+              "id": "ZA-CPT-002",
+              "name": "Cape Town Bellville",
+              "type": "Station",
+              "coordinates": null
+            },
+            {
+              "id": "ZA-CPT-001",
+              "name": "Cape Town Central",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "south-africa-durban",
+          "name": "Durban",
+          "stations": [
+            {
+              "id": "ZA-DBN-001",
+              "name": "Durban Central",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "south-africa-johannesburg",
+          "name": "Johannesburg",
+          "stations": [
+            {
+              "id": "ZA-JHB-002",
+              "name": "Johannesburg Braamfontein",
+              "type": "Station",
+              "coordinates": null
+            },
+            {
+              "id": "ZA-JHB-001",
+              "name": "Johannesburg Park Station",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "south-africa-pretoria",
+          "name": "Pretoria",
+          "stations": [
+            {
+              "id": "ZA-PTA-001",
+              "name": "Pretoria Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sudan",
+      "name": "Sudan",
+      "cities": [
+        {
+          "id": "sudan-atbara",
+          "name": "Atbara",
+          "stations": [
+            {
+              "id": "SD-ATB-001",
+              "name": "Atbara Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "sudan-khartoum",
+          "name": "Khartoum",
+          "stations": [
+            {
+              "id": "SD-KRT-001",
+              "name": "Khartoum Central",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tanzania",
+      "name": "Tanzania",
+      "cities": [
+        {
+          "id": "tanzania-dar-es-salaam",
+          "name": "Dar es Salaam",
+          "stations": [
+            {
+              "id": "TZ-DSM-001",
+              "name": "Dar es Salaam Central",
+              "type": "Terminal",
+              "coordinates": null
+            },
+            {
+              "id": "TZ-DSM-002",
+              "name": "Dar es Salaam Ubungo",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "tanzania-dodoma",
+          "name": "Dodoma",
+          "stations": [
+            {
+              "id": "TZ-DOD-001",
+              "name": "Dodoma Central",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "tanzania-kigoma",
+          "name": "Kigoma",
+          "stations": [
+            {
+              "id": "TZ-KIG-001",
+              "name": "Kigoma Station",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "tanzania-morogoro",
+          "name": "Morogoro",
+          "stations": [
+            {
+              "id": "TZ-MOR-001",
+              "name": "Morogoro Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "tanzania-mwanza",
+          "name": "Mwanza",
+          "stations": [
+            {
+              "id": "TZ-MWZ-001",
+              "name": "Mwanza Terminus",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "tanzania-tabora",
+          "name": "Tabora",
+          "stations": [
+            {
+              "id": "TZ-TAB-001",
+              "name": "Tabora Junction",
+              "type": "Junction",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tunisia",
+      "name": "Tunisia",
+      "cities": [
+        {
+          "id": "tunisia-sfax",
+          "name": "Sfax",
+          "stations": [
+            {
+              "id": "TN-SFX-001",
+              "name": "Sfax Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "tunisia-tunis",
+          "name": "Tunis",
+          "stations": [
+            {
+              "id": "TN-TUN-001",
+              "name": "Tunis Central",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "uganda",
+      "name": "Uganda",
+      "cities": [
+        {
+          "id": "uganda-jinja",
+          "name": "Jinja",
+          "stations": [
+            {
+              "id": "UG-JIN-001",
+              "name": "Jinja Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "uganda-kampala",
+          "name": "Kampala",
+          "stations": [
+            {
+              "id": "UG-KLA-001",
+              "name": "Kampala Central",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zambia",
+      "name": "Zambia",
+      "cities": [
+        {
+          "id": "zambia-kapiri-mposhi",
+          "name": "Kapiri Mposhi",
+          "stations": [
+            {
+              "id": "ZM-KPM-001",
+              "name": "Kapiri Mposhi Terminal",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "zambia-kitwe",
+          "name": "Kitwe",
+          "stations": [
+            {
+              "id": "ZM-KTW-001",
+              "name": "Kitwe Central",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "zambia-livingstone",
+          "name": "Livingstone",
+          "stations": [
+            {
+              "id": "ZM-LVS-001",
+              "name": "Livingstone Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "zambia-lusaka",
+          "name": "Lusaka",
+          "stations": [
+            {
+              "id": "ZM-LSK-001",
+              "name": "Lusaka Central",
+              "type": "Station",
+              "coordinates": null
+            },
+            {
+              "id": "ZM-LSK-002",
+              "name": "Lusaka Industrial",
+              "type": "Freight",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "zambia-ndola",
+          "name": "Ndola",
+          "stations": [
+            {
+              "id": "ZM-NDL-001",
+              "name": "Ndola Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zimbabwe",
+      "name": "Zimbabwe",
+      "cities": [
+        {
+          "id": "zimbabwe-bulawayo",
+          "name": "Bulawayo",
+          "stations": [
+            {
+              "id": "ZW-BYO-001",
+              "name": "Bulawayo Station",
+              "type": "Station",
+              "coordinates": null
+            }
+          ]
+        },
+        {
+          "id": "zimbabwe-harare",
+          "name": "Harare",
+          "stations": [
+            {
+              "id": "ZW-HRE-001",
+              "name": "Harare Central",
+              "type": "Terminal",
+              "coordinates": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "totalCountries": 22,
+    "totalCities": 63,
+    "totalStations": 74,
+    "lastUpdated": "2026-01-12T19:11:15.576Z"
+  }
+}
