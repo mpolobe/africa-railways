@@ -200,6 +200,16 @@ func main() {
 	mux.HandleFunc("/api/notifications/action", notificationActionHandler)
 	mux.HandleFunc("/api/notifications/count", notificationCountHandler)
 	
+	// Stations API endpoints
+	mux.HandleFunc("/api/stations", stationsHandler)
+	mux.HandleFunc("/api/stations/metadata", stationsMetadataHandler)
+	mux.HandleFunc("/api/stations/countries", stationsCountriesHandler)
+	mux.HandleFunc("/api/stations/cities", stationsCitiesHandler)
+	mux.HandleFunc("/api/stations/list", stationsListHandler)
+	mux.HandleFunc("/api/stations/search", stationsSearchHandler)
+	mux.HandleFunc("/api/stations/station", stationByIDHandler)
+	mux.HandleFunc("/api/stations/nearby", stationsNearbyHandler)
+	
 	// Sentinel mobile app endpoints
 	mux.HandleFunc("/api/sentinel/alert", sentinelAlertHandler)
 	mux.HandleFunc("/api/sentinel/report", sentinelReportHandler)

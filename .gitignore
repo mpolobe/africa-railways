@@ -94,3 +94,4 @@ _site/
 .sass-cache/
 # Google Cloud SDK (should be installed in CI/CD, not committed)
 google-cloud-sdk/
+backend/bin/

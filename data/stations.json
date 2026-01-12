@@ -630,6 +630,120 @@
           ]
         },
         {
+          "id": "algeria-algiers",
+          "name": "Algiers",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJlx5WXF-yjxIRrsdvE4CnrSo",
+              "name": "Agha station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.7686048,
+                "lng": 3.0571895
+              },
+              "address": "Alger Centre",
+              "rating": 3.6,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJD90kbPFRjhIR3fE9hBfx2yQ",
+              "name": "Bab Ezzouar Pont",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.72438689999999,
+                "lng": 3.1846619
+              },
+              "address": "Bab Ezzouar",
+              "rating": 4.1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ44rtUHusjxIRbiU4_GehlTA",
+              "name": "Baba Ali",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.6669645,
+                "lng": 3.052182199999999
+              },
+              "address": "Saoula",
+              "rating": 3.9,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJhw9EIqdSjhIRNXgui1oY3DQ",
+              "name": "centre de maintenance SNTF ,Caroubier",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.7397644,
+                "lng": 3.1105478
+              },
+              "address": "Rue Tripoli, Hussein Dey",
+              "rating": 3.9,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJVSpS6R1SjhIRl0iQZk5UR9E",
+              "name": "Cité Rabia",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.7245213,
+                "lng": 3.177005499999999
+              },
+              "address": "Boulevard de l'Université, Bab Ezzouar",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJk150xZhSjhIRhHkrm8zlNMU",
+              "name": "Gare du Caroubier",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.7350706,
+                "lng": 3.1195576
+              },
+              "address": "Hussein Dey",
+              "rating": 3.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJUyGMKa1EjhIRrywiIU_7JpA",
+              "name": "Gare ZI Reghaia",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.7358577,
+                "lng": 3.3312392
+              },
+              "address": "Réghaïa",
+              "rating": 3.7,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJLd_0QfmyjxIRod4WMEwWpSY",
+              "name": "Station Algiers",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.7794434,
+                "lng": 3.061738
+              },
+              "address": "Rue d'Angkor, Alger Centre",
+              "rating": 3.9,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJjaI0S46yjxIRB-3QULB0U7U",
+              "name": "Workshops station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.7565174,
+                "lng": 3.065479099999999
+              },
+              "address": "N11, Belouizdad",
+              "rating": 3.7,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "algeria-algoz",
           "name": "Algoz",
           "stations": [
@@ -871,6 +985,30 @@
                 "lat": 36.895546,
                 "lng": 7.758763
               }
+            },
+            {
+              "id": "GOOGLE-ChIJcZQBLHV58BIRvRJKUVD7aIM",
+              "name": "Gare de Bouchegouf",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.4867981,
+                "lng": 7.7196121
+              },
+              "address": "Drablia Tahar",
+              "rating": 4.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ9YNeSxEJ8BIR3kbPUTR8-zw",
+              "name": "Station de l'université (Chaiba)",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.8169486,
+                "lng": 7.725448599999999
+              },
+              "address": "W56, Sidi Amar",
+              "rating": 2.8,
+              "source": "Google Places"
             }
           ]
         },
@@ -2291,6 +2429,18 @@
           "name": "Constantine",
           "stations": [
             {
+              "id": "GOOGLE-ChIJ8-gvzClD8RIRWGeXci_TgFU",
+              "name": "Ain M'Lila Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.0380111,
+                "lng": 6.586013199999999
+              },
+              "address": "Aïn M'lila",
+              "rating": 4.1,
+              "source": "Google Places"
+            },
+            {
               "id": "3608167679",
               "name": "Constantine",
               "type": "Station",
@@ -2298,6 +2448,54 @@
                 "lat": 36.367244,
                 "lng": 6.6190457
               }
+            },
+            {
+              "id": "GOOGLE-ChIJBVbB58V38RIR8WHEiyAN6Os",
+              "name": "Gare ferroviaire Marchandises Hamma Bouziane",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.41113089999999,
+                "lng": 6.609145399999999
+              },
+              "address": "Hamma Bouziane",
+              "rating": 3.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ8YE0te9o8RIRt3MPelHUsNs",
+              "name": "Guerrah Train Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.13668210000001,
+                "lng": 6.6077907
+              },
+              "address": "",
+              "rating": 3.9,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJgQ4r2Qwh8hIRHqG4QDxvHxY",
+              "name": "Settara Train Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.73452399999999,
+                "lng": 6.345000499999999
+              },
+              "address": "",
+              "rating": 4.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJuRn_jOu48RIR9H3rmz6HXq0",
+              "name": "محطة القطار سحقي أحمد",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.7311415,
+                "lng": 6.861416699999999
+              },
+              "address": "Unnamed Rd, Cite Sahki Ahmed",
+              "rating": null,
+              "source": "Google Places"
             }
           ]
         },
@@ -5740,6 +5938,108 @@
                 "lat": 34.4870626,
                 "lng": 8.2773565
               }
+            }
+          ]
+        },
+        {
+          "id": "algeria-oran",
+          "name": "Oran",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJidlvClWIfg0RtgAgUYanNW4",
+              "name": "Gare Centrale d'Oran",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.6983968,
+                "lng": -0.6385406
+              },
+              "address": "71 rue mes boudiaf, Oran",
+              "rating": 3.9,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ5R3Lx--Ifg0RHioyr-hQLCo",
+              "name": "Gare Oran Marine",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.70816039999999,
+                "lng": -0.649906
+              },
+              "address": "Rue du Port, Oran",
+              "rating": 3.8,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ-cAICFRifg0RwSFacKSNp4A",
+              "name": "Gare SNTF",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.6900145,
+                "lng": -0.5669169
+              },
+              "address": "W46, Sidi Chami",
+              "rating": 3.2,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJt_rg5Hlxfg0RmAq3hr0zlxk",
+              "name": "Gare SNTF",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.788606,
+                "lng": -0.383149
+              },
+              "address": "Hassi Mefsoukh",
+              "rating": 4.8,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJL6tMxoVzfg0R1peaY6jBVVI",
+              "name": "Gare SNTF",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.8209414,
+                "lng": -0.3449064
+              },
+              "address": "N13, Arzew",
+              "rating": 4.8,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ1ZCk8W1lfg0RKJDdjtb-L4A",
+              "name": "Hassi Ameur",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.70762550000001,
+                "lng": -0.4652017
+              },
+              "address": "W41, Hassi Bounif",
+              "rating": 3.6,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJWfoPxhmKfg0ROsiuupNX63k",
+              "name": "Tramway Oran",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.6418759,
+                "lng": -0.6174333
+              },
+              "address": "N2A, Es Senia",
+              "rating": 4.1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJc2VBEFdifg0RRnFKlohUALE",
+              "name": "محطة ترامواي وهران لحي الصباح",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.6918917,
+                "lng": -0.5715927
+              },
+              "address": "W46, Bir El Djir",
+              "rating": 4.7,
+              "source": "Google Places"
             }
           ]
         },
@@ -13292,6 +13592,48 @@
           ]
         },
         {
+          "id": "angola-benguela",
+          "name": "Benguela",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJ63EOUyTWsRsR8flaqUeyZG8",
+              "name": "Central Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -12.3483691,
+                "lng": 13.5420315
+              },
+              "address": "Compao, Lobito",
+              "rating": 4.1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ68B83XLUrxsRHDrIfUxE2B4",
+              "name": "Estação da Damba Maria",
+              "type": "Station",
+              "coordinates": {
+                "lat": -12.5308574,
+                "lng": 13.4602989
+              },
+              "address": "Estrada Nacional 100",
+              "rating": 4.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJfT9DYmTRrxsRV3RdJFHe1tg",
+              "name": "Estação do Cavaco",
+              "type": "Station",
+              "coordinates": {
+                "lat": -12.5632166,
+                "lng": 13.4195257
+              },
+              "address": "EN100, Benguela",
+              "rating": 3.5,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "angola-bibala-(km162)",
           "name": "Bibala (Km162)",
           "stations": [
@@ -13863,6 +14205,78 @@
                 "lat": -14.6364234,
                 "lng": 16.722473
               }
+            }
+          ]
+        },
+        {
+          "id": "angola-lobito",
+          "name": "Lobito",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJ63EOUyTWsRsR8flaqUeyZG8",
+              "name": "Central Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -12.3483691,
+                "lng": 13.5420315
+              },
+              "address": "Compao, Lobito",
+              "rating": 4.1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ68B83XLUrxsRHDrIfUxE2B4",
+              "name": "Estação da Damba Maria",
+              "type": "Station",
+              "coordinates": {
+                "lat": -12.5308574,
+                "lng": 13.4602989
+              },
+              "address": "Estrada Nacional 100",
+              "rating": 4.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJfT9DYmTRrxsRV3RdJFHe1tg",
+              "name": "Estação do Cavaco",
+              "type": "Station",
+              "coordinates": {
+                "lat": -12.5632166,
+                "lng": 13.4195257
+              },
+              "address": "EN100, Benguela",
+              "rating": 3.5,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
+          "id": "angola-luanda",
+          "name": "Luanda",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJ6UUxXGTxURoRFnxyNLTQl3s",
+              "name": "Estação dos Musseques",
+              "type": "Station",
+              "coordinates": {
+                "lat": -8.8328625,
+                "lng": 13.2737696
+              },
+              "address": "Marcal, Luanda",
+              "rating": 3.7,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJJxbp40fxURoRenQzepxqs-M",
+              "name": "Filda station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -8.8505349,
+                "lng": 13.2884145
+              },
+              "address": "Luanda",
+              "rating": 3.9,
+              "source": "Google Places"
             }
           ]
         },
@@ -14531,6 +14945,48 @@
       ]
     },
     {
+      "id": "botswana",
+      "name": "Botswana",
+      "cities": [
+        {
+          "id": "botswana-francistown",
+          "name": "Francistown",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJJRR6hHxotB4RyIrDKROjBZ4",
+              "name": "Francistown Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -21.16493939999999,
+                "lng": 27.5080761
+              },
+              "address": "Francistown",
+              "rating": 3.3,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
+          "id": "botswana-gaborone",
+          "name": "Gaborone",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJG2n1zK1bux4RXrsbK_0RFbw",
+              "name": "Gaborone Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -24.6618871,
+                "lng": 25.9043898
+              },
+              "address": "Gaborone",
+              "rating": 3,
+              "source": "Google Places"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "cameroon",
       "name": "Cameroon",
       "cities": [
@@ -14546,6 +15002,24 @@
                 "lat": 3.7513951,
                 "lng": 11.4049655
               }
+            }
+          ]
+        },
+        {
+          "id": "cameroon-douala",
+          "name": "Douala",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJAz_H0GISYRARKh0sT9M8iMM",
+              "name": "Gare de Bessengue",
+              "type": "Station",
+              "coordinates": {
+                "lat": 4.0537854,
+                "lng": 9.7115981
+              },
+              "address": "Douala",
+              "rating": 3.8,
+              "source": "Google Places"
             }
           ]
         },
@@ -14877,6 +15351,30 @@
                 "lat": 3.8707816,
                 "lng": 11.5258987
               }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "djibouti",
+      "name": "Djibouti",
+      "cities": [
+        {
+          "id": "djibouti-djibouti-city",
+          "name": "Djibouti City",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJZ2tN1e0AIxYRVudUDBgvHZE",
+              "name": "La Gare Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 11.6040908,
+                "lng": 43.1507963
+              },
+              "address": "Blvd de la Republique, Djibouti",
+              "rating": 3.8,
+              "source": "Google Places"
             }
           ]
         }
@@ -17967,6 +18465,72 @@
           ]
         },
         {
+          "id": "dr-congo-kinshasa",
+          "name": "Kinshasa",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJ05F1oXQ0ahoROc76zYwYJqY",
+              "name": "Gare Centrale Kin Est",
+              "type": "Station",
+              "coordinates": {
+                "lat": -4.300459999999999,
+                "lng": 15.3187896
+              },
+              "address": "Avenue Isiro, Kinshasa",
+              "rating": 4.2,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJpcAeo3A3ahoR6lO4LRswLks",
+              "name": "Gare de Matete",
+              "type": "Station",
+              "coordinates": {
+                "lat": -4.3893752,
+                "lng": 15.3527529
+              },
+              "address": "Kinshasa",
+              "rating": 3.7,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJb2fRZOs2ahoRslmo074Pozc",
+              "name": "Gare de triage",
+              "type": "Station",
+              "coordinates": {
+                "lat": -4.3426923,
+                "lng": 15.3416591
+              },
+              "address": "Kinshasa",
+              "rating": 3.6,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJV7Dj4Z4yahoREFetQP7BZeY",
+              "name": "Gare ferrovière de Mfilou (P K)",
+              "type": "Station",
+              "coordinates": {
+                "lat": -4.2662444,
+                "lng": 15.2235639
+              },
+              "address": "Makélékélé, Brazzaville",
+              "rating": 3.6,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJDeLZYowzahoRP_qknB7LX1I",
+              "name": "Maritime Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -4.2991548,
+                "lng": 15.3067158
+              },
+              "address": "Kinshasa",
+              "rating": 2.8,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "dr-congo-kinshasa-est",
           "name": "Kinshasa Est",
           "stations": [
@@ -18775,6 +19339,18 @@
                 "lat": -11.6663228,
                 "lng": 27.4903373
               }
+            },
+            {
+              "id": "GOOGLE-ChIJJb8B28I-chkRK0jVIMKdgm4",
+              "name": "Lubumbashi",
+              "type": "Station",
+              "coordinates": {
+                "lat": -11.6689137,
+                "lng": 27.4915006
+              },
+              "address": "Route Du Golf, Lubumbashi",
+              "rating": 3.5,
+              "source": "Google Places"
             }
           ]
         },
@@ -19422,6 +19998,18 @@
                 "lat": -5.8178241,
                 "lng": 13.4599203
               }
+            },
+            {
+              "id": "GOOGLE-ChIJCYpwyPjLXBoRcAei_ZhLQkY",
+              "name": "Matadi Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -5.821565,
+                "lng": 13.457499
+              },
+              "address": "Ave Dela Poste, Matadi",
+              "rating": 2.9,
+              "source": "Google Places"
             }
           ]
         },
@@ -22090,6 +22678,168 @@
           ]
         },
         {
+          "id": "egypt-alexandria",
+          "name": "Alexandria",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJI8l5ierD9RQRYjnGIaDPTo4",
+              "name": "Alexandria",
+              "type": "Station",
+              "coordinates": {
+                "lat": 31.1935097,
+                "lng": 29.9064885
+              },
+              "address": "Kom Ad Dakah Gharb, Al Attarin",
+              "rating": 4.2,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJL7nu5uLD9RQRVkyVpk2YBXc",
+              "name": "El Boseary Station-The Public Organization for *",
+              "type": "Station",
+              "coordinates": {
+                "lat": 31.2036629,
+                "lng": 29.8839342
+              },
+              "address": "Al Mazar, Al Gomrok",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJdwcAN0rR9RQRTm6jPoMiWT8",
+              "name": "El Kettar Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 31.317691,
+                "lng": 30.0620097
+              },
+              "address": "Abu Qir Al Gharbeyah, Montaza 2",
+              "rating": 4.2,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJTczKe5yT9RQReWJbtBlfiSk",
+              "name": "El Kilo 21 Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 31.072596,
+                "lng": 29.7372575
+              },
+              "address": "ADH Dheraa Al Bahri, Amreya 1",
+              "rating": 3.7,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJB9SVN4zB9RQRbKkD02Dx5B0",
+              "name": "El Metras Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 31.1597967,
+                "lng": 29.8734849
+              },
+              "address": "Al Metras, Port al-Basal",
+              "rating": 3.9,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJtdVYZfLD9RQRYiAtzQVouus",
+              "name": "El Raml Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 31.2013546,
+                "lng": 29.9010136
+              },
+              "address": "Al Mesallah Sharq, Al Attarin",
+              "rating": 4.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJp3j-KZrD9RQR7I8nDEXn_qI",
+              "name": "El Rasafa Metro Stration",
+              "type": "Station",
+              "coordinates": {
+                "lat": 31.1911209,
+                "lng": 29.9187354
+              },
+              "address": "Emberouz WA Moharram Beik, Moharam Bek",
+              "rating": 3.8,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJgRY5CODD9RQRym_Q-RqpnVQ",
+              "name": "El Rokab El Bahareya Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 31.1952424,
+                "lng": 29.8823628
+              },
+              "address": "Ad Daerah Al Gomrokeyah, إدارة شرطة ميناء الإسكندرية",
+              "rating": 4.2,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJA7mNdtXE9RQR7A9ZroRvabU",
+              "name": "El Sook Train Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 31.2339786,
+                "lng": 29.9713809
+              },
+              "address": "Al Mahrousah, El Raml 2",
+              "rating": 3.7,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJNzuOq73a9RQRaEfSFcahb5g",
+              "name": "Seedi Beshr Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 31.25732879999999,
+                "lng": 29.9945747
+              },
+              "address": "Sidi Beshr Qebli, Montaza 2",
+              "rating": 3.6,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJJ7zeIJ3E9RQReid7NONM6Dw",
+              "name": "محطة النزهة",
+              "type": "Station",
+              "coordinates": {
+                "lat": 31.203619,
+                "lng": 29.9405176
+              },
+              "address": "Izbat Saed, Qesm Sidi Gaber",
+              "rating": 3.9,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJI84gZ3nE9RQRU-0V8mpqsWg",
+              "name": "محطة ترام الجامعة",
+              "type": "Station",
+              "coordinates": {
+                "lat": 31.21105799999999,
+                "lng": 29.920291
+              },
+              "address": "Omar Lotfy, Al Ibrahimeyah Bahri WA Sidi Gaber, Bab Shar'",
+              "rating": 3.7,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJedxy0HXD9RQRFwEe5O7A5wU",
+              "name": "محطة قطار محرم بيك",
+              "type": "Station",
+              "coordinates": {
+                "lat": 31.18767470000001,
+                "lng": 29.92999930000001
+              },
+              "address": "21 السكه الحديد, As Sabheyah WA Izbat Sharkas WA Izbat Raafat, Moharam Bek",
+              "rating": 3.4,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "egypt-an-nubariyah-hsr",
           "name": "An Nubariyah HSR",
           "stations": [
@@ -22131,6 +22881,48 @@
                 "lat": 24.7066449,
                 "lng": 30.599294
               }
+            }
+          ]
+        },
+        {
+          "id": "egypt-cairo",
+          "name": "Cairo",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJN2XHQY5AWBQRIjfL0CPJ9NU",
+              "name": "Ramses Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 30.0632299,
+                "lng": 31.2469369
+              },
+              "address": "Ramsis Square, Al Fagalah, Al Azbakeya",
+              "rating": 4.2,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJVwmF1TB0WBQRohv8uBcaHRA",
+              "name": "Sandanhour station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 30.4120702,
+                "lng": 31.1880022
+              },
+              "address": "Sandanhour, Banha",
+              "rating": 3.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJh8obeQAXWBQRKAC1eMqygEQ",
+              "name": "محطة عدلي منصور",
+              "type": "Station",
+              "coordinates": {
+                "lat": 30.1471767,
+                "lng": 31.4272496
+              },
+              "address": "Huckstep, El Nozha",
+              "rating": 4.6,
+              "source": "Google Places"
             }
           ]
         },
@@ -22191,6 +22983,60 @@
                 "lat": 30.9348704,
                 "lng": 32.5012148
               }
+            }
+          ]
+        },
+        {
+          "id": "egypt-giza",
+          "name": "Giza",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJIdps-Ye4WRQRwSp7Rbyqq6E",
+              "name": "Al Mataneya",
+              "type": "Station",
+              "coordinates": {
+                "lat": 29.5708929,
+                "lng": 31.2516922
+              },
+              "address": "Mataneya, Al, العياط",
+              "rating": 3.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJN2XHQY5AWBQRIjfL0CPJ9NU",
+              "name": "Ramses Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 30.0632299,
+                "lng": 31.2469369
+              },
+              "address": "Ramsis Square, Al Fagalah, Al Azbakeya",
+              "rating": 4.2,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJVwmF1TB0WBQRohv8uBcaHRA",
+              "name": "Sandanhour station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 30.4120702,
+                "lng": 31.1880022
+              },
+              "address": "Sandanhour, Banha",
+              "rating": 3.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJh8obeQAXWBQRKAC1eMqygEQ",
+              "name": "محطة عدلي منصور",
+              "type": "Station",
+              "coordinates": {
+                "lat": 30.1471767,
+                "lng": 31.4272496
+              },
+              "address": "Huckstep, El Nozha",
+              "rating": 4.6,
+              "source": "Google Places"
             }
           ]
         },
@@ -31653,6 +32499,48 @@
       "name": "Eritrea",
       "cities": [
         {
+          "id": "eritrea-asmara",
+          "name": "Asmara",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJNWB-kQHzbRYRUAt8sTSjN2s",
+              "name": "Asmera",
+              "type": "Station",
+              "coordinates": {
+                "lat": 15.338298,
+                "lng": 38.95147800000001
+              },
+              "address": "Asmara",
+              "rating": 4.2,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJxx5IyTl2chYRLg75xeFHt6A",
+              "name": "Gīnda Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 15.438342,
+                "lng": 39.1012652
+              },
+              "address": "Ghinda",
+              "rating": 3.9,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ-f-aAxmMbRYR99A04qRwSHs",
+              "name": "Nefasit Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 15.3356214,
+                "lng": 39.06370890000001
+              },
+              "address": "Nefasit",
+              "rating": 4.7,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "eritrea-campo-di-marte-حقل-المريخ",
           "name": "Campo di Marte حقل المريخ",
           "stations": [
@@ -31673,6 +32561,18 @@
           "id": "eritrea-massawa",
           "name": "Massawa",
           "stations": [
+            {
+              "id": "GOOGLE-ChIJxx5IyTl2chYRLg75xeFHt6A",
+              "name": "Gīnda Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 15.438342,
+                "lng": 39.1012652
+              },
+              "address": "Ghinda",
+              "rating": 3.9,
+              "source": "Google Places"
+            },
             {
               "id": "OSM-4286967143",
               "name": "Massawa-Port /ወደብ ባጽዕ(ምጽዋዕ) ميناء مصوع",
@@ -31783,6 +32683,48 @@
                 "lat": 8.5056529,
                 "lng": 39.2645178
               }
+            },
+            {
+              "id": "GOOGLE-ChIJt-WAidFySxYRbfYhkc6ON3A",
+              "name": "Bishooftuu",
+              "type": "Station",
+              "coordinates": {
+                "lat": 8.7482051,
+                "lng": 38.9823356
+              },
+              "address": "4, Bishoftu",
+              "rating": 3.1,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
+          "id": "ethiopia-addis-ababa",
+          "name": "Addis Ababa",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJt-WAidFySxYRbfYhkc6ON3A",
+              "name": "Bishooftuu",
+              "type": "Station",
+              "coordinates": {
+                "lat": 8.7482051,
+                "lng": 38.9823356
+              },
+              "address": "4, Bishoftu",
+              "rating": 3.1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJb0QIbcaFSxYRsRm0GCXtjq0",
+              "name": "La Gare",
+              "type": "Station",
+              "coordinates": {
+                "lat": 9.0094134,
+                "lng": 38.75334369999999
+              },
+              "address": "Kera, Addis Ababa",
+              "rating": 4.2,
+              "source": "Google Places"
             }
           ]
         },
@@ -32072,6 +33014,24 @@
                 "lat": 11.0686848,
                 "lng": 42.6375571
               }
+            }
+          ]
+        },
+        {
+          "id": "ethiopia-dire-dawa",
+          "name": "Dire Dawa",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJra99G8IBMRYRaDXkt7YW_sM",
+              "name": "Dire Dawa",
+              "type": "Station",
+              "coordinates": {
+                "lat": 9.595272899999998,
+                "lng": 41.8607753
+              },
+              "address": "Dire Dawa",
+              "rating": 3.9,
+              "source": "Google Places"
             }
           ]
         },
@@ -32848,6 +33808,54 @@
                 "lat": 5.5489157,
                 "lng": -0.2110196
               }
+            },
+            {
+              "id": "GOOGLE-ChIJ_13Ug7uQ3w8RFuyIm072KUs",
+              "name": "Accra Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 5.5487698,
+                "lng": -0.2116032
+              },
+              "address": "Kwame Nkurumah Avenue, Accra",
+              "rating": 3.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJEzhEK_KE3w8ROR_IKES52eg",
+              "name": "Batsonaa Train Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 5.619770900000001,
+                "lng": -0.119133
+              },
+              "address": "Accra",
+              "rating": 3.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ859zFwSa3w8R0XYTjOVTvz8",
+              "name": "Odaw Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 5.567671499999999,
+                "lng": -0.2188468
+              },
+              "address": "South Industrial Area, Accra",
+              "rating": 2.9,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJHaVGFl-H3w8RdNcCGeqZmyw",
+              "name": "Tema Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 5.628627100000001,
+                "lng": -0.00153
+              },
+              "address": "Tema",
+              "rating": 3.5,
+              "source": "Google Places"
             }
           ]
         },
@@ -33281,6 +34289,24 @@
                 "lat": 6.2011361,
                 "lng": -1.6646191
               }
+            }
+          ]
+        },
+        {
+          "id": "ghana-takoradi",
+          "name": "Takoradi",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJoyQb5K1w5w8RVizu9gtYSC0",
+              "name": "Train Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 4.8824233,
+                "lng": -1.7494799
+              },
+              "address": "Papa Gyaesayor Street, Takoradi",
+              "rating": 3.5,
+              "source": "Google Places"
             }
           ]
         },
@@ -35174,6 +36200,72 @@
           ]
         },
         {
+          "id": "kenya-kisumu",
+          "name": "Kisumu",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJ5Vj1Tc6jKhgRIAn1wcCBEos",
+              "name": "Kibos Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -0.0704241,
+                "lng": 34.8102397
+              },
+              "address": "Kibos Road, Kisumu",
+              "rating": 3.8,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJw-lSxuukKhgRYL5y54btm2g",
+              "name": "Kisumu Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -0.1049351,
+                "lng": 34.7476639
+              },
+              "address": "Kisumu",
+              "rating": 4.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJe-R8-CEBgBcRe1UeedvlrrE",
+              "name": "Luand Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 0.0344517,
+                "lng": 34.5755073
+              },
+              "address": "C29",
+              "rating": 3.7,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ964QWh8BgBcRXQS9m8ThM0c",
+              "name": "Mwibona Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 0.034048,
+                "lng": 34.57459689999999
+              },
+              "address": "C29",
+              "rating": 4.7,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJN-oBhvECgBcR08g5MWJUFY8",
+              "name": "Yala railway station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 0.09857650000000001,
+                "lng": 34.53655239999999
+              },
+              "address": "Yala",
+              "rating": 3.7,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "kenya-kitale",
           "name": "Kitale",
           "stations": [
@@ -35941,6 +37033,60 @@
           ]
         },
         {
+          "id": "kenya-mombasa",
+          "name": "Mombasa",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJvzPbgCptQBgRLKhwZ62Kvj0",
+              "name": "Kilindini Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -4.061039399999999,
+                "lng": 39.6493972
+              },
+              "address": "Mombasa",
+              "rating": 3.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJkQn-FyxyQBgRUthks-54iOs",
+              "name": "Miritini Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -4.0043998,
+                "lng": 39.5756402
+              },
+              "address": "Miritini Mombasa, Mombasa",
+              "rating": 3.8,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJmxfhydMSQBgRC9_FUq6Ba7E",
+              "name": "Mombasa Mashalling Yard",
+              "type": "Station",
+              "coordinates": {
+                "lat": -4.0550485,
+                "lng": 39.6557018
+              },
+              "address": "High Level, Mozambique Road, Mombasa",
+              "rating": 3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJu5SVPtcSQBgRntU3BCyJvGc",
+              "name": "Mombasa Train Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -4.057235299999999,
+                "lng": 39.6605252
+              },
+              "address": "Miji Kenda Street, Mombasa",
+              "rating": 3.7,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "kenya-mombasa-sgr",
           "name": "Mombasa SGR",
           "stations": [
@@ -36115,6 +37261,210 @@
           ]
         },
         {
+          "id": "kenya-nairobi",
+          "name": "Nairobi",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJTRSFnGp1LxgRW9t1uN43O5A",
+              "name": "Athi River Train Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -1.4493916,
+                "lng": 36.97589809999999
+              },
+              "address": "Athi River",
+              "rating": 3.8,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ1yCPKfYbLxgR9JmxLdKbcr8",
+              "name": "Dagoretti Train Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -1.2917309,
+                "lng": 36.69583799999999
+              },
+              "address": "Estate, Nairobi",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJcRnac0QULxgRH0ifpn7jS7s",
+              "name": "Dandora",
+              "type": "Station",
+              "coordinates": {
+                "lat": -1.2584525,
+                "lng": 36.8968621
+              },
+              "address": "Off Koma Rock Road, Near Total Petrol Station, Nairobi",
+              "rating": 3.6,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJP0-4SMETLxgRDchXex_ndoA",
+              "name": "donholm rail stop",
+              "type": "Station",
+              "coordinates": {
+                "lat": -1.2978207,
+                "lng": 36.88514289999999
+              },
+              "address": "Jogoo Road, Nairobi",
+              "rating": 3.9,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ10tcBfsSLxgRKud3mIzXIRU",
+              "name": "embakasi village train stop",
+              "type": "Station",
+              "coordinates": {
+                "lat": -1.3144031,
+                "lng": 36.91977019999999
+              },
+              "address": "Road to Utawala Academy, Nairobi",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJp8u_1d4TLxgRRqtcBx2DTLo",
+              "name": "Jogoo Road Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -1.2980567,
+                "lng": 36.8708575
+              },
+              "address": "Jogoo Road, Nairobi",
+              "rating": 3.8,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJoWhj2Ko_LxgRqgkcVHzDyfc",
+              "name": "Kahawa Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -1.1870608,
+                "lng": 36.91192749999999
+              },
+              "address": "Kenyatta University, Githurai",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJoYEMVAQfLxgRHw3Q46ZAMYk",
+              "name": "Kikuyu Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -1.2455939,
+                "lng": 36.6603674
+              },
+              "address": "Rungiri",
+              "rating": 4.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJFcZXUt8TLxgRbqvIWKAZuAI",
+              "name": "Makadara",
+              "type": "Station",
+              "coordinates": {
+                "lat": -1.2983932,
+                "lng": 36.8685682
+              },
+              "address": "Jogoo Road, Nairobi",
+              "rating": 3.4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJq3Lp1E4LLxgRSnqJFAUpPX0",
+              "name": "Marimbeti Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -1.4134658,
+                "lng": 36.94627189999999
+              },
+              "address": "Mugumoini, Nairobi",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJCS8lOyERLxgRzVY5GhnOh7Q",
+              "name": "Nairobi Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -1.2920408,
+                "lng": 36.82788710000001
+              },
+              "address": "Nairobi",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJiVwUzkgSLxgRFyal97etsgg",
+              "name": "pipeline railway stop",
+              "type": "Station",
+              "coordinates": {
+                "lat": -1.3158404,
+                "lng": 36.89456819999999
+              },
+              "address": "Kenya Pipeline Estate, Nairobi",
+              "rating": 3.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJOVUZmz91LxgRK3QD2uudITE",
+              "name": "Railway Crossing",
+              "type": "Station",
+              "coordinates": {
+                "lat": -1.4475113,
+                "lng": 36.9733946
+              },
+              "address": "Next To Tuskys Supermarket, Off Athi River Road, Athi River",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ2RK0y0sSLxgRHexPyTra9ZA",
+              "name": "stage mpya railway stop",
+              "type": "Station",
+              "coordinates": {
+                "lat": -1.3125583,
+                "lng": 36.892519
+              },
+              "address": "Stage Mpya, Nairobi",
+              "rating": 3.6,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJp1mJtKYNLxgRaZiCts59iao",
+              "name": "Syokimau Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -1.3598093,
+                "lng": 36.9069452
+              },
+              "address": "Mombasa Road, Nairobi",
+              "rating": 3.9,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
+          "id": "kenya-naivasha",
+          "name": "Naivasha",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJeW60Nm4KKRgR284NG5s0Z0g",
+              "name": "Gilgi Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -0.4929796,
+                "lng": 36.32041449999999
+              },
+              "address": "Gilgil",
+              "rating": 3.3,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "kenya-naivasha-railway",
           "name": "Naivasha Railway",
           "stations": [
@@ -36134,6 +37484,30 @@
           "name": "Nakuru",
           "stations": [
             {
+              "id": "GOOGLE-ChIJeW60Nm4KKRgR284NG5s0Z0g",
+              "name": "Gilgi Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -0.4929796,
+                "lng": 36.32041449999999
+              },
+              "address": "Gilgil",
+              "rating": 3.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJCWQ0A1c9KhgReYc73rt56Rk",
+              "name": "Molo Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -0.2455608,
+                "lng": 35.7322598
+              },
+              "address": "Molo",
+              "rating": 4.3,
+              "source": "Google Places"
+            },
+            {
               "id": "964767963",
               "name": "Nakuru",
               "type": "Station",
@@ -36141,6 +37515,54 @@
                 "lat": -0.283451,
                 "lng": 36.0775405
               }
+            },
+            {
+              "id": "GOOGLE-ChIJA8mj4paNKRgR1e-CBeF4uTA",
+              "name": "Nakuru Goods railway station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -0.2820707,
+                "lng": 36.0710657
+              },
+              "address": "Nakuru",
+              "rating": 3.6,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ5-Sx95GNKRgRZJw9-EN0IeI",
+              "name": "Nakuru Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -0.2838427,
+                "lng": 36.0776435
+              },
+              "address": "Nakuru",
+              "rating": 3.6,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJG5AEOMZjhxcRk1CmbrcRsL4",
+              "name": "Nyahururu Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 0.03848429999999999,
+                "lng": 36.3680667
+              },
+              "address": "Nyahururu",
+              "rating": 4.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJVS4MmNQHKhgRHiHkcClmsEA",
+              "name": "Sabatia Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -0.0293219,
+                "lng": 35.74553129999999
+              },
+              "address": "",
+              "rating": 5,
+              "source": "Google Places"
             }
           ]
         },
@@ -37020,6 +38442,48 @@
           ]
         },
         {
+          "id": "madagascar-antananarivo",
+          "name": "Antananarivo",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJ9yDThtCA8CERvu0Pmgl9wvY",
+              "name": "Alarobia",
+              "type": "Station",
+              "coordinates": {
+                "lat": -18.8699437,
+                "lng": 47.5180564
+              },
+              "address": "Tananarive Antananarivo",
+              "rating": 2.7,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ8RfkxX1-8CERKIp_ib04GRU",
+              "name": "Antananarivo",
+              "type": "Station",
+              "coordinates": {
+                "lat": -18.9384745,
+                "lng": 47.52173550000001
+              },
+              "address": "Ambohidahy, Antananarivo",
+              "rating": 3.8,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJIXea-gJ-8CERMLaxzA_JvNM",
+              "name": "Gare Soarano",
+              "type": "Station",
+              "coordinates": {
+                "lat": -18.903289,
+                "lng": 47.51956389999999
+              },
+              "address": "Gare Soarano, Analakely, Antananarivo",
+              "rating": 4.1,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "madagascar-antsirinala",
           "name": "Antsirinala",
           "stations": [
@@ -37101,6 +38565,36 @@
               },
               "operator": "FCE",
               "source": "OpenStreetMap"
+            }
+          ]
+        },
+        {
+          "id": "madagascar-toamasina",
+          "name": "Toamasina",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJH83WtrUB9SERxg5t6dxGohI",
+              "name": "Toamasina Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -18.1554788,
+                "lng": 49.40929609999999
+              },
+              "address": "Toamasina",
+              "rating": 3.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJh1GulzIA9SER797naZ748V0",
+              "name": "Train (Railway) Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -18.1651481,
+                "lng": 49.4045464
+              },
+              "address": "Toamasina",
+              "rating": 3.9,
+              "source": "Google Places"
             }
           ]
         },
@@ -38261,6 +39755,144 @@
           ]
         },
         {
+          "id": "morocco-casablanca",
+          "name": "Casablanca",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJPRwPJH7Lpw0RJJBCmdArzYs",
+              "name": "Aïn Sebâa",
+              "type": "Station",
+              "coordinates": {
+                "lat": 33.6084997,
+                "lng": -7.524174399999999
+              },
+              "address": "Casablanca",
+              "rating": 3.4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJp1u4WL3Spw0RtnOnLqBF1xI",
+              "name": "Avenue Hassan II",
+              "type": "Station",
+              "coordinates": {
+                "lat": 33.58392289999999,
+                "lng": -7.6232323
+              },
+              "address": "Boulevard Hassan II, Casablanca",
+              "rating": 4.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJmTM0SWumpw0RilQUg8K6uFc",
+              "name": "Bouznika",
+              "type": "Station",
+              "coordinates": {
+                "lat": 33.7901016,
+                "lng": -7.161910600000001
+              },
+              "address": "Bouznika",
+              "rating": 3.6,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ35ZzQILSpw0RwmLmjZuCiDQ",
+              "name": "Casa Port",
+              "type": "Station",
+              "coordinates": {
+                "lat": 33.5994804,
+                "lng": -7.6128264
+              },
+              "address": "Boulevard de Fes, Casablanca",
+              "rating": 4.2,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ4bxqPmzTpw0RrDGKnppTPKI",
+              "name": "End Taramway Ain Diab",
+              "type": "Station",
+              "coordinates": {
+                "lat": 33.5874824,
+                "lng": -7.680843499999998
+              },
+              "address": "Boulevard de la Grande Corniche, Casablanca",
+              "rating": 4.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ07ljY-CPqA0Rg4gr_Ch92S4",
+              "name": "Gare Bir Jdid",
+              "type": "Station",
+              "coordinates": {
+                "lat": 33.3634516,
+                "lng": -7.980290699999999
+              },
+              "address": "",
+              "rating": 3.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJzRl8HP8spg0R_eAa8dj_FBA",
+              "name": "Naseem Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 33.5173902,
+                "lng": -7.658286700000001
+              },
+              "address": "Casablanca",
+              "rating": 3.7,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJH_0IF5A6pg0Rw5pIS8Oe4PE",
+              "name": "Train station Mohammed V Airport",
+              "type": "Station",
+              "coordinates": {
+                "lat": 33.3737827,
+                "lng": -7.579692
+              },
+              "address": "Nouaceur",
+              "rating": 3.2,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJw5CJYRXTpw0RGvOwRQXcSQQ",
+              "name": "الساحل",
+              "type": "Station",
+              "coordinates": {
+                "lat": 33.58092200000001,
+                "lng": -7.6748273
+              },
+              "address": "Casablanca",
+              "rating": 4.1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJYUl0Vdgspg0RYRwAlTlxLEI",
+              "name": "الكليات النهاية",
+              "type": "Station",
+              "coordinates": {
+                "lat": 33.5457897,
+                "lng": -7.6573661
+              },
+              "address": "Route Ancienne, Casablanca",
+              "rating": 4.4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJY7Bgr0stpg0Rfb2wbt0G2e4",
+              "name": "مكة",
+              "type": "Station",
+              "coordinates": {
+                "lat": 33.5582161,
+                "lng": -7.629710900000001
+              },
+              "address": "Boulevard de La Mecque, Casablanca",
+              "rating": 4.4,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "morocco-chaabat-el-leham",
           "name": "Chaabat El Leham",
           "stations": [
@@ -38435,6 +40067,24 @@
                 "lat": 33.54127,
                 "lng": -7.6499243
               }
+            }
+          ]
+        },
+        {
+          "id": "morocco-fes",
+          "name": "Fes",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJ8fBQFzKLnw0RafCfC7HoxhU",
+              "name": "Fes Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 34.0473108,
+                "lng": -5.0053264
+              },
+              "address": "Fes",
+              "rating": 4.1,
+              "source": "Google Places"
             }
           ]
         },
@@ -38870,6 +40520,24 @@
           ]
         },
         {
+          "id": "morocco-marrakech",
+          "name": "Marrakech",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJW_PvCfePrw0RNrDwu-a6l9A",
+              "name": "Sidi Bou Othmane train station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 31.9230299,
+                "lng": -7.946602199999999
+              },
+              "address": "N9, Sidi Bou Othmane",
+              "rating": 3.3,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "morocco-marrakech-مراكش",
           "name": "Marrakech مراكش",
           "stations": [
@@ -38920,6 +40588,36 @@
                 "lat": 33.2656081,
                 "lng": -8.3670249
               }
+            }
+          ]
+        },
+        {
+          "id": "morocco-meknes",
+          "name": "Meknes",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJ63t_sd5EoA0RTizwOvgfh2U",
+              "name": "Gare Al Amir Abdul Kader",
+              "type": "Station",
+              "coordinates": {
+                "lat": 33.8996946,
+                "lng": -5.5456096
+              },
+              "address": "Meknes",
+              "rating": 3.6,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJZ-3dKJNdoA0RWI-gNtEyi1Y",
+              "name": "Gare De Ain Karma",
+              "type": "Station",
+              "coordinates": {
+                "lat": 34.0107103,
+                "lng": -5.624249
+              },
+              "address": "Ain Karma de Wlad Nssir",
+              "rating": 3.8,
+              "source": "Google Places"
             }
           ]
         },
@@ -39164,6 +40862,60 @@
           ]
         },
         {
+          "id": "morocco-oujda",
+          "name": "Oujda",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJ8U83hCEMeA0RTpCZgCuRA2Y",
+              "name": "Gare de NAÎMA",
+              "type": "Station",
+              "coordinates": {
+                "lat": 34.6015069,
+                "lng": -2.2192856
+              },
+              "address": "Naïma",
+              "rating": 3.7,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJPcL6BZxxeA0RiNGYETM65kg",
+              "name": "Gare Ferroviaire Beni Oukil",
+              "type": "Station",
+              "coordinates": {
+                "lat": 34.62935889999999,
+                "lng": -2.0523942
+              },
+              "address": "",
+              "rating": 2.8,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJvyVHnmGVeA0R5-9_3HoDSpE",
+              "name": "La gare de sabra",
+              "type": "Station",
+              "coordinates": {
+                "lat": 34.82649219999999,
+                "lng": -1.5231698
+              },
+              "address": "Sabra",
+              "rating": 3.9,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJgQRrnrBkeA0RLqVqe4dTxPI",
+              "name": "Oujda",
+              "type": "Station",
+              "coordinates": {
+                "lat": 34.6795044,
+                "lng": -1.9247779
+              },
+              "address": "Oujda",
+              "rating": 3.9,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "morocco-oujda-وجدة",
           "name": "Oujda وجدة",
           "stations": [
@@ -39220,6 +40972,132 @@
                 "lat": 34.9024065,
                 "lng": -1.0271837
               }
+            }
+          ]
+        },
+        {
+          "id": "morocco-rabat",
+          "name": "Rabat",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJmTM0SWumpw0RilQUg8K6uFc",
+              "name": "Bouznika",
+              "type": "Station",
+              "coordinates": {
+                "lat": 33.7901016,
+                "lng": -7.161910600000001
+              },
+              "address": "Bouznika",
+              "rating": 3.6,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJzbhkBf1Zpw0RIrCwdeKPvRA",
+              "name": "Kénitra",
+              "type": "Station",
+              "coordinates": {
+                "lat": 34.2522819,
+                "lng": -6.5803275
+              },
+              "address": "Avenue des FAR, Kenitra",
+              "rating": 4.1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJj0BfRItspw0R6SOCYy6gjJM",
+              "name": "Rabat Agdal",
+              "type": "Station",
+              "coordinates": {
+                "lat": 34.0021353,
+                "lng": -6.855586
+              },
+              "address": "Avenue El Hadj Ahmed Charkaoui, Rabat",
+              "rating": 4.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJg0ZlY3hspw0R4LLmt70J1J0",
+              "name": "Rabat Ville",
+              "type": "Station",
+              "coordinates": {
+                "lat": 34.0164635,
+                "lng": -6.8356942
+              },
+              "address": "Avenue Mohammed V, Rabat",
+              "rating": 3.9,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJN2eWGp5cpw0RLqfRR51faXM",
+              "name": "Sidi Taibi train station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 34.1766203,
+                "lng": -6.6633475
+              },
+              "address": "P4266, Sidi Taibi",
+              "rating": 4.2,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJm837qMlrpw0RD_d0y-GoF9Q",
+              "name": "Terminus Tramway Hassan II",
+              "type": "Station",
+              "coordinates": {
+                "lat": 34.0347038,
+                "lng": -6.799735099999999
+              },
+              "address": "Avenue Hassan II, Salé",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJAVdZYF5spw0RE8XEPdT-Z_E",
+              "name": "Terminus Tramway Hôpital Moulay Youssef",
+              "type": "Station",
+              "coordinates": {
+                "lat": 34.0108949,
+                "lng": -6.859076300000001
+              },
+              "address": "Avenue Sidi Mohamed Ben Abdellah, Rabat",
+              "rating": 4.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJM0UMXsJspw0RqDTLuPXwbHM",
+              "name": "Terminus Tramway Madinat Al Irfane",
+              "type": "Station",
+              "coordinates": {
+                "lat": 33.9826645,
+                "lng": -6.864239599999999
+              },
+              "address": "Avenue Allal Al Fassi, Rabat",
+              "rating": 4.1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJQ6lCXNhrpw0RAw8OKjU0s2c",
+              "name": "محطة سلا تابريكت",
+              "type": "Station",
+              "coordinates": {
+                "lat": 34.0523686,
+                "lng": -6.805175200000001
+              },
+              "address": "Avenue 6 Novembre, Salé",
+              "rating": 3.7,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJveKzfNVrpw0RUuhJCkoBcD0",
+              "name": "نهاية طراموي حي كريمة",
+              "type": "Station",
+              "coordinates": {
+                "lat": 34.0543172,
+                "lng": -6.7942876
+              },
+              "address": "Avenue Mohamed V, Salé",
+              "rating": 4.2,
+              "source": "Google Places"
             }
           ]
         },
@@ -39578,6 +41456,72 @@
                 "lat": 35.7703931,
                 "lng": -5.7853389
               }
+            }
+          ]
+        },
+        {
+          "id": "morocco-tangier",
+          "name": "Tangier",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJR66TVP6jDA0RAcz0ZWyLr7o",
+              "name": "Renfe",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.88759,
+                "lng": -5.313137399999999
+              },
+              "address": "Plaza Rafael Gibert, 26, Ceuta",
+              "rating": 2.8,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJe-4wbpyACw0RzG1fok4O0XY",
+              "name": "Tanger Ville Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.7715294,
+                "lng": -5.785986599999998
+              },
+              "address": "Tangier",
+              "rating": 4.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJL80nRMScDA0RlX73cRAMwHY",
+              "name": "The train station, the small palace",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.8457154,
+                "lng": -5.547537
+              },
+              "address": "",
+              "rating": 3.1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJQxer4OuPCw0RzTUZ8KEaRGc",
+              "name": "محطة القطار العقبة الحمراء",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.61240449999999,
+                "lng": -5.915835999999999
+              },
+              "address": "",
+              "rating": 3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJcRep2ZZ-Cw0RfaR4rEjwg5s",
+              "name": "محطة القطار ملوسة",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.7216307,
+                "lng": -5.659133799999999
+              },
+              "address": "",
+              "rating": 3.9,
+              "source": "Google Places"
             }
           ]
         },
@@ -40032,6 +41976,18 @@
                 "lat": -19.8245473,
                 "lng": 34.8385581
               }
+            },
+            {
+              "id": "GOOGLE-ChIJO643s19qKh8RcEWrUBd2K88",
+              "name": "Beira Railroad Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -19.8248118,
+                "lng": 34.8384434
+              },
+              "address": "Beira",
+              "rating": 4.2,
+              "source": "Google Places"
             }
           ]
         },
@@ -40603,6 +42559,72 @@
           ]
         },
         {
+          "id": "mozambique-maputo",
+          "name": "Maputo",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJcUoTB8Wa5h4RZxv31cRKYIs",
+              "name": "CFM",
+              "type": "Station",
+              "coordinates": {
+                "lat": -25.956037,
+                "lng": 32.5500239
+              },
+              "address": "Avenida Organizacao Das Nacoes Unidas, Maputo",
+              "rating": 3.8,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJdZGHJsqa5h4RspI0l6zML70",
+              "name": "CFM",
+              "type": "Station",
+              "coordinates": {
+                "lat": -25.9514897,
+                "lng": 32.5426143
+              },
+              "address": "Maputo",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ00jJuXbY5R4R3MEYpzAi0lg",
+              "name": "Goba Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -26.1987659,
+                "lng": 32.1436143
+              },
+              "address": "MR7, Goba",
+              "rating": 3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ23dTRBmb5h4RenAyMaQvBAs",
+              "name": "Maputo Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -25.9710715,
+                "lng": 32.56436170000001
+              },
+              "address": "Maputo",
+              "rating": 4.4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJY8s-itZZ5h4RqVbTcv2Dh_4",
+              "name": "Moambe Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -25.6541673,
+                "lng": 32.303946
+              },
+              "address": "",
+              "rating": 5,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "mozambique-marromeu",
           "name": "Marromeu",
           "stations": [
@@ -40958,6 +42980,18 @@
           "id": "mozambique-nampula",
           "name": "Nampula",
           "stations": [
+            {
+              "id": "GOOGLE-ChIJ-8Qhi601xhgRoZyOjuHLJio",
+              "name": "Estacao CFM",
+              "type": "Station",
+              "coordinates": {
+                "lat": -15.1134342,
+                "lng": 39.26889179999999
+              },
+              "address": "Nampula",
+              "rating": 3.7,
+              "source": "Google Places"
+            },
             {
               "id": "3316984417",
               "name": "Nampula",
@@ -42453,6 +44487,18 @@
           "name": "Walvis Bay",
           "stations": [
             {
+              "id": "GOOGLE-ChIJYQYJzOVYdhwRDu7cHrCUU0I",
+              "name": "Swakopmund Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -22.6734024,
+                "lng": 14.5353956
+              },
+              "address": "Mandume Ya Ndemufayo, Swakopmund",
+              "rating": 3.1,
+              "source": "Google Places"
+            },
+            {
               "id": "168965034",
               "name": "Walvis Bay",
               "type": "Station",
@@ -42460,6 +44506,48 @@
                 "lat": -22.9538276,
                 "lng": 14.5010294
               }
+            },
+            {
+              "id": "GOOGLE-ChIJvz_xoA7vdhwRzvjXUAOv_7A",
+              "name": "Walvis Bay Train Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -22.9540209,
+                "lng": 14.5016299
+              },
+              "address": "Walvis Bay",
+              "rating": 3.9,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
+          "id": "namibia-windhoek",
+          "name": "Windhoek",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJdaA7O0MbCxwRfTn3fhhbWtQ",
+              "name": "TransNamib Train Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -22.5595481,
+                "lng": 17.0812458
+              },
+              "address": "Bahnhof Street, Windhoek",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJkf3H-VwbCxwRuhB2CEevf7c",
+              "name": "Windhoek Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -22.5559886,
+                "lng": 17.0808893
+              },
+              "address": "Windhoek",
+              "rating": 3.9,
+              "source": "Google Places"
             }
           ]
         }
@@ -42481,6 +44569,24 @@
                 "lat": 5.843094,
                 "lng": 6.1101432
               }
+            }
+          ]
+        },
+        {
+          "id": "nigeria-abuja",
+          "name": "Abuja",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJW_4QPaN2ThARe5DyjcfhELQ",
+              "name": "Idu Train Terminal",
+              "type": "Station",
+              "coordinates": {
+                "lat": 9.045022699999999,
+                "lng": 7.343090299999999
+              },
+              "address": "Abuja",
+              "rating": 4.1,
+              "source": "Google Places"
             }
           ]
         },
@@ -43418,6 +45524,84 @@
           ]
         },
         {
+          "id": "nigeria-ibadan",
+          "name": "Ibadan",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJI24C-g-NORARXCbmDuWibXY",
+              "name": "Dugbe Railway Station Ibadan",
+              "type": "Station",
+              "coordinates": {
+                "lat": 7.388433699999999,
+                "lng": 3.8761892
+              },
+              "address": "Liebu Bypass, Ibadan",
+              "rating": 3.9,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ7WXQpZF7ORARftEIjY71gAg",
+              "name": "Junction",
+              "type": "Station",
+              "coordinates": {
+                "lat": 6.962601200000001,
+                "lng": 3.837191200000001
+              },
+              "address": "",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJh9_tsXpwORARmk68vPDkmn4",
+              "name": "Junction",
+              "type": "Station",
+              "coordinates": {
+                "lat": 6.937778799999999,
+                "lng": 3.9160947
+              },
+              "address": "Oru",
+              "rating": 3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ77IHvKbLORARrHMrDqqk5gE",
+              "name": "Moluberin Junction",
+              "type": "Station",
+              "coordinates": {
+                "lat": 7.4752551,
+                "lng": 4.3523052
+              },
+              "address": "Gbongan",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJJ1n7G6TsORARMH21-SsIHd0",
+              "name": "Ojuirin Railway Junction",
+              "type": "Station",
+              "coordinates": {
+                "lat": 7.435575200000001,
+                "lng": 3.9823854
+              },
+              "address": "Unnamed Rd,, Ibadan",
+              "rating": 3.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJzxM8RBCNORAR_l1mSDAcct0",
+              "name": "Train Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 7.390281399999998,
+                "lng": 3.8773902
+              },
+              "address": "Magazine Road, Ibadan",
+              "rating": 3.9,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "nigeria-idu",
           "name": "Idu",
           "stations": [
@@ -43705,6 +45889,30 @@
           "name": "Kaduna",
           "stations": [
             {
+              "id": "GOOGLE-ChIJdWlYcGm1shER_gLYu1W2S34",
+              "name": "Junction",
+              "type": "Station",
+              "coordinates": {
+                "lat": 10.557608,
+                "lng": 7.4535665
+              },
+              "address": "Kaduna",
+              "rating": 3.4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJA8D8WWy1shERZJbLe1Z6A7w",
+              "name": "Junction",
+              "type": "Station",
+              "coordinates": {
+                "lat": 10.561877,
+                "lng": 7.456766400000001
+              },
+              "address": "Kaduna",
+              "rating": 3.9,
+              "source": "Google Places"
+            },
+            {
               "id": "3677156385",
               "name": "Kaduna - Rigasa",
               "type": "Station",
@@ -43721,6 +45929,18 @@
                 "lat": 10.492132,
                 "lng": 7.4163853
               }
+            },
+            {
+              "id": "GOOGLE-ChIJy_pZI3M1TRARnFG7ckpaoP4",
+              "name": "Kaduna Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 10.4959513,
+                "lng": 7.417687999999999
+              },
+              "address": "Kaduna",
+              "rating": 3.8,
+              "source": "Google Places"
             }
           ]
         },
@@ -44106,6 +46326,204 @@
               },
               "operator": "",
               "source": "OpenStreetMap"
+            }
+          ]
+        },
+        {
+          "id": "nigeria-lagos",
+          "name": "Lagos",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJqanPkW6ROxARXucdJAqgW_4",
+              "name": "Agege Train Station (Babatunde Fashola Station)",
+              "type": "Station",
+              "coordinates": {
+                "lat": 6.624059700000001,
+                "lng": 3.3246086
+              },
+              "address": "Lagos",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJIac2KW6ROxARxylmK8cDmfI",
+              "name": "Babatunde Raji Fashola Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 6.620987500000001,
+                "lng": 3.3258906
+              },
+              "address": "Nigeria",
+              "rating": 4.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJETfxybeWOxARRmqMHaR1d-U",
+              "name": "Iju Train Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 6.6610851,
+                "lng": 3.3200146
+              },
+              "address": "Fatokun Street, Lagos",
+              "rating": 3.8,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ8zZ_YIqROxARrjZQBKdiduk",
+              "name": "Ikeja Train Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 6.591413600000001,
+                "lng": 3.337638
+              },
+              "address": "Nigeria",
+              "rating": 4.6,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ-8PMXoCMOxARqdNwRIctOsg",
+              "name": "Lagos Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 6.4843329,
+                "lng": 3.3810918
+              },
+              "address": "Cooper Street, Lagos",
+              "rating": 3.9,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ_9pdbXeLOxARpTZ04OJQuQg",
+              "name": "Lagos Terminus",
+              "type": "Station",
+              "coordinates": {
+                "lat": 6.469867799999999,
+                "lng": 3.382483699999999
+              },
+              "address": "Murtala Muhammed, Lagos",
+              "rating": 3.9,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJhdbgX_uWOxARbEkXbx2LRw4",
+              "name": "Lateef Jakande",
+              "type": "Station",
+              "coordinates": {
+                "lat": 6.687341099999999,
+                "lng": 3.3035393
+              },
+              "address": "Nigeria",
+              "rating": 5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJR-tryxeJOxARFaEicoG4kU4",
+              "name": "Mile 2",
+              "type": "Station",
+              "coordinates": {
+                "lat": 6.459880899999999,
+                "lng": 3.3111005
+              },
+              "address": "Nigeria",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJr7_2-LaNOxARdE6AM-sBwNI",
+              "name": "Mushin",
+              "type": "Station",
+              "coordinates": {
+                "lat": 6.5319904,
+                "lng": 3.362106
+              },
+              "address": "Nigeria",
+              "rating": 3.6,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJDdWlNo-LOxARksOCDkrcj2o",
+              "name": "National Theatre",
+              "type": "Station",
+              "coordinates": {
+                "lat": 6.476187299999999,
+                "lng": 3.3675978
+              },
+              "address": "Nigeria",
+              "rating": 5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJexxD1PGNOxARWbQVGMjAz7I",
+              "name": "Oshodi Terminal",
+              "type": "Station",
+              "coordinates": {
+                "lat": 6.556764499999999,
+                "lng": 3.3516897
+              },
+              "address": "Nigeria",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJk0grtIGMOxARyjC8T43Tuxk",
+              "name": "Oyingbo Redline Train Staion",
+              "type": "Station",
+              "coordinates": {
+                "lat": 6.483267,
+                "lng": 3.382026
+              },
+              "address": "Nigeria",
+              "rating": 3.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJRS0nmUOJOxARCFnTGyKNQr0",
+              "name": "Railway Terminus Suru Alaba",
+              "type": "Station",
+              "coordinates": {
+                "lat": 6.4650148,
+                "lng": 3.3259267
+              },
+              "address": "Lagos - Badagry Expressway, Lagos",
+              "rating": 4.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJxXbgXhWJOxARstyVefhZ9Ao",
+              "name": "Suru Alaba Railway station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 6.460729799999998,
+                "lng": 3.317723199999999
+              },
+              "address": "Lagos",
+              "rating": 4.2,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJxSIziUGJOxARuxfj3Yln7Ug",
+              "name": "Suru Alaba Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 6.4623822,
+                "lng": 3.3235419
+              },
+              "address": "Suru Alaba Bus Stop, Ojo Road",
+              "rating": 3.8,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJm5aC9FyMOxAR9nDsEHKpTUg",
+              "name": "Yaba Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 6.507089199999999,
+                "lng": 3.3714774
+              },
+              "address": "Tejuosho Road, Lagos",
+              "rating": 3.9,
+              "source": "Google Places"
             }
           ]
         },
@@ -44713,6 +47131,30 @@
           "id": "nigeria-port-harcourt",
           "name": "Port Harcourt",
           "stations": [
+            {
+              "id": "GOOGLE-ChIJdbUwVmqZQhARha01gCy7W6E",
+              "name": "Aba Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 5.1237563,
+                "lng": 7.3705012
+              },
+              "address": "Aba",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJz88CsfrLaRAR9Rv7oIR7lKc",
+              "name": "Port Harcourt Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 4.7879109,
+                "lng": 7.002706600000001
+              },
+              "address": "Station Road, Port Harcourt",
+              "rating": 3.8,
+              "source": "Google Places"
+            },
             {
               "id": "1855084842",
               "name": "Port Harcourt Station",
@@ -58340,6 +60782,18 @@
           "name": "Dakar",
           "stations": [
             {
+              "id": "GOOGLE-ChIJjaMwAqQMwQ4RWS9k3PleGZY",
+              "name": "arret petit train bleu pikine",
+              "type": "Station",
+              "coordinates": {
+                "lat": 14.7504142,
+                "lng": -17.39087869999999
+              },
+              "address": "Diammaguen, Dakar",
+              "rating": 3.8,
+              "source": "Google Places"
+            },
+            {
               "id": "10245379100",
               "name": "Dakar",
               "type": "Station",
@@ -58347,6 +60801,66 @@
                 "lat": 14.6765855,
                 "lng": -17.4338612
               }
+            },
+            {
+              "id": "GOOGLE-ChIJFxca6FJywQ4RDm7KY4EWA6E",
+              "name": "Dakar Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 14.6756635,
+                "lng": -17.4333973
+              },
+              "address": "Dakar",
+              "rating": 4.4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJo2DoYh5zwQ4RgozQ2BsWqmI",
+              "name": "Gare de Bel Air",
+              "type": "Station",
+              "coordinates": {
+                "lat": 14.7018083,
+                "lng": -17.42812959999999
+              },
+              "address": "Hann Pecheur, Dakar",
+              "rating": 3.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJP-mjPWYLwQ4RIbCxRSIas-Y",
+              "name": "Gare de Thiaroye",
+              "type": "Station",
+              "coordinates": {
+                "lat": 14.761758,
+                "lng": -17.374115
+              },
+              "address": "Diammaguen, Dakar",
+              "rating": 3.8,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJXbGMOcGfwQ4R9gbEVTn17pE",
+              "name": "Gare ferroviaire de Rufisque",
+              "type": "Station",
+              "coordinates": {
+                "lat": 14.7157112,
+                "lng": -17.2709804
+              },
+              "address": "Diammaguen, Dakar",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJlbmaPthywQ4Rn_k2_Msgckg",
+              "name": "Halte de Hann",
+              "type": "Station",
+              "coordinates": {
+                "lat": 14.7180931,
+                "lng": -17.433998
+              },
+              "address": "Hann, Dakar",
+              "rating": 3.7,
+              "source": "Google Places"
             }
           ]
         },
@@ -58835,6 +61349,48 @@
                 "lat": 14.758771,
                 "lng": -17.3802989
               }
+            }
+          ]
+        },
+        {
+          "id": "senegal-thies",
+          "name": "Thies",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJP-mjPWYLwQ4RIbCxRSIas-Y",
+              "name": "Gare de Thiaroye",
+              "type": "Station",
+              "coordinates": {
+                "lat": 14.761758,
+                "lng": -17.374115
+              },
+              "address": "Diammaguen, Dakar",
+              "rating": 3.8,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJgQsLLnzTwQ4RDnsvajQQjqs",
+              "name": "Gare ferroviaire de Mékhé",
+              "type": "Station",
+              "coordinates": {
+                "lat": 15.113754,
+                "lng": -16.6324626
+              },
+              "address": "Meckhe",
+              "rating": 3.1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJXbGMOcGfwQ4R9gbEVTn17pE",
+              "name": "Gare ferroviaire de Rufisque",
+              "type": "Station",
+              "coordinates": {
+                "lat": 14.7157112,
+                "lng": -17.2709804
+              },
+              "address": "Diammaguen, Dakar",
+              "rating": 4,
+              "source": "Google Places"
             }
           ]
         },
@@ -61657,6 +64213,162 @@
                 "lat": -29.1185721,
                 "lng": 26.2264292
               }
+            },
+            {
+              "id": "GOOGLE-ChIJkyAKCibQjx4RF4iB3XXnea0",
+              "name": "De Bloem",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.07944,
+                "lng": 26.26472
+              },
+              "address": "Estoire, Bloemfontein",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJg8z3Dd7Pjx4R4xP2mCJnBR4",
+              "name": "Estoire",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.09155,
+                "lng": 26.25525
+              },
+              "address": "Estoire, Bloemfontein",
+              "rating": 5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJubMAC97Gjx4RpqF0ePC5K1M",
+              "name": "Hope Orchards",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.23153,
+                "lng": 26.1582799
+              },
+              "address": "South Africa",
+              "rating": 3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJMfoXDBHDjx4R4ahMNAlk4GM",
+              "name": "Kelly's View",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.14759999999999,
+                "lng": 26.1045999
+              },
+              "address": "South Africa",
+              "rating": 3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJQUzN2afOjx4RYF25vHsQaps",
+              "name": "Kerelaw",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.14806,
+                "lng": 26.3227799
+              },
+              "address": "South Africa",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJhRqyRu7Pjx4RaBnXR0evgC8",
+              "name": "Longend",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.10366,
+                "lng": 26.2440699
+              },
+              "address": "Linquinda, Bloemfontein",
+              "rating": 2.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJx2jEFIvLjx4RrMT3FU9wXe0",
+              "name": "Lynchfield",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.15722,
+                "lng": 26.3502799
+              },
+              "address": "South Africa",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJW3gXm-POjx4RJ4yVtRlTKvU",
+              "name": "Nassau",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.13821,
+                "lng": 26.28277
+              },
+              "address": "Maxley Small Holdings, Bloemfontein",
+              "rating": 5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJRflMRIvojx4RfNSfdjRhJnM",
+              "name": "Olienhoutplaat",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.16306,
+                "lng": 25.9891699
+              },
+              "address": "South Africa",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ2drgp9HFjx4RNa0TjNXDD4Q",
+              "name": "Rifle Range",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.17845,
+                "lng": 26.1913099
+              },
+              "address": "Fauna, Bloemfontein",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJjZq6JgPPjx4RUk1tffK8duE",
+              "name": "Shannon",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.13583,
+                "lng": 26.2744399
+              },
+              "address": "Bloemspruit, Bloemfontein",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJE0lwYnPFjx4RjD2WaVoys9A",
+              "name": "Showground",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.13432,
+                "lng": 26.20881
+              },
+              "address": "Generaal De Wet, Bloemfontein",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJgfdrB-zEjx4RsfXBhMBS_VE",
+              "name": "Sleepdam",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.13278,
+                "lng": 26.165
+              },
+              "address": "Bloemfontein NU, Bloemfontein",
+              "rating": null,
+              "source": "Google Places"
             }
           ]
         },
@@ -63427,6 +66139,30 @@
           "name": "Cape Town",
           "stations": [
             {
+              "id": "GOOGLE-ChIJ_7AE-D5bzB0RNILhJCYGGxM",
+              "name": "Bonteheuwel Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.9418467,
+                "lng": 18.5494507
+              },
+              "address": "Assegaai Avenue, Goodwood, Cape Town",
+              "rating": 1.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ00nbhPddzB0R3edbWvi2VMc",
+              "name": "Cape Town Harbour",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.90428,
+                "lng": 18.4300599
+              },
+              "address": "South Arm Road, Victoria & Alfred Waterfront, Cape Town",
+              "rating": 4.5,
+              "source": "Google Places"
+            },
+            {
               "id": "288676470",
               "name": "Cape Town Station",
               "type": "Station",
@@ -63434,6 +66170,54 @@
                 "lat": -33.9224221,
                 "lng": 18.4263523
               }
+            },
+            {
+              "id": "GOOGLE-ChIJMyRwSWJnzB0R_eWE4NxT6rY",
+              "name": "Cape Town Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.9236402,
+                "lng": 18.427191
+              },
+              "address": "Foreshore, Cape Town",
+              "rating": 2.8,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ_VLdpK9dzB0RV7vUmnHzWW0",
+              "name": "Paardeneiland",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.92188209999999,
+                "lng": 18.4652084
+              },
+              "address": "Table Bay, Salt River, Cape Town",
+              "rating": 3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJrRJ1DWJnzB0Rd4GHrQ6zzzA",
+              "name": "RCJM - Blue Train: Cape Town Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.92148799999999,
+                "lng": 18.426947
+              },
+              "address": "Adderley Street, Cape Town City Centre, Cape Town",
+              "rating": 4.8,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJPRPu6KhdzB0RmyUuTRLTAKI",
+              "name": "Salt River Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.9275502,
+                "lng": 18.46468729999999
+              },
+              "address": "Voortrekker Road, Salt River, Cape Town",
+              "rating": 3.6,
+              "source": "Google Places"
             }
           ]
         },
@@ -66992,6 +69776,42 @@
           "name": "Durban",
           "stations": [
             {
+              "id": "GOOGLE-ChIJNyw1zdir9x4RJNW_jxU7X4Q",
+              "name": "Bayhead",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.90600999999999,
+                "lng": 30.98558
+              },
+              "address": "Solomon Mahlangu Drive, Bayhead, Durban",
+              "rating": 2.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJJSR6Vtqr9x4RVuPocmuijw0",
+              "name": "Booth",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.90472,
+                "lng": 30.97917
+              },
+              "address": "Roberts Grove, Rossburgh, Durban",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJY1NVxuer9x4RhDIG2j5Y36o",
+              "name": "Clairwood Train Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.9151372,
+                "lng": 30.9774143
+              },
+              "address": "South Coast Road, Clairwood, Durban",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
               "id": "348954984",
               "name": "Durban",
               "type": "Station",
@@ -66999,6 +69819,162 @@
                 "lat": -29.8448444,
                 "lng": 31.0230108
               }
+            },
+            {
+              "id": "GOOGLE-ChIJfUbcotCp9x4RSZ3DcYlmmGI",
+              "name": "Durban Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.839285,
+                "lng": 31.024377
+              },
+              "address": "Umgeni Road, Durban Central, Durban",
+              "rating": 3.4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJjdtT6ngH9x4RD1LPuiC6Y4Y",
+              "name": "Durban Station Concourse",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.8464968,
+                "lng": 31.0243342
+              },
+              "address": "65 Masabalala Yengwa Avenue, Stamford Hill, Durban",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJoy1r7nL_9h4RSqmjyrxj9Ko",
+              "name": "Induspine",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.86722,
+                "lng": 30.84028
+              },
+              "address": "Umshinini, Pinetown",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJDfBeOT6p9x4R53PhSjxrGUY",
+              "name": "King's Rest",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.90472,
+                "lng": 31.0144399
+              },
+              "address": "Cherwell Road, Bayhead, Durban",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJNYHsEDv89h4Re9qeiBK6YDY",
+              "name": "Kloof",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.7913893,
+                "lng": 30.8334776
+              },
+              "address": "Old Main Road, Kloof",
+              "rating": 3.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJMfZBftX99h4RIt2GgxCYHY8",
+              "name": "Manors",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.79944,
+                "lng": 30.8525
+              },
+              "address": "Kloof",
+              "rating": 1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJW3qAk9er9x4R2T5LyZ1_yrQ",
+              "name": "Maydon Wharf",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.89971,
+                "lng": 30.98601
+              },
+              "address": "M4 Southern, Bayhead, Durban",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJu6ACNncH9x4R4SOp1iJtQnI",
+              "name": "Moses Mabhida Train Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.828221,
+                "lng": 31.0316
+              },
+              "address": "44 Masabalala Yengwa Avenue, Stamford Hill, Durban",
+              "rating": 4.7,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJR2M0sFio9x4RgsBNw6ny_CE",
+              "name": "Point",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.87288,
+                "lng": 31.05016
+              },
+              "address": "Signal Road, Point, Durban",
+              "rating": 3.7,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJycv89cmq9x4RUAUpDjB1XO0",
+              "name": "Queensburg Train Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.8922509,
+                "lng": 30.901608
+              },
+              "address": "Queensburgh, Durban",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJXawOE3Ws9x4Rthhp_pA3p2U",
+              "name": "Race Course Halt",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.93944,
+                "lng": 30.96278
+              },
+              "address": "Durban South, Mobeni East",
+              "rating": 3.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJHYuDfCUH9x4RonDZcgt8LiQ",
+              "name": "Springfield Flats",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.81167,
+                "lng": 30.99944
+              },
+              "address": "Umgeni Business Park, Durban",
+              "rating": 3.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJwV6fUc799h4R1HWVanQihR8",
+              "name": "Wyebank",
+              "type": "Station",
+              "coordinates": {
+                "lat": -29.78556,
+                "lng": 30.85806
+              },
+              "address": "Fernleigh Avenue, Zamokuhle, Kloof",
+              "rating": 5,
+              "source": "Google Places"
             }
           ]
         },
@@ -67118,6 +70094,66 @@
           "name": "East London",
           "stations": [
             {
+              "id": "GOOGLE-ChIJYSZ36pPdZh4RB-kt3LAzqNs",
+              "name": "Arnoldton",
+              "type": "Station",
+              "coordinates": {
+                "lat": -32.9649999,
+                "lng": 27.80306
+              },
+              "address": "Mdantsane Access-Weg, Reeston North, Oos-Londen",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJz3b1QG_gZh4RHDoTnbP3CuY",
+              "name": "Cambridge",
+              "type": "Station",
+              "coordinates": {
+                "lat": -32.9724999,
+                "lng": 27.89111
+              },
+              "address": "Mayfair Avenue, Cambridge Village, East London",
+              "rating": 3.7,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ27qtx0XgZh4RAfRHGk2WzlM",
+              "name": "Chiselhurst",
+              "type": "Station",
+              "coordinates": {
+                "lat": -32.98661,
+                "lng": 27.89431
+              },
+              "address": "Union Avenue, Selborne, East London",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ6Rw9BQfeZh4RpOTmEvcox8U",
+              "name": "Dawn",
+              "type": "Station",
+              "coordinates": {
+                "lat": -32.96476,
+                "lng": 27.83347
+              },
+              "address": "Dawn, East London",
+              "rating": 3.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJdQycWvbhZh4R-iAn7IVpTN8",
+              "name": "East Bank",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.03458,
+                "lng": 27.9095
+              },
+              "address": "Strand Road, Harbour, East London",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
               "id": "9164184293",
               "name": "East London",
               "type": "Station",
@@ -67125,6 +70161,150 @@
                 "lat": -33.0166531,
                 "lng": 27.9077491
               }
+            },
+            {
+              "id": "GOOGLE-ChIJw_1q_unhZh4RvrDqMr02ly4",
+              "name": "East London",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.01643,
+                "lng": 27.90761
+              },
+              "address": "Station Street, Quigney, East London",
+              "rating": 4.1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJK_aAqVDDZh4R0hW8XB-6-u8",
+              "name": "Egerton",
+              "type": "Station",
+              "coordinates": {
+                "lat": -32.9202699,
+                "lng": 27.72578
+              },
+              "address": "R102",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJKzPQaMHhZh4R8r9HGEiVXK4",
+              "name": "Gately",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.01302390000001,
+                "lng": 27.9064511
+              },
+              "address": "Commercial Road, Arcadia, East London",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJLS7e6IfgZh4RjATqB8AmZdM",
+              "name": "Highgate",
+              "type": "Station",
+              "coordinates": {
+                "lat": -32.9710899,
+                "lng": 27.87684
+              },
+              "address": "Voortrekker Road, Cambridge West, East London",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ3Sd67BzeZh4RO0GahFNhCW4",
+              "name": "Horseshoe",
+              "type": "Station",
+              "coordinates": {
+                "lat": -32.9665668,
+                "lng": 27.8414343
+              },
+              "address": "Summerpride, East London",
+              "rating": 1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJv4q4-IHGZh4R6bMet5gXtf0",
+              "name": "Lonetree",
+              "type": "Station",
+              "coordinates": {
+                "lat": -32.89806,
+                "lng": 27.64306
+              },
+              "address": "R102, Ntabozuko General, East London",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJG0bqDFjcZh4RVcZLL5FW26A",
+              "name": "Mdantsane",
+              "type": "Station",
+              "coordinates": {
+                "lat": -32.93056,
+                "lng": 27.78472
+              },
+              "address": "R102",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJM-aIkKndZh4RPz6kM8rGo10",
+              "name": "Mtsotso",
+              "type": "Station",
+              "coordinates": {
+                "lat": -32.94778,
+                "lng": 27.78639
+              },
+              "address": "R102, Reeston North, East London",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJZXVOYU3gZh4RLQgcOBddNLc",
+              "name": "Panmure",
+              "type": "Station",
+              "coordinates": {
+                "lat": -32.99825,
+                "lng": 27.89009
+              },
+              "address": "Parkway, Braelyn, East London",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJDevCp8fhZh4Rmi0_Nl6q3qI",
+              "name": "Southernwood",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.00944,
+                "lng": 27.90361
+              },
+              "address": "Avenue, Arcadia, East London",
+              "rating": 5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJS2SKTkDgZh4RR9lSC5NhTzs",
+              "name": "Vincent",
+              "type": "Station",
+              "coordinates": {
+                "lat": -32.9786999,
+                "lng": 27.89898000000001
+              },
+              "address": "Kings Way, Ocean View, East London",
+              "rating": 3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ0cYO-PrdZh4RxgVmyJM82Yg",
+              "name": "Wilsonia",
+              "type": "Station",
+              "coordinates": {
+                "lat": -32.96700000000001,
+                "lng": 27.82168
+              },
+              "address": "N2 National, Dawn, East London",
+              "rating": null,
+              "source": "Google Places"
             }
           ]
         },
@@ -73416,6 +76596,144 @@
               },
               "operator": "",
               "source": "OpenStreetMap"
+            }
+          ]
+        },
+        {
+          "id": "south-africa-johannesburg",
+          "name": "Johannesburg",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJwRuqDTRrlR4RoUh2U672PJc",
+              "name": "Birchleigh",
+              "type": "Station",
+              "coordinates": {
+                "lat": -26.0671602,
+                "lng": 28.2345697
+              },
+              "address": "Pretoria Road, Rietfontein 32-Ir, Kempton Park",
+              "rating": 1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJIQ1iqEQOlR4RDFjPw28aU8g",
+              "name": "City Deep",
+              "type": "Station",
+              "coordinates": {
+                "lat": -26.21867,
+                "lng": 28.07782
+              },
+              "address": "Vickers Road, Doornfontein 92-Ir, Johannesburg South",
+              "rating": 2.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJkwckwkwQlR4R2HMWw2kxbto",
+              "name": "Hillview",
+              "type": "Station",
+              "coordinates": {
+                "lat": -26.2221099,
+                "lng": 28.1433799
+              },
+              "address": "Elandsfontein 90-Ir, Germiston",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJDxI3YNwLlR4RYxC46_TPty8",
+              "name": "Langlaagte",
+              "type": "Station",
+              "coordinates": {
+                "lat": -26.2017,
+                "lng": 27.99055
+              },
+              "address": "Deville Street, Paarlshoop, Johannesburg",
+              "rating": 3.7,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJIz3f2DYKlR4RaBOwE6S0JhY",
+              "name": "Longdale",
+              "type": "Station",
+              "coordinates": {
+                "lat": -26.1985224,
+                "lng": 27.9629617
+              },
+              "address": "Jonathan Road, Longdale, Johannesburg",
+              "rating": 5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJh44fVRkKlR4Rv3Y_SYfmghc",
+              "name": "New Canada",
+              "type": "Station",
+              "coordinates": {
+                "lat": -26.21446,
+                "lng": 27.94239
+              },
+              "address": "New Canada Road, Randburg",
+              "rating": 2.8,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJmy5d4CEMlR4RETN2o-zoaBM",
+              "name": "Park",
+              "type": "Station",
+              "coordinates": {
+                "lat": -26.1955285,
+                "lng": 28.0415987
+              },
+              "address": "South Africa",
+              "rating": 4.1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJmZssYh8MlR4RvyAMXrgnaWM",
+              "name": "Park",
+              "type": "Station",
+              "coordinates": {
+                "lat": -26.1953315,
+                "lng": 28.0418963
+              },
+              "address": "South Africa",
+              "rating": 3.4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJsblN8M4RlR4RCmuTGk9weGg",
+              "name": "Recreation",
+              "type": "Station",
+              "coordinates": {
+                "lat": -26.2169399,
+                "lng": 28.1275
+              },
+              "address": "Lower Germiston Road, Elandsfontein 90-Ir, Germiston",
+              "rating": 2.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJp7JCc3wJlR4RdN9CMK8EhNU",
+              "name": "Riverlea",
+              "type": "Station",
+              "coordinates": {
+                "lat": -26.21727,
+                "lng": 27.97917
+              },
+              "address": "Riverlea, Johannesburg",
+              "rating": 4.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJFcwbiS1zlR4Rqr2-qso0vT8",
+              "name": "Thabo's Cab Service",
+              "type": "Station",
+              "coordinates": {
+                "lat": -26.1062376,
+                "lng": 28.0539781
+              },
+              "address": "22 Maude Street, Sandton",
+              "rating": null,
+              "source": "Google Places"
             }
           ]
         },
@@ -85392,6 +88710,180 @@
           ]
         },
         {
+          "id": "south-africa-port-elizabeth",
+          "name": "Port Elizabeth",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJ39MpPWPVeh4RRz2doM2EvzU",
+              "name": "Aloes",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.81861,
+                "lng": 25.6286099
+              },
+              "address": "ST George (R335), Wells Estate, Gqeberha",
+              "rating": 3.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJSZMTpu_Reh4RxzA13TBEIrE",
+              "name": "Bog Farm",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.98639,
+                "lng": 25.55361
+              },
+              "address": "Wentworth Road, Greenshields Park, Gqeberha",
+              "rating": 3.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJzSEdtSnaeh4RCjRlqdbEpz4",
+              "name": "Chelsea",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.9430599,
+                "lng": 25.43472
+              },
+              "address": "Lakeside, Farms Port Elizabeth, Gqeberha",
+              "rating": 5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJQx-v4isrex4RpDWs5G7Y8bM",
+              "name": "Coega",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.76278,
+                "lng": 25.65694
+              },
+              "address": "R334, Uitenhage Farms, Gqeberha",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJByuIEiYmex4RlzNor8mx1jQ",
+              "name": "Despatch",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.79745,
+                "lng": 25.4682299
+              },
+              "address": "Holland Street, Retief, Despatch",
+              "rating": 2.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJj-WxSgnSeh4Rz29jO7JS5-I",
+              "name": "Emerald Hill",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.9866699,
+                "lng": 25.5844399
+              },
+              "address": "Heugh Road, Schoenmakerskop, Gqeberha",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ89DCwJnSeh4R7QVFCKNiQnc",
+              "name": "Humewood Road",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.97139,
+                "lng": 25.6349999
+              },
+              "address": "Humewood Road, Gqeberha",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJfSIAEVHQeh4Rp6iRVhVIgXs",
+              "name": "Lorraine",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.97305989999999,
+                "lng": 25.51278
+              },
+              "address": "Dijon Road, Lorraine Manor, Gqeberha",
+              "rating": 1.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJqz4mWlPSeh4RONf35OyyBX0",
+              "name": "Metrorail Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.945476,
+                "lng": 25.609167
+              },
+              "address": "Swartkops Street, North End, Gqeberha",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJf4wecFTSeh4R_p0HoeW27DI",
+              "name": "North End",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.94778,
+                "lng": 25.61028
+              },
+              "address": "Settlers Highway, Gqeberha",
+              "rating": 4.7,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJScgHK0soex4RpqXFvLxoXvQ",
+              "name": "Perseverance",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.81556,
+                "lng": 25.52056
+              },
+              "address": "R367, Despatch",
+              "rating": 5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJVZGr8DjZeh4RFoXvhGQAWmk",
+              "name": "Progress (Gesluit)",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.9278199,
+                "lng": 25.39377
+              },
+              "address": "Draaifontein, Farms Port Elizabeth, Gqeberha",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJfRm61k3Ueh4RAjDAcbCnPiA",
+              "name": "Swartkops",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.86806,
+                "lng": 25.6011099
+              },
+              "address": "Grahamstown Road, Swartkops, Gqeberha",
+              "rating": 3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJO-RBrojQeh4RdbElZKqSO-o",
+              "name": "Theescombe",
+              "type": "Station",
+              "coordinates": {
+                "lat": -33.96722,
+                "lng": 25.48583
+              },
+              "address": "Courtney Close, Sherwood, Gqeberha",
+              "rating": 3.8,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "south-africa-port-rex",
           "name": "Port Rex",
           "stations": [
@@ -85599,6 +89091,90 @@
           "name": "Pretoria",
           "stations": [
             {
+              "id": "GOOGLE-ChIJJ3QNfITYvx4RS6hdxw8X-CA",
+              "name": "Bantule",
+              "type": "Station",
+              "coordinates": {
+                "lat": -25.73330999999999,
+                "lng": 28.16753
+              },
+              "address": "Staatsartillerie Road, Pretoria and Townlands 351-J, Pretoria",
+              "rating": 5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJwRuqDTRrlR4RoUh2U672PJc",
+              "name": "Birchleigh",
+              "type": "Station",
+              "coordinates": {
+                "lat": -26.0671602,
+                "lng": 28.2345697
+              },
+              "address": "Pretoria Road, Rietfontein 32-Ir, Kempton Park",
+              "rating": 1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ43hL5ohhlR4RaNTPCZu1kZE",
+              "name": "Devenishstraat",
+              "type": "Station",
+              "coordinates": {
+                "lat": -25.7605795,
+                "lng": 28.2099788
+              },
+              "address": "South Africa",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJCUwmmo7Yvx4RnlrpPCWFGkE",
+              "name": "Hercules",
+              "type": "Station",
+              "coordinates": {
+                "lat": -25.72461,
+                "lng": 28.16738
+              },
+              "address": "Haarlem Street, Hermanstad, Pretoria",
+              "rating": 4.1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJoSSPZvXYvx4R48C44jY1lyo",
+              "name": "Machielsnek",
+              "type": "Station",
+              "coordinates": {
+                "lat": -25.7174799,
+                "lng": 28.1596
+              },
+              "address": "Hendriks Street, Hermanstad, Pretoria",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJVUG4xyZilR4RbRQ6axfJAr4",
+              "name": "Mearsstraat",
+              "type": "Station",
+              "coordinates": {
+                "lat": -25.7598651,
+                "lng": 28.2015588
+              },
+              "address": "South Africa",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJMYX2imFilR4RNZfxPekDcSc",
+              "name": "Mitchell Street",
+              "type": "Station",
+              "coordinates": {
+                "lat": -25.75694,
+                "lng": 28.16071
+              },
+              "address": "Carl Street, Pretoria Townlands 351-Jr, Pretoria",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
               "id": "799906122",
               "name": "Pretoria",
               "type": "Station",
@@ -85606,6 +89182,30 @@
                 "lat": -25.7594894,
                 "lng": 28.1892212
               }
+            },
+            {
+              "id": "GOOGLE-ChIJUYDVMzxilR4RdPRKBnKsFF0",
+              "name": "Pretoria",
+              "type": "Station",
+              "coordinates": {
+                "lat": -25.75866,
+                "lng": 28.18987
+              },
+              "address": "Scheiding Street, Salvokop, Pretoria",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJfaUXiGZilR4REIM2EKLqpto",
+              "name": "Pretoria West",
+              "type": "Station",
+              "coordinates": {
+                "lat": -25.7561187,
+                "lng": 28.1674354
+              },
+              "address": "Carl Street, Pretoria Townlands 351-Jr, Pretoria",
+              "rating": 5,
+              "source": "Google Places"
             },
             {
               "id": "8821278662",
@@ -85624,6 +89224,42 @@
                 "lat": -25.7560941,
                 "lng": 28.1676538
               }
+            },
+            {
+              "id": "GOOGLE-ChIJAe34qb9hlR4R__8NFHUe-GA",
+              "name": "Rissik",
+              "type": "Station",
+              "coordinates": {
+                "lat": -25.749447,
+                "lng": 28.2322856
+              },
+              "address": "Festival Street, Hatfield, Pretoria",
+              "rating": 4.2,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ9R1_XoTYvx4RZKUScKPIVSg",
+              "name": "Technikon Rant",
+              "type": "Station",
+              "coordinates": {
+                "lat": -25.7322199,
+                "lng": 28.1675
+              },
+              "address": "Pretoria and Townlands 351-J, Pretoria",
+              "rating": 3.2,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJU4mdPY9hlR4RqcCqH-6tubg",
+              "name": "Walkerstraat",
+              "type": "Station",
+              "coordinates": {
+                "lat": -25.7601322,
+                "lng": 28.21350069999999
+              },
+              "address": "South Africa",
+              "rating": 4.3,
+              "source": "Google Places"
             }
           ]
         },
@@ -96178,6 +99814,24 @@
           ]
         },
         {
+          "id": "sudan-atbara",
+          "name": "Atbara",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJF_I5SH8yhxYRYYXzEKIxsYI",
+              "name": "Atbara Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 17.6927674,
+                "lng": 33.977092
+              },
+              "address": "Atbara",
+              "rating": 4.7,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "sudan-aweil",
           "name": "Aweil",
           "stations": [
@@ -96358,6 +100012,48 @@
           ]
         },
         {
+          "id": "sudan-khartoum",
+          "name": "Khartoum",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJx7-W83aSjhYRV72iPxqJV_w",
+              "name": "Khartoum North Train Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 15.6339205,
+                "lng": 32.5403677
+              },
+              "address": "Al-Inqaz Street, Khartoum North",
+              "rating": 4.1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ4R4tAxqOjhYR0txwQOupShc",
+              "name": "Khartoum Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 15.593886,
+                "lng": 32.5270204
+              },
+              "address": "Khartoum",
+              "rating": 3.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJK0rSyMXtjhYR6h_PJyrJ1ac",
+              "name": "محطة الكدرو",
+              "type": "Station",
+              "coordinates": {
+                "lat": 15.7524202,
+                "lng": 32.5689483
+              },
+              "address": "Oum-ElGora Janoob Street",
+              "rating": 3.9,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "sudan-khartoum-train",
           "name": "Khartoum train",
           "stations": [
@@ -96399,6 +100095,36 @@
                 "lat": 15.3566587,
                 "lng": 38.9873581
               }
+            }
+          ]
+        },
+        {
+          "id": "sudan-port-sudan",
+          "name": "Port Sudan",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJT23sI6NR1xURov1ZupsFJj8",
+              "name": "Asotriba",
+              "type": "Station",
+              "coordinates": {
+                "lat": 19.554533,
+                "lng": 37.15908230000001
+              },
+              "address": "Port Sudan",
+              "rating": 3.7,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJM-QWEs1E1xURcRXf3eGADZc",
+              "name": "Tisimit",
+              "type": "Station",
+              "coordinates": {
+                "lat": 19.4533151,
+                "lng": 37.12391849999999
+              },
+              "address": "",
+              "rating": 2,
+              "source": "Google Places"
             }
           ]
         },
@@ -97368,6 +101094,24 @@
           ]
         },
         {
+          "id": "tanzania-arusha",
+          "name": "Arusha",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJTRacLZEcNxgRaEujySTVljs",
+              "name": "Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -3.3764162,
+                "lng": 36.6816493
+              },
+              "address": "Range Road, Arusha",
+              "rating": 4,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "tanzania-bahi",
           "name": "Bahi",
           "stations": [
@@ -97509,6 +101253,18 @@
           "name": "Dar es Salaam",
           "stations": [
             {
+              "id": "GOOGLE-ChIJzaDxWgFLXBgRzI9F--2jWz0",
+              "name": "Central Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -6.822945199999999,
+                "lng": 39.2840503
+              },
+              "address": "Gerezani Street, Dar es Salaam",
+              "rating": 3.7,
+              "source": "Google Places"
+            },
+            {
               "id": "440137926",
               "name": "Dar es Salaam",
               "type": "Station",
@@ -97516,6 +101272,54 @@
                 "lat": -6.8464084,
                 "lng": 39.2450325
               }
+            },
+            {
+              "id": "GOOGLE-ChIJCUF6fiJKXBgR7AL40HrpIDk",
+              "name": "Tazara Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -6.848299099999999,
+                "lng": 39.2446941
+              },
+              "address": "Dar es Salaam",
+              "rating": 3.9,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJCQItl0ZJXBgRRqw8qJm6fks",
+              "name": "Train Station Mabibo",
+              "type": "Station",
+              "coordinates": {
+                "lat": -6.809916999999999,
+                "lng": 39.2211807
+              },
+              "address": "Dar es Salaam",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJmdX6AGpJXBgRfppgazRcZAE",
+              "name": "Train Station Relini",
+              "type": "Station",
+              "coordinates": {
+                "lat": -6.815616399999999,
+                "lng": 39.22175999999999
+              },
+              "address": "Dar es Salaam",
+              "rating": 3.4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJpbmDGXtJXBgR9rB-1R9GbNc",
+              "name": "Train Station Tabata Relini",
+              "type": "Station",
+              "coordinates": {
+                "lat": -6.824628799999999,
+                "lng": 39.2302573
+              },
+              "address": "Dar es Salaam",
+              "rating": 3.6,
+              "source": "Google Places"
             }
           ]
         },
@@ -97540,6 +101344,18 @@
                 "lat": -6.1839376,
                 "lng": 35.7493783
               }
+            },
+            {
+              "id": "GOOGLE-ChIJvxmEvFHlTRgRx_f9gB_rYVA",
+              "name": "Train Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -6.1838343,
+                "lng": 35.7499009
+              },
+              "address": "A 104, Dodoma",
+              "rating": 3.7,
+              "source": "Google Places"
             }
           ]
         },
@@ -99063,6 +102879,18 @@
                 "lat": -6.7543145,
                 "lng": 37.6644837
               }
+            },
+            {
+              "id": "GOOGLE-ChIJozaRt7ddWhgRodfqJf1KSsI",
+              "name": "Morogoro Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -6.822599299999999,
+                "lng": 37.6726448
+              },
+              "address": "Morogoro",
+              "rating": 3.1,
+              "source": "Google Places"
             }
           ]
         },
@@ -99290,6 +103118,18 @@
                 "lat": -2.522712,
                 "lng": 32.8987015
               }
+            },
+            {
+              "id": "GOOGLE-ChIJX2ibTrNkzhkRQpM8zq_pZO4",
+              "name": "Mwanza Train Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -2.5224336,
+                "lng": 32.8983037
+              },
+              "address": "Mwanza",
+              "rating": 3.5,
+              "source": "Google Places"
             }
           ]
         },
@@ -100104,6 +103944,294 @@
       ]
     },
     {
+      "id": "tunisia",
+      "name": "Tunisia",
+      "cities": [
+        {
+          "id": "tunisia-sfax",
+          "name": "Sfax",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJpVyR_6vG_xIRzPVXIdJwZwc",
+              "name": "Chaal",
+              "type": "Station",
+              "coordinates": {
+                "lat": 34.5163814,
+                "lng": 10.3444226
+              },
+              "address": "Tunisia",
+              "rating": 3.5,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ8epqeSzY_xIROGLhVNMA9Jc",
+              "name": "Gargour",
+              "type": "Station",
+              "coordinates": {
+                "lat": 34.572812,
+                "lng": 10.577882
+              },
+              "address": "Tunisia",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJn-7umd7mARMR7swF4UbK_4Y",
+              "name": "La Hencha",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.1374001,
+                "lng": 10.7285678
+              },
+              "address": "Tunisia",
+              "rating": 3.7,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
+          "id": "tunisia-sousse",
+          "name": "Sousse",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJBxkHwuGK_RIRwyUD8FCQpvs",
+              "name": "Aig L12",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.82175949999999,
+                "lng": 10.5756493
+              },
+              "address": "Tunisia",
+              "rating": null,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJBw6gWif1_RIRyrpb0qk7zbo",
+              "name": "Gare ferroviaire Ezzouhour",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.7806736,
+                "lng": 10.575242
+              },
+              "address": "",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJmxs36y11AhMRD8f2wDgCVpI",
+              "name": "Le Dépot",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.79320569999999,
+                "lng": 10.654603
+              },
+              "address": "Tunisia",
+              "rating": 3.7,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJT2O0IIp1AhMRywNz8O4--Mk",
+              "name": "lti El Ksar Resort & Thalasso",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.8514695,
+                "lng": 10.6214027
+              },
+              "address": "Medina, Sousse",
+              "rating": 3.7,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJm46a3guK_RIRxELvCBJbQqI",
+              "name": "lti Thalassa Sousse",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.8623964,
+                "lng": 10.6156616
+              },
+              "address": "Avenue 14 Janvier, Sousse",
+              "rating": 3.2,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ-5QWU8oSAhMRgnA_jR8bf5I",
+              "name": "Monastir",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.77062629999999,
+                "lng": 10.8252907
+              },
+              "address": "Monastir",
+              "rating": 3.9,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJQ5BGQZkMAhMRPCD9j-SY2Fc",
+              "name": "Sahline Sebkha",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.757682,
+                "lng": 10.7165367
+              },
+              "address": "Sahline",
+              "rating": 3.3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ03ifUcOP_RIRD5tfofPEaHI",
+              "name": "Sidi Bou Ali",
+              "type": "Station",
+              "coordinates": {
+                "lat": 35.9531544,
+                "lng": 10.4513333
+              },
+              "address": "Tunisia",
+              "rating": 3.3,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
+          "id": "tunisia-tunis",
+          "name": "Tunis",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJo-XjCu0z_RIRfhAo-fPnCmw",
+              "name": "Bir Aniba",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.7954484,
+                "lng": 10.1574953
+              },
+              "address": "Tunis",
+              "rating": 4.1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJUyOuHUU2_RIRW1ia811Hyv8",
+              "name": "Bir Kassaa",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.7410163,
+                "lng": 10.2282554
+              },
+              "address": "Ben Arous",
+              "rating": 3.6,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJtYo_a7a04hIRIZL21tQ8RKc",
+              "name": "Carthage Hannibal",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.853423,
+                "lng": 10.3289416
+              },
+              "address": "Carthage",
+              "rating": 3.6,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJHQaiqUAy_RIRCOFH5ultM5o",
+              "name": "DenDen",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.8022665,
+                "lng": 10.1082802
+              },
+              "address": "Den Den",
+              "rating": 3.4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ0ed9RQ00_RIRV5gf6J31_hs",
+              "name": "Gare de Tunis",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.7949275,
+                "lng": 10.180481
+              },
+              "address": "Rue Ali Darghouth, Tunis",
+              "rating": 3.1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJ13hroGcy_RIRdLX3cra5hlw",
+              "name": "Gare sncft La Manouba",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.8159636,
+                "lng": 10.1015162
+              },
+              "address": "Tunis",
+              "rating": 4.1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJJe6n-Ck0_RIRQlJXc7YJ2WU",
+              "name": "Jebel Jeloud",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.77249629999999,
+                "lng": 10.2094419
+              },
+              "address": "",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJF9yBvHU2_RIRl7rmLHK9YIw",
+              "name": "Megrine",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.768327,
+                "lng": 10.2339183
+              },
+              "address": "Tunisia",
+              "rating": 4.1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJVULz6gJK_RIRqOoHqw4kWow",
+              "name": "Rades",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.7689621,
+                "lng": 10.2711191
+              },
+              "address": "Tunisia",
+              "rating": 4,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJoY-C8xQ0_RIRA2Py3CuZx3s",
+              "name": "SNCFT -Fret",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.79239510000001,
+                "lng": 10.1887894
+              },
+              "address": "Rue de Italie, Tunis",
+              "rating": 2.9,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJE60p1V5K_RIR-kPXropkcQ8",
+              "name": "محطة ميناء حلق الوادي الجنوبي",
+              "type": "Station",
+              "coordinates": {
+                "lat": 36.8051055,
+                "lng": 10.2880257
+              },
+              "address": "",
+              "rating": 4.2,
+              "source": "Google Places"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "uganda",
       "name": "Uganda",
       "cities": [
@@ -100123,6 +104251,36 @@
           ]
         },
         {
+          "id": "uganda-jinja",
+          "name": "Jinja",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJvyE8rIF8fhcR6XTscZc_9ZU",
+              "name": "Jinja Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 0.4415312,
+                "lng": 33.2169468
+              },
+              "address": "Jinja",
+              "rating": 3.8,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJZyms3tPGfRcRSAWEPr_WnSo",
+              "name": "Kyetume Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 0.318913,
+                "lng": 32.7706906
+              },
+              "address": "",
+              "rating": 3.6,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "uganda-kampala",
           "name": "Kampala",
           "stations": [
@@ -100134,6 +104292,42 @@
                 "lat": 0.3121624,
                 "lng": 32.5887758
               }
+            },
+            {
+              "id": "GOOGLE-ChIJXwZATXm8fRcRD4A6rlQa4gE",
+              "name": "Kampala Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 0.3123837,
+                "lng": 32.5883065
+              },
+              "address": "Kibuli, Kampala",
+              "rating": 3.9,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJZyms3tPGfRcRSAWEPr_WnSo",
+              "name": "Kyetume Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": 0.318913,
+                "lng": 32.7706906
+              },
+              "address": "",
+              "rating": 3.6,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJM4rWmMS8fRcRNZedlMOmy8Y",
+              "name": "Nalukolongo Railway Workshop",
+              "type": "Station",
+              "coordinates": {
+                "lat": 0.2936265,
+                "lng": 32.5549505
+              },
+              "address": "A 109, Kampala",
+              "rating": 3.5,
+              "source": "Google Places"
             }
           ]
         },
@@ -100672,6 +104866,36 @@
           ]
         },
         {
+          "id": "zambia-kitwe",
+          "name": "Kitwe",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJrxoAS94YbRkRf_ml5RAM9KU",
+              "name": "Mufulira Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -12.5397014,
+                "lng": 28.2558144
+              },
+              "address": "Mufulira",
+              "rating": 3,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJtegyrr_RbBkRjRECzbI3g54",
+              "name": "Sakania Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -12.7506603,
+                "lng": 28.5540814
+              },
+              "address": "Sakania",
+              "rating": 3,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "zambia-lilayi",
           "name": "Lilayi",
           "stations": [
@@ -100698,6 +104922,18 @@
                 "lat": -17.8592652,
                 "lng": 25.8567828
               }
+            },
+            {
+              "id": "GOOGLE-ChIJlTzUx1zlTxkRmUYoAFVMKwI",
+              "name": "Victoria Falls Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -17.9349041,
+                "lng": 25.8405784
+              },
+              "address": "Victoria Falls",
+              "rating": 3.8,
+              "source": "Google Places"
             }
           ]
         },
@@ -100720,6 +104956,18 @@
           "id": "zambia-lusaka",
           "name": "Lusaka",
           "stations": [
+            {
+              "id": "GOOGLE-ChIJw_Jq53XEQBkR0oAMJXYb7ho",
+              "name": "Kafue Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -15.7701285,
+                "lng": 28.1773608
+              },
+              "address": "Kafue",
+              "rating": 4.5,
+              "source": "Google Places"
+            },
             {
               "id": "918269446",
               "name": "Lusaka",
@@ -100965,6 +105213,36 @@
               },
               "operator": "CEAR",
               "source": "OpenStreetMap"
+            }
+          ]
+        },
+        {
+          "id": "zambia-ndola",
+          "name": "Ndola",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJ5UDQuSO1bBkREtgnOLukJ-o",
+              "name": "Ndola Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -12.962721,
+                "lng": 28.653517
+              },
+              "address": "Ndola",
+              "rating": 3.1,
+              "source": "Google Places"
+            },
+            {
+              "id": "GOOGLE-ChIJtegyrr_RbBkRjRECzbI3g54",
+              "name": "Sakania Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -12.7506603,
+                "lng": 28.5540814
+              },
+              "address": "Sakania",
+              "rating": 3,
+              "source": "Google Places"
             }
           ]
         },
@@ -101465,6 +105743,18 @@
                 "lat": -20.1612221,
                 "lng": 28.5726983
               }
+            },
+            {
+              "id": "GOOGLE-ChIJ74GSw6BTtR4RwPslDcOzkDc",
+              "name": "Mpopoma Train Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -20.1474398,
+                "lng": 28.5518014
+              },
+              "address": "Bulawayo",
+              "rating": 2,
+              "source": "Google Places"
             }
           ]
         },
@@ -101801,6 +106091,24 @@
                 "lat": -19.4589234,
                 "lng": 29.8080252
               }
+            }
+          ]
+        },
+        {
+          "id": "zimbabwe-harare",
+          "name": "Harare",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJ50uOah2kMRkRtMF2lp8GrpM",
+              "name": "Kambuzuma Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -17.8632562,
+                "lng": 30.9889764
+              },
+              "address": "Lochinvar, Harare",
+              "rating": 4,
+              "source": "Google Places"
             }
           ]
         },
@@ -102843,6 +107151,24 @@
           ]
         },
         {
+          "id": "zimbabwe-victoria-falls",
+          "name": "Victoria Falls",
+          "stations": [
+            {
+              "id": "GOOGLE-ChIJlTzUx1zlTxkRmUYoAFVMKwI",
+              "name": "Victoria Falls Railway Station",
+              "type": "Station",
+              "coordinates": {
+                "lat": -17.9349041,
+                "lng": 25.8405784
+              },
+              "address": "Victoria Falls",
+              "rating": 3.8,
+              "source": "Google Places"
+            }
+          ]
+        },
+        {
           "id": "zimbabwe-zanguja",
           "name": "Zanguja",
           "stations": [
@@ -102876,13 +107202,14 @@
     }
   ],
   "metadata": {
-    "totalCountries": 28,
-    "totalCities": 6190,
-    "totalStations": 6924,
-    "lastUpdated": "2026-01-12T20:09:51.408Z",
+    "totalCountries": 31,
+    "totalCities": 6240,
+    "totalStations": 7258,
+    "lastUpdated": "2026-01-12T20:59:17.131Z",
     "sources": [
       "Airtable",
-      "OpenStreetMap"
+      "OpenStreetMap",
+      "Google Places"
     ]
   }
 }

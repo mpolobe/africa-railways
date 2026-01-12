@@ -1,8 +1,8 @@
 module github.com/mpolobe/africa-railways/backend
 
-go 1.24.1
+go 1.22
 
-toolchain go1.24.11
+
 
 require (
 	github.com/ethereum/go-ethereum v1.16.7
