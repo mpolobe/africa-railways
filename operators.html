@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Railway Operators - Africa Railways</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --navy: #0a0e1a;
+            --gold: #FFB800;
+            --cyan: #00D4FF;
+            --surface: #16203a;
+        }
+        body {
+            background: var(--navy);
+            min-height: 100vh;
+            color: #fff;
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 8%;
+            background: rgba(10,14,26,0.95);
+            border-bottom: 1px solid #222;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--gold);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            margin: 0;
+            align-items: center;
+        }
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+        .cta-nav {
+            background: linear-gradient(135deg, var(--gold), #ff9500);
+            color: var(--navy);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+        }
+        .card {
+            background: var(--surface);
+            border: 1px solid #222;
+            border-radius: 15px;
+        }
+        .operator-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .operator-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 184, 0, 0.2);
+            border-color: var(--gold);
+        }
+        .operator-card.selected {
+            border: 2px solid var(--gold);
+            background: rgba(255, 184, 0, 0.1);
+        }
+        .badge-service {
+            font-size: 0.7rem;
+            margin-right: 4px;
+        }
+        .region-filter {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+        }
+        .region-filter:focus {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            box-shadow: 0 0 0 0.25rem rgba(244, 164, 96, 0.25);
+        }
+        .region-filter option {
+            background: #1a1a2e;
+        }
+        .api-key-display {
+            font-family: monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            word-break: break-all;
+        }
+        .stats-card {
+            background: linear-gradient(135deg, var(--gold), #ff9500);
+        }
+        .btn-generate {
+            background: var(--gold);
+            border: none;
+            color: var(--navy);
+            font-weight: 600;
+        }
+        .btn-generate:hover {
+            background: #FFC933;
+            color: var(--navy);
+        }
+        .search-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .search-input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 0.25rem rgba(255, 184, 0, 0.25);
+        }
+        .region-filter:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 0.25rem rgba(255, 184, 0, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo"><i class="fas fa-train"></i> Africoin <span style="color:var(--cyan)">Spine</span></a>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/book-tickets.html">🎫 Tickets</a></li>
+            <li><a href="/operators.html" style="color: var(--gold);">🚂 Operators</a></li>
+            <li><a href="/sentinel.html">🛡️ Sentinel</a></li>
+            <li><a href="/docs/STATIONS_API.md">📍 API Docs</a></li>
+        </ul>
+    </nav>
+
+    <div class="container py-5">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="display-5 fw-bold">
+                    <i class="bi bi-building me-3"></i>Railway Operators
+                </h1>
+                <p class="lead text-muted">Browse African railway operators and generate API keys for integration</p>
+            </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="row mb-4" id="statsRow">
+            <div class="col-md-3 col-6 mb-3">
+                <div class="card stats-card text-white h-100">
+                    <div class="card-body text-center">
+                        <h2 class="mb-0" id="totalOperators">-</h2>
+                        <small>Total Operators</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+                <div class="card stats-card text-white h-100">
+                    <div class="card-body text-center">
+                        <h2 class="mb-0" id="totalCountries">-</h2>
+                        <small>Countries</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+                <div class="card stats-card text-white h-100">
+                    <div class="card-body text-center">
+                        <h2 class="mb-0" id="totalRegions">-</h2>
+                        <small>Regions</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+                <div class="card stats-card text-white h-100">
+                    <div class="card-body text-center">
+                        <h2 class="mb-0" id="totalNetwork">-</h2>
+                        <small>Total km</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <input type="text" class="form-control search-input" id="searchInput" placeholder="Search operators...">
+            </div>
+            <div class="col-md-3 mb-3">
+                <select class="form-select region-filter" id="regionFilter">
+                    <option value="">All Regions</option>
+                </select>
+            </div>
+            <div class="col-md-3 mb-3">
+                <select class="form-select region-filter" id="countryFilter">
+                    <option value="">All Countries</option>
+                </select>
+            </div>
+            <div class="col-md-2 mb-3">
+                <button class="btn btn-outline-light w-100" onclick="resetFilters()">
+                    <i class="bi bi-x-circle me-1"></i>Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="row">
+            <!-- Operators List -->
+            <div class="col-lg-8 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-list-ul me-2"></i>Operators (<span id="displayCount">0</span>)</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" id="operatorsList">
+                            <div class="col-12 text-center py-5">
+                                <div class="spinner-border text-secondary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Key Generation Panel -->
+            <div class="col-lg-4">
+                <div class="card sticky-top" style="top: 20px;">
+                    <div class="card-header">
+                        <i class="bi bi-key-fill me-2"></i>Generate API Key
+                    </div>
+                    <div class="card-body">
+                        <div id="noOperatorSelected">
+                            <p class="text-muted text-center mb-0">
+                                <i class="bi bi-arrow-left-circle d-block mb-2" style="font-size: 2rem;"></i>
+                                Select an operator to generate an API key
+                            </p>
+                        </div>
+                        <div id="operatorSelected" style="display: none;">
+                            <div class="mb-3">
+                                <label class="form-label text-muted small">Selected Operator</label>
+                                <h5 id="selectedOperatorName" class="mb-0"></h5>
+                                <small class="text-muted" id="selectedOperatorCountry"></small>
+                            </div>
+                            <hr>
+                            <form id="apiKeyForm">
+                                <input type="hidden" id="operatorId">
+                                <div class="mb-3">
+                                    <label class="form-label">Your Name</label>
+                                    <input type="text" class="form-control bg-dark text-white border-secondary" id="userName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email Address</label>
+                                    <input type="email" class="form-control bg-dark text-white border-secondary" id="userEmail" required>
+                                </div>
+                                <button type="submit" class="btn btn-generate w-100">
+                                    <i class="bi bi-key me-2"></i>Generate API Key
+                                </button>
+                            </form>
+                        </div>
+                        <div id="apiKeyResult" style="display: none;">
+                            <div class="alert alert-success">
+                                <i class="bi bi-check-circle-fill me-2"></i>API Key Generated!
+                            </div>
+                            <label class="form-label">Your API Key</label>
+                            <div class="api-key-display mb-3" id="generatedKey"></div>
+                            <button class="btn btn-outline-light btn-sm w-100 mb-2" onclick="copyApiKey()">
+                                <i class="bi bi-clipboard me-2"></i>Copy to Clipboard
+                            </button>
+                            <div class="alert alert-warning mt-3 mb-0">
+                                <small><i class="bi bi-exclamation-triangle me-1"></i>Store this key securely. It will not be shown again.</small>
+                            </div>
+                            <hr>
+                            <button class="btn btn-outline-secondary btn-sm w-100" onclick="resetApiKeyForm()">
+                                Generate Another Key
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API Documentation -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <i class="bi bi-book me-2"></i>API Documentation
+                    </div>
+                    <div class="card-body">
+                        <h6>Endpoints</h6>
+                        <ul class="list-unstyled small">
+                            <li class="mb-2">
+                                <code class="text-secondary">GET /api/operators</code>
+                                <br><small class="text-muted">List all operators</small>
+                            </li>
+                            <li class="mb-2">
+                                <code class="text-secondary">GET /api/operators/search?q=</code>
+                                <br><small class="text-muted">Search operators</small>
+                            </li>
+                            <li class="mb-2">
+                                <code class="text-secondary">GET /api/operators/operator?id=</code>
+                                <br><small class="text-muted">Get operator by ID</small>
+                            </li>
+                        </ul>
+                        <h6>Authentication</h6>
+                        <p class="small text-muted mb-0">
+                            Include your API key in the <code>X-API-Key</code> header.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-4 mt-5" style="background: rgba(0,0,0,0.3);">
+        <div class="container text-center">
+            <p class="mb-0 text-muted">&copy; 2026 Africa Railways. Connecting the continent.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_BASE = window.location.hostname === 'localhost' 
+            ? 'http://localhost:8080' 
+            : '';
+        
+        let allOperators = [];
+        let selectedOperator = null;
+
+        async function loadOperators() {
+            try {
+                const response = await fetch(`${API_BASE}/api/operators`);
+                const data = await response.json();
+                
+                allOperators = data.operators || [];
+                
+                // Update stats
+                document.getElementById('totalOperators').textContent = data.metadata?.totalOperators || allOperators.length;
+                document.getElementById('totalRegions').textContent = data.metadata?.regions?.length || 5;
+                
+                // Calculate total network
+                const totalKm = allOperators.reduce((sum, op) => sum + (op.networkLength || 0), 0);
+                document.getElementById('totalNetwork').textContent = totalKm.toLocaleString();
+                
+                // Get unique countries
+                const countries = [...new Set(allOperators.map(op => op.country))];
+                document.getElementById('totalCountries').textContent = countries.length;
+                
+                // Populate filters
+                populateFilters(data.metadata?.regions || [], countries);
+                
+                // Render operators
+                renderOperators(allOperators);
+            } catch (error) {
+                console.error('Failed to load operators:', error);
+                document.getElementById('operatorsList').innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="bi bi-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+                        <p class="mt-3">Failed to load operators. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function populateFilters(regions, countries) {
+            const regionFilter = document.getElementById('regionFilter');
+            regions.forEach(region => {
+                const option = document.createElement('option');
+                option.value = region;
+                option.textContent = region;
+                regionFilter.appendChild(option);
+            });
+
+            const countryFilter = document.getElementById('countryFilter');
+            countries.sort().forEach(country => {
+                const option = document.createElement('option');
+                option.value = country;
+                option.textContent = country;
+                countryFilter.appendChild(option);
+            });
+        }
+
+        function renderOperators(operators) {
+            const container = document.getElementById('operatorsList');
+            document.getElementById('displayCount').textContent = operators.length;
+
+            if (operators.length === 0) {
+                container.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="bi bi-search text-muted" style="font-size: 3rem;"></i>
+                        <p class="mt-3 text-muted">No operators found matching your criteria.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = operators.map(op => `
+                <div class="col-md-6 mb-3">
+                    <div class="card operator-card h-100 ${selectedOperator?.id === op.id ? 'selected' : ''}" 
+                         onclick="selectOperator('${op.id}')">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="card-title mb-0">${op.shortName || op.name}</h6>
+                                <span class="badge bg-${op.status === 'active' ? 'success' : 'secondary'}">${op.status}</span>
+                            </div>
+                            <p class="card-text small text-muted mb-2">${op.name}</p>
+                            <p class="card-text small mb-2">
+                                <i class="bi bi-geo-alt me-1"></i>${op.country}
+                                <span class="ms-2"><i class="bi bi-rulers me-1"></i>${op.networkLength?.toLocaleString() || '?'} km</span>
+                            </p>
+                            <div>
+                                ${(op.services || []).map(s => `
+                                    <span class="badge badge-service bg-${getServiceColor(s)}">${s}</span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getServiceColor(service) {
+            const colors = {
+                'passenger': 'primary',
+                'freight': 'info',
+                'commuter': 'success',
+                'high-speed': 'danger',
+                'luxury': 'warning',
+                'mining': 'secondary'
+            };
+            return colors[service] || 'secondary';
+        }
+
+        function selectOperator(id) {
+            selectedOperator = allOperators.find(op => op.id === id);
+            
+            if (selectedOperator) {
+                document.getElementById('noOperatorSelected').style.display = 'none';
+                document.getElementById('operatorSelected').style.display = 'block';
+                document.getElementById('apiKeyResult').style.display = 'none';
+                
+                document.getElementById('selectedOperatorName').textContent = selectedOperator.name;
+                document.getElementById('selectedOperatorCountry').textContent = `${selectedOperator.country} - ${selectedOperator.region}`;
+                document.getElementById('operatorId').value = selectedOperator.id;
+                
+                // Re-render to show selection
+                renderOperators(filterOperators());
+            }
+        }
+
+        function filterOperators() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const region = document.getElementById('regionFilter').value;
+            const country = document.getElementById('countryFilter').value;
+
+            return allOperators.filter(op => {
+                const matchesSearch = !search || 
+                    op.name.toLowerCase().includes(search) ||
+                    (op.shortName && op.shortName.toLowerCase().includes(search)) ||
+                    op.country.toLowerCase().includes(search);
+                const matchesRegion = !region || op.region === region;
+                const matchesCountry = !country || op.country === country;
+                return matchesSearch && matchesRegion && matchesCountry;
+            });
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('regionFilter').value = '';
+            document.getElementById('countryFilter').value = '';
+            renderOperators(allOperators);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', () => {
+            renderOperators(filterOperators());
+        });
+
+        document.getElementById('regionFilter').addEventListener('change', () => {
+            renderOperators(filterOperators());
+        });
+
+        document.getElementById('countryFilter').addEventListener('change', () => {
+            renderOperators(filterOperators());
+        });
+
+        document.getElementById('apiKeyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating...';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/operators/apikey/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        operatorId: document.getElementById('operatorId').value,
+                        name: document.getElementById('userName').value,
+                        email: document.getElementById('userEmail').value
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.apiKey) {
+                    document.getElementById('operatorSelected').style.display = 'none';
+                    document.getElementById('apiKeyResult').style.display = 'block';
+                    document.getElementById('generatedKey').textContent = data.apiKey;
+                } else {
+                    alert(data.error || 'Failed to generate API key');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to generate API key. Please try again.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-key me-2"></i>Generate API Key';
+            }
+        });
+
+        function copyApiKey() {
+            const key = document.getElementById('generatedKey').textContent;
+            navigator.clipboard.writeText(key).then(() => {
+                const btn = event.target.closest('button');
+                btn.innerHTML = '<i class="bi bi-check me-2"></i>Copied!';
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="bi bi-clipboard me-2"></i>Copy to Clipboard';
+                }, 2000);
+            });
+        }
+
+        function resetApiKeyForm() {
+            document.getElementById('apiKeyResult').style.display = 'none';
+            document.getElementById('operatorSelected').style.display = 'block';
+            document.getElementById('userName').value = '';
+            document.getElementById('userEmail').value = '';
+        }
+
+        // Load operators on page load
+        loadOperators();
+    </script>
+</body>
+</html>
