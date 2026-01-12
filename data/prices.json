@@ -1,0 +1,1518 @@
+{
+  "metadata": {
+    "lastUpdated": "2026-01-12T21:25:32.942Z",
+    "baseCurrency": "USD",
+    "afcRate": 1,
+    "exchangeRates": {
+      "KES": 128.94,
+      "TZS": 2486.51,
+      "ZAR": 16.5,
+      "EGP": 47.21,
+      "MAD": 9.24,
+      "NGN": 1422.63,
+      "ETB": 154.92,
+      "DZD": 130.13,
+      "TND": 2.89,
+      "ZMW": 19.49,
+      "BWP": 13.66,
+      "MZN": 63.6,
+      "AOA": 918.74,
+      "GHS": 10.72,
+      "XOF": 563.94,
+      "XAF": 563.94,
+      "SDG": 458.7,
+      "UGX": 3588.44
+    },
+    "totalOperators": 13,
+    "totalRoutes": 36
+  },
+  "operators": [
+    {
+      "id": "kenya_sgr",
+      "name": "Kenya Railways SGR",
+      "country": "Kenya",
+      "currency": "KES",
+      "website": "https://metrokenya.co.ke",
+      "routeCount": 2
+    },
+    {
+      "id": "tanzania_trc",
+      "name": "Tanzania Railways Corporation",
+      "country": "Tanzania",
+      "currency": "TZS",
+      "website": "https://trc.co.tz",
+      "routeCount": 3
+    },
+    {
+      "id": "tazara",
+      "name": "TAZARA Railway",
+      "country": "Tanzania/Zambia",
+      "currency": "TZS",
+      "website": "https://www.tazarasite.com",
+      "routeCount": 2
+    },
+    {
+      "id": "southafrica_shosholoza",
+      "name": "Shosholoza Meyl",
+      "country": "South Africa",
+      "currency": "ZAR",
+      "website": "https://www.shosholozameyl.co.za",
+      "routeCount": 3
+    },
+    {
+      "id": "southafrica_gautrain",
+      "name": "Gautrain",
+      "country": "South Africa",
+      "currency": "ZAR",
+      "website": "https://www.gautrain.co.za",
+      "routeCount": 3
+    },
+    {
+      "id": "egypt_enr",
+      "name": "Egyptian National Railways",
+      "country": "Egypt",
+      "currency": "EGP",
+      "website": "https://enr.gov.eg",
+      "routeCount": 3
+    },
+    {
+      "id": "morocco_oncf",
+      "name": "ONCF Morocco",
+      "country": "Morocco",
+      "currency": "MAD",
+      "website": "https://www.oncf.ma",
+      "routeCount": 4
+    },
+    {
+      "id": "nigeria_nrc",
+      "name": "Nigerian Railway Corporation",
+      "country": "Nigeria",
+      "currency": "NGN",
+      "website": "https://nrc.gov.ng",
+      "routeCount": 3
+    },
+    {
+      "id": "ethiopia_edr",
+      "name": "Ethio-Djibouti Railway",
+      "country": "Ethiopia",
+      "currency": "ETB",
+      "website": "https://erc.gov.et",
+      "routeCount": 3
+    },
+    {
+      "id": "algeria_sntf",
+      "name": "SNTF Algeria",
+      "country": "Algeria",
+      "currency": "DZD",
+      "website": "https://www.sntf.dz",
+      "routeCount": 3
+    },
+    {
+      "id": "tunisia_sncft",
+      "name": "SNCFT Tunisia",
+      "country": "Tunisia",
+      "currency": "TND",
+      "website": "https://www.sncft.com.tn",
+      "routeCount": 3
+    },
+    {
+      "id": "zambia_zrl",
+      "name": "Zambia Railways",
+      "country": "Zambia",
+      "currency": "ZMW",
+      "website": "https://www.zrl.com.zm",
+      "routeCount": 2
+    },
+    {
+      "id": "ghana_grc",
+      "name": "Ghana Railway Company",
+      "country": "Ghana",
+      "currency": "GHS",
+      "website": "https://www.grc.gov.gh",
+      "routeCount": 2
+    }
+  ],
+  "routes": [
+    {
+      "id": "kenya_sgr-nairobi-mombasa",
+      "operator": "kenya_sgr",
+      "operatorName": "Kenya Railways SGR",
+      "country": "Kenya",
+      "from": "Nairobi",
+      "to": "Mombasa",
+      "distance": 472,
+      "duration": "4h 30m",
+      "currency": "KES",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 1000,
+              "currency": "KES"
+            },
+            "usd": 7.76,
+            "afc": 7.76
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 3000,
+              "currency": "KES"
+            },
+            "usd": 23.27,
+            "afc": 23.27
+          }
+        }
+      ]
+    },
+    {
+      "id": "kenya_sgr-nairobi-suswa",
+      "operator": "kenya_sgr",
+      "operatorName": "Kenya Railways SGR",
+      "country": "Kenya",
+      "from": "Nairobi",
+      "to": "Suswa",
+      "distance": 120,
+      "duration": "1h 15m",
+      "currency": "KES",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 300,
+              "currency": "KES"
+            },
+            "usd": 2.33,
+            "afc": 2.33
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 700,
+              "currency": "KES"
+            },
+            "usd": 5.43,
+            "afc": 5.43
+          }
+        }
+      ]
+    },
+    {
+      "id": "tanzania_trc-dar-es-salaam-kigoma",
+      "operator": "tanzania_trc",
+      "operatorName": "Tanzania Railways Corporation",
+      "country": "Tanzania",
+      "from": "Dar es Salaam",
+      "to": "Kigoma",
+      "distance": 1254,
+      "duration": "36h",
+      "currency": "TZS",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 35000,
+              "currency": "TZS"
+            },
+            "usd": 14.08,
+            "afc": 14.08
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 65000,
+              "currency": "TZS"
+            },
+            "usd": 26.14,
+            "afc": 26.14
+          }
+        },
+        {
+          "name": "sleeper",
+          "price": {
+            "local": {
+              "amount": 95000,
+              "currency": "TZS"
+            },
+            "usd": 38.21,
+            "afc": 38.21
+          }
+        }
+      ]
+    },
+    {
+      "id": "tanzania_trc-dar-es-salaam-mwanza",
+      "operator": "tanzania_trc",
+      "operatorName": "Tanzania Railways Corporation",
+      "country": "Tanzania",
+      "from": "Dar es Salaam",
+      "to": "Mwanza",
+      "distance": 1219,
+      "duration": "24h",
+      "currency": "TZS",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 32000,
+              "currency": "TZS"
+            },
+            "usd": 12.87,
+            "afc": 12.87
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 58000,
+              "currency": "TZS"
+            },
+            "usd": 23.33,
+            "afc": 23.33
+          }
+        },
+        {
+          "name": "sleeper",
+          "price": {
+            "local": {
+              "amount": 85000,
+              "currency": "TZS"
+            },
+            "usd": 34.18,
+            "afc": 34.18
+          }
+        }
+      ]
+    },
+    {
+      "id": "tanzania_trc-dar-es-salaam-dodoma",
+      "operator": "tanzania_trc",
+      "operatorName": "Tanzania Railways Corporation",
+      "country": "Tanzania",
+      "from": "Dar es Salaam",
+      "to": "Dodoma",
+      "distance": 456,
+      "duration": "8h",
+      "currency": "TZS",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 15000,
+              "currency": "TZS"
+            },
+            "usd": 6.03,
+            "afc": 6.03
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 28000,
+              "currency": "TZS"
+            },
+            "usd": 11.26,
+            "afc": 11.26
+          }
+        }
+      ]
+    },
+    {
+      "id": "tazara-dar-es-salaam-kapiri-mposhi",
+      "operator": "tazara",
+      "operatorName": "TAZARA Railway",
+      "country": "Tanzania/Zambia",
+      "from": "Dar es Salaam",
+      "to": "Kapiri Mposhi",
+      "distance": 1860,
+      "duration": "46h",
+      "currency": "TZS",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 85000,
+              "currency": "TZS"
+            },
+            "usd": 34.18,
+            "afc": 34.18
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 145000,
+              "currency": "TZS"
+            },
+            "usd": 58.31,
+            "afc": 58.31
+          }
+        },
+        {
+          "name": "sleeper",
+          "price": {
+            "local": {
+              "amount": 195000,
+              "currency": "TZS"
+            },
+            "usd": 78.42,
+            "afc": 78.42
+          }
+        }
+      ]
+    },
+    {
+      "id": "tazara-dar-es-salaam-mbeya",
+      "operator": "tazara",
+      "operatorName": "TAZARA Railway",
+      "country": "Tanzania/Zambia",
+      "from": "Dar es Salaam",
+      "to": "Mbeya",
+      "distance": 840,
+      "duration": "18h",
+      "currency": "TZS",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 45000,
+              "currency": "TZS"
+            },
+            "usd": 18.1,
+            "afc": 18.1
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 75000,
+              "currency": "TZS"
+            },
+            "usd": 30.16,
+            "afc": 30.16
+          }
+        },
+        {
+          "name": "sleeper",
+          "price": {
+            "local": {
+              "amount": 105000,
+              "currency": "TZS"
+            },
+            "usd": 42.23,
+            "afc": 42.23
+          }
+        }
+      ]
+    },
+    {
+      "id": "southafrica_shosholoza-johannesburg-cape-town",
+      "operator": "southafrica_shosholoza",
+      "operatorName": "Shosholoza Meyl",
+      "country": "South Africa",
+      "from": "Johannesburg",
+      "to": "Cape Town",
+      "distance": 1530,
+      "duration": "27h",
+      "currency": "ZAR",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 550,
+              "currency": "ZAR"
+            },
+            "usd": 33.33,
+            "afc": 33.33
+          }
+        },
+        {
+          "name": "tourist",
+          "price": {
+            "local": {
+              "amount": 750,
+              "currency": "ZAR"
+            },
+            "usd": 45.45,
+            "afc": 45.45
+          }
+        },
+        {
+          "name": "sleeper",
+          "price": {
+            "local": {
+              "amount": 1100,
+              "currency": "ZAR"
+            },
+            "usd": 66.67,
+            "afc": 66.67
+          }
+        }
+      ]
+    },
+    {
+      "id": "southafrica_shosholoza-johannesburg-durban",
+      "operator": "southafrica_shosholoza",
+      "operatorName": "Shosholoza Meyl",
+      "country": "South Africa",
+      "from": "Johannesburg",
+      "to": "Durban",
+      "distance": 730,
+      "duration": "13h",
+      "currency": "ZAR",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 320,
+              "currency": "ZAR"
+            },
+            "usd": 19.39,
+            "afc": 19.39
+          }
+        },
+        {
+          "name": "tourist",
+          "price": {
+            "local": {
+              "amount": 450,
+              "currency": "ZAR"
+            },
+            "usd": 27.27,
+            "afc": 27.27
+          }
+        },
+        {
+          "name": "sleeper",
+          "price": {
+            "local": {
+              "amount": 650,
+              "currency": "ZAR"
+            },
+            "usd": 39.39,
+            "afc": 39.39
+          }
+        }
+      ]
+    },
+    {
+      "id": "southafrica_shosholoza-johannesburg-port-elizabeth",
+      "operator": "southafrica_shosholoza",
+      "operatorName": "Shosholoza Meyl",
+      "country": "South Africa",
+      "from": "Johannesburg",
+      "to": "Port Elizabeth",
+      "distance": 1040,
+      "duration": "20h",
+      "currency": "ZAR",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 420,
+              "currency": "ZAR"
+            },
+            "usd": 25.45,
+            "afc": 25.45
+          }
+        },
+        {
+          "name": "tourist",
+          "price": {
+            "local": {
+              "amount": 580,
+              "currency": "ZAR"
+            },
+            "usd": 35.15,
+            "afc": 35.15
+          }
+        },
+        {
+          "name": "sleeper",
+          "price": {
+            "local": {
+              "amount": 850,
+              "currency": "ZAR"
+            },
+            "usd": 51.52,
+            "afc": 51.52
+          }
+        }
+      ]
+    },
+    {
+      "id": "southafrica_gautrain-johannesburg-pretoria",
+      "operator": "southafrica_gautrain",
+      "operatorName": "Gautrain",
+      "country": "South Africa",
+      "from": "Johannesburg",
+      "to": "Pretoria",
+      "distance": 50,
+      "duration": "35m",
+      "currency": "ZAR",
+      "classes": [
+        {
+          "name": "standard",
+          "price": {
+            "local": {
+              "amount": 72,
+              "currency": "ZAR"
+            },
+            "usd": 4.36,
+            "afc": 4.36
+          }
+        }
+      ]
+    },
+    {
+      "id": "southafrica_gautrain-johannesburg-or-tambo-airport",
+      "operator": "southafrica_gautrain",
+      "operatorName": "Gautrain",
+      "country": "South Africa",
+      "from": "Johannesburg",
+      "to": "OR Tambo Airport",
+      "distance": 25,
+      "duration": "15m",
+      "currency": "ZAR",
+      "classes": [
+        {
+          "name": "standard",
+          "price": {
+            "local": {
+              "amount": 185,
+              "currency": "ZAR"
+            },
+            "usd": 11.21,
+            "afc": 11.21
+          }
+        }
+      ]
+    },
+    {
+      "id": "southafrica_gautrain-sandton-pretoria",
+      "operator": "southafrica_gautrain",
+      "operatorName": "Gautrain",
+      "country": "South Africa",
+      "from": "Sandton",
+      "to": "Pretoria",
+      "distance": 35,
+      "duration": "25m",
+      "currency": "ZAR",
+      "classes": [
+        {
+          "name": "standard",
+          "price": {
+            "local": {
+              "amount": 58,
+              "currency": "ZAR"
+            },
+            "usd": 3.52,
+            "afc": 3.52
+          }
+        }
+      ]
+    },
+    {
+      "id": "egypt_enr-cairo-alexandria",
+      "operator": "egypt_enr",
+      "operatorName": "Egyptian National Railways",
+      "country": "Egypt",
+      "from": "Cairo",
+      "to": "Alexandria",
+      "distance": 208,
+      "duration": "2h 30m",
+      "currency": "EGP",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 65,
+              "currency": "EGP"
+            },
+            "usd": 1.38,
+            "afc": 1.38
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 120,
+              "currency": "EGP"
+            },
+            "usd": 2.54,
+            "afc": 2.54
+          }
+        }
+      ]
+    },
+    {
+      "id": "egypt_enr-cairo-luxor",
+      "operator": "egypt_enr",
+      "operatorName": "Egyptian National Railways",
+      "country": "Egypt",
+      "from": "Cairo",
+      "to": "Luxor",
+      "distance": 671,
+      "duration": "9h",
+      "currency": "EGP",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 180,
+              "currency": "EGP"
+            },
+            "usd": 3.81,
+            "afc": 3.81
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 350,
+              "currency": "EGP"
+            },
+            "usd": 7.41,
+            "afc": 7.41
+          }
+        },
+        {
+          "name": "sleeper",
+          "price": {
+            "local": {
+              "amount": 1200,
+              "currency": "EGP"
+            },
+            "usd": 25.42,
+            "afc": 25.42
+          }
+        }
+      ]
+    },
+    {
+      "id": "egypt_enr-cairo-aswan",
+      "operator": "egypt_enr",
+      "operatorName": "Egyptian National Railways",
+      "country": "Egypt",
+      "from": "Cairo",
+      "to": "Aswan",
+      "distance": 879,
+      "duration": "13h",
+      "currency": "EGP",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 220,
+              "currency": "EGP"
+            },
+            "usd": 4.66,
+            "afc": 4.66
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 420,
+              "currency": "EGP"
+            },
+            "usd": 8.9,
+            "afc": 8.9
+          }
+        },
+        {
+          "name": "sleeper",
+          "price": {
+            "local": {
+              "amount": 1500,
+              "currency": "EGP"
+            },
+            "usd": 31.77,
+            "afc": 31.77
+          }
+        }
+      ]
+    },
+    {
+      "id": "morocco_oncf-casablanca-marrakech",
+      "operator": "morocco_oncf",
+      "operatorName": "ONCF Morocco",
+      "country": "Morocco",
+      "from": "Casablanca",
+      "to": "Marrakech",
+      "distance": 238,
+      "duration": "2h 45m",
+      "currency": "MAD",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 99,
+              "currency": "MAD"
+            },
+            "usd": 10.71,
+            "afc": 10.71
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 149,
+              "currency": "MAD"
+            },
+            "usd": 16.13,
+            "afc": 16.13
+          }
+        }
+      ]
+    },
+    {
+      "id": "morocco_oncf-casablanca-tangier",
+      "operator": "morocco_oncf",
+      "operatorName": "ONCF Morocco",
+      "country": "Morocco",
+      "from": "Casablanca",
+      "to": "Tangier",
+      "distance": 340,
+      "duration": "2h 10m",
+      "currency": "MAD",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 149,
+              "currency": "MAD"
+            },
+            "usd": 16.13,
+            "afc": 16.13
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 229,
+              "currency": "MAD"
+            },
+            "usd": 24.78,
+            "afc": 24.78
+          }
+        }
+      ]
+    },
+    {
+      "id": "morocco_oncf-casablanca-fes",
+      "operator": "morocco_oncf",
+      "operatorName": "ONCF Morocco",
+      "country": "Morocco",
+      "from": "Casablanca",
+      "to": "Fes",
+      "distance": 296,
+      "duration": "3h 30m",
+      "currency": "MAD",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 120,
+              "currency": "MAD"
+            },
+            "usd": 12.99,
+            "afc": 12.99
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 180,
+              "currency": "MAD"
+            },
+            "usd": 19.48,
+            "afc": 19.48
+          }
+        }
+      ]
+    },
+    {
+      "id": "morocco_oncf-rabat-tangier",
+      "operator": "morocco_oncf",
+      "operatorName": "ONCF Morocco",
+      "country": "Morocco",
+      "from": "Rabat",
+      "to": "Tangier",
+      "distance": 250,
+      "duration": "1h 30m",
+      "currency": "MAD",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 119,
+              "currency": "MAD"
+            },
+            "usd": 12.88,
+            "afc": 12.88
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 179,
+              "currency": "MAD"
+            },
+            "usd": 19.37,
+            "afc": 19.37
+          }
+        }
+      ]
+    },
+    {
+      "id": "nigeria_nrc-lagos-ibadan",
+      "operator": "nigeria_nrc",
+      "operatorName": "Nigerian Railway Corporation",
+      "country": "Nigeria",
+      "from": "Lagos",
+      "to": "Ibadan",
+      "distance": 157,
+      "duration": "2h 30m",
+      "currency": "NGN",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 3000,
+              "currency": "NGN"
+            },
+            "usd": 2.11,
+            "afc": 2.11
+          }
+        },
+        {
+          "name": "business",
+          "price": {
+            "local": {
+              "amount": 5000,
+              "currency": "NGN"
+            },
+            "usd": 3.51,
+            "afc": 3.51
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 6500,
+              "currency": "NGN"
+            },
+            "usd": 4.57,
+            "afc": 4.57
+          }
+        }
+      ]
+    },
+    {
+      "id": "nigeria_nrc-abuja-kaduna",
+      "operator": "nigeria_nrc",
+      "operatorName": "Nigerian Railway Corporation",
+      "country": "Nigeria",
+      "from": "Abuja",
+      "to": "Kaduna",
+      "distance": 186,
+      "duration": "2h",
+      "currency": "NGN",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 2500,
+              "currency": "NGN"
+            },
+            "usd": 1.76,
+            "afc": 1.76
+          }
+        },
+        {
+          "name": "business",
+          "price": {
+            "local": {
+              "amount": 4000,
+              "currency": "NGN"
+            },
+            "usd": 2.81,
+            "afc": 2.81
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 6000,
+              "currency": "NGN"
+            },
+            "usd": 4.22,
+            "afc": 4.22
+          }
+        }
+      ]
+    },
+    {
+      "id": "nigeria_nrc-lagos-abeokuta",
+      "operator": "nigeria_nrc",
+      "operatorName": "Nigerian Railway Corporation",
+      "country": "Nigeria",
+      "from": "Lagos",
+      "to": "Abeokuta",
+      "distance": 77,
+      "duration": "1h 15m",
+      "currency": "NGN",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 1500,
+              "currency": "NGN"
+            },
+            "usd": 1.05,
+            "afc": 1.05
+          }
+        },
+        {
+          "name": "business",
+          "price": {
+            "local": {
+              "amount": 2500,
+              "currency": "NGN"
+            },
+            "usd": 1.76,
+            "afc": 1.76
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 3500,
+              "currency": "NGN"
+            },
+            "usd": 2.46,
+            "afc": 2.46
+          }
+        }
+      ]
+    },
+    {
+      "id": "ethiopia_edr-addis-ababa-djibouti",
+      "operator": "ethiopia_edr",
+      "operatorName": "Ethio-Djibouti Railway",
+      "country": "Ethiopia",
+      "from": "Addis Ababa",
+      "to": "Djibouti",
+      "distance": 756,
+      "duration": "12h",
+      "currency": "ETB",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 800,
+              "currency": "ETB"
+            },
+            "usd": 5.16,
+            "afc": 5.16
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 1500,
+              "currency": "ETB"
+            },
+            "usd": 9.68,
+            "afc": 9.68
+          }
+        }
+      ]
+    },
+    {
+      "id": "ethiopia_edr-addis-ababa-dire-dawa",
+      "operator": "ethiopia_edr",
+      "operatorName": "Ethio-Djibouti Railway",
+      "country": "Ethiopia",
+      "from": "Addis Ababa",
+      "to": "Dire Dawa",
+      "distance": 446,
+      "duration": "7h",
+      "currency": "ETB",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 500,
+              "currency": "ETB"
+            },
+            "usd": 3.23,
+            "afc": 3.23
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 900,
+              "currency": "ETB"
+            },
+            "usd": 5.81,
+            "afc": 5.81
+          }
+        }
+      ]
+    },
+    {
+      "id": "ethiopia_edr-addis-ababa-adama",
+      "operator": "ethiopia_edr",
+      "operatorName": "Ethio-Djibouti Railway",
+      "country": "Ethiopia",
+      "from": "Addis Ababa",
+      "to": "Adama",
+      "distance": 99,
+      "duration": "1h 30m",
+      "currency": "ETB",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 100,
+              "currency": "ETB"
+            },
+            "usd": 0.65,
+            "afc": 0.65
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 180,
+              "currency": "ETB"
+            },
+            "usd": 1.16,
+            "afc": 1.16
+          }
+        }
+      ]
+    },
+    {
+      "id": "algeria_sntf-algiers-oran",
+      "operator": "algeria_sntf",
+      "operatorName": "SNTF Algeria",
+      "country": "Algeria",
+      "from": "Algiers",
+      "to": "Oran",
+      "distance": 422,
+      "duration": "4h 30m",
+      "currency": "DZD",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 800,
+              "currency": "DZD"
+            },
+            "usd": 6.15,
+            "afc": 6.15
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 1400,
+              "currency": "DZD"
+            },
+            "usd": 10.76,
+            "afc": 10.76
+          }
+        }
+      ]
+    },
+    {
+      "id": "algeria_sntf-algiers-constantine",
+      "operator": "algeria_sntf",
+      "operatorName": "SNTF Algeria",
+      "country": "Algeria",
+      "from": "Algiers",
+      "to": "Constantine",
+      "distance": 431,
+      "duration": "5h",
+      "currency": "DZD",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 850,
+              "currency": "DZD"
+            },
+            "usd": 6.53,
+            "afc": 6.53
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 1500,
+              "currency": "DZD"
+            },
+            "usd": 11.53,
+            "afc": 11.53
+          }
+        }
+      ]
+    },
+    {
+      "id": "algeria_sntf-algiers-annaba",
+      "operator": "algeria_sntf",
+      "operatorName": "SNTF Algeria",
+      "country": "Algeria",
+      "from": "Algiers",
+      "to": "Annaba",
+      "distance": 599,
+      "duration": "7h",
+      "currency": "DZD",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 1100,
+              "currency": "DZD"
+            },
+            "usd": 8.45,
+            "afc": 8.45
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 1900,
+              "currency": "DZD"
+            },
+            "usd": 14.6,
+            "afc": 14.6
+          }
+        }
+      ]
+    },
+    {
+      "id": "tunisia_sncft-tunis-sfax",
+      "operator": "tunisia_sncft",
+      "operatorName": "SNCFT Tunisia",
+      "country": "Tunisia",
+      "from": "Tunis",
+      "to": "Sfax",
+      "distance": 270,
+      "duration": "3h 30m",
+      "currency": "TND",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 15,
+              "currency": "TND"
+            },
+            "usd": 5.19,
+            "afc": 5.19
+          }
+        },
+        {
+          "name": "confort",
+          "price": {
+            "local": {
+              "amount": 22,
+              "currency": "TND"
+            },
+            "usd": 7.61,
+            "afc": 7.61
+          }
+        }
+      ]
+    },
+    {
+      "id": "tunisia_sncft-tunis-sousse",
+      "operator": "tunisia_sncft",
+      "operatorName": "SNCFT Tunisia",
+      "country": "Tunisia",
+      "from": "Tunis",
+      "to": "Sousse",
+      "distance": 143,
+      "duration": "2h",
+      "currency": "TND",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 9,
+              "currency": "TND"
+            },
+            "usd": 3.11,
+            "afc": 3.11
+          }
+        },
+        {
+          "name": "confort",
+          "price": {
+            "local": {
+              "amount": 13,
+              "currency": "TND"
+            },
+            "usd": 4.5,
+            "afc": 4.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "tunisia_sncft-tunis-gabes",
+      "operator": "tunisia_sncft",
+      "operatorName": "SNCFT Tunisia",
+      "country": "Tunisia",
+      "from": "Tunis",
+      "to": "Gabes",
+      "distance": 405,
+      "duration": "5h 30m",
+      "currency": "TND",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 22,
+              "currency": "TND"
+            },
+            "usd": 7.61,
+            "afc": 7.61
+          }
+        },
+        {
+          "name": "confort",
+          "price": {
+            "local": {
+              "amount": 32,
+              "currency": "TND"
+            },
+            "usd": 11.07,
+            "afc": 11.07
+          }
+        }
+      ]
+    },
+    {
+      "id": "zambia_zrl-lusaka-livingstone",
+      "operator": "zambia_zrl",
+      "operatorName": "Zambia Railways",
+      "country": "Zambia",
+      "from": "Lusaka",
+      "to": "Livingstone",
+      "distance": 473,
+      "duration": "12h",
+      "currency": "ZMW",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 150,
+              "currency": "ZMW"
+            },
+            "usd": 7.7,
+            "afc": 7.7
+          }
+        },
+        {
+          "name": "business",
+          "price": {
+            "local": {
+              "amount": 280,
+              "currency": "ZMW"
+            },
+            "usd": 14.37,
+            "afc": 14.37
+          }
+        },
+        {
+          "name": "sleeper",
+          "price": {
+            "local": {
+              "amount": 450,
+              "currency": "ZMW"
+            },
+            "usd": 23.09,
+            "afc": 23.09
+          }
+        }
+      ]
+    },
+    {
+      "id": "zambia_zrl-lusaka-kitwe",
+      "operator": "zambia_zrl",
+      "operatorName": "Zambia Railways",
+      "country": "Zambia",
+      "from": "Lusaka",
+      "to": "Kitwe",
+      "distance": 337,
+      "duration": "8h",
+      "currency": "ZMW",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 120,
+              "currency": "ZMW"
+            },
+            "usd": 6.16,
+            "afc": 6.16
+          }
+        },
+        {
+          "name": "business",
+          "price": {
+            "local": {
+              "amount": 220,
+              "currency": "ZMW"
+            },
+            "usd": 11.29,
+            "afc": 11.29
+          }
+        },
+        {
+          "name": "sleeper",
+          "price": {
+            "local": {
+              "amount": 350,
+              "currency": "ZMW"
+            },
+            "usd": 17.96,
+            "afc": 17.96
+          }
+        }
+      ]
+    },
+    {
+      "id": "ghana_grc-accra-kumasi",
+      "operator": "ghana_grc",
+      "operatorName": "Ghana Railway Company",
+      "country": "Ghana",
+      "from": "Accra",
+      "to": "Kumasi",
+      "distance": 270,
+      "duration": "5h",
+      "currency": "GHS",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 50,
+              "currency": "GHS"
+            },
+            "usd": 4.66,
+            "afc": 4.66
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 90,
+              "currency": "GHS"
+            },
+            "usd": 8.4,
+            "afc": 8.4
+          }
+        }
+      ]
+    },
+    {
+      "id": "ghana_grc-accra-takoradi",
+      "operator": "ghana_grc",
+      "operatorName": "Ghana Railway Company",
+      "country": "Ghana",
+      "from": "Accra",
+      "to": "Takoradi",
+      "distance": 225,
+      "duration": "4h",
+      "currency": "GHS",
+      "classes": [
+        {
+          "name": "economy",
+          "price": {
+            "local": {
+              "amount": 45,
+              "currency": "GHS"
+            },
+            "usd": 4.2,
+            "afc": 4.2
+          }
+        },
+        {
+          "name": "firstClass",
+          "price": {
+            "local": {
+              "amount": 80,
+              "currency": "GHS"
+            },
+            "usd": 7.46,
+            "afc": 7.46
+          }
+        }
+      ]
+    }
+  ]
+}
