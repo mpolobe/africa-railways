@@ -681,26 +681,22 @@
             const [isBooking, setIsBooking] = useState(false);
             const [searchMode, setSearchMode] = useState('simple'); // 'simple' or 'advanced'
 
-            // Load station data - try API first for better performance
+            // Load station data only when needed (for advanced mode)
             useEffect(() => {
-                // Try to load just metadata first for quick display
-                fetch('/api/stations/metadata')
-                    .then(res => res.json())
-                    .then(metadata => {
-                        setStationData({ metadata, countries: [] });
-                        // Then load full data in background for advanced search
-                        return fetch('/data/stations.json');
-                    })
-                    .then(res => res.json())
-                    .then(data => setStationData(data))
-                    .catch(() => {
-                        // Fallback: load full JSON directly
-                        fetch('/data/stations.json')
-                            .then(res => res.json())
-                            .then(data => setStationData(data))
-                            .catch(err => console.error('Failed to load stations:', err));
+                // Only load full data if in advanced mode
+                if (searchMode === 'advanced' && !stationData?.countries?.length) {
+                    fetch('/data/stations.json')
+                        .then(res => res.json())
+                        .then(data => setStationData(data))
+                        .catch(err => console.error('Failed to load stations:', err));
+                } else if (!stationData) {
+                    // Set minimal metadata for simple mode
+                    setStationData({ 
+                        metadata: { totalStations: 7258, totalCountries: 31 }, 
+                        countries: [] 
                     });
-            }, []);
+                }
+            }, [searchMode]);
 
             // Reset selections when switching modes
             const handleModeChange = (mode) => {
