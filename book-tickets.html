@@ -307,6 +307,32 @@
             const [selectedStation, setSelectedStation] = useState(null);
             const [isSearching, setIsSearching] = useState(false);
 
+            // Load stations data for local search
+            const [localStations, setLocalStations] = useState([]);
+            
+            useEffect(() => {
+                fetch('/data/stations.json')
+                    .then(res => res.json())
+                    .then(data => {
+                        // Flatten stations for search
+                        const flat = [];
+                        for (const country of data.countries || []) {
+                            for (const city of country.cities || []) {
+                                for (const station of city.stations || []) {
+                                    flat.push({
+                                        ...station,
+                                        city: city.name,
+                                        country: country.name,
+                                    });
+                                }
+                            }
+                        }
+                        setLocalStations(flat);
+                        console.log(`Loaded ${flat.length} stations for search`);
+                    })
+                    .catch(err => console.error('Failed to load stations:', err));
+            }, []);
+
             // Debounced search
             useEffect(() => {
                 if (!searchTerm || searchTerm.length < 2) {
@@ -316,71 +342,34 @@
 
                 setIsSearching(true);
                 const timeoutId = setTimeout(() => {
-                    // Try API first, fallback to local search
-                    fetch(`/api/stations/search?q=${encodeURIComponent(searchTerm)}&limit=20`)
-                        .then(res => res.json())
-                        .then(data => {
-                            const results = (data.results || []).filter(s => s.id !== otherValue);
-                            setFilteredStations(results);
-                            setIsSearching(false);
+                    // Search local stations
+                    const term = searchTerm.toLowerCase();
+                    const results = localStations
+                        .filter(s => {
+                            const searchText = `${s.name} ${s.city} ${s.country}`.toLowerCase();
+                            return searchText.includes(term) && s.id !== otherValue;
                         })
-                        .catch(() => {
-                            // Fallback to local search if API not available
-                            if (stationData) {
-                                const term = searchTerm.toLowerCase();
-                                const results = [];
-                                for (const country of stationData.countries) {
-                                    for (const city of country.cities) {
-                                        for (const station of city.stations) {
-                                            const searchText = `${station.name} ${city.name} ${country.name}`.toLowerCase();
-                                            if (searchText.includes(term) && station.id !== otherValue) {
-                                                results.push({ ...station, city: city.name, country: country.name });
-                                                if (results.length >= 20) break;
-                                            }
-                                        }
-                                        if (results.length >= 20) break;
-                                    }
-                                    if (results.length >= 20) break;
-                                }
-                                setFilteredStations(results);
-                            }
-                            setIsSearching(false);
-                        });
+                        .slice(0, 20);
+                    
+                    setFilteredStations(results);
+                    setIsSearching(false);
                 }, 300); // 300ms debounce
 
                 return () => clearTimeout(timeoutId);
-            }, [searchTerm, otherValue, stationData]);
+            }, [searchTerm, otherValue, localStations]);
 
-            // Load selected station details
+            // Load selected station details from local data
             useEffect(() => {
                 if (!value) {
                     setSelectedStation(null);
                     return;
                 }
 
-                // Try API first
-                fetch(`/api/stations/station?id=${encodeURIComponent(value)}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.id) {
-                            setSelectedStation(data);
-                        }
-                    })
-                    .catch(() => {
-                        // Fallback to local search
-                        if (stationData) {
-                            for (const country of stationData.countries) {
-                                for (const city of country.cities) {
-                                    const station = city.stations.find(s => s.id === value);
-                                    if (station) {
-                                        setSelectedStation({ ...station, city: city.name, country: country.name });
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-                    });
-            }, [value, stationData]);
+                const found = localStations.find(s => s.id === value);
+                if (found) {
+                    setSelectedStation(found);
+                }
+            }, [value, localStations]);
 
             const handleSelect = (station) => {
                 onChange(station.id);
