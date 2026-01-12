@@ -298,42 +298,89 @@
             { id: 'first', name: 'First Class', priceUSD: 200, priceAFC: 200, priceLocal: 'TZS 520,000', icon: '👑' },
         ];
 
-        // Simple Search Station Selector Component
+        // Simple Search Station Selector Component (API-based for performance)
         function SimpleStationSelector({ label, value, onChange, otherValue, stationData }) {
             const [searchTerm, setSearchTerm] = useState('');
             const [isOpen, setIsOpen] = useState(false);
             const [highlightedIndex, setHighlightedIndex] = useState(0);
+            const [filteredStations, setFilteredStations] = useState([]);
+            const [selectedStation, setSelectedStation] = useState(null);
+            const [isSearching, setIsSearching] = useState(false);
 
-            // Flatten all stations for simple search
-            const allStations = useMemo(() => {
-                if (!stationData) return [];
-                const stations = [];
-                for (const country of stationData.countries) {
-                    for (const city of country.cities) {
-                        for (const station of city.stations) {
-                            stations.push({
-                                ...station,
-                                city: city.name,
-                                country: country.name,
-                                searchText: `${station.name} ${city.name} ${country.name}`.toLowerCase(),
-                            });
-                        }
-                    }
+            // Debounced search
+            useEffect(() => {
+                if (!searchTerm || searchTerm.length < 2) {
+                    setFilteredStations([]);
+                    return;
                 }
-                return stations;
-            }, [stationData]);
 
-            // Filter stations based on search
-            const filteredStations = useMemo(() => {
-                if (!searchTerm || searchTerm.length < 2) return [];
-                const term = searchTerm.toLowerCase();
-                return allStations
-                    .filter(s => s.searchText.includes(term) && s.id !== otherValue)
-                    .slice(0, 20); // Limit to 20 results
-            }, [searchTerm, allStations, otherValue]);
+                setIsSearching(true);
+                const timeoutId = setTimeout(() => {
+                    // Try API first, fallback to local search
+                    fetch(`/api/stations/search?q=${encodeURIComponent(searchTerm)}&limit=20`)
+                        .then(res => res.json())
+                        .then(data => {
+                            const results = (data.results || []).filter(s => s.id !== otherValue);
+                            setFilteredStations(results);
+                            setIsSearching(false);
+                        })
+                        .catch(() => {
+                            // Fallback to local search if API not available
+                            if (stationData) {
+                                const term = searchTerm.toLowerCase();
+                                const results = [];
+                                for (const country of stationData.countries) {
+                                    for (const city of country.cities) {
+                                        for (const station of city.stations) {
+                                            const searchText = `${station.name} ${city.name} ${country.name}`.toLowerCase();
+                                            if (searchText.includes(term) && station.id !== otherValue) {
+                                                results.push({ ...station, city: city.name, country: country.name });
+                                                if (results.length >= 20) break;
+                                            }
+                                        }
+                                        if (results.length >= 20) break;
+                                    }
+                                    if (results.length >= 20) break;
+                                }
+                                setFilteredStations(results);
+                            }
+                            setIsSearching(false);
+                        });
+                }, 300); // 300ms debounce
 
-            // Get selected station details
-            const selectedStation = allStations.find(s => s.id === value);
+                return () => clearTimeout(timeoutId);
+            }, [searchTerm, otherValue, stationData]);
+
+            // Load selected station details
+            useEffect(() => {
+                if (!value) {
+                    setSelectedStation(null);
+                    return;
+                }
+
+                // Try API first
+                fetch(`/api/stations/station?id=${encodeURIComponent(value)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.id) {
+                            setSelectedStation(data);
+                        }
+                    })
+                    .catch(() => {
+                        // Fallback to local search
+                        if (stationData) {
+                            for (const country of stationData.countries) {
+                                for (const city of country.cities) {
+                                    const station = city.stations.find(s => s.id === value);
+                                    if (station) {
+                                        setSelectedStation({ ...station, city: city.name, country: country.name });
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    });
+            }, [value, stationData]);
 
             const handleSelect = (station) => {
                 onChange(station.id);
@@ -460,7 +507,13 @@
                         </div>
                     )}
 
-                    {searchTerm.length >= 2 && filteredStations.length === 0 && (
+                    {isSearching && (
+                        <div style={{ marginTop: '8px', color: '#94a3b8', fontSize: '0.85rem' }}>
+                            Searching...
+                        </div>
+                    )}
+
+                    {searchTerm.length >= 2 && !isSearching && filteredStations.length === 0 && (
                         <div style={{ marginTop: '8px', color: '#94a3b8', fontSize: '0.85rem' }}>
                             No stations found for "{searchTerm}"
                         </div>
@@ -628,12 +681,25 @@
             const [isBooking, setIsBooking] = useState(false);
             const [searchMode, setSearchMode] = useState('simple'); // 'simple' or 'advanced'
 
-            // Load station data for summary display
+            // Load station data - try API first for better performance
             useEffect(() => {
-                fetch('/data/stations.json')
+                // Try to load just metadata first for quick display
+                fetch('/api/stations/metadata')
+                    .then(res => res.json())
+                    .then(metadata => {
+                        setStationData({ metadata, countries: [] });
+                        // Then load full data in background for advanced search
+                        return fetch('/data/stations.json');
+                    })
                     .then(res => res.json())
                     .then(data => setStationData(data))
-                    .catch(err => console.error('Failed to load stations:', err));
+                    .catch(() => {
+                        // Fallback: load full JSON directly
+                        fetch('/data/stations.json')
+                            .then(res => res.json())
+                            .then(data => setStationData(data))
+                            .catch(err => console.error('Failed to load stations:', err));
+                    });
             }, []);
 
             // Reset selections when switching modes
