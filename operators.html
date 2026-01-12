@@ -67,8 +67,21 @@
         }
         .card {
             background: var(--surface);
-            border: 1px solid #222;
+            border: 1px solid #333;
             border-radius: 15px;
+        }
+        .card-header {
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid #333;
+            color: var(--white);
+            font-weight: 600;
+        }
+        .card-title {
+            color: var(--gold) !important;
+            font-weight: 700;
+        }
+        .card-text {
+            color: #fff !important;
         }
         .operator-card {
             transition: transform 0.2s, box-shadow 0.2s;
@@ -83,9 +96,28 @@
             border: 2px solid var(--gold);
             background: rgba(255, 184, 0, 0.1);
         }
+        .operator-name {
+            color: #aaa;
+            font-size: 0.85rem;
+        }
+        .operator-details {
+            color: #fff;
+        }
+        .operator-details i {
+            color: var(--gold);
+        }
         .badge-service {
             font-size: 0.7rem;
             margin-right: 4px;
+        }
+        .text-muted {
+            color: #aaa !important;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #fff;
+        }
+        .lead {
+            color: #aaa;
         }
         .region-filter {
             background: rgba(255, 255, 255, 0.1);
@@ -108,7 +140,18 @@
             word-break: break-all;
         }
         .stats-card {
-            background: linear-gradient(135deg, var(--gold), #ff9500);
+            background: var(--surface);
+            border: 1px solid #333;
+        }
+        .stats-card h2 {
+            color: var(--gold);
+            font-weight: 800;
+        }
+        .stats-card small {
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.7rem;
         }
         .btn-generate {
             background: var(--gold);
@@ -119,6 +162,23 @@
         .btn-generate:hover {
             background: #FFC933;
             color: var(--navy);
+        }
+        .form-label {
+            color: #aaa;
+        }
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #333;
+            color: #fff;
+        }
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--gold);
+            color: #fff;
+            box-shadow: 0 0 0 0.25rem rgba(255, 184, 0, 0.25);
+        }
+        .form-control::placeholder {
+            color: #666;
         }
         .search-input {
             background: rgba(255, 255, 255, 0.1);
@@ -256,20 +316,20 @@
                         </div>
                         <div id="operatorSelected" style="display: none;">
                             <div class="mb-3">
-                                <label class="form-label text-muted small">Selected Operator</label>
-                                <h5 id="selectedOperatorName" class="mb-0"></h5>
-                                <small class="text-muted" id="selectedOperatorCountry"></small>
+                                <label class="form-label small">Selected Operator</label>
+                                <h5 id="selectedOperatorName" class="mb-0" style="color: var(--gold);"></h5>
+                                <small id="selectedOperatorCountry" style="color: #aaa;"></small>
                             </div>
                             <hr>
                             <form id="apiKeyForm">
                                 <input type="hidden" id="operatorId">
                                 <div class="mb-3">
                                     <label class="form-label">Your Name</label>
-                                    <input type="text" class="form-control bg-dark text-white border-secondary" id="userName" required>
+                                    <input type="text" class="form-control" id="userName" required placeholder="Enter your name">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Email Address</label>
-                                    <input type="email" class="form-control bg-dark text-white border-secondary" id="userEmail" required>
+                                    <input type="email" class="form-control" id="userEmail" required placeholder="Enter your email">
                                 </div>
                                 <button type="submit" class="btn btn-generate w-100">
                                     <i class="bi bi-key me-2"></i>Generate API Key
@@ -427,13 +487,13 @@
                          onclick="selectOperator('${op.id}')">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h6 class="card-title mb-0">${op.shortName || op.name}</h6>
+                                <h6 class="card-title mb-0" style="color: var(--gold); font-weight: 700;">${op.shortName || op.name}</h6>
                                 <span class="badge bg-${op.status === 'active' ? 'success' : 'secondary'}">${op.status}</span>
                             </div>
-                            <p class="card-text small text-muted mb-2">${op.name}</p>
-                            <p class="card-text small mb-2">
-                                <i class="bi bi-geo-alt me-1"></i>${op.country}
-                                <span class="ms-2"><i class="bi bi-rulers me-1"></i>${op.networkLength?.toLocaleString() || '?'} km</span>
+                            <p class="operator-name mb-2">${op.name}</p>
+                            <p class="operator-details small mb-2">
+                                <i class="bi bi-geo-alt me-1"></i><span style="color: #fff;">${op.country}</span>
+                                <span class="ms-3"><i class="bi bi-rulers me-1"></i><span style="color: #fff;">${op.networkLength?.toLocaleString() || '?'} km</span></span>
                             </p>
                             <div>
                                 ${(op.services || []).map(s => `
