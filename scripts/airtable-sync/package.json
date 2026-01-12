@@ -1,0 +1,30 @@
+{
+  "name": "airtable-sync",
+  "version": "1.0.0",
+  "description": "Airtable sync scripts for Africa Railways operational data",
+  "main": "index.js",
+  "scripts": {
+    "sync:schedules": "node sync-schedules.js",
+    "sync:bookings": "node sync-bookings.js",
+    "sync:ussd": "node sync-ussd-sessions.js",
+    "sync:transactions": "node sync-transactions.js",
+    "sync:all": "npm run sync:schedules && npm run sync:bookings && npm run sync:ussd && npm run sync:transactions",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "airtable",
+    "sync",
+    "railways",
+    "africa"
+  ],
+  "author": "Africa Railways",
+  "license": "MIT",
+  "dependencies": {
+    "airtable": "^0.12.2",
+    "node-fetch": "^2.7.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.50.0"
+  }
+}

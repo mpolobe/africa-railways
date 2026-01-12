@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Join Whitelist - AFRC IDO</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --navy: #0a0e1a; --gold: #FFB800; --cyan: #00D4FF; --white: #ffffff; --surface: #16203a; --green: #10b981; }
         html { scroll-behavior: smooth; }
@@ -332,26 +333,41 @@
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
             
             try {
-                // TODO: Replace with actual backend API endpoint
-                // Example: const response = await fetch('/api/whitelist', {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify(data)
-                // });
-                // if (!response.ok) throw new Error('Submission failed');
+                // Initialize Supabase client
+                const SUPABASE_URL = 'https://your-project.supabase.co'; // Replace with your Supabase URL
+                const SUPABASE_ANON_KEY = 'your-anon-key'; // Replace with your Supabase anon key
+                const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                 
-                // Simulate API call (REPLACE WITH ACTUAL BACKEND INTEGRATION)
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                // Insert into whitelist table
+                const { data: result, error } = await supabase
+                    .from('whitelist')
+                    .insert([{
+                        wallet_address: data.walletAddress,
+                        email: data.email,
+                        telegram_handle: data.telegram || null,
+                        twitter_handle: data.twitter || null,
+                        investment_amount: data.investment,
+                        referral_code: data.referral || null,
+                        terms_accepted: true,
+                        status: 'pending'
+                    }]);
+                
+                if (error) {
+                    // Check if it's a duplicate wallet address
+                    if (error.code === '23505') {
+                        throw new Error('This wallet address is already registered.');
+                    }
+                    throw new Error(error.message);
+                }
                 
                 // Success
                 whitelistForm.style.display = 'none';
                 successMessage.classList.add('show');
                 
-                // Store registration (in real implementation, this would be sent to backend)
-                console.log('Whitelist registration:', data);
+                console.log('Whitelist registration successful:', result);
                 
             } catch (error) {
-                showError('Failed to submit registration. Please try again.');
+                showError(error.message || 'Failed to submit registration. Please try again.');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-rocket"></i> Join Whitelist';
             }

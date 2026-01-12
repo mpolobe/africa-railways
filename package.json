@@ -19,7 +19,14 @@
     "build:staff:android": "cd SmartphoneApp && APP_VARIANT=staff eas build --platform android --profile staff --non-interactive",
     "build:staff:ios": "cd SmartphoneApp && APP_VARIANT=staff eas build --platform ios --profile staff --non-interactive",
     "build:all:android": "npm run build:railways:android && npm run build:africoin:android && npm run build:sentinel:android && npm run build:staff:android",
-    "build:all:ios": "npm run build:railways:ios && npm run build:africoin:ios && npm run build:sentinel:ios && npm run build:staff:ios"
+    "build:all:ios": "npm run build:railways:ios && npm run build:africoin:ios && npm run build:sentinel:ios && npm run build:staff:ios",
+    "airtable:sync:schedules": "node scripts/airtable-sync/sync-schedules.js",
+    "airtable:sync:bookings": "node scripts/airtable-sync/sync-bookings.js",
+    "airtable:sync:ussd": "node scripts/airtable-sync/sync-ussd-sessions.js",
+    "airtable:sync:transactions": "node scripts/airtable-sync/sync-transactions.js",
+    "airtable:sync:all": "node scripts/airtable-sync/sync-all.js",
+    "airtable:monitor": "node scripts/airtable-sync/monitor.js report",
+    "airtable:health": "node scripts/airtable-sync/monitor.js health"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^6.1.0",

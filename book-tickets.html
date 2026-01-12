@@ -311,9 +311,9 @@
         ];
 
         const CLASSES = [
-            { id: 'economy', name: 'Economy', price: 50, icon: '💺' },
-            { id: 'business', name: 'Business', price: 120, icon: '🛋️' },
-            { id: 'first', name: 'First Class', price: 200, icon: '👑' },
+            { id: 'economy', name: 'Economy', priceUSD: 50, priceAFC: 50, priceLocal: 'TZS 130,000', icon: '💺' },
+            { id: 'business', name: 'Business', priceUSD: 120, priceAFC: 120, priceLocal: 'TZS 312,000', icon: '🛋️' },
+            { id: 'first', name: 'First Class', priceUSD: 200, priceAFC: 200, priceLocal: 'TZS 520,000', icon: '👑' },
         ];
 
         function BookingApp() {
@@ -326,7 +326,8 @@
             const [isBooking, setIsBooking] = useState(false);
 
             const selectedClassData = CLASSES.find(c => c.id === selectedClass);
-            const totalPrice = selectedClassData ? selectedClassData.price * passengers : 0;
+            const totalPriceUSD = selectedClassData ? selectedClassData.priceUSD * passengers : 0;
+            const totalPriceAFC = selectedClassData ? selectedClassData.priceAFC * passengers : 0;
 
             const swapStations = () => {
                 const temp = from;
@@ -394,11 +395,11 @@
                     <div className="payment-banner">
                         <h3>💳 Payment & Rewards</h3>
                         <p>
-                            Pay for your cross-border journey seamlessly with <strong>$AFC (Africoin)</strong>. 
-                            Use your <strong>$AFRC (Africa Rail Credits)</strong> balance for cabin upgrades and station lounge access.
+                            Pay with <strong>local currency (TZS)</strong>, <strong>AFC (Africoin stablecoin)</strong>, or <strong>USD</strong>. 
+                            Multi-currency support for seamless cross-border travel across Africa.
                         </p>
                         <p style={{ marginTop: '10px', fontSize: '0.9rem' }}>
-                            Earn AFRC rewards on every journey • Stake for 12% APY • Vote on governance
+                            Earn <strong>AFRC rewards</strong> on every journey • Stake for 12% APY • Vote on governance
                         </p>
                     </div>
 
@@ -466,7 +467,11 @@
                                         >
                                             <div style={{ fontSize: '2rem' }}>{cls.icon}</div>
                                             <div>{cls.name}</div>
-                                            <div className="price">{cls.price} AFC</div>
+                                            <div className="price" style={{ fontSize: '0.85rem', lineHeight: '1.4' }}>
+                                                <div>{cls.priceLocal}</div>
+                                                <div>{cls.priceAFC} AFC</div>
+                                                <div>${cls.priceUSD} USD</div>
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
@@ -499,11 +504,19 @@
                                         </div>
                                         <div className="summary-item">
                                             <span>Price per ticket</span>
-                                            <span>{selectedClassData?.price} AFC</span>
+                                            <span style={{ textAlign: 'right', fontSize: '0.9rem', lineHeight: '1.5' }}>
+                                                <div>{selectedClassData?.priceLocal}</div>
+                                                <div>{selectedClassData?.priceAFC} AFC</div>
+                                                <div>${selectedClassData?.priceUSD} USD</div>
+                                            </span>
                                         </div>
-                                        <div className="summary-item">
-                                            <span>Total</span>
-                                            <span>{totalPrice} AFC</span>
+                                        <div className="summary-item" style={{ borderTop: '1px solid #333', paddingTop: '15px', marginTop: '10px' }}>
+                                            <span style={{ fontWeight: 'bold', color: 'var(--gold)' }}>Total</span>
+                                            <span style={{ textAlign: 'right', fontSize: '1rem', lineHeight: '1.5', fontWeight: 'bold' }}>
+                                                <div style={{ color: 'var(--cyan)' }}>{selectedClassData ? `TZS ${(parseInt(selectedClassData.priceLocal.split(' ')[1].replace(/,/g, '')) * passengers).toLocaleString()}` : ''}</div>
+                                                <div style={{ color: 'var(--gold)' }}>{totalPriceAFC} AFC</div>
+                                                <div style={{ color: 'var(--green)' }}>${totalPriceUSD} USD</div>
+                                            </span>
                                         </div>
                                     </>
                                 )}
@@ -519,7 +532,7 @@
                                     onClick={handleBooking}
                                     disabled={!from || !to || !date || isBooking}
                                 >
-                                    {isBooking ? 'Processing...' : `Book Now - ${totalPrice} AFC`}
+                                    {isBooking ? 'Processing...' : 'Book Now'}
                                 </button>
 
                                 {status && (
@@ -530,7 +543,7 @@
 
                                 <div className="info-box">
                                     <strong>💡 Payment Info:</strong><br/>
-                                    Tickets are paid with AFC (Africoin) tokens. AFRC (Africa Rail Credits) are loyalty rewards and cannot be used for ticket purchases.
+                                    Tickets can be paid with local currency (TZS), AFC (Africoin stablecoin), or USD. AFC is pegged 1:1 with USD. Earn AFRC loyalty rewards on every purchase.
                                 </div>
                             </div>
                         </div>
