@@ -1,6 +1,7 @@
 {
   "name": "Africa Railways - Sovereign Hub",
   "image": "mcr.microsoft.com/devcontainers/go:1-1.22-bookworm",
+  "runArgs": ["--network=host"],
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
       "version": "20"
