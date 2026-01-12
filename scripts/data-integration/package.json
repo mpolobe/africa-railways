@@ -1,0 +1,30 @@
+{
+  "name": "africa-railways-data-integration",
+  "version": "1.0.0",
+  "description": "Production data integration: Website → Airtable → Africoin → AI",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "sync:api": "node sync-api.js",
+    "sync:scrape": "node sync-scrape.js",
+    "sync:all": "node sync-all.js",
+    "test": "node test-integration.js",
+    "monitor": "node monitor.js"
+  },
+  "keywords": [
+    "railway",
+    "airtable",
+    "africoin",
+    "ai",
+    "integration"
+  ],
+  "author": "Africa Railways",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "cheerio": "^1.0.0-rc.12",
+    "airtable": "^0.12.2",
+    "dotenv": "^16.3.1",
+    "node-cron": "^3.0.3"
+  }
+}
