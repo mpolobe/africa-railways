@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { captureError } from '../services/sentry';
 
 /**
  * ErrorBoundary Component
  * Catches JavaScript errors anywhere in the child component tree,
- * logs those errors, and displays a fallback UI instead of crashing the app.
+ * logs those errors to Sentry, and displays a fallback UI instead of crashing the app.
  */
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -30,8 +31,11 @@ class ErrorBoundary extends React.Component {
       errorInfo
     });
 
-    // You can also log the error to an error reporting service here
-    // Example: Sentry.captureException(error);
+    // Report error to Sentry
+    captureError(error, {
+      componentStack: errorInfo?.componentStack,
+      boundary: this.props.name || 'ErrorBoundary'
+    });
   }
 
   handleReset = () => {

@@ -69,6 +69,14 @@ module.exports = {
     // Plugins
     plugins: [
       [
+        "@sentry/react-native/expo",
+        {
+          organization: "africa-railways",
+          project: "africa-railways-android",
+          url: "https://sentry.io/"
+        }
+      ],
+      [
         "expo-camera",
         {
           cameraPermission: config.cameraPermission
@@ -142,7 +150,21 @@ module.exports = {
       appDescription: config.description,
       backendUrl: process.env.BACKEND_URL || "https://africa-railways.vercel.app",
       apiKey: process.env.API_KEY,
-      alchemyKey: process.env.ALCHEMY_SDK_KEY
+      alchemyKey: process.env.ALCHEMY_SDK_KEY,
+      sentryDsn: "https://da12fbfe77b5504802bbd0b624cacaba@o4510700950061056.ingest.us.sentry.io/4510700954058752"
+    },
+    
+    // Sentry hooks
+    hooks: {
+      postPublish: [
+        {
+          file: "sentry-expo/upload-sourcemaps",
+          config: {
+            organization: "africa-railways",
+            project: "africa-railways-android"
+          }
+        }
+      ]
     }
   }
 };

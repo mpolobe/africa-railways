@@ -4,6 +4,10 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { MapHologram } from './MapHologram'; // Our Pixel-Map component
 import { Transaction } from '@mysten/sui/transactions';
 import { SuiClient, getFullnodeUrl } from '@mysten/sui/client';
+import { initSentry, captureError, addBreadcrumb } from './services/sentry';
+
+// Initialize Sentry for error tracking
+initSentry();
 
 // This line is updated automatically by your deploy-railway.sh script
 const PACKAGE_ID = "0x0"; 
