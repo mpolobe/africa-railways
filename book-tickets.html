@@ -284,6 +284,95 @@
                 text-align: center;
             }
         }
+        
+        /* Currency Banner Scrolling Animation */
+        .currency-banner {
+            background: linear-gradient(90deg, var(--surface) 0%, #1a2642 50%, var(--surface) 100%);
+            border: 1px solid #333;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .currency-banner::before,
+        .currency-banner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 60px;
+            z-index: 2;
+            pointer-events: none;
+        }
+        
+        .currency-banner::before {
+            left: 0;
+            background: linear-gradient(90deg, var(--surface) 0%, transparent 100%);
+        }
+        
+        .currency-banner::after {
+            right: 0;
+            background: linear-gradient(90deg, transparent 0%, var(--surface) 100%);
+        }
+        
+        .currency-scroll-container {
+            display: flex;
+            animation: scroll-currencies 30s linear infinite;
+            width: max-content;
+        }
+        
+        .currency-scroll-container:hover {
+            animation-play-state: paused;
+        }
+        
+        @keyframes scroll-currencies {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+        
+        .currency-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            white-space: nowrap;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .currency-flag {
+            font-size: 1.2rem;
+        }
+        
+        .currency-code {
+            font-weight: 600;
+            color: var(--gold);
+        }
+        
+        .currency-rate {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+        
+        .currency-change {
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .currency-change.up {
+            color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .currency-change.down {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -360,6 +449,67 @@
             EUR: 'Euro',
             GBP: 'British Pound',
         };
+
+        // Currency flags for banner
+        const CURRENCY_FLAGS = {
+            ZMW: '🇿🇲',
+            TZS: '🇹🇿',
+            KES: '🇰🇪',
+            ZAR: '🇿🇦',
+            UGX: '🇺🇬',
+            NGN: '🇳🇬',
+            BWP: '🇧🇼',
+            MZN: '🇲🇿',
+            RWF: '🇷🇼',
+            ETB: '🇪🇹',
+            EGP: '🇪🇬',
+            MAD: '🇲🇦',
+            GHS: '🇬🇭',
+            AOA: '🇦🇴',
+            CDF: '🇨🇩',
+            NAD: '🇳🇦',
+            USD: '🇺🇸',
+            EUR: '🇪🇺',
+            GBP: '🇬🇧',
+        };
+
+        // Scrolling Currency Banner Component
+        function CurrencyBanner({ rates, rateSource }) {
+            // Simulated daily changes (random but consistent per session)
+            const [changes] = useState(() => {
+                const c = {};
+                Object.keys(CURRENCY_FLAGS).forEach(code => {
+                    if (code !== 'USD') {
+                        c[code] = (Math.random() * 2 - 1).toFixed(2); // -1% to +1%
+                    }
+                });
+                return c;
+            });
+
+            const currencyList = Object.keys(CURRENCY_FLAGS).filter(c => c !== 'USD' && c !== 'EUR' && c !== 'GBP');
+            
+            // Duplicate for seamless loop
+            const displayList = [...currencyList, ...currencyList];
+
+            return (
+                <div className="currency-banner">
+                    <div className="currency-scroll-container">
+                        {displayList.map((code, index) => (
+                            <div key={`${code}-${index}`} className="currency-item">
+                                <span className="currency-flag">{CURRENCY_FLAGS[code]}</span>
+                                <span className="currency-code">{code}</span>
+                                <span className="currency-rate">
+                                    {CURRENCY_SYMBOLS[code]}{rates[code]?.toFixed(2) || FALLBACK_RATES[code]?.toFixed(2)}
+                                </span>
+                                <span className={`currency-change ${parseFloat(changes[code]) >= 0 ? 'up' : 'down'}`}>
+                                    {parseFloat(changes[code]) >= 0 ? '↑' : '↓'} {Math.abs(changes[code])}%
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
 
         // Base prices in USD
         const BASE_PRICES = {
@@ -962,6 +1112,9 @@
                             Back to Home
                         </a>
                     </div>
+
+                    {/* Scrolling Currency Banner */}
+                    <CurrencyBanner rates={exchangeRates} rateSource={rateSource} />
 
                     <div className="payment-banner">
                         <h3>💳 Payment & Rewards</h3>
