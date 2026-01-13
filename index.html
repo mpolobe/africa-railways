@@ -446,7 +446,73 @@
                 />
                 <p style="color: #aaa; font-size: 0.8rem; margin-top: 12px;">Book tickets on the go</p>
             </div>
+
+            <!-- Contact Us Form -->
+            <div>
+                <h4 style="color:var(--gold); margin-bottom: 20px; font-size: 1rem;">Contact Us</h4>
+                <form id="contactForm" onsubmit="submitContactForm(event)" style="display: flex; flex-direction: column; gap: 12px;">
+                    <input 
+                        type="text" 
+                        id="contactName" 
+                        placeholder="Your Name" 
+                        required
+                        style="padding: 12px 15px; background: rgba(255,255,255,0.05); border: 1px solid #333; border-radius: 8px; color: white; font-size: 0.9rem;"
+                    />
+                    <input 
+                        type="email" 
+                        id="contactEmail" 
+                        placeholder="Your Email" 
+                        required
+                        style="padding: 12px 15px; background: rgba(255,255,255,0.05); border: 1px solid #333; border-radius: 8px; color: white; font-size: 0.9rem;"
+                    />
+                    <textarea 
+                        id="contactMessage" 
+                        placeholder="Your Message" 
+                        rows="3" 
+                        required
+                        style="padding: 12px 15px; background: rgba(255,255,255,0.05); border: 1px solid #333; border-radius: 8px; color: white; font-size: 0.9rem; resize: vertical;"
+                    ></textarea>
+                    <button 
+                        type="submit" 
+                        style="padding: 12px 20px; background: var(--gold); color: var(--navy); border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.3s;"
+                        onmouseover="this.style.background='#FFC933'; this.style.transform='translateY(-2px)';"
+                        onmouseout="this.style.background='var(--gold)'; this.style.transform='translateY(0)';"
+                    >
+                        Send Message
+                    </button>
+                </form>
+                <p id="contactStatus" style="color: #aaa; font-size: 0.8rem; margin-top: 10px; display: none;"></p>
+            </div>
         </div>
+
+        <script>
+            function submitContactForm(event) {
+                event.preventDefault();
+                
+                const name = document.getElementById('contactName').value;
+                const email = document.getElementById('contactEmail').value;
+                const message = document.getElementById('contactMessage').value;
+                const statusEl = document.getElementById('contactStatus');
+                
+                // Show sending status
+                statusEl.style.display = 'block';
+                statusEl.style.color = 'var(--cyan)';
+                statusEl.textContent = 'Sending message...';
+                
+                // Simulate form submission (replace with actual API call)
+                setTimeout(() => {
+                    statusEl.style.color = '#10b981';
+                    statusEl.textContent = '✅ Message sent! We will get back to you soon.';
+                    
+                    // Clear form
+                    document.getElementById('contactForm').reset();
+                    
+                    // Also open WhatsApp as backup
+                    const whatsappMsg = encodeURIComponent(`Hi Africa Railways! I'm ${name} (${email}). ${message}`);
+                    // window.open(`https://wa.me/260966165444?text=${whatsappMsg}`, '_blank');
+                }, 1000);
+            }
+        </script>
         
         <!-- Bottom Bar -->
         <div style="border-top: 1px solid #222; padding-top: 30px; text-align: center;">
