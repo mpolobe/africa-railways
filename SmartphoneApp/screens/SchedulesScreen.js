@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from 'react-native';
 import { useOfflineData } from '../hooks/useOfflineData';
 import { CACHE_KEYS } from '../services/offlineStorage';
 import MultiCurrencyPrice from '../components/MultiCurrencyPrice';
-import { getTicketPrice, detectLocalCurrency } from '../utils/currencyConverter';
+import { getTicketPrice, detectLocalCurrency, EXCHANGE_RATES, getCurrencySymbol } from '../utils/currencyConverter';
+import { getExchangeRates } from '../services/exchangeRateService';
 
 /**
  * Schedules Screen
@@ -12,10 +13,26 @@ import { getTicketPrice, detectLocalCurrency } from '../utils/currencyConverter'
 const SchedulesScreen = ({ navigation }) => {
   const [localCurrency, setLocalCurrency] = useState('ZMW');
   const [selectedClass, setSelectedClass] = useState('economy');
+  const [isReturnTrip, setIsReturnTrip] = useState(false);
+  const [exchangeRate, setExchangeRate] = useState(EXCHANGE_RATES['ZMW'] || 27.5);
 
-  // Detect user's local currency
+  // Detect user's local currency and fetch live rates
   useEffect(() => {
-    detectLocalCurrency().then(setLocalCurrency);
+    const initializeCurrency = async () => {
+      const currency = await detectLocalCurrency();
+      setLocalCurrency(currency);
+      
+      try {
+        const { rates } = await getExchangeRates();
+        if (rates[currency]) {
+          setExchangeRate(rates[currency]);
+        }
+      } catch (error) {
+        console.warn('Failed to fetch exchange rates:', error);
+      }
+    };
+    
+    initializeCurrency();
   }, []);
 
   // Mock fetch function - replace with actual API call
@@ -114,6 +131,35 @@ const SchedulesScreen = ({ navigation }) => {
           </View>
         )}
 
+        {/* Route Options with Return Trip Toggle */}
+        {schedules && schedules.length > 0 && (
+          <View style={styles.routeOptionsCard}>
+            <View style={styles.routeOptionsHeader}>
+              <Text style={styles.routeOptionsTitle}>Trip Options</Text>
+              
+              {/* Return Trip Toggle */}
+              <View style={styles.returnToggleContainer}>
+                <Text style={styles.returnToggleLabel}>Return Trip</Text>
+                <Switch
+                  value={isReturnTrip}
+                  onValueChange={setIsReturnTrip}
+                  trackColor={{ false: '#334155', true: '#38bdf8' }}
+                  thumbColor={isReturnTrip ? '#FFB800' : '#64748B'}
+                  ios_backgroundColor="#334155"
+                />
+              </View>
+            </View>
+            
+            {isReturnTrip && (
+              <View style={styles.returnInfoBanner}>
+                <Text style={styles.returnInfoText}>
+                  ↩️ Return journey included • Prices shown are for round trip
+                </Text>
+              </View>
+            )}
+          </View>
+        )}
+
         {/* Class Selector */}
         {schedules && schedules.length > 0 && (
           <View style={styles.classSelector}>
@@ -142,7 +188,9 @@ const SchedulesScreen = ({ navigation }) => {
 
         {/* Schedules List */}
         {schedules && schedules.map((schedule) => {
-          const priceUSD = getTicketPrice(schedule.route, selectedClass);
+          const basePriceUSD = getTicketPrice(schedule.route, selectedClass);
+          const priceUSD = isReturnTrip ? basePriceUSD * 2 : basePriceUSD;
+          const priceLocal = priceUSD * exchangeRate;
           const hasClass = schedule.classes.includes(selectedClass);
 
           return (
@@ -154,7 +202,12 @@ const SchedulesScreen = ({ navigation }) => {
                 </View>
               </View>
 
-              <Text style={styles.route}>{schedule.route}</Text>
+              <View style={styles.routeContainer}>
+                <Text style={styles.route}>{schedule.route}</Text>
+                {isReturnTrip && (
+                  <Text style={styles.returnBadge}>⇄ Return</Text>
+                )}
+              </View>
 
               <View style={styles.timeContainer}>
                 <View style={styles.timeBlock}>
@@ -172,15 +225,23 @@ const SchedulesScreen = ({ navigation }) => {
                 </View>
               </View>
 
-              {/* Price Display */}
+              {/* Price Display - Local Currency Prominent */}
               {priceUSD && hasClass ? (
                 <View style={styles.priceContainer}>
-                  <MultiCurrencyPrice
-                    priceUSD={priceUSD}
-                    localCurrency={localCurrency}
-                    size="small"
-                    showLabels={false}
-                  />
+                  {/* Primary: Local Currency */}
+                  <View style={styles.localPriceRow}>
+                    <Text style={styles.localPrice}>
+                      {getCurrencySymbol(localCurrency)}{priceLocal.toLocaleString('en-US', { maximumFractionDigits: 0 })}
+                    </Text>
+                    <Text style={styles.localCurrencyCode}>{localCurrency}</Text>
+                  </View>
+                  
+                  {/* Secondary: USD and AFC */}
+                  <View style={styles.secondaryPriceRow}>
+                    <Text style={styles.secondaryPrice}>${priceUSD.toFixed(2)} USD</Text>
+                    <Text style={styles.priceSeparator}>•</Text>
+                    <Text style={[styles.secondaryPrice, styles.afcPriceText]}>{priceUSD.toFixed(2)} AFC</Text>
+                  </View>
                 </View>
               ) : !hasClass ? (
                 <View style={styles.unavailableContainer}>
@@ -194,9 +255,11 @@ const SchedulesScreen = ({ navigation }) => {
               {priceUSD && hasClass && (
                 <TouchableOpacity 
                   style={styles.bookButton}
-                  onPress={() => navigation.navigate('TicketBooking', { schedule })}
+                  onPress={() => navigation.navigate('TicketBooking', { schedule, isReturnTrip })}
                 >
-                  <Text style={styles.bookButtonText}>Book Ticket</Text>
+                  <Text style={styles.bookButtonText}>
+                    {isReturnTrip ? 'Book Return Trip' : 'Book Ticket'}
+                  </Text>
                 </TouchableOpacity>
               )}
             </View>

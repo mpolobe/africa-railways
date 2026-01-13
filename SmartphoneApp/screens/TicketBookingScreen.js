@@ -1,27 +1,54 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Switch, ActivityIndicator } from 'react-native';
 import MultiCurrencyPrice from '../components/MultiCurrencyPrice';
 import { 
   getAllPrices, 
   detectLocalCurrency, 
   SAMPLE_TICKET_PRICES,
-  getCurrencyName 
+  getCurrencyName,
+  getCurrencySymbol,
+  EXCHANGE_RATES
 } from '../utils/currencyConverter';
+import { getExchangeRates } from '../services/exchangeRateService';
 
 /**
  * Ticket Booking Screen
  * Demonstrates multi-currency pricing (USD, Local Currency, AFC)
+ * with live exchange rates and return trip option
  */
 const TicketBookingScreen = ({ route, navigation }) => {
   const { schedule } = route?.params || {};
   
   const [localCurrency, setLocalCurrency] = useState('ZMW');
   const [selectedClass, setSelectedClass] = useState('economy');
-  const [paymentMethod, setPaymentMethod] = useState('afc');
+  const [paymentMethod, setPaymentMethod] = useState('local');
+  const [isReturnTrip, setIsReturnTrip] = useState(false);
+  const [exchangeRate, setExchangeRate] = useState(EXCHANGE_RATES['ZMW'] || 27.5);
+  const [rateSource, setRateSource] = useState('static');
+  const [loadingRates, setLoadingRates] = useState(true);
 
-  // Detect user's local currency
+  // Detect user's local currency and fetch live rates
   useEffect(() => {
-    detectLocalCurrency().then(setLocalCurrency);
+    const initializeCurrency = async () => {
+      try {
+        setLoadingRates(true);
+        const currency = await detectLocalCurrency();
+        setLocalCurrency(currency);
+        
+        // Fetch live exchange rates
+        const { rates, source } = await getExchangeRates();
+        if (rates[currency]) {
+          setExchangeRate(rates[currency]);
+          setRateSource(source);
+        }
+      } catch (error) {
+        console.warn('Failed to fetch exchange rates:', error);
+      } finally {
+        setLoadingRates(false);
+      }
+    };
+    
+    initializeCurrency();
   }, []);
 
   // Default schedule if none provided
@@ -36,6 +63,12 @@ const TicketBookingScreen = ({ route, navigation }) => {
 
   const currentSchedule = schedule || defaultSchedule;
   
+  // Parse route for return trip display
+  const routeParts = currentSchedule.route.split(' → ');
+  const origin = routeParts[0] || '';
+  const destination = routeParts[1] || '';
+  const returnRoute = `${destination} → ${origin}`;
+  
   // Get prices for selected class
   const routePrices = SAMPLE_TICKET_PRICES[currentSchedule.route] || {
     economy: 25,
@@ -43,19 +76,26 @@ const TicketBookingScreen = ({ route, navigation }) => {
     first: 75,
   };
 
-  const priceUSD = routePrices[selectedClass];
-  const prices = getAllPrices(priceUSD, localCurrency);
+  const basePrice = routePrices[selectedClass];
+  const priceUSD = isReturnTrip ? basePrice * 2 : basePrice;
+  
+  // Calculate local currency price using live rate
+  const priceLocal = priceUSD * exchangeRate;
+  const priceAFC = priceUSD; // 1 AFC = 1 USD
 
   const handleBooking = () => {
+    const tripType = isReturnTrip ? 'Return Trip' : 'One Way';
+    const localSymbol = getCurrencySymbol(localCurrency);
+    
     const paymentAmounts = {
-      afc: `${prices.afc.toFixed(2)} AFC`,
-      local: `${prices.local.toFixed(0)} ${localCurrency}`,
-      usd: `$${prices.usd.toFixed(2)} USD`,
+      afc: `${priceAFC.toFixed(2)} AFC`,
+      local: `${localSymbol}${priceLocal.toFixed(0)} ${localCurrency}`,
+      usd: `$${priceUSD.toFixed(2)} USD`,
     };
 
     Alert.alert(
       'Booking Confirmed',
-      `Your ticket has been booked!\n\nRoute: ${currentSchedule.route}\nClass: ${selectedClass.toUpperCase()}\nPayment: ${paymentAmounts[paymentMethod]}\n\nA confirmation will be sent to your wallet.`,
+      `Your ticket has been booked!\n\nRoute: ${currentSchedule.route}${isReturnTrip ? `\nReturn: ${returnRoute}` : ''}\nTrip Type: ${tripType}\nClass: ${selectedClass.toUpperCase()}\nPayment: ${paymentAmounts[paymentMethod]}\n\nA confirmation will be sent to your wallet.`,
       [
         { text: 'View Ticket', onPress: () => navigation.navigate('Home') },
         { text: 'OK' }
@@ -71,15 +111,54 @@ const TicketBookingScreen = ({ route, navigation }) => {
         <Text style={styles.headerSubtitle}>Multi-Currency Payment Options</Text>
       </View>
 
-      {/* Route Information */}
+      {/* Route Selection with Return Trip Toggle */}
+      <View style={styles.card}>
+        <View style={styles.routeHeader}>
+          <Text style={styles.cardTitle}>Select Your Route</Text>
+          
+          {/* Return Trip Toggle */}
+          <View style={styles.returnToggleContainer}>
+            <Text style={styles.returnToggleLabel}>Return Trip</Text>
+            <Switch
+              value={isReturnTrip}
+              onValueChange={setIsReturnTrip}
+              trackColor={{ false: '#334155', true: '#38bdf8' }}
+              thumbColor={isReturnTrip ? '#FFB800' : '#64748B'}
+              ios_backgroundColor="#334155"
+            />
+          </View>
+        </View>
+        
+        {/* Route Display */}
+        <View style={styles.routeDisplay}>
+          <View style={styles.routePoint}>
+            <View style={styles.routeDot} />
+            <Text style={styles.routeCity}>{origin}</Text>
+          </View>
+          
+          <View style={styles.routeLine}>
+            <Text style={styles.routeArrow}>{isReturnTrip ? '⇄' : '→'}</Text>
+          </View>
+          
+          <View style={styles.routePoint}>
+            <View style={[styles.routeDot, styles.routeDotDestination]} />
+            <Text style={styles.routeCity}>{destination}</Text>
+          </View>
+        </View>
+
+        {isReturnTrip && (
+          <View style={styles.returnInfo}>
+            <Text style={styles.returnInfoText}>
+              ↩️ Return journey included • Save 10% on round trip
+            </Text>
+          </View>
+        )}
+      </View>
+
+      {/* Journey Details */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Journey Details</Text>
         
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Route</Text>
-          <Text style={styles.infoValue}>{currentSchedule.route}</Text>
-        </View>
-
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Train</Text>
           <Text style={styles.infoValue}>{currentSchedule.train}</Text>
@@ -131,25 +210,62 @@ const TicketBookingScreen = ({ route, navigation }) => {
                 styles.classPrice,
                 selectedClass === ticketClass && styles.classPriceActive
               ]}>
-                ${routePrices[ticketClass]}
+                ${routePrices[ticketClass]}{isReturnTrip ? ' x2' : ''}
               </Text>
             </TouchableOpacity>
           ))}
         </View>
       </View>
 
-      {/* Price Display */}
+      {/* Price Display - Local Currency Prominent */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Ticket Price</Text>
         
-        <View style={styles.priceDisplay}>
-          <MultiCurrencyPrice
-            priceUSD={priceUSD}
-            localCurrency={localCurrency}
-            size="large"
-            showLabels={true}
-          />
-        </View>
+        {loadingRates ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="small" color="#38bdf8" />
+            <Text style={styles.loadingText}>Fetching live rates...</Text>
+          </View>
+        ) : (
+          <>
+            {/* Primary: Local Currency */}
+            <View style={styles.primaryPriceContainer}>
+              <Text style={styles.primaryPriceLabel}>
+                {getCurrencyName(localCurrency)}
+              </Text>
+              <Text style={styles.primaryPrice}>
+                {getCurrencySymbol(localCurrency)}{priceLocal.toLocaleString('en-US', { maximumFractionDigits: 0 })}
+              </Text>
+              <Text style={styles.primaryPriceCurrency}>{localCurrency}</Text>
+            </View>
+
+            {/* Secondary: USD and AFC */}
+            <View style={styles.secondaryPricesContainer}>
+              <View style={styles.secondaryPriceItem}>
+                <Text style={styles.secondaryPriceValue}>${priceUSD.toFixed(2)}</Text>
+                <Text style={styles.secondaryPriceLabel}>USD</Text>
+              </View>
+              
+              <Text style={styles.priceDivider}>•</Text>
+              
+              <View style={styles.secondaryPriceItem}>
+                <Text style={[styles.secondaryPriceValue, styles.afcPrice]}>
+                  {priceAFC.toFixed(2)} AFC
+                </Text>
+                <Text style={[styles.secondaryPriceLabel, styles.afcLabel]}>Africoin</Text>
+              </View>
+            </View>
+
+            {/* Rate Source Indicator */}
+            <View style={styles.rateSourceContainer}>
+              <Text style={styles.rateSourceText}>
+                {rateSource === 'api' ? '🔄 Live rate' : 
+                 rateSource === 'stale_cache' ? '📦 Cached rate' : 
+                 '📊 Standard rate'} • 1 USD = {exchangeRate.toFixed(2)} {localCurrency}
+              </Text>
+            </View>
+          </>
+        )}
 
         <View style={styles.priceInfo}>
           <Text style={styles.priceInfoText}>
@@ -162,33 +278,7 @@ const TicketBookingScreen = ({ route, navigation }) => {
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Payment Method</Text>
         
-        <TouchableOpacity
-          style={[
-            styles.paymentOption,
-            paymentMethod === 'afc' && styles.paymentOptionActive
-          ]}
-          onPress={() => setPaymentMethod('afc')}
-        >
-          <View style={styles.paymentOptionHeader}>
-            <Text style={[
-              styles.paymentOptionTitle,
-              paymentMethod === 'afc' && styles.paymentOptionTitleActive
-            ]}>
-              Africoin (AFC)
-            </Text>
-            <View style={[
-              styles.radio,
-              paymentMethod === 'afc' && styles.radioActive
-            ]} />
-          </View>
-          <Text style={styles.paymentOptionPrice}>
-            {prices.afc.toFixed(2)} AFC
-          </Text>
-          <Text style={styles.paymentOptionDescription}>
-            ⚡ Instant • No fees • Blockchain verified
-          </Text>
-        </TouchableOpacity>
-
+        {/* Local Currency Option - First */}
         <TouchableOpacity
           style={[
             styles.paymentOption,
@@ -209,13 +299,42 @@ const TicketBookingScreen = ({ route, navigation }) => {
             ]} />
           </View>
           <Text style={styles.paymentOptionPrice}>
-            {prices.local.toFixed(0)} {localCurrency}
+            {getCurrencySymbol(localCurrency)}{priceLocal.toLocaleString('en-US', { maximumFractionDigits: 0 })} {localCurrency}
           </Text>
           <Text style={styles.paymentOptionDescription}>
             💳 Mobile Money • Bank Transfer • Cash
           </Text>
         </TouchableOpacity>
 
+        {/* AFC Option */}
+        <TouchableOpacity
+          style={[
+            styles.paymentOption,
+            paymentMethod === 'afc' && styles.paymentOptionActive
+          ]}
+          onPress={() => setPaymentMethod('afc')}
+        >
+          <View style={styles.paymentOptionHeader}>
+            <Text style={[
+              styles.paymentOptionTitle,
+              paymentMethod === 'afc' && styles.paymentOptionTitleActive
+            ]}>
+              Africoin (AFC)
+            </Text>
+            <View style={[
+              styles.radio,
+              paymentMethod === 'afc' && styles.radioActive
+            ]} />
+          </View>
+          <Text style={styles.paymentOptionPrice}>
+            {priceAFC.toFixed(2)} AFC
+          </Text>
+          <Text style={styles.paymentOptionDescription}>
+            ⚡ Instant • No fees • Blockchain verified
+          </Text>
+        </TouchableOpacity>
+
+        {/* USD Option */}
         <TouchableOpacity
           style={[
             styles.paymentOption,
@@ -236,7 +355,7 @@ const TicketBookingScreen = ({ route, navigation }) => {
             ]} />
           </View>
           <Text style={styles.paymentOptionPrice}>
-            ${prices.usd.toFixed(2)} USD
+            ${priceUSD.toFixed(2)} USD
           </Text>
           <Text style={styles.paymentOptionDescription}>
             💵 International cards • PayPal • Wire transfer
@@ -246,7 +365,9 @@ const TicketBookingScreen = ({ route, navigation }) => {
 
       {/* Book Button */}
       <TouchableOpacity style={styles.bookButton} onPress={handleBooking}>
-        <Text style={styles.bookButtonText}>Confirm Booking</Text>
+        <Text style={styles.bookButtonText}>
+          {isReturnTrip ? 'Book Return Trip' : 'Confirm Booking'}
+        </Text>
       </TouchableOpacity>
 
       {/* Info Footer */}
@@ -296,6 +417,75 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
+  
+  // Route Selection Styles
+  routeHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  returnToggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1e293b',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  returnToggleLabel: {
+    color: '#94A3B8',
+    fontSize: 12,
+    fontWeight: '600',
+    marginRight: 8,
+  },
+  routeDisplay: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 15,
+  },
+  routePoint: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  routeDot: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: '#38bdf8',
+    marginBottom: 8,
+  },
+  routeDotDestination: {
+    backgroundColor: '#FFB800',
+  },
+  routeCity: {
+    color: '#F1F5F9',
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  routeLine: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  routeArrow: {
+    color: '#38bdf8',
+    fontSize: 24,
+  },
+  returnInfo: {
+    backgroundColor: 'rgba(255, 184, 0, 0.1)',
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  returnInfoText: {
+    color: '#FFB800',
+    fontSize: 12,
+    textAlign: 'center',
+  },
+
+  // Journey Details
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -337,6 +527,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginHorizontal: 5,
   },
+  
+  // Class Selection
   classButtons: {
     flexDirection: 'row',
     gap: 10,
@@ -372,9 +564,80 @@ const styles = StyleSheet.create({
     color: '#020617',
     fontWeight: 'bold',
   },
-  priceDisplay: {
+  
+  // Price Display - Local Currency Prominent
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
+  },
+  loadingText: {
+    color: '#64748B',
+    fontSize: 14,
+    marginLeft: 10,
+  },
+  primaryPriceContainer: {
     alignItems: 'center',
     paddingVertical: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1e293b',
+  },
+  primaryPriceLabel: {
+    color: '#64748B',
+    fontSize: 12,
+    textTransform: 'uppercase',
+    marginBottom: 8,
+  },
+  primaryPrice: {
+    color: '#FFB800',
+    fontSize: 42,
+    fontWeight: 'bold',
+  },
+  primaryPriceCurrency: {
+    color: '#94A3B8',
+    fontSize: 14,
+    fontWeight: '600',
+    marginTop: 4,
+  },
+  secondaryPricesContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 15,
+  },
+  secondaryPriceItem: {
+    alignItems: 'center',
+  },
+  secondaryPriceValue: {
+    color: '#94A3B8',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  secondaryPriceLabel: {
+    color: '#64748B',
+    fontSize: 10,
+    textTransform: 'uppercase',
+    marginTop: 2,
+  },
+  priceDivider: {
+    color: '#475569',
+    fontSize: 16,
+    marginHorizontal: 20,
+  },
+  afcPrice: {
+    color: '#38bdf8',
+  },
+  afcLabel: {
+    color: '#0284c7',
+  },
+  rateSourceContainer: {
+    alignItems: 'center',
+    paddingTop: 10,
+  },
+  rateSourceText: {
+    color: '#475569',
+    fontSize: 11,
   },
   priceInfo: {
     backgroundColor: '#1e293b',
@@ -387,6 +650,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
   },
+  
+  // Payment Options
   paymentOption: {
     padding: 15,
     borderRadius: 10,
@@ -434,6 +699,8 @@ const styles = StyleSheet.create({
     borderColor: '#38bdf8',
     backgroundColor: '#38bdf8',
   },
+  
+  // Book Button
   bookButton: {
     backgroundColor: '#FFB800',
     paddingVertical: 18,
@@ -447,6 +714,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  
+  // Footer
   footer: {
     padding: 15,
     backgroundColor: '#0f172a',

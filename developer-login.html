@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 Developer Login - Africa Railways API</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --navy: #0a0e1a;
+            --gold: #FFB800;
+            --cyan: #00D4FF;
+            --white: #ffffff;
+            --surface: #16203a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--navy) 0%, #1a2642 100%);
+            color: var(--white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .back-home {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--white);
+            text-decoration: none;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #333;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .back-home:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--gold);
+            transform: translateX(-3px);
+        }
+        
+        .login-container {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 50px 40px;
+            max-width: 450px;
+            width: 100%;
+            border: 1px solid #333;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .form-group input::placeholder {
+            color: #64748b;
+        }
+        
+        .login-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--gold) 0%, #ff9500 100%);
+            color: var(--navy);
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 184, 0, 0.4);
+        }
+        
+        .login-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #333;
+        }
+        
+        .divider span {
+            padding: 0 15px;
+        }
+        
+        .social-login {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-btn {
+            flex: 1;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            border-radius: 10px;
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .social-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--gold);
+        }
+        
+        .social-btn.google {
+            background: rgba(234, 67, 53, 0.1);
+            border-color: rgba(234, 67, 53, 0.3);
+        }
+        
+        .social-btn.google:hover {
+            background: rgba(234, 67, 53, 0.2);
+            border-color: #ea4335;
+        }
+        
+        .social-btn.github {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .status-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .status-message.success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+        
+        .status-message.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+        
+        .status-message.info {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: var(--cyan);
+        }
+        
+        .features {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid #333;
+        }
+        
+        .features h3 {
+            color: var(--gold);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            text-align: left;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+        
+        .feature-icon {
+            font-size: 1.2rem;
+            min-width: 25px;
+        }
+        
+        .register-link {
+            margin-top: 25px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .register-link a {
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--navy);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-home">
+        <i class="fas fa-arrow-left"></i>
+        Back to Home
+    </a>
+    
+    <div class="login-container">
+        <div class="logo">🔑</div>
+        <h1>Developer Portal</h1>
+        <p class="subtitle">Access API keys and documentation</p>
+        
+        <form id="login-form" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="developer@company.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter your password" required>
+            </div>
+            
+            <button type="submit" id="login-btn" class="login-button">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>Sign In</span>
+            </button>
+        </form>
+        
+        <div class="divider"><span>or continue with</span></div>
+        
+        <div class="social-login">
+            <button class="social-btn google" onclick="handleGoogleLogin()">
+                <i class="fab fa-google"></i>
+                Google
+            </button>
+            <button class="social-btn github" onclick="handleGithubLogin()">
+                <i class="fab fa-github"></i>
+                GitHub
+            </button>
+        </div>
+        
+        <div id="status-message" class="status-message"></div>
+        
+        <div class="features">
+            <h3>Developer Benefits</h3>
+            <div class="feature-item">
+                <span class="feature-icon">🔑</span>
+                <span>Generate and manage API keys</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">📊</span>
+                <span>Access usage analytics and logs</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">📚</span>
+                <span>Full API documentation access</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">🛡️</span>
+                <span>Secure key rotation and management</span>
+            </div>
+        </div>
+        
+        <div class="register-link">
+            Don't have an account? <a href="#" onclick="showRegisterInfo()">Register here</a>
+        </div>
+    </div>
+
+    <script>
+        // Check if already authenticated
+        window.addEventListener('DOMContentLoaded', () => {
+            const authToken = sessionStorage.getItem('dev_auth_token');
+            const authExpiry = sessionStorage.getItem('dev_auth_expiry');
+            
+            if (authToken && authExpiry) {
+                const expiryTime = parseInt(authExpiry);
+                if (Date.now() < expiryTime) {
+                    showStatus('Already authenticated. Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'operators.html';
+                    }, 1000);
+                    return;
+                }
+            }
+        });
+
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('status-message');
+            statusEl.textContent = message;
+            statusEl.className = `status-message ${type}`;
+            statusEl.style.display = 'block';
+        }
+
+        function hideStatus() {
+            const statusEl = document.getElementById('status-message');
+            statusEl.style.display = 'none';
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const loginBtn = document.getElementById('login-btn');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<span class="spinner"></span><span>Signing in...</span>';
+            hideStatus();
+            
+            try {
+                // Simulate authentication
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // For demo: accept any valid email format
+                if (email && password.length >= 4) {
+                    const mockToken = 'dev_' + Math.random().toString(36).substring(2);
+                    const expiryTime = Date.now() + (24 * 60 * 60 * 1000); // 24 hours
+                    
+                    sessionStorage.setItem('dev_auth_token', mockToken);
+                    sessionStorage.setItem('dev_auth_expiry', expiryTime.toString());
+                    sessionStorage.setItem('dev_user_email', email);
+                    sessionStorage.setItem('dev_user_name', email.split('@')[0]);
+                    
+                    showStatus('✅ Login successful! Redirecting...', 'success');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'operators.html';
+                    }, 1500);
+                } else {
+                    throw new Error('Invalid credentials');
+                }
+            } catch (error) {
+                showStatus('❌ Invalid email or password. Please try again.', 'error');
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i><span>Sign In</span>';
+            }
+        }
+
+        async function handleGoogleLogin() {
+            showStatus('Connecting to Google...', 'info');
+            
+            // Simulate OAuth flow
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            const mockToken = 'google_' + Math.random().toString(36).substring(2);
+            const expiryTime = Date.now() + (24 * 60 * 60 * 1000);
+            
+            sessionStorage.setItem('dev_auth_token', mockToken);
+            sessionStorage.setItem('dev_auth_expiry', expiryTime.toString());
+            sessionStorage.setItem('dev_user_email', 'developer@gmail.com');
+            sessionStorage.setItem('dev_user_name', 'Developer');
+            
+            showStatus('✅ Google login successful! Redirecting...', 'success');
+            
+            setTimeout(() => {
+                window.location.href = 'operators.html';
+            }, 1500);
+        }
+
+        async function handleGithubLogin() {
+            showStatus('Connecting to GitHub...', 'info');
+            
+            // Simulate OAuth flow
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            const mockToken = 'github_' + Math.random().toString(36).substring(2);
+            const expiryTime = Date.now() + (24 * 60 * 60 * 1000);
+            
+            sessionStorage.setItem('dev_auth_token', mockToken);
+            sessionStorage.setItem('dev_auth_expiry', expiryTime.toString());
+            sessionStorage.setItem('dev_user_email', 'developer@github.com');
+            sessionStorage.setItem('dev_user_name', 'GitHubDev');
+            
+            showStatus('✅ GitHub login successful! Redirecting...', 'success');
+            
+            setTimeout(() => {
+                window.location.href = 'operators.html';
+            }, 1500);
+        }
+
+        function showRegisterInfo() {
+            showStatus('📧 Contact api@africarailways.com to request developer access.', 'info');
+        }
+    </script>
+</body>
+</html>

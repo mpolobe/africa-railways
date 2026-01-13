@@ -292,10 +292,50 @@
     <script type="text/babel">
         const { useState, useEffect, useMemo } = React;
 
+        // Exchange rates (USD to local currency) - fallback values
+        const FALLBACK_RATES = {
+            ZMW: 27.50,  // Zambian Kwacha
+            TZS: 2580.00, // Tanzanian Shilling
+            KES: 129.00,  // Kenyan Shilling
+            ZAR: 18.75,   // South African Rand
+            UGX: 3750.00, // Ugandan Shilling
+            NGN: 1550.00, // Nigerian Naira
+            USD: 1.00,
+        };
+
+        // Currency symbols
+        const CURRENCY_SYMBOLS = {
+            ZMW: 'ZK',
+            TZS: 'TSh',
+            KES: 'KSh',
+            ZAR: 'R',
+            UGX: 'USh',
+            NGN: '₦',
+            USD: '$',
+        };
+
+        // Currency names
+        const CURRENCY_NAMES = {
+            ZMW: 'Zambian Kwacha',
+            TZS: 'Tanzanian Shilling',
+            KES: 'Kenyan Shilling',
+            ZAR: 'South African Rand',
+            UGX: 'Ugandan Shilling',
+            NGN: 'Nigerian Naira',
+            USD: 'US Dollar',
+        };
+
+        // Base prices in USD
+        const BASE_PRICES = {
+            economy: 50,
+            business: 120,
+            first: 200,
+        };
+
         const CLASSES = [
-            { id: 'economy', name: 'Economy', priceUSD: 50, priceAFC: 50, priceLocal: 'TZS 130,000', icon: '💺' },
-            { id: 'business', name: 'Business', priceUSD: 120, priceAFC: 120, priceLocal: 'TZS 312,000', icon: '🛋️' },
-            { id: 'first', name: 'First Class', priceUSD: 200, priceAFC: 200, priceLocal: 'TZS 520,000', icon: '👑' },
+            { id: 'economy', name: 'Economy', priceUSD: 50, icon: '💺' },
+            { id: 'business', name: 'Business', priceUSD: 120, icon: '🛋️' },
+            { id: 'first', name: 'First Class', priceUSD: 200, icon: '👑' },
         ];
 
         // Simple Search Station Selector Component (API-based for performance)
@@ -669,6 +709,36 @@
             const [status, setStatus] = useState('');
             const [isBooking, setIsBooking] = useState(false);
             const [searchMode, setSearchMode] = useState('simple'); // 'simple' or 'advanced'
+            const [isReturnTrip, setIsReturnTrip] = useState(false);
+            const [localCurrency, setLocalCurrency] = useState('TZS');
+            const [exchangeRates, setExchangeRates] = useState(FALLBACK_RATES);
+            const [rateSource, setRateSource] = useState('fallback');
+            const [loadingRates, setLoadingRates] = useState(true);
+
+            // Fetch live exchange rates
+            useEffect(() => {
+                const fetchRates = async () => {
+                    try {
+                        setLoadingRates(true);
+                        const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                        if (response.ok) {
+                            const data = await response.json();
+                            const rates = {};
+                            Object.keys(FALLBACK_RATES).forEach(currency => {
+                                rates[currency] = data.rates[currency] || FALLBACK_RATES[currency];
+                            });
+                            setExchangeRates(rates);
+                            setRateSource('live');
+                        }
+                    } catch (error) {
+                        console.warn('Failed to fetch live rates, using fallback:', error);
+                        setRateSource('fallback');
+                    } finally {
+                        setLoadingRates(false);
+                    }
+                };
+                fetchRates();
+            }, []);
 
             // Load station data only when needed (for advanced mode)
             useEffect(() => {
@@ -694,9 +764,23 @@
                 setTo('');
             };
 
+            // Calculate prices with return trip multiplier
+            const tripMultiplier = isReturnTrip ? 2 : 1;
             const selectedClassData = CLASSES.find(c => c.id === selectedClass);
-            const totalPriceUSD = selectedClassData ? selectedClassData.priceUSD * passengers : 0;
-            const totalPriceAFC = selectedClassData ? selectedClassData.priceAFC * passengers : 0;
+            const basePriceUSD = selectedClassData ? selectedClassData.priceUSD : 0;
+            const totalPriceUSD = basePriceUSD * passengers * tripMultiplier;
+            const totalPriceAFC = totalPriceUSD; // 1 AFC = 1 USD
+            const totalPriceLocal = totalPriceUSD * (exchangeRates[localCurrency] || 1);
+            
+            // Format local currency
+            const formatLocalPrice = (amount) => {
+                const symbol = CURRENCY_SYMBOLS[localCurrency] || localCurrency;
+                // No decimals for large value currencies
+                if (['TZS', 'UGX', 'NGN'].includes(localCurrency)) {
+                    return `${symbol}${Math.round(amount).toLocaleString()}`;
+                }
+                return `${symbol}${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            };
 
             // Find station details for summary
             const findStation = (stationId) => {
@@ -778,12 +862,40 @@
                     <div className="payment-banner">
                         <h3>💳 Payment & Rewards</h3>
                         <p>
-                            Pay with <strong>local currency (TZS)</strong>, <strong>AFC (Africoin stablecoin)</strong>, or <strong>USD</strong>. 
+                            Pay with <strong>local currency ({CURRENCY_NAMES[localCurrency]})</strong>, <strong>AFC (Africoin stablecoin)</strong>, or <strong>USD</strong>. 
                             Multi-currency support for seamless cross-border travel across Africa.
                         </p>
                         <p style={{ marginTop: '10px', fontSize: '0.9rem' }}>
                             Earn <strong>AFRC rewards</strong> on every journey • Stake for 12% APY • Vote on governance
                         </p>
+                        
+                        {/* Currency Selector */}
+                        <div style={{ marginTop: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                            <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Display prices in:</span>
+                            <select 
+                                value={localCurrency}
+                                onChange={(e) => setLocalCurrency(e.target.value)}
+                                style={{ 
+                                    padding: '8px 12px', 
+                                    background: 'rgba(255,255,255,0.1)', 
+                                    border: '1px solid var(--gold)', 
+                                    borderRadius: '6px', 
+                                    color: 'white', 
+                                    fontSize: '0.9rem',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                <option value="TZS">🇹🇿 TZS - Tanzanian Shilling</option>
+                                <option value="ZMW">🇿🇲 ZMW - Zambian Kwacha</option>
+                                <option value="KES">🇰🇪 KES - Kenyan Shilling</option>
+                                <option value="ZAR">🇿🇦 ZAR - South African Rand</option>
+                                <option value="UGX">🇺🇬 UGX - Ugandan Shilling</option>
+                                <option value="NGN">🇳🇬 NGN - Nigerian Naira</option>
+                            </select>
+                            <span style={{ color: '#64748b', fontSize: '0.75rem' }}>
+                                {rateSource === 'live' ? '🔄 Live rate' : '📊 Standard rate'}
+                            </span>
+                        </div>
                     </div>
 
                     <div className="booking-grid">
@@ -826,6 +938,57 @@
                                         🗂️ Advanced
                                     </button>
                                 </div>
+                            </div>
+
+                            {/* Return Trip Toggle */}
+                            <div style={{ 
+                                marginBottom: '20px', 
+                                padding: '15px', 
+                                background: isReturnTrip ? 'rgba(255,184,0,0.1)' : 'rgba(255,255,255,0.05)', 
+                                borderRadius: '10px',
+                                border: isReturnTrip ? '2px solid var(--gold)' : '1px solid #333',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                transition: 'all 0.3s'
+                            }}>
+                                <div>
+                                    <div style={{ fontWeight: '600', color: isReturnTrip ? 'var(--gold)' : 'white', marginBottom: '4px' }}>
+                                        {isReturnTrip ? '⇄ Return Trip' : '→ One Way'}
+                                    </div>
+                                    <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
+                                        {isReturnTrip ? 'Round trip ticket included' : 'Single journey only'}
+                                    </div>
+                                </div>
+                                <label style={{ 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    gap: '10px',
+                                    cursor: 'pointer',
+                                    padding: '8px 16px',
+                                    background: isReturnTrip ? 'var(--gold)' : 'rgba(255,255,255,0.1)',
+                                    borderRadius: '20px',
+                                    transition: 'all 0.3s'
+                                }}>
+                                    <span style={{ 
+                                        fontSize: '0.85rem', 
+                                        fontWeight: '600',
+                                        color: isReturnTrip ? 'var(--navy)' : '#94a3b8'
+                                    }}>
+                                        Return Trip
+                                    </span>
+                                    <input 
+                                        type="checkbox"
+                                        checked={isReturnTrip}
+                                        onChange={(e) => setIsReturnTrip(e.target.checked)}
+                                        style={{ 
+                                            width: '18px', 
+                                            height: '18px',
+                                            accentColor: 'var(--gold)',
+                                            cursor: 'pointer'
+                                        }}
+                                    />
+                                </label>
                             </div>
 
                             {/* Station count info */}
@@ -903,23 +1066,31 @@
                             </div>
 
                             <div className="form-group">
-                                <label>Travel Class</label>
+                                <label>Travel Class {isReturnTrip && <span style={{ color: 'var(--gold)', fontSize: '0.8rem' }}>(× 2 for return)</span>}</label>
                                 <div className="class-options">
-                                    {CLASSES.map(cls => (
-                                        <div 
-                                            key={cls.id}
-                                            className={`class-option ${selectedClass === cls.id ? 'selected' : ''}`}
-                                            onClick={() => setSelectedClass(cls.id)}
-                                        >
-                                            <div style={{ fontSize: '2rem' }}>{cls.icon}</div>
-                                            <div>{cls.name}</div>
-                                            <div className="price" style={{ fontSize: '0.85rem', lineHeight: '1.4' }}>
-                                                <div>{cls.priceLocal}</div>
-                                                <div>{cls.priceAFC} AFC</div>
-                                                <div>${cls.priceUSD} USD</div>
+                                    {CLASSES.map(cls => {
+                                        const classLocalPrice = cls.priceUSD * (exchangeRates[localCurrency] || 1) * tripMultiplier;
+                                        const classUSDPrice = cls.priceUSD * tripMultiplier;
+                                        return (
+                                            <div 
+                                                key={cls.id}
+                                                className={`class-option ${selectedClass === cls.id ? 'selected' : ''}`}
+                                                onClick={() => setSelectedClass(cls.id)}
+                                            >
+                                                <div style={{ fontSize: '2rem' }}>{cls.icon}</div>
+                                                <div>{cls.name}</div>
+                                                <div className="price" style={{ fontSize: '0.85rem', lineHeight: '1.4' }}>
+                                                    {/* Local currency prominent */}
+                                                    <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--cyan)' }}>
+                                                        {formatLocalPrice(classLocalPrice)}
+                                                    </div>
+                                                    <div style={{ color: '#94a3b8', fontSize: '0.8rem' }}>
+                                                        ${classUSDPrice} USD • {classUSDPrice} AFC
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>
@@ -933,7 +1104,13 @@
                                         <div className="summary-item">
                                             <span>Route</span>
                                             <span style={{ textAlign: 'right' }}>
-                                                {fromStation?.city} → {toStation?.city}
+                                                {fromStation?.city} {isReturnTrip ? '⇄' : '→'} {toStation?.city}
+                                            </span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span>Trip Type</span>
+                                            <span style={{ color: isReturnTrip ? 'var(--gold)' : 'white' }}>
+                                                {isReturnTrip ? '⇄ Return Trip' : '→ One Way'}
                                             </span>
                                         </div>
                                         <div className="summary-item">
@@ -948,21 +1125,43 @@
                                             <span>Class</span>
                                             <span>{selectedClassData?.name}</span>
                                         </div>
-                                        <div className="summary-item">
-                                            <span>Price per ticket</span>
-                                            <span style={{ textAlign: 'right', fontSize: '0.9rem', lineHeight: '1.5' }}>
-                                                <div>{selectedClassData?.priceLocal}</div>
-                                                <div>{selectedClassData?.priceAFC} AFC</div>
-                                                <div>${selectedClassData?.priceUSD} USD</div>
-                                            </span>
-                                        </div>
-                                        <div className="summary-item" style={{ borderTop: '1px solid #333', paddingTop: '15px', marginTop: '10px' }}>
-                                            <span style={{ fontWeight: 'bold', color: 'var(--gold)' }}>Total</span>
-                                            <span style={{ textAlign: 'right', fontSize: '1rem', lineHeight: '1.5', fontWeight: 'bold' }}>
-                                                <div style={{ color: 'var(--cyan)' }}>{selectedClassData ? `TZS ${(parseInt(selectedClassData.priceLocal.split(' ')[1].replace(/,/g, '')) * passengers).toLocaleString()}` : ''}</div>
-                                                <div style={{ color: 'var(--gold)' }}>{totalPriceAFC} AFC</div>
-                                                <div style={{ color: 'var(--green)' }}>${totalPriceUSD} USD</div>
-                                            </span>
+                                        
+                                        {/* Total - Local Currency Prominent */}
+                                        <div style={{ 
+                                            marginTop: '20px', 
+                                            padding: '20px', 
+                                            background: 'rgba(0,212,255,0.1)', 
+                                            borderRadius: '12px',
+                                            border: '1px solid rgba(0,212,255,0.3)',
+                                            textAlign: 'center'
+                                        }}>
+                                            <div style={{ color: '#94a3b8', fontSize: '0.85rem', marginBottom: '8px' }}>
+                                                TOTAL ({CURRENCY_NAMES[localCurrency]})
+                                            </div>
+                                            <div style={{ 
+                                                fontSize: '2rem', 
+                                                fontWeight: 'bold', 
+                                                color: 'var(--cyan)',
+                                                marginBottom: '10px'
+                                            }}>
+                                                {formatLocalPrice(totalPriceLocal)}
+                                            </div>
+                                            <div style={{ 
+                                                display: 'flex', 
+                                                justifyContent: 'center', 
+                                                gap: '20px',
+                                                fontSize: '0.9rem'
+                                            }}>
+                                                <span style={{ color: 'var(--gold)' }}>{totalPriceAFC} AFC</span>
+                                                <span style={{ color: 'var(--green)' }}>${totalPriceUSD} USD</span>
+                                            </div>
+                                            <div style={{ 
+                                                marginTop: '10px', 
+                                                fontSize: '0.75rem', 
+                                                color: '#64748b' 
+                                            }}>
+                                                1 USD = {exchangeRates[localCurrency]?.toFixed(2)} {localCurrency} • {rateSource === 'live' ? '🔄 Live rate' : '📊 Standard rate'}
+                                            </div>
                                         </div>
                                     </>
                                 )}
@@ -978,7 +1177,7 @@
                                     onClick={handleBooking}
                                     disabled={!from || !to || !date || isBooking}
                                 >
-                                    {isBooking ? 'Processing...' : 'Book Now'}
+                                    {isBooking ? 'Processing...' : isReturnTrip ? '⇄ Book Return Trip' : '→ Book Now'}
                                 </button>
 
                                 {status && (
@@ -989,7 +1188,12 @@
 
                                 <div className="info-box">
                                     <strong>💡 Payment Info:</strong><br/>
-                                    Tickets can be paid with local currency (TZS), AFC (Africoin stablecoin), or USD. AFC is pegged 1:1 with USD. Earn AFRC loyalty rewards on every purchase.
+                                    Tickets can be paid with <strong>{CURRENCY_NAMES[localCurrency]}</strong>, AFC (Africoin stablecoin), or USD. AFC is pegged 1:1 with USD. Earn AFRC loyalty rewards on every purchase.
+                                    {isReturnTrip && (
+                                        <div style={{ marginTop: '10px', color: 'var(--gold)' }}>
+                                            ↩️ <strong>Return trip</strong> - Your ticket includes the journey back!
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>

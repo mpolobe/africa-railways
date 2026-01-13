@@ -4,6 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Railway Operators - Africa Railways</title>
+    <script>
+        // Check authentication for API key access
+        window.isAuthenticated = false;
+        window.userEmail = null;
+        window.userName = null;
+        
+        (function() {
+            const authToken = sessionStorage.getItem('dev_auth_token');
+            const authExpiry = sessionStorage.getItem('dev_auth_expiry');
+            
+            if (authToken && authExpiry) {
+                const expiryTime = parseInt(authExpiry);
+                if (Date.now() < expiryTime) {
+                    window.isAuthenticated = true;
+                    window.userEmail = sessionStorage.getItem('dev_user_email');
+                    window.userName = sessionStorage.getItem('dev_user_name');
+                }
+            }
+        })();
+    </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -274,10 +294,11 @@
                     <option value="">All Countries</option>
                 </select>
             </div>
-            <div class="col-md-2 mb-3">
-                <button class="btn btn-outline-light w-100" onclick="resetFilters()">
+            <div class="col-md-2 mb-3 d-flex align-items-center gap-2">
+                <button class="btn btn-outline-light flex-grow-1" onclick="resetFilters()">
                     <i class="bi bi-x-circle me-1"></i>Reset
                 </button>
+                <span id="dataSourceIndicator"></span>
             </div>
         </div>
 
@@ -304,11 +325,42 @@
             <!-- API Key Generation Panel -->
             <div class="col-lg-4">
                 <div class="card sticky-top" style="top: 20px;">
-                    <div class="card-header">
-                        <i class="bi bi-key-fill me-2"></i>Generate API Key
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-key-fill me-2"></i>Generate API Key</span>
+                        <span id="authStatus"></span>
                     </div>
                     <div class="card-body">
-                        <div id="noOperatorSelected">
+                        <!-- Login Required Message -->
+                        <div id="loginRequired">
+                            <div class="text-center py-4">
+                                <i class="bi bi-lock-fill d-block mb-3" style="font-size: 3rem; color: var(--gold);"></i>
+                                <h5 style="color: var(--gold);">Login Required</h5>
+                                <p class="text-muted mb-4">
+                                    Sign in to your developer account to generate and manage API keys.
+                                </p>
+                                <a href="developer-login.html" class="btn btn-generate w-100 mb-3">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>Sign In to Continue
+                                </a>
+                                <p class="text-muted small mb-0">
+                                    Don't have an account? <a href="developer-login.html" style="color: var(--cyan);">Register here</a>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Authenticated User Info -->
+                        <div id="userInfo" style="display: none;">
+                            <div class="d-flex align-items-center justify-content-between mb-3 p-2" style="background: rgba(255,184,0,0.1); border-radius: 8px;">
+                                <div>
+                                    <small class="text-muted d-block">Logged in as</small>
+                                    <span id="loggedInUser" style="color: var(--gold); font-weight: 600;"></span>
+                                </div>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="logout()">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="noOperatorSelected" style="display: none;">
                             <p class="text-muted text-center mb-0">
                                 <i class="bi bi-arrow-left-circle d-block mb-2" style="font-size: 2rem;"></i>
                                 Select an operator to generate an API key
@@ -325,11 +377,11 @@
                                 <input type="hidden" id="operatorId">
                                 <div class="mb-3">
                                     <label class="form-label">Your Name</label>
-                                    <input type="text" class="form-control" id="userName" required placeholder="Enter your name">
+                                    <input type="text" class="form-control" id="formUserName" required placeholder="Enter your name">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Email Address</label>
-                                    <input type="email" class="form-control" id="userEmail" required placeholder="Enter your email">
+                                    <input type="email" class="form-control" id="formUserEmail" required placeholder="Enter your email">
                                 </div>
                                 <button type="submit" class="btn btn-generate w-100">
                                     <i class="bi bi-key me-2"></i>Generate API Key
@@ -396,6 +448,57 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Initialize authentication UI
+        document.addEventListener('DOMContentLoaded', () => {
+            updateAuthUI();
+        });
+
+        function updateAuthUI() {
+            const loginRequired = document.getElementById('loginRequired');
+            const userInfo = document.getElementById('userInfo');
+            const noOperatorSelected = document.getElementById('noOperatorSelected');
+            const authStatus = document.getElementById('authStatus');
+            
+            if (window.isAuthenticated) {
+                // User is logged in
+                loginRequired.style.display = 'none';
+                userInfo.style.display = 'block';
+                noOperatorSelected.style.display = 'block';
+                
+                document.getElementById('loggedInUser').textContent = window.userEmail || 'Developer';
+                authStatus.innerHTML = '<span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Authenticated</span>';
+                
+                // Pre-fill form with user info
+                const formUserName = document.getElementById('formUserName');
+                const formUserEmail = document.getElementById('formUserEmail');
+                if (formUserName) formUserName.value = window.userName || '';
+                if (formUserEmail) formUserEmail.value = window.userEmail || '';
+            } else {
+                // User is not logged in
+                loginRequired.style.display = 'block';
+                userInfo.style.display = 'none';
+                noOperatorSelected.style.display = 'none';
+                authStatus.innerHTML = '<span class="badge bg-secondary"><i class="bi bi-lock me-1"></i>Login Required</span>';
+            }
+        }
+
+        function logout() {
+            sessionStorage.removeItem('dev_auth_token');
+            sessionStorage.removeItem('dev_auth_expiry');
+            sessionStorage.removeItem('dev_user_email');
+            sessionStorage.removeItem('dev_user_name');
+            window.isAuthenticated = false;
+            window.userEmail = null;
+            window.userName = null;
+            updateAuthUI();
+            
+            // Reset operator selection
+            selectedOperator = null;
+            document.getElementById('operatorSelected').style.display = 'none';
+            document.getElementById('apiKeyResult').style.display = 'none';
+            renderOperators(filterOperators());
+        }
+
         // Determine API base URL
         const API_BASE = (() => {
             const hostname = window.location.hostname;
@@ -413,39 +516,123 @@
         
         let allOperators = [];
         let selectedOperator = null;
+        let dataSource = 'unknown'; // 'api', 'local', or 'cache'
 
+        // Load operators with offline-first approach
         async function loadOperators() {
+            // First, try to load from local JSON (always available)
+            let localData = null;
             try {
-                const response = await fetch(`${API_BASE}/api/operators`);
-                const data = await response.json();
+                const localResponse = await fetch('/data/operators.json');
+                if (localResponse.ok) {
+                    localData = await localResponse.json();
+                    console.log('📦 Loaded local operators data:', localData.operators?.length || 0, 'operators');
+                }
+            } catch (e) {
+                console.warn('Could not load local operators.json:', e);
+            }
+
+            // Then try to fetch from API for latest data
+            let apiData = null;
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
                 
-                allOperators = data.operators || [];
+                const apiResponse = await fetch(`${API_BASE}/api/operators`, {
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
                 
-                // Update stats
-                document.getElementById('totalOperators').textContent = data.metadata?.totalOperators || allOperators.length;
-                document.getElementById('totalRegions').textContent = data.metadata?.regions?.length || 5;
-                
-                // Calculate total network
-                const totalKm = allOperators.reduce((sum, op) => sum + (op.networkLength || 0), 0);
-                document.getElementById('totalNetwork').textContent = totalKm.toLocaleString();
-                
-                // Get unique countries
-                const countries = [...new Set(allOperators.map(op => op.country))];
-                document.getElementById('totalCountries').textContent = countries.length;
-                
-                // Populate filters
-                populateFilters(data.metadata?.regions || [], countries);
-                
-                // Render operators
-                renderOperators(allOperators);
+                if (apiResponse.ok) {
+                    apiData = await apiResponse.json();
+                    console.log('🌐 Loaded API operators data:', apiData.operators?.length || 0, 'operators');
+                    dataSource = 'api';
+                    
+                    // Cache API data for offline use
+                    try {
+                        localStorage.setItem('operators_cache', JSON.stringify(apiData));
+                        localStorage.setItem('operators_cache_time', Date.now().toString());
+                    } catch (e) {
+                        console.warn('Could not cache operators:', e);
+                    }
+                }
             } catch (error) {
-                console.error('Failed to load operators:', error);
+                console.warn('API not available:', error.message);
+            }
+
+            // Determine which data to use
+            let data;
+            if (apiData && apiData.operators?.length > 0) {
+                // API data is available and has operators
+                data = apiData;
+                dataSource = 'api';
+            } else if (localData && localData.operators?.length > 0) {
+                // Fall back to local JSON
+                data = localData;
+                dataSource = 'local';
+            } else {
+                // Try cached data as last resort
+                try {
+                    const cached = localStorage.getItem('operators_cache');
+                    if (cached) {
+                        data = JSON.parse(cached);
+                        dataSource = 'cache';
+                        console.log('💾 Using cached operators data');
+                    }
+                } catch (e) {
+                    console.warn('Could not load cached operators:', e);
+                }
+            }
+
+            if (!data || !data.operators?.length) {
                 document.getElementById('operatorsList').innerHTML = `
                     <div class="col-12 text-center py-5">
                         <i class="bi bi-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
-                        <p class="mt-3">Failed to load operators. Please try again later.</p>
+                        <p class="mt-3">No operators data available. Please check your connection.</p>
                     </div>
                 `;
+                return;
+            }
+
+            // Process the data
+            allOperators = data.operators || [];
+            
+            // Update stats
+            document.getElementById('totalOperators').textContent = data.metadata?.totalOperators || allOperators.length;
+            document.getElementById('totalRegions').textContent = data.metadata?.regions?.length || 5;
+            
+            // Calculate total network
+            const totalKm = allOperators.reduce((sum, op) => sum + (op.networkLength || 0), 0);
+            document.getElementById('totalNetwork').textContent = totalKm.toLocaleString();
+            
+            // Get unique countries
+            const countries = [...new Set(allOperators.map(op => op.country))];
+            document.getElementById('totalCountries').textContent = countries.length;
+            
+            // Populate filters
+            populateFilters(data.metadata?.regions || [], countries);
+            
+            // Render operators
+            renderOperators(allOperators);
+            
+            // Show data source indicator
+            updateDataSourceIndicator();
+        }
+
+        function updateDataSourceIndicator() {
+            const indicator = document.getElementById('dataSourceIndicator');
+            if (indicator) {
+                const icons = {
+                    'api': '🌐 Live',
+                    'local': '📦 Offline',
+                    'cache': '💾 Cached'
+                };
+                const colors = {
+                    'api': 'success',
+                    'local': 'warning',
+                    'cache': 'secondary'
+                };
+                indicator.innerHTML = `<span class="badge bg-${colors[dataSource] || 'secondary'}">${icons[dataSource] || 'Unknown'}</span>`;
             }
         }
 
@@ -522,6 +709,14 @@
             selectedOperator = allOperators.find(op => op.id === id);
             
             if (selectedOperator) {
+                // Check if user is authenticated
+                if (!window.isAuthenticated) {
+                    // Show login prompt
+                    alert('Please sign in to generate API keys for operators.');
+                    window.location.href = 'developer-login.html';
+                    return;
+                }
+                
                 document.getElementById('noOperatorSelected').style.display = 'none';
                 document.getElementById('operatorSelected').style.display = 'block';
                 document.getElementById('apiKeyResult').style.display = 'none';

@@ -215,8 +215,9 @@ formatCurrency(25, 'USD');     // "$25.00"
 ## Future Enhancements
 
 ### Phase 2 (Q2 2026)
-- [ ] Live exchange rate API integration
-- [ ] User preference for default currency
+- [x] Live exchange rate API integration ✅ **Completed Jan 2026**
+- [x] User preference for default currency ✅ **Completed Jan 2026**
+- [x] Return trip toggle for booking ✅ **Completed Jan 2026**
 - [ ] Historical price tracking
 - [ ] Multi-currency wallet balance
 - [ ] Automatic currency detection via GPS
@@ -243,7 +244,10 @@ POST /api/payments/usd
 ```
 
 ### Current Implementation
-- Static exchange rates (updated periodically)
+- **Live exchange rates** from ExchangeRate-API with 1-hour caching
+- **Fallback rates** when API is unavailable
+- **Return trip toggle** for round-trip bookings
+- **Currency selector** supporting 6 African currencies (TZS, ZMW, KES, ZAR, UGX, NGN)
 - Hardcoded ticket prices (sample data)
 - Mock booking confirmation
 - Ready for backend integration
