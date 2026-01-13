@@ -457,6 +457,8 @@
             const loginRequired = document.getElementById('loginRequired');
             const userInfo = document.getElementById('userInfo');
             const noOperatorSelected = document.getElementById('noOperatorSelected');
+            const operatorSelected = document.getElementById('operatorSelected');
+            const apiKeyResult = document.getElementById('apiKeyResult');
             const authStatus = document.getElementById('authStatus');
             
             if (window.isAuthenticated) {
@@ -474,10 +476,12 @@
                 if (formUserName) formUserName.value = window.userName || '';
                 if (formUserEmail) formUserEmail.value = window.userEmail || '';
             } else {
-                // User is not logged in
+                // User is not logged in - hide everything except login prompt
                 loginRequired.style.display = 'block';
                 userInfo.style.display = 'none';
                 noOperatorSelected.style.display = 'none';
+                if (operatorSelected) operatorSelected.style.display = 'none';
+                if (apiKeyResult) apiKeyResult.style.display = 'none';
                 authStatus.innerHTML = '<span class="badge bg-secondary"><i class="bi bi-lock me-1"></i>Login Required</span>';
             }
         }
