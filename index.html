@@ -31,10 +31,10 @@
         :root { --navy: #0a0e1a; --gold: #FFB800; --cyan: #00D4FF; --white: #ffffff; --surface: #16203a; }
         html { scroll-behavior: smooth; }
         body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; }
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 4% 20px 2%; background: rgba(10,14,26,0.95); border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
-        .logo { font-size: 1.4rem; font-weight: 800; color: var(--gold); text-decoration: none; display: flex; align-items: center; gap: 10px; }
-        .nav-links { display: flex; list-style: none; gap: 20px; margin: 0; align-items: center; padding-right: 20px; }
-        .nav-links a { color: var(--white); text-decoration: none; font-size: 0.9rem; transition: 0.3s; font-weight: 500; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 2%; background: rgba(10,14,26,0.95); border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+        .logo { font-size: 1.2rem; font-weight: 800; color: var(--gold); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+        .nav-links { display: flex; list-style: none; gap: 15px; margin: 0; align-items: center; padding-right: 10px; }
+        .nav-links a, .nav-links .dropdown-toggle { color: var(--white); text-decoration: none; font-size: 0.85rem; transition: 0.3s; font-weight: 500; }
         .nav-links a:hover { color: var(--gold); }
         .nav-item { position: relative; }
         .dropdown { position: relative; }
@@ -116,7 +116,7 @@
             <span>Africa <span style="color:var(--cyan)">Railways</span></span>
         </a>
         <ul class="nav-links">
-            <li class="nav-item" style="margin-left: -10px;"><a href="#home">Home</a></li>
+            <li class="nav-item"><a href="#home">Home</a></li>
             <li class="nav-item"><a href="/about.html">About</a></li>
             <li class="nav-item"><a href="/track-trains.html">🗺️ Live Map</a></li>
             
@@ -169,8 +169,8 @@
                 </div>
             </li>
             
-            <li class="nav-item"><a href="/tazara-pilot.html" style="background: linear-gradient(135deg, #8b5cf6, #ec4899); color: white; padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 0.9rem;">🚀 Pilot</a></li>
-            <li class="nav-item"><a href="/book-tickets.html" class="cta-nav" style="padding: 8px 12px; font-size: 0.9rem;">🎫 Tickets</a></li>
+            <li class="nav-item"><a href="/tazara-pilot.html" style="background: linear-gradient(135deg, #8b5cf6, #ec4899); color: white; padding: 6px 10px; border-radius: 6px; font-weight: 600; font-size: 0.85rem;">🚀 Pilot</a></li>
+            <li class="nav-item"><a href="/book-tickets.html" class="cta-nav" style="padding: 6px 10px; font-size: 0.85rem;">🎫 Tickets</a></li>
         </ul>
     </nav>
     <section id="home" class="hero">
