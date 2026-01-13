@@ -230,6 +230,10 @@ func main() {
 	mux.HandleFunc("/api/operators/apikey/generate", generateAPIKeyHandler)
 	mux.HandleFunc("/api/operators/apikey/validate", validateAPIKeyHandler)
 
+	// AI Chat endpoints
+	mux.HandleFunc("/api/ai/chat", aiChatHandler)
+	mux.HandleFunc("/api/admin/apikey", updateAPIKeyHandler)
+
 	log.Println("🛰️  Sentinel Engine Live on :" + port)
 	log.Println("📡 WebSocket endpoint: /ws")
 	log.Println("📩 Add event endpoint: /add-event")
@@ -240,5 +244,6 @@ func main() {
 	log.Println("📱 Sentinel Mobile API: /api/sentinel/*")
 	log.Println("📘 Facebook API: /api/facebook/*")
 	log.Println("🚂 Operators API: /api/operators/*")
+	log.Println("🤖 AI Chat API: /api/ai/chat")
 	log.Fatal(http.ListenAndServe(":"+port, corsMiddleware(mux)))
 }
