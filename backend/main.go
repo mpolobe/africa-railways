@@ -184,6 +184,9 @@ func main() {
 	// Initialize notifications
 	InitNotifications()
 
+	// Initialize WhatsApp OTP service
+	initWhatsAppConfig()
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/ws", wsHandler)
 	mux.HandleFunc("/add-event", addEventHandler)
@@ -238,6 +241,10 @@ func main() {
 	mux.HandleFunc("/api/sms/send", smsHandler)
 	mux.HandleFunc("/api/sms/booking-confirmation", bookingConfirmationHandler)
 
+	// OTP Authentication endpoints
+	mux.HandleFunc("/api/auth/send-otp", sendOTPHandler)
+	mux.HandleFunc("/api/auth/verify-otp", verifyOTPHandler)
+
 	// Bookings & Payments endpoints
 	mux.HandleFunc("/api/bookings", bookingsHandler)
 	mux.HandleFunc("/api/bookings/detail", bookingDetailHandler)
@@ -258,6 +265,7 @@ func main() {
 	log.Println("🚂 Operators API: /api/operators/*")
 	log.Println("🤖 AI Chat API: /api/ai/chat")
 	log.Println("🎫 Bookings API: /api/bookings/*")
+	log.Println("🔐 Auth OTP API: /api/auth/*")
 	log.Println("💳 Payments API: /api/payments")
 	log.Fatal(http.ListenAndServe(":"+port, corsMiddleware(mux)))
 }

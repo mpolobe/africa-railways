@@ -1203,45 +1203,53 @@
             }
             
             pendingPhone = phone;
-            
-            // Generate 6-digit OTP
-            pendingOtp = Math.floor(100000 + Math.random() * 900000).toString();
-            
-            // Store OTP temporarily
-            sessionStorage.setItem('pending_otp', pendingOtp);
             sessionStorage.setItem('pending_phone', phone);
             sessionStorage.setItem('otp_method', otpMethod);
             
-            // Send OTP via API
+            // Show loading state
+            const sendBtn = document.querySelector('#loginStep2 button[onclick="sendOTP()"]');
+            const originalText = sendBtn.textContent;
+            sendBtn.textContent = 'Sending...';
+            sendBtn.disabled = true;
+            
+            // Send OTP via backend API
             try {
-                const message = `Your Africa Railways verification code is: ${pendingOtp}\n\nThis code expires in 5 minutes.\n\nOr dial *384*26621# for USSD access.`;
+                const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                    ? 'http://localhost:8080/api/auth/send-otp'
+                    : 'https://api.africa-railways.com/api/auth/send-otp';
                 
-                if (otpMethod === 'whatsapp') {
-                    // WhatsApp - open WhatsApp with pre-filled message (for demo)
-                    // In production, use WhatsApp Business API
-                    console.log('WhatsApp OTP:', pendingOtp);
-                } else {
-                    // SMS via Africa's Talking
-                    await fetch('/api/sms/send', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ to: phone, message: message })
-                    });
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        phone: phone, 
+                        method: otpMethod 
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.error || 'Failed to send OTP');
                 }
+                
+                // Show OTP input step
+                document.getElementById('loginStep2').style.display = 'none';
+                document.getElementById('loginStep3').style.display = 'block';
+                document.getElementById('sentToNumber').textContent = phone;
+                
+                // Focus first OTP input
+                document.querySelectorAll('.otp-digit')[0].focus();
+                
+                console.log('OTP sent via', otpMethod);
+                
             } catch (err) {
-                console.log('OTP send error (demo mode):', pendingOtp);
+                console.error('OTP send error:', err);
+                alert('Failed to send OTP: ' + err.message + '\n\nPlease try again.');
+            } finally {
+                sendBtn.textContent = originalText;
+                sendBtn.disabled = false;
             }
-            
-            // Show OTP input step
-            document.getElementById('loginStep2').style.display = 'none';
-            document.getElementById('loginStep3').style.display = 'block';
-            document.getElementById('sentToNumber').textContent = phone;
-            
-            // Focus first OTP input
-            document.querySelectorAll('.otp-digit')[0].focus();
-            
-            // For demo, show OTP in console
-            console.log('Demo OTP:', pendingOtp);
         }
         
         function otpInputHandler(input, index) {
@@ -1269,36 +1277,67 @@
                 return;
             }
             
-            const storedOtp = sessionStorage.getItem('pending_otp');
-            
-            if (enteredOtp !== storedOtp) {
-                alert('Invalid code. Please try again.');
-                return;
-            }
-            
-            // Generate wallet from phone number
             const phone = sessionStorage.getItem('pending_phone');
-            const wallet = await generatePhoneWallet(phone);
             
-            // Save session
-            localStorage.setItem('africa_railways_wallet', JSON.stringify({
-                address: wallet.address,
-                phone: phone,
-                provider: 'phone',
-                createdAt: new Date().toISOString()
-            }));
+            // Show loading state
+            const verifyBtn = document.getElementById('verifyOtpBtn');
+            const originalText = verifyBtn.textContent;
+            verifyBtn.textContent = 'Verifying...';
+            verifyBtn.disabled = true;
             
-            // Clear OTP data
-            sessionStorage.removeItem('pending_otp');
-            sessionStorage.removeItem('pending_phone');
-            
-            // Show success
-            document.getElementById('loginStep3').style.display = 'none';
-            document.getElementById('loginStep4').style.display = 'block';
-            document.getElementById('newWalletAddress').textContent = wallet.address.slice(0, 8) + '...' + wallet.address.slice(-6);
-            
-            // Update header
-            updateWalletUI({ address: wallet.address });
+            try {
+                const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                    ? 'http://localhost:8080/api/auth/verify-otp'
+                    : 'https://api.africa-railways.com/api/auth/verify-otp';
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        phone: phone, 
+                        code: enteredOtp 
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.error || 'Invalid OTP');
+                }
+                
+                // Use wallet from API response or generate locally
+                const walletAddress = result.wallet || (await generatePhoneWallet(phone)).address;
+                
+                // Save session
+                localStorage.setItem('africa_railways_wallet', JSON.stringify({
+                    address: walletAddress,
+                    phone: phone,
+                    provider: 'phone',
+                    createdAt: new Date().toISOString()
+                }));
+                
+                // Clear OTP data
+                sessionStorage.removeItem('pending_phone');
+                sessionStorage.removeItem('otp_method');
+                
+                // Show success
+                document.getElementById('loginStep3').style.display = 'none';
+                document.getElementById('loginStep4').style.display = 'block';
+                document.getElementById('newWalletAddress').textContent = walletAddress.slice(0, 8) + '...' + walletAddress.slice(-6);
+                
+                // Update header
+                updateWalletUI({ address: walletAddress });
+                
+            } catch (err) {
+                console.error('OTP verify error:', err);
+                alert(err.message);
+                // Clear OTP inputs on error
+                digits.forEach(d => d.value = '');
+                digits[0].focus();
+            } finally {
+                verifyBtn.textContent = originalText;
+                verifyBtn.disabled = false;
+            }
         }
         
         async function generatePhoneWallet(phone) {
@@ -1320,16 +1359,36 @@
             return { address, phone };
         }
         
-        function resendOTP() {
+        async function resendOTP() {
             // Clear existing OTP inputs
             document.querySelectorAll('.otp-digit').forEach(d => d.value = '');
             
-            // Resend
-            pendingOtp = Math.floor(100000 + Math.random() * 900000).toString();
-            sessionStorage.setItem('pending_otp', pendingOtp);
+            const phone = sessionStorage.getItem('pending_phone');
+            const method = sessionStorage.getItem('otp_method') || 'sms';
             
-            alert('New code sent!');
-            console.log('New Demo OTP:', pendingOtp);
+            try {
+                const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                    ? 'http://localhost:8080/api/auth/send-otp'
+                    : 'https://api.africa-railways.com/api/auth/send-otp';
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, method })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('New code sent!');
+                } else {
+                    alert('Failed to resend: ' + (result.error || 'Unknown error'));
+                }
+            } catch (err) {
+                alert('Failed to resend code. Please try again.');
+            }
+            
+            document.querySelectorAll('.otp-digit')[0].focus();
         }
         
         async function loginWithGoogle() {
