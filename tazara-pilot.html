@@ -563,7 +563,7 @@
                 monthlyPrice: 10,
                 discount: 0,
                 stakingReward: 5,
-                benefits: ['Pay-per-ride', 'No commitment', '5% AFRC staking rewards']
+                benefits: ['Pay-per-ride', 'No commitment', '5% $AFC staking rewards']
             },
             {
                 id: 'frequent',
@@ -571,7 +571,7 @@
                 monthlyPrice: 50,
                 discount: 15,
                 stakingReward: 12,
-                benefits: ['15% discount on all rides', '12% AFRC staking rewards', 'Priority booking', 'Flexible cancellation']
+                benefits: ['15% discount on all rides', '12% $AFC staking rewards', 'Priority booking', 'Flexible cancellation']
             },
             {
                 id: 'unlimited',
@@ -579,7 +579,7 @@
                 monthlyPrice: 150,
                 discount: 30,
                 stakingReward: 20,
-                benefits: ['30% discount on all rides', '20% AFRC staking rewards', 'Unlimited rides', 'VIP lounge access', 'Free seat upgrades']
+                benefits: ['30% discount on all rides', '20% $AFC staking rewards', 'Unlimited rides', 'VIP lounge access', 'Free seat upgrades']
             }
         ];
 
@@ -620,7 +620,7 @@
                     tripType: isReturnTrip ? 'Return' : 'One Way',
                     passengers: passengers,
                     class: tier.name,
-                    price: `${totalCost.toFixed(2)} AFRC`,
+                    price: `${totalCost.toFixed(2)} $AFC`,
                     wallet: walletAddress,
                     phone: phoneNumber,
                     issued: new Date().toISOString(),
@@ -732,7 +732,7 @@ Valid Until: ${new Date(ticketData.validUntil).toLocaleString()}
                         await new Promise(resolve => setTimeout(resolve, 800));
 
                         // Step 2: Create wallet from phone number
-                        setStatus('info:🔐 Creating your SUI/AFC wallet from phone number...');
+                        setStatus('info:🔐 Creating your SUI/$AFC wallet from phone number...');
                         await new Promise(resolve => setTimeout(resolve, 1200));
                         
                         // Deterministic wallet generation from phone (mirrors backend sui_logic.py)
@@ -774,7 +774,7 @@ Valid Until: ${new Date(ticketData.validUntil).toLocaleString()}
                     }
                     
                     const walletMsg = `\n💳 Wallet: ${walletAddress.slice(0, 10)}...${walletAddress.slice(-6)}`;
-                    setStatus(`success:✅ Booking confirmed! Reference: ${bookingRef}${walletMsg}${smsMsg}\n💰 ${stakingAmount} AFRC staked earning ${stakingRewards}% APY\n🎫 Your NFT ticket is ready for download!`);
+                    setStatus(`success:✅ Booking confirmed! Reference: ${bookingRef}${walletMsg}${smsMsg}\n💰 ${stakingAmount} $AFC staked earning ${stakingRewards}% APY\n🎫 Your NFT ticket is ready for download!`);
                     
                     // Keep ticket data visible for download, reset form after 15 seconds
                     setTimeout(() => {
@@ -813,7 +813,7 @@ Valid Until: ${new Date(ticketData.validUntil).toLocaleString()}
                     <div className="info-banner">
                         <h3>💡 How Book & Stake Works</h3>
                         <p>
-                            Choose a subscription tier and your booking payment is automatically staked in AFRC tokens, 
+                            Choose a subscription tier and your booking payment is automatically staked in $AFC tokens, 
                             earning you passive rewards while you travel. The more you ride, the more you earn!
                         </p>
                     </div>
@@ -890,7 +890,7 @@ Valid Until: ${new Date(ticketData.validUntil).toLocaleString()}
                                         <div className="route-header">
                                             <div className="route-name">{route.name}</div>
                                             <div className="route-price">
-                                                ${isReturnTrip ? (route.basePrice * 1.8).toFixed(0) : route.basePrice} AFRC
+                                                ${isReturnTrip ? (route.basePrice * 1.8).toFixed(0) : route.basePrice} $AFC
                                                 {isReturnTrip && <span style={{ fontSize: '0.7rem', color: '#10b981', marginLeft: '5px' }}>-10%</span>}
                                             </div>
                                         </div>
@@ -969,7 +969,7 @@ Valid Until: ${new Date(ticketData.validUntil).toLocaleString()}
                                 {!isLoggedIn && (
                                     <div style={{ marginBottom: '20px' }}>
                                         <label style={{ display: 'block', marginBottom: '8px', color: '#94a3b8' }}>
-                                            📱 Phone Number <span style={{ color: 'var(--gold)', fontSize: '0.8rem' }}>(creates your SUI/AFC wallet)</span>
+                                            📱 Phone Number <span style={{ color: 'var(--gold)', fontSize: '0.8rem' }}>(creates your SUI/$AFC wallet)</span>
                                         </label>
                                         <input 
                                             type="tel" 
@@ -1010,7 +1010,7 @@ Valid Until: ${new Date(ticketData.validUntil).toLocaleString()}
                                         </div>
                                         <div className="summary-item">
                                             <span>Base Price {isReturnTrip && '(10% off)'}</span>
-                                            <span>${basePrice.toFixed(2)} AFRC</span>
+                                            <span>${basePrice.toFixed(2)} $AFC</span>
                                         </div>
                                         <div className="summary-item">
                                             <span>Subscription</span>
@@ -1018,7 +1018,7 @@ Valid Until: ${new Date(ticketData.validUntil).toLocaleString()}
                                         </div>
                                         <div className="summary-item">
                                             <span>Discount ({tier.discount}%)</span>
-                                            <span style={{ color: 'var(--green)' }}>-${discount.toFixed(2)} AFRC</span>
+                                            <span style={{ color: 'var(--green)' }}>-${discount.toFixed(2)} $AFC</span>
                                         </div>
                                         <div className="summary-item">
                                             <span>Staking APY</span>
@@ -1026,7 +1026,7 @@ Valid Until: ${new Date(ticketData.validUntil).toLocaleString()}
                                         </div>
                                         <div className="summary-item">
                                             <span>Total</span>
-                                            <span>${totalCost.toFixed(2)} AFRC</span>
+                                            <span>${totalCost.toFixed(2)} $AFC</span>
                                         </div>
                                     </>
                                 )}
@@ -1042,7 +1042,7 @@ Valid Until: ${new Date(ticketData.validUntil).toLocaleString()}
                                     onClick={handleBooking}
                                     disabled={!route || isBooking || (!isLoggedIn && !phoneNumber)}
                                 >
-                                    {isBooking ? '⏳ Processing...' : `Book & Stake - $${totalCost.toFixed(2)} AFRC`}
+                                    {isBooking ? '⏳ Processing...' : `Book & Stake - $${totalCost.toFixed(2)} $AFC`}
                                 </button>
 
                                 {!isLoggedIn && !phoneNumber && route && (
