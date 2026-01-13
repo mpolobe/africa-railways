@@ -1,5 +1,9 @@
 // Vercel Serverless Function - SMS Notification
 // Uses Africa's Talking API for SMS delivery
+//
+// Africa's Talking Sandbox Configuration:
+// - Service Code: *384*26621#
+// - Callback URL: https://africa-railways-production.up.railway.app/ussd
 
 export default async function handler(req, res) {
     // CORS headers
@@ -23,9 +27,12 @@ export default async function handler(req, res) {
         }
 
         // Africa's Talking credentials from environment
+        // Sandbox: username = 'sandbox', use sandbox API
+        // Production: username = 'africarailways', use production API
         const username = process.env.AT_USERNAME || 'sandbox';
         const apiKey = process.env.AT_API_KEY;
         const shortCode = process.env.AT_SHORTCODE || 'AFRICARAIL';
+        const ussdCode = '*384*26621#';
 
         if (!apiKey) {
             console.log('SMS queued (no API key configured):', { to, message: message.substring(0, 50) });
