@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - Africa Railways</title>
+    <style>
+        :root {
+            --navy: #0a0e1a;
+            --gold: #FFB800;
+            --cyan: #00D4FF;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--navy);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .offline-icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--gold);
+        }
+        
+        p {
+            color: #94a3b8;
+            max-width: 400px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .retry-btn {
+            background: var(--gold);
+            color: var(--navy);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .retry-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 184, 0, 0.3);
+        }
+        
+        .cached-info {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid #333;
+            max-width: 400px;
+        }
+        
+        .cached-info h3 {
+            color: var(--cyan);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .cached-link {
+            display: block;
+            padding: 12px;
+            margin: 8px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .cached-link:hover {
+            background: rgba(255, 184, 0, 0.1);
+            color: var(--gold);
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ef4444;
+        }
+        
+        .status-dot.online {
+            background: #10b981;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-icon">📡</div>
+    <h1>You're Offline</h1>
+    <p>
+        It looks like you've lost your internet connection. 
+        Don't worry - your tickets are still accessible offline!
+    </p>
+    
+    <button class="retry-btn" onclick="location.reload()">
+        Try Again
+    </button>
+    
+    <div class="cached-info">
+        <h3>📱 Available Offline</h3>
+        <a href="/my-tickets.html" class="cached-link">🎫 View My Tickets</a>
+        <a href="/schedules.html" class="cached-link">🕐 Cached Schedules</a>
+        <a href="/stations.html" class="cached-link">🚉 Station Information</a>
+    </div>
+    
+    <div class="status-indicator">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Checking connection...</span>
+    </div>
+
+    <script>
+        // Check connection status
+        function updateStatus() {
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+            
+            if (navigator.onLine) {
+                dot.classList.add('online');
+                text.textContent = 'Connection restored! Reloading...';
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                dot.classList.remove('online');
+                text.textContent = 'No internet connection';
+            }
+        }
+        
+        window.addEventListener('online', updateStatus);
+        window.addEventListener('offline', updateStatus);
+        updateStatus();
+    </script>
+</body>
+</html>

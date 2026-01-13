@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗺️ Live Train Tracking - Africa Railways</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        :root {
+            --navy: #0a0e1a;
+            --gold: #FFB800;
+            --cyan: #00D4FF;
+            --green: #10b981;
+            --red: #ef4444;
+            --surface: #16203a;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--navy);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: var(--surface);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .main-container {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+        
+        .sidebar {
+            width: 350px;
+            background: var(--surface);
+            border-right: 1px solid #333;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .sidebar-header h2 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-header p {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+        
+        .train-list {
+            padding: 10px;
+        }
+        
+        .train-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .train-card:hover {
+            border-color: var(--gold);
+            transform: translateX(5px);
+        }
+        
+        .train-card.active {
+            border-color: var(--cyan);
+            background: rgba(0, 212, 255, 0.1);
+        }
+        
+        .train-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .train-name {
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .train-status {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-ontime { background: rgba(16, 185, 129, 0.2); color: var(--green); }
+        .status-delayed { background: rgba(239, 68, 68, 0.2); color: var(--red); }
+        .status-arriving { background: rgba(255, 184, 0, 0.2); color: var(--gold); }
+        
+        .train-route {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+        
+        .train-progress {
+            background: #333;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        
+        .train-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--gold));
+            border-radius: 3px;
+            transition: width 0.5s;
+        }
+        
+        .train-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+        
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+        
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .map-overlay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--surface);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            min-width: 200px;
+        }
+        
+        .map-legend {
+            margin-top: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+        
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .legend-dot.train { background: var(--gold); }
+        .legend-dot.station { background: var(--cyan); }
+        .legend-dot.delayed { background: var(--red); }
+        
+        .search-box {
+            padding: 15px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: white;
+            font-size: 0.9rem;
+        }
+        
+        .search-input::placeholder {
+            color: #64748b;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+        
+        .filter-tabs {
+            display: flex;
+            padding: 10px 15px;
+            gap: 10px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .filter-tab {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.05);
+            border: none;
+            border-radius: 20px;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+        
+        .filter-tab.active {
+            background: var(--gold);
+            color: var(--navy);
+            font-weight: 600;
+        }
+        
+        .filter-tab:hover:not(.active) {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column-reverse;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: 40vh;
+            }
+            
+            .map-container {
+                height: 60vh;
+            }
+            
+            .map-overlay {
+                display: none;
+            }
+        }
+        
+        /* Custom Leaflet styles */
+        .train-marker {
+            background: var(--gold);
+            border: 3px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .station-marker {
+            background: var(--cyan);
+            border: 2px solid white;
+            border-radius: 50%;
+            width: 12px;
+            height: 12px;
+        }
+        
+        .leaflet-popup-content-wrapper {
+            background: var(--surface);
+            color: white;
+            border-radius: 12px;
+        }
+        
+        .leaflet-popup-tip {
+            background: var(--surface);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="/" class="logo">
+            <i class="fas fa-train"></i> Africa Railways
+        </a>
+        <a href="/" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+    </header>
+    
+    <div class="main-container">
+        <aside class="sidebar">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="🔍 Search trains or stations..." id="searchInput">
+            </div>
+            
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="all">All</button>
+                <button class="filter-tab" data-filter="ontime">On Time</button>
+                <button class="filter-tab" data-filter="delayed">Delayed</button>
+            </div>
+            
+            <div class="sidebar-header">
+                <h2>🚂 Live Trains</h2>
+                <p>Real-time tracking across Africa</p>
+            </div>
+            
+            <div class="train-list" id="trainList">
+                <!-- Train cards will be inserted here -->
+            </div>
+        </aside>
+        
+        <main class="map-container">
+            <div id="map"></div>
+            
+            <div class="map-overlay">
+                <h3 style="font-size: 0.9rem; margin-bottom: 5px;">Live Tracking</h3>
+                <p style="color: #94a3b8; font-size: 0.75rem;">Updated every 30 seconds</p>
+                
+                <div class="map-legend">
+                    <div class="legend-item">
+                        <div class="legend-dot train"></div>
+                        <span>Active Train</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot station"></div>
+                        <span>Station</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot delayed"></div>
+                        <span>Delayed</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Sample train data (would come from API in production)
+        const trains = [
+            {
+                id: 'TAZ-101',
+                name: 'TAZARA Express 101',
+                route: 'Dar es Salaam → Kapiri Mposhi',
+                status: 'ontime',
+                progress: 45,
+                currentLocation: { lat: -8.5, lng: 31.5 },
+                departure: '08:00',
+                arrival: '18:00',
+                nextStation: 'Mbeya',
+                eta: '12:30'
+            },
+            {
+                id: 'TAZ-102',
+                name: 'TAZARA Express 102',
+                route: 'Kapiri Mposhi → Dar es Salaam',
+                status: 'delayed',
+                delay: '+45 min',
+                progress: 30,
+                currentLocation: { lat: -10.2, lng: 31.2 },
+                departure: '07:00',
+                arrival: '17:00',
+                nextStation: 'Kasama',
+                eta: '11:45'
+            },
+            {
+                id: 'KRC-501',
+                name: 'Madaraka Express',
+                route: 'Nairobi → Mombasa',
+                status: 'ontime',
+                progress: 70,
+                currentLocation: { lat: -3.2, lng: 38.5 },
+                departure: '06:00',
+                arrival: '10:30',
+                nextStation: 'Mombasa Terminus',
+                eta: '10:15'
+            },
+            {
+                id: 'KRC-502',
+                name: 'Madaraka Express',
+                route: 'Mombasa → Nairobi',
+                status: 'arriving',
+                progress: 95,
+                currentLocation: { lat: -1.35, lng: 36.85 },
+                departure: '15:00',
+                arrival: '19:30',
+                nextStation: 'Nairobi Terminus',
+                eta: '19:25'
+            },
+            {
+                id: 'GAU-01',
+                name: 'Gautrain North',
+                route: 'Johannesburg → Pretoria',
+                status: 'ontime',
+                progress: 60,
+                currentLocation: { lat: -25.9, lng: 28.1 },
+                departure: '07:30',
+                arrival: '08:15',
+                nextStation: 'Centurion',
+                eta: '08:00'
+            },
+            {
+                id: 'TUN-301',
+                name: 'SNCFT Grandes Lignes',
+                route: 'Tunis → Sousse',
+                status: 'ontime',
+                progress: 55,
+                currentLocation: { lat: 36.2, lng: 10.1 },
+                departure: '09:00',
+                arrival: '11:30',
+                nextStation: 'Enfidha',
+                eta: '10:15'
+            }
+        ];
+
+        // Major stations
+        const stations = [
+            { name: 'Dar es Salaam', lat: -6.8, lng: 39.28 },
+            { name: 'Kapiri Mposhi', lat: -14.97, lng: 28.67 },
+            { name: 'Mbeya', lat: -8.9, lng: 33.45 },
+            { name: 'Nairobi', lat: -1.29, lng: 36.82 },
+            { name: 'Mombasa', lat: -4.05, lng: 39.67 },
+            { name: 'Johannesburg', lat: -26.2, lng: 28.04 },
+            { name: 'Pretoria', lat: -25.75, lng: 28.19 },
+            { name: 'Tunis', lat: 36.8, lng: 10.18 },
+            { name: 'Sousse', lat: 35.83, lng: 10.6 }
+        ];
+
+        // Initialize map centered on Africa
+        const map = L.map('map').setView([-5, 25], 4);
+
+        // Dark map tiles
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '© OpenStreetMap contributors © CARTO',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Custom train icon
+        const trainIcon = L.divIcon({
+            className: 'train-marker',
+            html: '🚂',
+            iconSize: [30, 30],
+            iconAnchor: [15, 15]
+        });
+
+        const delayedTrainIcon = L.divIcon({
+            className: 'train-marker',
+            html: '🚂',
+            iconSize: [30, 30],
+            iconAnchor: [15, 15],
+            style: 'background: #ef4444;'
+        });
+
+        // Add station markers
+        stations.forEach(station => {
+            L.circleMarker([station.lat, station.lng], {
+                radius: 6,
+                fillColor: '#00D4FF',
+                color: '#fff',
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.8
+            }).addTo(map).bindPopup(`<b>🚉 ${station.name}</b>`);
+        });
+
+        // Train markers storage
+        const trainMarkers = {};
+
+        // Add train markers
+        trains.forEach(train => {
+            const icon = train.status === 'delayed' ? delayedTrainIcon : trainIcon;
+            const marker = L.marker([train.currentLocation.lat, train.currentLocation.lng], { icon })
+                .addTo(map)
+                .bindPopup(`
+                    <div style="min-width: 200px;">
+                        <h3 style="margin: 0 0 10px; color: var(--gold);">${train.name}</h3>
+                        <p style="margin: 5px 0; color: #94a3b8;">${train.route}</p>
+                        <p style="margin: 5px 0;">
+                            <span style="color: ${train.status === 'delayed' ? '#ef4444' : '#10b981'};">
+                                ${train.status === 'delayed' ? '⚠️ Delayed ' + train.delay : '✅ On Time'}
+                            </span>
+                        </p>
+                        <p style="margin: 5px 0;">Next: <b>${train.nextStation}</b> (ETA: ${train.eta})</p>
+                    </div>
+                `);
+            trainMarkers[train.id] = marker;
+        });
+
+        // Render train list
+        function renderTrainList(filter = 'all') {
+            const trainList = document.getElementById('trainList');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filteredTrains = trains.filter(train => {
+                const matchesFilter = filter === 'all' || train.status === filter;
+                const matchesSearch = train.name.toLowerCase().includes(searchTerm) || 
+                                     train.route.toLowerCase().includes(searchTerm);
+                return matchesFilter && matchesSearch;
+            });
+
+            trainList.innerHTML = filteredTrains.map(train => `
+                <div class="train-card" data-train-id="${train.id}" onclick="focusTrain('${train.id}')">
+                    <div class="train-header">
+                        <span class="train-name">
+                            🚂 ${train.name}
+                        </span>
+                        <span class="train-status status-${train.status}">
+                            ${train.status === 'delayed' ? '⚠️ ' + train.delay : 
+                              train.status === 'arriving' ? '📍 Arriving' : '✅ On Time'}
+                        </span>
+                    </div>
+                    <div class="train-route">${train.route}</div>
+                    <div class="train-progress">
+                        <div class="train-progress-bar" style="width: ${train.progress}%"></div>
+                    </div>
+                    <div class="train-details">
+                        <span>Next: ${train.nextStation}</span>
+                        <span>ETA: ${train.eta}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Focus on a specific train
+        function focusTrain(trainId) {
+            const train = trains.find(t => t.id === trainId);
+            if (train && trainMarkers[trainId]) {
+                map.setView([train.currentLocation.lat, train.currentLocation.lng], 8);
+                trainMarkers[trainId].openPopup();
+                
+                // Highlight card
+                document.querySelectorAll('.train-card').forEach(card => {
+                    card.classList.remove('active');
+                });
+                document.querySelector(`[data-train-id="${trainId}"]`)?.classList.add('active');
+            }
+        }
+
+        // Filter tabs
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                renderTrainList(tab.dataset.filter);
+            });
+        });
+
+        // Search
+        document.getElementById('searchInput').addEventListener('input', () => {
+            const activeFilter = document.querySelector('.filter-tab.active').dataset.filter;
+            renderTrainList(activeFilter);
+        });
+
+        // Initial render
+        renderTrainList();
+
+        // Simulate real-time updates
+        setInterval(() => {
+            trains.forEach(train => {
+                // Simulate movement
+                train.currentLocation.lat += (Math.random() - 0.5) * 0.01;
+                train.currentLocation.lng += (Math.random() - 0.5) * 0.01;
+                train.progress = Math.min(100, train.progress + Math.random() * 0.5);
+                
+                // Update marker position
+                if (trainMarkers[train.id]) {
+                    trainMarkers[train.id].setLatLng([train.currentLocation.lat, train.currentLocation.lng]);
+                }
+            });
+            renderTrainList(document.querySelector('.filter-tab.active').dataset.filter);
+        }, 5000);
+    </script>
+</body>
+</html>

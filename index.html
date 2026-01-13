@@ -3,7 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Africoin - The Digital Spine of Africa</title>
+    <title>Africa Railways - Book Train Tickets Across Africa</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Book train tickets across Africa. Multi-currency payments, mobile money, blockchain-verified tickets. TAZARA, Kenya Railways, and more.">
+    <meta name="theme-color" content="#FFB800">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Africa Railways">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Africa Railways - Book Train Tickets Across Africa">
+    <meta property="og:description" content="The modern way to book train tickets across Africa. Multi-currency, mobile money, blockchain-verified.">
+    <meta property="og:image" content="/images/og-image.png">
+    <meta property="og:url" content="https://africarailways.com">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Africa Railways">
+    <meta name="twitter:description" content="Book train tickets across Africa">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --navy: #0a0e1a; --gold: #FFB800; --cyan: #00D4FF; --white: #ffffff; --surface: #16203a; }
@@ -61,6 +83,7 @@
         <ul class="nav-links">
             <li class="nav-item"><a href="#home">Home</a></li>
             <li class="nav-item"><a href="/about.html">About</a></li>
+            <li class="nav-item"><a href="/track-trains.html">🗺️ Live Map</a></li>
             
             <li class="nav-item dropdown">
                 <span class="dropdown-toggle">
@@ -462,5 +485,122 @@
                 }
             });
         });
+
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('SW registered:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('SW registration failed:', error);
+                    });
+            });
+        }
+
+        // Install prompt for PWA
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Show install button if needed
+            const installBtn = document.getElementById('installBtn');
+            if (installBtn) installBtn.style.display = 'block';
+        });
+
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted install');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+    </script>
+
+    <!-- Language Toggle (Fixed Position) -->
+    <div id="languageToggle" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+        <button onclick="toggleLanguageMenu()" style="background: var(--surface); border: 1px solid #333; border-radius: 50px; padding: 12px 20px; color: white; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; box-shadow: 0 5px 20px rgba(0,0,0,0.3);">
+            🌍 <span id="currentLang">EN</span> <i class="fas fa-chevron-up" style="font-size: 0.7rem;"></i>
+        </button>
+        <div id="langMenu" style="display: none; position: absolute; bottom: 50px; right: 0; background: var(--surface); border: 1px solid #333; border-radius: 12px; overflow: hidden; min-width: 150px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+            <a href="?lang=en" style="display: block; padding: 12px 20px; color: white; text-decoration: none; border-bottom: 1px solid #333;">🇬🇧 English</a>
+            <a href="?lang=fr" style="display: block; padding: 12px 20px; color: white; text-decoration: none; border-bottom: 1px solid #333;">🇫🇷 Français</a>
+            <a href="?lang=sw" style="display: block; padding: 12px 20px; color: white; text-decoration: none; border-bottom: 1px solid #333;">🇰🇪 Kiswahili</a>
+            <a href="?lang=ar" style="display: block; padding: 12px 20px; color: white; text-decoration: none; border-bottom: 1px solid #333;">🇪🇬 العربية</a>
+            <a href="?lang=pt" style="display: block; padding: 12px 20px; color: white; text-decoration: none;">🇲🇿 Português</a>
+        </div>
+    </div>
+
+    <script>
+        function toggleLanguageMenu() {
+            const menu = document.getElementById('langMenu');
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Close language menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#languageToggle')) {
+                document.getElementById('langMenu').style.display = 'none';
+            }
+        });
+    </script>
+
+    <!-- Low Bandwidth Mode Toggle -->
+    <div id="bandwidthToggle" style="position: fixed; bottom: 20px; left: 20px; z-index: 1000;">
+        <button onclick="toggleLowBandwidth()" id="bandwidthBtn" style="background: var(--surface); border: 1px solid #333; border-radius: 50px; padding: 12px 20px; color: white; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; box-shadow: 0 5px 20px rgba(0,0,0,0.3);">
+            <span id="bandwidthIcon">📶</span> <span id="bandwidthText">Data Saver</span>
+        </button>
+    </div>
+
+    <style>
+        .low-bandwidth-mode img:not(.essential) { display: none !important; }
+        .low-bandwidth-mode .hero { background: var(--navy) !important; }
+        .low-bandwidth-mode .card { background: transparent !important; border: 1px solid #333 !important; }
+        .low-bandwidth-mode video, .low-bandwidth-mode iframe { display: none !important; }
+        .low-bandwidth-mode .stat-card { padding: 10px !important; }
+        .low-bandwidth-mode footer img { display: none !important; }
+    </style>
+
+    <script>
+        // Low bandwidth mode
+        function toggleLowBandwidth() {
+            const body = document.body;
+            const icon = document.getElementById('bandwidthIcon');
+            const text = document.getElementById('bandwidthText');
+            
+            body.classList.toggle('low-bandwidth-mode');
+            
+            if (body.classList.contains('low-bandwidth-mode')) {
+                icon.textContent = '📴';
+                text.textContent = 'Data Saver ON';
+                localStorage.setItem('lowBandwidth', 'true');
+            } else {
+                icon.textContent = '📶';
+                text.textContent = 'Data Saver';
+                localStorage.setItem('lowBandwidth', 'false');
+            }
+        }
+
+        // Check saved preference
+        if (localStorage.getItem('lowBandwidth') === 'true') {
+            document.body.classList.add('low-bandwidth-mode');
+            document.getElementById('bandwidthIcon').textContent = '📴';
+            document.getElementById('bandwidthText').textContent = 'Data Saver ON';
+        }
+
+        // Auto-enable on slow connection
+        if (navigator.connection) {
+            const conn = navigator.connection;
+            if (conn.saveData || conn.effectiveType === '2g' || conn.effectiveType === 'slow-2g') {
+                document.body.classList.add('low-bandwidth-mode');
+                document.getElementById('bandwidthIcon').textContent = '📴';
+                document.getElementById('bandwidthText').textContent = 'Data Saver ON';
+            }
+        }
     </script>
 </body></html>
