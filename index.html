@@ -46,15 +46,11 @@
         .cta-nav { background: linear-gradient(135deg, var(--gold), #ff9500); color: var(--navy); padding: 10px 20px; border-radius: 8px; font-weight: 700; }
         .cta-nav:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(255,184,0,0.4); color: var(--navy); }
         .hero { 
-            padding: 100px 8%; 
+            padding: 120px 8% 100px; 
             text-align: center; 
-            background: 
-                linear-gradient(to bottom, rgba(10, 14, 26, 0.7) 0%, rgba(10, 14, 26, 0.85) 50%, rgba(10, 14, 26, 0.95) 100%),
-                url('https://fuchsia-written-horse-361.mypinata.cloud/ipfs/bafkreidfwl5q4nh6xgqhk45ri5fhx5jsl4gvprjt57ptrqt72h2r3ch5oe');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
             position: relative;
+            overflow: hidden;
+            background: var(--navy);
         }
         .hero::before {
             content: '';
@@ -63,10 +59,25 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(255, 184, 0, 0.05) 0%, rgba(0, 212, 255, 0.05) 100%);
+            background: url('https://fuchsia-written-horse-361.mypinata.cloud/ipfs/bafkreidfwl5q4nh6xgqhk45ri5fhx5jsl4gvprjt57ptrqt72h2r3ch5oe');
+            background-size: cover;
+            background-position: center;
+            filter: grayscale(100%) brightness(0.3) contrast(1.2);
+            opacity: 0.6;
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(180deg, rgba(10, 14, 26, 0.3) 0%, rgba(10, 14, 26, 0.6) 50%, var(--navy) 100%),
+                linear-gradient(90deg, rgba(255, 184, 0, 0.1) 0%, transparent 50%, rgba(0, 212, 255, 0.1) 100%);
             pointer-events: none;
         }
-        .hero > * { position: relative; z-index: 1; }
+        .hero > * { position: relative; z-index: 2; }
         .hero-tag { color: var(--gold); font-weight: bold; letter-spacing: 4px; border: 1px solid var(--gold); padding: 5px 15px; display: inline-block; margin-bottom: 20px; font-size: 0.8rem; }
         h1 { font-size: clamp(2.5rem, 5vw, 4rem); margin: 0 0 20px; font-weight: 900; line-height: 1.1; }
         .hero-stats { display: flex; gap: 40px; margin-bottom: 40px; justify-content: center; flex-wrap: wrap; }
