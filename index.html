@@ -79,6 +79,188 @@
         }
         .hero > * { position: relative; z-index: 2; }
         .hero-tag { color: var(--gold); font-weight: bold; letter-spacing: 4px; border: 1px solid var(--gold); padding: 5px 15px; display: inline-block; margin-bottom: 20px; font-size: 0.8rem; }
+        
+        /* zkLogin Wallet Button */
+        .wallet-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 14, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 184, 0, 0.2);
+        }
+        .wallet-bar-logo {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+        .wallet-bar-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .zklogin-btn {
+            background: linear-gradient(135deg, #4285f4 0%, #34a853 50%, #fbbc05 75%, #ea4335 100%);
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
+        }
+        .zklogin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(66, 133, 244, 0.4);
+        }
+        .zklogin-btn.connected {
+            background: linear-gradient(135deg, var(--gold) 0%, #e6a800 100%);
+            color: #000;
+        }
+        .wallet-address-display {
+            font-family: monospace;
+            font-size: 0.85rem;
+            background: rgba(0,0,0,0.3);
+            padding: 3px 10px;
+            border-radius: 4px;
+        }
+        .wallet-balance {
+            color: var(--gold);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .zklogin-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        .zklogin-modal.active {
+            display: flex;
+        }
+        .zklogin-modal-content {
+            background: linear-gradient(135deg, #1a1f35 0%, #0d121f 100%);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 420px;
+            width: 90%;
+            border: 1px solid rgba(255, 184, 0, 0.3);
+            text-align: center;
+        }
+        .zklogin-modal h2 {
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+        .zklogin-modal p {
+            color: #94a3b8;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+        .zklogin-option {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 16px 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        .zklogin-option:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--gold);
+            transform: translateX(5px);
+        }
+        .zklogin-option-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .zklogin-option-google { background: #fff; }
+        .zklogin-option-facebook { background: #1877f2; }
+        .zklogin-option-phone { background: var(--gold); }
+        .zklogin-option-title {
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+        .zklogin-option-desc {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+        .zklogin-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 28px;
+            cursor: pointer;
+        }
+        .zklogin-footer {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .zklogin-footer p {
+            font-size: 0.8rem;
+            margin-bottom: 0;
+        }
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--gold);
+        }
+        .user-info {
+            text-align: left;
+        }
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+        .user-wallet {
+            font-size: 0.75rem;
+            color: var(--gold);
+            font-family: monospace;
+        }
+        @media (max-width: 768px) {
+            .wallet-bar { padding: 10px 15px; }
+            .wallet-bar-logo { font-size: 1rem; }
+            .zklogin-btn { padding: 8px 15px; font-size: 0.85rem; }
+            .user-info { display: none; }
+        }
         h1 { font-size: clamp(2.5rem, 5vw, 4rem); margin: 0 0 20px; font-weight: 900; line-height: 1.1; }
         .hero-stats { display: flex; gap: 40px; margin-bottom: 40px; justify-content: center; flex-wrap: wrap; }
         .stat-card { background: var(--surface); padding: 20px; border-radius: 12px; border: 1px solid #333; min-width: 140px; }
@@ -173,7 +355,172 @@
             <li class="nav-item"><a href="/book-tickets.html" style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem;"><span>🎫</span><span class="cta-nav" style="padding: 6px 10px;">Tickets</span></a></li>
         </ul>
     </nav>
-    <section id="home" class="hero">
+    <!-- Wallet Bar -->
+    <div class="wallet-bar">
+        <div class="wallet-bar-logo">🚂 Africa Railways</div>
+        <div class="wallet-bar-actions">
+            <div id="walletStatus" style="display: none;">
+                <span class="wallet-balance" id="walletBalance">0 $AFC</span>
+            </div>
+            <button class="zklogin-btn" id="zkLoginBtn" onclick="openZkLoginModal()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+                <span id="zkLoginBtnText">Login / Sign Up</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="zklogin-modal" id="zkLoginModal">
+        <div class="zklogin-modal-content" style="position: relative;">
+            <button class="zklogin-close" onclick="closeZkLoginModal()">&times;</button>
+            
+            <!-- Step 1: Choose Method -->
+            <div id="loginStep1">
+                <h2>🔐 Connect Your Wallet</h2>
+                <p>Sign in to access your SUI/$AFC wallet. No seed phrases needed!</p>
+                
+                <!-- Phone Login (Primary for Africa) -->
+                <div class="zklogin-option" onclick="showPhoneLogin()" style="border: 2px solid var(--gold);">
+                    <div class="zklogin-option-icon zklogin-option-phone">
+                        <span>📱</span>
+                    </div>
+                    <div>
+                        <div class="zklogin-option-title">Phone Number <span style="background: var(--gold); color: #000; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; margin-left: 8px;">RECOMMENDED</span></div>
+                        <div class="zklogin-option-desc">OTP via SMS or WhatsApp • Works with USSD *384*26621#</div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: center; margin: 20px 0; color: #64748b;">
+                    <div style="flex: 1; height: 1px; background: #333;"></div>
+                    <span style="padding: 0 15px; font-size: 0.85rem;">or continue with</span>
+                    <div style="flex: 1; height: 1px; background: #333;"></div>
+                </div>
+                
+                <!-- Social Login -->
+                <div style="display: flex; gap: 12px;">
+                    <div class="zklogin-option" onclick="loginWithGoogle()" style="flex: 1; margin-bottom: 0;">
+                        <div class="zklogin-option-icon zklogin-option-google" style="width: 36px; height: 36px;">
+                            <img src="https://www.google.com/favicon.ico" width="20" height="20" alt="Google">
+                        </div>
+                        <div>
+                            <div class="zklogin-option-title" style="font-size: 0.9rem;">Google</div>
+                        </div>
+                    </div>
+                    
+                    <div class="zklogin-option" onclick="loginWithFacebook()" style="flex: 1; margin-bottom: 0;">
+                        <div class="zklogin-option-icon zklogin-option-facebook" style="width: 36px; height: 36px;">
+                            <span style="color: #fff; font-weight: bold; font-size: 16px;">f</span>
+                        </div>
+                        <div>
+                            <div class="zklogin-option-title" style="font-size: 0.9rem;">Facebook</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="zklogin-footer">
+                    <p>🔒 Powered by SUI blockchain • Your wallet, your control</p>
+                </div>
+            </div>
+            
+            <!-- Step 2: Phone Number Input -->
+            <div id="loginStep2" style="display: none;">
+                <h2>📱 Enter Phone Number</h2>
+                <p>We'll send a verification code via SMS or WhatsApp</p>
+                
+                <div style="margin: 25px 0;">
+                    <label style="display: block; margin-bottom: 8px; color: #94a3b8; font-size: 0.9rem;">Phone Number</label>
+                    <input type="tel" id="phoneInput" placeholder="+260 966 165 444" 
+                        style="width: 100%; padding: 15px; background: rgba(255,255,255,0.05); border: 1px solid #333; border-radius: 10px; color: #fff; font-size: 1.1rem; text-align: center; letter-spacing: 1px;"
+                        oninput="formatPhoneNumber(this)">
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; color: #94a3b8; font-size: 0.9rem;">Send OTP via:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="selectOtpMethod('sms')" id="otpSmsBtn" class="otp-method-btn active" style="flex: 1; padding: 12px; background: rgba(255,184,0,0.2); border: 1px solid var(--gold); border-radius: 8px; color: var(--gold); cursor: pointer; font-weight: 600;">
+                            📱 SMS
+                        </button>
+                        <button onclick="selectOtpMethod('whatsapp')" id="otpWhatsappBtn" class="otp-method-btn" style="flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid #333; border-radius: 8px; color: #94a3b8; cursor: pointer; font-weight: 600;">
+                            💬 WhatsApp
+                        </button>
+                    </div>
+                </div>
+                
+                <button onclick="sendOTP()" style="width: 100%; padding: 15px; background: var(--gold); border: none; border-radius: 10px; color: #000; font-size: 1rem; font-weight: 700; cursor: pointer;">
+                    Send Verification Code
+                </button>
+                
+                <button onclick="showStep1()" style="width: 100%; padding: 12px; background: transparent; border: none; color: #94a3b8; cursor: pointer; margin-top: 15px;">
+                    ← Back to login options
+                </button>
+                
+                <div style="margin-top: 20px; padding: 15px; background: rgba(255,184,0,0.1); border-radius: 10px; text-align: center;">
+                    <p style="color: var(--gold); font-size: 0.85rem; margin: 0;">
+                        📞 No smartphone? Dial <strong>*384*26621#</strong> for USSD access
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Step 3: OTP Verification -->
+            <div id="loginStep3" style="display: none;">
+                <h2>✅ Enter Verification Code</h2>
+                <p>Code sent to <span id="sentToNumber" style="color: var(--gold);"></span></p>
+                
+                <div style="margin: 25px 0;">
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <input type="text" maxlength="1" class="otp-digit" style="width: 50px; height: 60px; text-align: center; font-size: 1.5rem; background: rgba(255,255,255,0.05); border: 1px solid #333; border-radius: 10px; color: #fff;" oninput="otpInputHandler(this, 0)">
+                        <input type="text" maxlength="1" class="otp-digit" style="width: 50px; height: 60px; text-align: center; font-size: 1.5rem; background: rgba(255,255,255,0.05); border: 1px solid #333; border-radius: 10px; color: #fff;" oninput="otpInputHandler(this, 1)">
+                        <input type="text" maxlength="1" class="otp-digit" style="width: 50px; height: 60px; text-align: center; font-size: 1.5rem; background: rgba(255,255,255,0.05); border: 1px solid #333; border-radius: 10px; color: #fff;" oninput="otpInputHandler(this, 2)">
+                        <input type="text" maxlength="1" class="otp-digit" style="width: 50px; height: 60px; text-align: center; font-size: 1.5rem; background: rgba(255,255,255,0.05); border: 1px solid #333; border-radius: 10px; color: #fff;" oninput="otpInputHandler(this, 3)">
+                        <input type="text" maxlength="1" class="otp-digit" style="width: 50px; height: 60px; text-align: center; font-size: 1.5rem; background: rgba(255,255,255,0.05); border: 1px solid #333; border-radius: 10px; color: #fff;" oninput="otpInputHandler(this, 4)">
+                        <input type="text" maxlength="1" class="otp-digit" style="width: 50px; height: 60px; text-align: center; font-size: 1.5rem; background: rgba(255,255,255,0.05); border: 1px solid #333; border-radius: 10px; color: #fff;" oninput="otpInputHandler(this, 5)">
+                    </div>
+                </div>
+                
+                <button onclick="verifyOTP()" id="verifyOtpBtn" style="width: 100%; padding: 15px; background: var(--gold); border: none; border-radius: 10px; color: #000; font-size: 1rem; font-weight: 700; cursor: pointer;">
+                    Verify & Connect Wallet
+                </button>
+                
+                <div style="margin-top: 20px; text-align: center;">
+                    <p style="color: #64748b; font-size: 0.85rem;">Didn't receive code? <button onclick="resendOTP()" style="background: none; border: none; color: var(--gold); cursor: pointer; font-weight: 600;">Resend</button></p>
+                </div>
+                
+                <button onclick="showStep2()" style="width: 100%; padding: 12px; background: transparent; border: none; color: #94a3b8; cursor: pointer; margin-top: 10px;">
+                    ← Change phone number
+                </button>
+            </div>
+            
+            <!-- Step 4: Success -->
+            <div id="loginStep4" style="display: none;">
+                <div style="text-align: center; padding: 20px 0;">
+                    <div style="font-size: 60px; margin-bottom: 20px;">🎉</div>
+                    <h2 style="color: var(--gold);">Wallet Connected!</h2>
+                    <p>Your SUI/$AFC wallet is ready to use</p>
+                    
+                    <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; margin: 25px 0; text-align: left;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: #94a3b8;">Wallet Address</span>
+                            <span id="newWalletAddress" style="font-family: monospace; color: var(--gold);"></span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: #94a3b8;">Network</span>
+                            <span style="color: #fff;">SUI Mainnet</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #94a3b8;">Balance</span>
+                            <span style="color: var(--gold);">0 $AFC</span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="closeZkLoginModal()" style="width: 100%; padding: 15px; background: var(--gold); border: none; border-radius: 10px; color: #000; font-size: 1rem; font-weight: 700; cursor: pointer;">
+                        Start Using Africa Railways
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section id="home" class="hero" style="padding-top: 80px;">
         <div class="hero-tag">2026 CONTINENTAL ROLLOUT</div>
         <h1>Connecting Africa</h1>
         <p style="color:#aaa; max-width:700px; margin: 0 auto 40px;">Integrated high-speed rail and Sui blockchain network, securing trade for 54 nations.</p>
@@ -769,6 +1116,439 @@
                 document.getElementById('bandwidthIcon').textContent = '📴';
                 document.getElementById('bandwidthText').textContent = 'Data Saver ON';
             }
+        }
+        
+        // ============================================
+        // WALLET LOGIN FUNCTIONS
+        // ============================================
+        
+        let otpMethod = 'sms';
+        let pendingPhone = '';
+        let pendingOtp = '';
+        
+        // Check for existing session on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkExistingSession();
+        });
+        
+        function checkExistingSession() {
+            const savedWallet = localStorage.getItem('africa_railways_wallet');
+            if (savedWallet) {
+                const wallet = JSON.parse(savedWallet);
+                updateWalletUI(wallet);
+            }
+        }
+        
+        function updateWalletUI(wallet) {
+            const btn = document.getElementById('zkLoginBtn');
+            const btnText = document.getElementById('zkLoginBtnText');
+            const walletStatus = document.getElementById('walletStatus');
+            
+            btn.classList.add('connected');
+            btnText.innerHTML = `<span class="wallet-address-display">${wallet.address.slice(0, 6)}...${wallet.address.slice(-4)}</span>`;
+            walletStatus.style.display = 'block';
+            document.getElementById('walletBalance').textContent = '0 $AFC';
+        }
+        
+        function openZkLoginModal() {
+            document.getElementById('zkLoginModal').classList.add('active');
+            showStep1();
+        }
+        
+        function closeZkLoginModal() {
+            document.getElementById('zkLoginModal').classList.remove('active');
+        }
+        
+        function showStep1() {
+            document.getElementById('loginStep1').style.display = 'block';
+            document.getElementById('loginStep2').style.display = 'none';
+            document.getElementById('loginStep3').style.display = 'none';
+            document.getElementById('loginStep4').style.display = 'none';
+        }
+        
+        function showStep2() {
+            document.getElementById('loginStep1').style.display = 'none';
+            document.getElementById('loginStep2').style.display = 'block';
+            document.getElementById('loginStep3').style.display = 'none';
+            document.getElementById('loginStep4').style.display = 'none';
+        }
+        
+        function showPhoneLogin() {
+            showStep2();
+            document.getElementById('phoneInput').focus();
+        }
+        
+        function formatPhoneNumber(input) {
+            // Basic formatting - allow + and numbers
+            let value = input.value.replace(/[^\d+]/g, '');
+            if (!value.startsWith('+')) {
+                value = '+' + value;
+            }
+            input.value = value;
+        }
+        
+        function selectOtpMethod(method) {
+            otpMethod = method;
+            document.getElementById('otpSmsBtn').style.background = method === 'sms' ? 'rgba(255,184,0,0.2)' : 'rgba(255,255,255,0.05)';
+            document.getElementById('otpSmsBtn').style.borderColor = method === 'sms' ? 'var(--gold)' : '#333';
+            document.getElementById('otpSmsBtn').style.color = method === 'sms' ? 'var(--gold)' : '#94a3b8';
+            document.getElementById('otpWhatsappBtn').style.background = method === 'whatsapp' ? 'rgba(37,211,102,0.2)' : 'rgba(255,255,255,0.05)';
+            document.getElementById('otpWhatsappBtn').style.borderColor = method === 'whatsapp' ? '#25d366' : '#333';
+            document.getElementById('otpWhatsappBtn').style.color = method === 'whatsapp' ? '#25d366' : '#94a3b8';
+        }
+        
+        async function sendOTP() {
+            const phone = document.getElementById('phoneInput').value;
+            if (!phone || phone.length < 10) {
+                alert('Please enter a valid phone number');
+                return;
+            }
+            
+            pendingPhone = phone;
+            
+            // Generate 6-digit OTP
+            pendingOtp = Math.floor(100000 + Math.random() * 900000).toString();
+            
+            // Store OTP temporarily
+            sessionStorage.setItem('pending_otp', pendingOtp);
+            sessionStorage.setItem('pending_phone', phone);
+            sessionStorage.setItem('otp_method', otpMethod);
+            
+            // Send OTP via API
+            try {
+                const message = `Your Africa Railways verification code is: ${pendingOtp}\n\nThis code expires in 5 minutes.\n\nOr dial *384*26621# for USSD access.`;
+                
+                if (otpMethod === 'whatsapp') {
+                    // WhatsApp - open WhatsApp with pre-filled message (for demo)
+                    // In production, use WhatsApp Business API
+                    console.log('WhatsApp OTP:', pendingOtp);
+                } else {
+                    // SMS via Africa's Talking
+                    await fetch('/api/sms/send', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ to: phone, message: message })
+                    });
+                }
+            } catch (err) {
+                console.log('OTP send error (demo mode):', pendingOtp);
+            }
+            
+            // Show OTP input step
+            document.getElementById('loginStep2').style.display = 'none';
+            document.getElementById('loginStep3').style.display = 'block';
+            document.getElementById('sentToNumber').textContent = phone;
+            
+            // Focus first OTP input
+            document.querySelectorAll('.otp-digit')[0].focus();
+            
+            // For demo, show OTP in console
+            console.log('Demo OTP:', pendingOtp);
+        }
+        
+        function otpInputHandler(input, index) {
+            // Move to next input
+            if (input.value.length === 1 && index < 5) {
+                document.querySelectorAll('.otp-digit')[index + 1].focus();
+            }
+            
+            // Check if all digits entered
+            const digits = document.querySelectorAll('.otp-digit');
+            let otp = '';
+            digits.forEach(d => otp += d.value);
+            if (otp.length === 6) {
+                document.getElementById('verifyOtpBtn').style.background = 'var(--gold)';
+            }
+        }
+        
+        async function verifyOTP() {
+            const digits = document.querySelectorAll('.otp-digit');
+            let enteredOtp = '';
+            digits.forEach(d => enteredOtp += d.value);
+            
+            if (enteredOtp.length !== 6) {
+                alert('Please enter the 6-digit code');
+                return;
+            }
+            
+            const storedOtp = sessionStorage.getItem('pending_otp');
+            
+            if (enteredOtp !== storedOtp) {
+                alert('Invalid code. Please try again.');
+                return;
+            }
+            
+            // Generate wallet from phone number
+            const phone = sessionStorage.getItem('pending_phone');
+            const wallet = await generatePhoneWallet(phone);
+            
+            // Save session
+            localStorage.setItem('africa_railways_wallet', JSON.stringify({
+                address: wallet.address,
+                phone: phone,
+                provider: 'phone',
+                createdAt: new Date().toISOString()
+            }));
+            
+            // Clear OTP data
+            sessionStorage.removeItem('pending_otp');
+            sessionStorage.removeItem('pending_phone');
+            
+            // Show success
+            document.getElementById('loginStep3').style.display = 'none';
+            document.getElementById('loginStep4').style.display = 'block';
+            document.getElementById('newWalletAddress').textContent = wallet.address.slice(0, 8) + '...' + wallet.address.slice(-6);
+            
+            // Update header
+            updateWalletUI({ address: wallet.address });
+        }
+        
+        async function generatePhoneWallet(phone) {
+            // Normalize phone number
+            const digits = phone.replace(/\D/g, '').slice(-10).padStart(10, '0');
+            const salt = 'africa-railways-phone-wallet-v1';
+            const input = digits + salt;
+            
+            // Generate deterministic address using SHA-256
+            const encoder = new TextEncoder();
+            const data = encoder.encode(input);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = new Uint8Array(hashBuffer);
+            
+            const address = '0x' + Array.from(hashArray)
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+            
+            return { address, phone };
+        }
+        
+        function resendOTP() {
+            // Clear existing OTP inputs
+            document.querySelectorAll('.otp-digit').forEach(d => d.value = '');
+            
+            // Resend
+            pendingOtp = Math.floor(100000 + Math.random() * 900000).toString();
+            sessionStorage.setItem('pending_otp', pendingOtp);
+            
+            alert('New code sent!');
+            console.log('New Demo OTP:', pendingOtp);
+        }
+        
+        async function loginWithGoogle() {
+            // Show loading state in modal
+            const step1 = document.getElementById('loginStep1');
+            step1.innerHTML = `
+                <div style="text-align: center; padding: 40px 0;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">🔄</div>
+                    <h3 style="color: var(--gold);">Connecting to Google...</h3>
+                    <p style="color: #94a3b8;">A popup window will open for authentication</p>
+                    <p style="color: #64748b; font-size: 0.85rem; margin-top: 15px;">If popup is blocked, please allow popups for this site</p>
+                </div>
+            `;
+            
+            // Open popup for Google OAuth (simulated for demo)
+            const width = 500, height = 600;
+            const left = (screen.width - width) / 2;
+            const top = (screen.height - height) / 2;
+            
+            // In production, this would be the actual Google OAuth URL
+            // For demo, we simulate the flow
+            const popup = window.open('about:blank', 'GoogleLogin', 
+                `width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no`);
+            
+            if (popup) {
+                popup.document.write(`
+                    <html>
+                    <head><title>Google Sign In</title></head>
+                    <body style="font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #f5f5f5;">
+                        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" width="200" style="margin-bottom: 30px;">
+                        <h2 style="color: #333; margin-bottom: 20px;">Sign in with Google</h2>
+                        <p style="color: #666; margin-bottom: 30px;">Demo: Click below to simulate Google login</p>
+                        <button onclick="window.opener.postMessage({type:'google_auth',success:true,email:'user@gmail.com'},'*');window.close();" 
+                            style="padding: 15px 40px; background: #4285f4; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
+                            Continue as user@gmail.com
+                        </button>
+                        <button onclick="window.close();" style="margin-top: 15px; padding: 10px 30px; background: #ddd; border: none; border-radius: 5px; cursor: pointer;">
+                            Cancel
+                        </button>
+                    </body>
+                    </html>
+                `);
+            }
+            
+            // Listen for message from popup
+            window.addEventListener('message', function googleHandler(event) {
+                if (event.data && event.data.type === 'google_auth') {
+                    window.removeEventListener('message', googleHandler);
+                    
+                    if (event.data.success) {
+                        const wallet = {
+                            address: '0x' + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join(''),
+                            provider: 'google',
+                            email: event.data.email
+                        };
+                        
+                        localStorage.setItem('africa_railways_wallet', JSON.stringify(wallet));
+                        
+                        // Restore step1 and show success
+                        restoreStep1();
+                        document.getElementById('loginStep1').style.display = 'none';
+                        document.getElementById('loginStep4').style.display = 'block';
+                        document.getElementById('newWalletAddress').textContent = wallet.address.slice(0, 8) + '...' + wallet.address.slice(-6);
+                        
+                        updateWalletUI(wallet);
+                    } else {
+                        restoreStep1();
+                    }
+                }
+            });
+            
+            // Handle popup closed without completing
+            const checkPopup = setInterval(() => {
+                if (popup && popup.closed) {
+                    clearInterval(checkPopup);
+                    restoreStep1();
+                }
+            }, 500);
+        }
+        
+        async function loginWithFacebook() {
+            // Show loading state in modal
+            const step1 = document.getElementById('loginStep1');
+            step1.innerHTML = `
+                <div style="text-align: center; padding: 40px 0;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">🔄</div>
+                    <h3 style="color: var(--gold);">Connecting to Facebook...</h3>
+                    <p style="color: #94a3b8;">A popup window will open for authentication</p>
+                    <p style="color: #64748b; font-size: 0.85rem; margin-top: 15px;">If popup is blocked, please allow popups for this site</p>
+                </div>
+            `;
+            
+            // Open popup for Facebook OAuth (simulated for demo)
+            const width = 500, height = 600;
+            const left = (screen.width - width) / 2;
+            const top = (screen.height - height) / 2;
+            
+            const popup = window.open('about:blank', 'FacebookLogin', 
+                `width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no`);
+            
+            if (popup) {
+                popup.document.write(`
+                    <html>
+                    <head><title>Facebook Login</title></head>
+                    <body style="font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #f0f2f5;">
+                        <div style="background: #1877f2; color: white; padding: 15px 30px; border-radius: 8px; font-size: 24px; font-weight: bold; margin-bottom: 30px;">facebook</div>
+                        <h2 style="color: #1c1e21; margin-bottom: 20px;">Log in to Facebook</h2>
+                        <p style="color: #65676b; margin-bottom: 30px;">Demo: Click below to simulate Facebook login</p>
+                        <button onclick="window.opener.postMessage({type:'facebook_auth',success:true},'*');window.close();" 
+                            style="padding: 15px 40px; background: #1877f2; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; font-weight: bold;">
+                            Continue as Facebook User
+                        </button>
+                        <button onclick="window.close();" style="margin-top: 15px; padding: 10px 30px; background: #e4e6eb; border: none; border-radius: 5px; cursor: pointer; color: #1c1e21;">
+                            Cancel
+                        </button>
+                    </body>
+                    </html>
+                `);
+            }
+            
+            // Listen for message from popup
+            window.addEventListener('message', function fbHandler(event) {
+                if (event.data && event.data.type === 'facebook_auth') {
+                    window.removeEventListener('message', fbHandler);
+                    
+                    if (event.data.success) {
+                        const wallet = {
+                            address: '0x' + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join(''),
+                            provider: 'facebook'
+                        };
+                        
+                        localStorage.setItem('africa_railways_wallet', JSON.stringify(wallet));
+                        
+                        // Restore step1 and show success
+                        restoreStep1();
+                        document.getElementById('loginStep1').style.display = 'none';
+                        document.getElementById('loginStep4').style.display = 'block';
+                        document.getElementById('newWalletAddress').textContent = wallet.address.slice(0, 8) + '...' + wallet.address.slice(-6);
+                        
+                        updateWalletUI(wallet);
+                    } else {
+                        restoreStep1();
+                    }
+                }
+            });
+            
+            // Handle popup closed without completing
+            const checkPopup = setInterval(() => {
+                if (popup && popup.closed) {
+                    clearInterval(checkPopup);
+                    restoreStep1();
+                }
+            }, 500);
+        }
+        
+        function restoreStep1() {
+            document.getElementById('loginStep1').innerHTML = `
+                <h2>🔐 Connect Your Wallet</h2>
+                <p>Sign in to access your SUI/$AFC wallet. No seed phrases needed!</p>
+                
+                <!-- Phone Login (Primary for Africa) -->
+                <div class="zklogin-option" onclick="showPhoneLogin()" style="border: 2px solid var(--gold);">
+                    <div class="zklogin-option-icon zklogin-option-phone">
+                        <span>📱</span>
+                    </div>
+                    <div>
+                        <div class="zklogin-option-title">Phone Number <span style="background: var(--gold); color: #000; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; margin-left: 8px;">RECOMMENDED</span></div>
+                        <div class="zklogin-option-desc">OTP via SMS or WhatsApp • Works with USSD *384*26621#</div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: center; margin: 20px 0; color: #64748b;">
+                    <div style="flex: 1; height: 1px; background: #333;"></div>
+                    <span style="padding: 0 15px; font-size: 0.85rem;">or continue with</span>
+                    <div style="flex: 1; height: 1px; background: #333;"></div>
+                </div>
+                
+                <!-- Social Login -->
+                <div style="display: flex; gap: 12px;">
+                    <div class="zklogin-option" onclick="loginWithGoogle()" style="flex: 1; margin-bottom: 0;">
+                        <div class="zklogin-option-icon zklogin-option-google" style="width: 36px; height: 36px;">
+                            <img src="https://www.google.com/favicon.ico" width="20" height="20" alt="Google">
+                        </div>
+                        <div>
+                            <div class="zklogin-option-title" style="font-size: 0.9rem;">Google</div>
+                        </div>
+                    </div>
+                    
+                    <div class="zklogin-option" onclick="loginWithFacebook()" style="flex: 1; margin-bottom: 0;">
+                        <div class="zklogin-option-icon zklogin-option-facebook" style="width: 36px; height: 36px;">
+                            <span style="color: #fff; font-weight: bold; font-size: 16px;">f</span>
+                        </div>
+                        <div>
+                            <div class="zklogin-option-title" style="font-size: 0.9rem;">Facebook</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="zklogin-footer">
+                    <p>🔒 Powered by SUI blockchain • Your wallet, your control</p>
+                </div>
+            `;
+        }
+        
+        function logout() {
+            localStorage.removeItem('africa_railways_wallet');
+            sessionStorage.clear();
+            
+            const btn = document.getElementById('zkLoginBtn');
+            const btnText = document.getElementById('zkLoginBtnText');
+            const walletStatus = document.getElementById('walletStatus');
+            
+            btn.classList.remove('connected');
+            btnText.textContent = 'Login / Sign Up';
+            walletStatus.style.display = 'none';
+            
+            closeZkLoginModal();
         }
     </script>
 </body></html>

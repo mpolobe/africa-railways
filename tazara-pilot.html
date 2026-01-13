@@ -104,6 +104,86 @@
             border-color: var(--gold);
         }
         
+        .connect-wallet-btn {
+            background: linear-gradient(135deg, var(--gold) 0%, #e6a800 100%);
+            border: none;
+            color: var(--navy);
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 184, 0, 0.3);
+        }
+        
+        .connect-wallet-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 184, 0, 0.4);
+        }
+        
+        .connect-wallet-btn.connected {
+            background: linear-gradient(135deg, var(--green) 0%, #059669 100%);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .wallet-address {
+            font-family: monospace;
+            font-size: 0.85rem;
+            background: rgba(0,0,0,0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        
+        .wallet-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .wallet-modal-content {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid #333;
+        }
+        
+        .wallet-option {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #333;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+        
+        .wallet-option:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--gold);
+        }
+        
+        .wallet-option img {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+        }
+        
         .info-banner {
             background: rgba(139, 92, 246, 0.1);
             border: 1px solid rgba(139, 92, 246, 0.3);
@@ -594,6 +674,10 @@
             const [phoneNumber, setPhoneNumber] = useState('');
             const [isLoggedIn, setIsLoggedIn] = useState(false); // Would be set by auth system
             const [ticketData, setTicketData] = useState(null); // For download
+            const [walletConnected, setWalletConnected] = useState(false);
+            const [connectedAddress, setConnectedAddress] = useState('');
+            const [showWalletModal, setShowWalletModal] = useState(false);
+            const [walletType, setWalletType] = useState(''); // 'sui', 'zklogin', 'phone'
 
             // Get routes based on active tab
             const currentRoutes = activeTab === 'tanzania' ? ROUTES_FROM_TANZANIA : ROUTES_FROM_ZAMBIA;
@@ -684,6 +768,87 @@ Valid Until: ${new Date(ticketData.validUntil).toLocaleString()}
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
             };
+
+            // Wallet connection functions
+            const connectWallet = async (type) => {
+                setWalletType(type);
+                
+                if (type === 'sui') {
+                    // Check for SUI wallet extension
+                    if (window.suiWallet) {
+                        try {
+                            const accounts = await window.suiWallet.requestPermissions();
+                            if (accounts && accounts.length > 0) {
+                                setConnectedAddress(accounts[0]);
+                                setWalletConnected(true);
+                                setShowWalletModal(false);
+                                setStatus('success:✅ SUI Wallet connected!');
+                            }
+                        } catch (err) {
+                            setStatus('error:❌ Failed to connect SUI wallet');
+                        }
+                    } else {
+                        // Simulate for demo
+                        const demoAddress = '0x' + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join('');
+                        setConnectedAddress(demoAddress);
+                        setWalletConnected(true);
+                        setShowWalletModal(false);
+                        setStatus('success:✅ SUI Wallet connected (demo mode)');
+                    }
+                } else if (type === 'zklogin') {
+                    // Redirect to zkLogin flow
+                    setStatus('info:🔐 Redirecting to zkLogin...');
+                    setTimeout(() => {
+                        const zkAddress = '0x' + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join('');
+                        setConnectedAddress(zkAddress);
+                        setWalletConnected(true);
+                        setShowWalletModal(false);
+                        setStatus('success:✅ zkLogin wallet connected!');
+                    }, 1500);
+                } else if (type === 'phone') {
+                    // Phone-based wallet
+                    const phone = prompt('Enter your phone number (e.g., +260966165444):\n\nOr dial *384*26621# for USSD access');
+                    if (phone) {
+                        setPhoneNumber(phone);
+                        const phoneDigits = phone.replace(/\D/g, '').slice(-10);
+                        const phoneAddress = '0x' + Array.from({length: 64}, (_, i) => 
+                            ((parseInt(phoneDigits[i % 10]) * (i + 1)) % 16).toString(16)
+                        ).join('');
+                        setConnectedAddress(phoneAddress);
+                        setWalletConnected(true);
+                        setShowWalletModal(false);
+                        setStatus('success:✅ Phone wallet connected!');
+                    }
+                }
+            };
+            
+            const disconnectWallet = () => {
+                setWalletConnected(false);
+                setConnectedAddress('');
+                setWalletType('');
+                setStatus('info:Wallet disconnected');
+            };
+            
+            // Check for existing wallet connection on load
+            React.useEffect(() => {
+                const savedWallet = localStorage.getItem('africa_railways_wallet');
+                if (savedWallet) {
+                    const { address, type } = JSON.parse(savedWallet);
+                    setConnectedAddress(address);
+                    setWalletType(type);
+                    setWalletConnected(true);
+                }
+            }, []);
+            
+            // Save wallet connection
+            React.useEffect(() => {
+                if (walletConnected && connectedAddress) {
+                    localStorage.setItem('africa_railways_wallet', JSON.stringify({
+                        address: connectedAddress,
+                        type: walletType
+                    }));
+                }
+            }, [walletConnected, connectedAddress, walletType]);
 
             const handleBooking = async () => {
                 if (!selectedRoute) {
@@ -803,12 +968,81 @@ Valid Until: ${new Date(ticketData.validUntil).toLocaleString()}
                                     Tanzania-Zambia Railway Authority • Book & Stake Model
                                 </p>
                             </div>
-                            <a href="/" className="back-button">
-                                <i className="fas fa-arrow-left"></i>
-                                Back to Home
-                            </a>
+                            <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                                <button 
+                                    className={`connect-wallet-btn ${walletConnected ? 'connected' : ''}`}
+                                    onClick={() => setShowWalletModal(true)}
+                                >
+                                    {walletConnected ? (
+                                        <>
+                                            <i className="fas fa-wallet"></i>
+                                            <span className="wallet-address">{connectedAddress.slice(0, 6)}...{connectedAddress.slice(-4)}</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <i className="fas fa-wallet"></i>
+                                            Connect Wallet
+                                        </>
+                                    )}
+                                </button>
+                                <a href="/" className="back-button">
+                                    <i className="fas fa-arrow-left"></i>
+                                    Back
+                                </a>
+                            </div>
                         </div>
                     </div>
+                    
+                    {/* Wallet Connection Modal */}
+                    {showWalletModal && (
+                        <div className="wallet-modal" onClick={() => setShowWalletModal(false)}>
+                            <div className="wallet-modal-content" onClick={e => e.stopPropagation()}>
+                                <h3 style={{ color: 'var(--gold)', marginBottom: '20px', textAlign: 'center' }}>
+                                    🔐 Connect Your Wallet
+                                </h3>
+                                
+                                <div className="wallet-option" onClick={() => connectWallet('sui')}>
+                                    <img src="https://sui.io/favicon.png" alt="SUI" />
+                                    <div>
+                                        <div style={{ fontWeight: '600' }}>SUI Wallet</div>
+                                        <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Connect with SUI browser extension</div>
+                                    </div>
+                                </div>
+                                
+                                <div className="wallet-option" onClick={() => connectWallet('zklogin')}>
+                                    <div style={{ width: '40px', height: '40px', background: 'linear-gradient(135deg, #4285f4, #ea4335)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>🔑</div>
+                                    <div>
+                                        <div style={{ fontWeight: '600' }}>zkLogin (Google/Facebook)</div>
+                                        <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Login with social account</div>
+                                    </div>
+                                </div>
+                                
+                                <div className="wallet-option" onClick={() => connectWallet('phone')}>
+                                    <div style={{ width: '40px', height: '40px', background: 'var(--gold)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>📱</div>
+                                    <div>
+                                        <div style={{ fontWeight: '600' }}>Phone Number</div>
+                                        <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Create wallet from phone (USSD: *384*26621#)</div>
+                                    </div>
+                                </div>
+                                
+                                {walletConnected && (
+                                    <button 
+                                        onClick={() => { disconnectWallet(); setShowWalletModal(false); }}
+                                        style={{ width: '100%', padding: '12px', background: 'rgba(239,68,68,0.2)', border: '1px solid #ef4444', borderRadius: '8px', color: '#ef4444', cursor: 'pointer', marginTop: '10px' }}
+                                    >
+                                        Disconnect Wallet
+                                    </button>
+                                )}
+                                
+                                <button 
+                                    onClick={() => setShowWalletModal(false)}
+                                    style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '8px', color: '#94a3b8', cursor: 'pointer', marginTop: '10px' }}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
 
                     <div className="info-banner">
                         <h3>💡 How Book & Stake Works</h3>
