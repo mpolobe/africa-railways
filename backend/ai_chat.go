@@ -110,11 +110,11 @@ func getOpenAIKey() (string, error) {
 		return envKey, nil
 	}
 
-	// Priority 2: Database
+	// Priority 2: Database (service_config table)
 	if db != nil {
 		var key string
 		err := db.QueryRow(`
-			SELECT api_key FROM api_keys 
+			SELECT api_key FROM service_config 
 			WHERE service_name = 'openai' AND is_active = true
 		`).Scan(&key)
 
@@ -291,12 +291,12 @@ func updateAPIKeyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Update API key
+	// Update API key in service_config table
 	_, err := db.Exec(`
-		INSERT INTO api_keys (service_name, api_key, description)
+		INSERT INTO service_config (service_name, api_key, description)
 		VALUES ($1, $2, $3)
 		ON CONFLICT (service_name) 
-		DO UPDATE SET api_key = $2, updated_at = CURRENT_TIMESTAMP
+		DO UPDATE SET api_key = $2, updated_at = NOW()
 	`, req.ServiceName, req.APIKey, "Updated via API")
 
 	if err != nil {
