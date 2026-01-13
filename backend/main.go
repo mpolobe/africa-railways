@@ -238,6 +238,14 @@ func main() {
 	mux.HandleFunc("/api/sms/send", smsHandler)
 	mux.HandleFunc("/api/sms/booking-confirmation", bookingConfirmationHandler)
 
+	// Bookings & Payments endpoints
+	mux.HandleFunc("/api/bookings", bookingsHandler)
+	mux.HandleFunc("/api/bookings/detail", bookingDetailHandler)
+	mux.HandleFunc("/api/bookings/stats", bookingStatsHandler)
+	mux.HandleFunc("/api/payments", paymentsHandler)
+	mux.HandleFunc("/api/tickets/validate", ticketValidateHandler)
+	mux.HandleFunc("/api/tickets/use", ticketUseHandler)
+
 	log.Println("🛰️  Sentinel Engine Live on :" + port)
 	log.Println("📡 WebSocket endpoint: /ws")
 	log.Println("📩 Add event endpoint: /add-event")
@@ -249,5 +257,7 @@ func main() {
 	log.Println("📘 Facebook API: /api/facebook/*")
 	log.Println("🚂 Operators API: /api/operators/*")
 	log.Println("🤖 AI Chat API: /api/ai/chat")
+	log.Println("🎫 Bookings API: /api/bookings/*")
+	log.Println("💳 Payments API: /api/payments")
 	log.Fatal(http.ListenAndServe(":"+port, corsMiddleware(mux)))
 }
