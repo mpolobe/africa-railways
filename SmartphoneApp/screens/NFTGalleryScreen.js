@@ -127,6 +127,7 @@ const SAMPLE_NFTS = [
     passengers: 1,
     status: 'valid',
     price: '45 AFRC',
+    walletAddress: '0x742d35Cc6634C0532925a3b844Bc9e7595f8fE00',
     txHash: '0x1234...abcd',
     mintedAt: '2026-01-13T10:30:00Z',
     // Links to souvenir
@@ -144,6 +145,7 @@ const SAMPLE_NFTS = [
     passengers: 1,
     status: 'valid',
     price: '45 AFRC',
+    walletAddress: '0x742d35Cc6634C0532925a3b844Bc9e7595f8fE00',
     txHash: '0x5678...efgh',
     mintedAt: '2026-01-13T10:30:00Z',
     souvenirId: 'SOU-TAZARA-002',
@@ -160,6 +162,7 @@ const SAMPLE_NFTS = [
     passengers: 2,
     status: 'used',
     price: '96 AFRC',
+    walletAddress: '0x742d35Cc6634C0532925a3b844Bc9e7595f8fE00',
     txHash: '0xcccc...dddd',
     mintedAt: '2025-12-10T09:00:00Z',
     souvenirId: 'SOU-TAZARA-003',
@@ -536,7 +539,13 @@ const NFTGalleryScreen = ({ navigation }) => {
             {nft.type === NFT_TYPES.TICKET && (
               <View style={styles.miniQRContainer}>
                 <QRCode
-                  value={JSON.stringify({ id: nft.id, type: 'ticket' })}
+                  value={JSON.stringify({
+                    id: nft.id,
+                    type: 'ticket',
+                    wallet: nft.walletAddress || '0x0',
+                    route: nft.route,
+                    date: nft.date,
+                  })}
                   size={60}
                   backgroundColor="white"
                   color="#0A0F1C"
@@ -660,9 +669,12 @@ const NFTGalleryScreen = ({ navigation }) => {
                     value={JSON.stringify({
                       id: selectedNFT.id,
                       type: 'ticket',
+                      wallet: selectedNFT.walletAddress || '0x0',
                       route: selectedNFT.route,
                       date: selectedNFT.date,
+                      class: selectedNFT.class,
                       seat: selectedNFT.seat,
+                      passengers: selectedNFT.passengers,
                       txHash: selectedNFT.txHash,
                     })}
                     size={180}

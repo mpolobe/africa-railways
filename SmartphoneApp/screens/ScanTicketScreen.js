@@ -157,12 +157,41 @@ const ScanTicketScreen = ({ navigation }) => {
     setProcessing(true);
     
     try {
-      // QR code format: "walletAddress" or "TKT1024|walletAddress"
-      let walletAddress = data;
+      // QR code formats supported:
+      // 1. JSON: {"id":"TKT-XXX","type":"ticket","wallet":"0x...","route":"...","date":"..."}
+      // 2. Legacy: "walletAddress" or "TKT1024|walletAddress"
+      let walletAddress = null;
       let ticketId = null;
+      let ticketData = {};
       
-      if (data.includes('|')) {
-        [ticketId, walletAddress] = data.split('|');
+      // Try parsing as JSON first (new format from NFT Gallery)
+      if (data.startsWith('{')) {
+        try {
+          const jsonData = JSON.parse(data);
+          ticketId = jsonData.id;
+          walletAddress = jsonData.wallet;
+          ticketData = {
+            route: jsonData.route,
+            date: jsonData.date,
+            seat: jsonData.seat,
+            class: jsonData.class,
+            passengers: jsonData.passengers,
+            txHash: jsonData.txHash,
+            type: jsonData.type,
+          };
+          console.log('Parsed JSON QR:', ticketId, walletAddress);
+        } catch (e) {
+          console.log('Failed to parse JSON, trying legacy format');
+        }
+      }
+      
+      // Legacy format: "walletAddress" or "TKT1024|walletAddress"
+      if (!ticketId && !walletAddress) {
+        if (data.includes('|')) {
+          [ticketId, walletAddress] = data.split('|');
+        } else {
+          walletAddress = data;
+        }
       }
       
       // Check if already used
@@ -187,19 +216,79 @@ const ScanTicketScreen = ({ navigation }) => {
         }
       }
 
+      // If we have ticket data from JSON QR (new format), validate it
+      if (ticketData.type === 'ticket' && ticketId) {
+        // New format - validate ticket from JSON data
+        console.log('Validating ticket from JSON QR code...');
+        
+        // Check if ticket date is valid (not expired)
+        const ticketDate = new Date(ticketData.date);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        if (ticketDate < today) {
+          setTicketResult({
+            status: 'expired',
+            ticketId: ticketId,
+            walletAddress: walletAddress,
+            message: 'Ticket Expired',
+            ...ticketData
+          });
+          await saveScanHistory({
+            ticketId: ticketId,
+            status: 'expired',
+            timestamp: new Date().toISOString()
+          });
+          setProcessing(false);
+          return;
+        }
+        
+        // Valid ticket from JSON
+        setTicketResult({
+          status: 'valid',
+          ticketId: ticketId,
+          walletAddress: walletAddress,
+          message: 'Valid Ticket',
+          ...ticketData,
+          verifiedOn: 'SUI Network'
+        });
+        
+        // Cache for offline use
+        const cachedTickets = await AsyncStorage.getItem('cached_tickets');
+        const cache = cachedTickets ? JSON.parse(cachedTickets) : {};
+        cache[ticketId] = {
+          ...ticketData,
+          walletAddress,
+          cachedAt: new Date().toISOString()
+        };
+        await AsyncStorage.setItem('cached_tickets', JSON.stringify(cache));
+        
+        await saveScanHistory({
+          ticketId: ticketId,
+          status: 'valid',
+          timestamp: new Date().toISOString()
+        });
+        setProcessing(false);
+        return;
+      }
+
+      // Legacy format - verify on blockchain
       if (offlineMode) {
         // Offline mode - check cache
         const cachedTickets = await AsyncStorage.getItem('cached_tickets');
         const cache = cachedTickets ? JSON.parse(cachedTickets) : {};
         
-        if (cache[walletAddress]) {
+        // Check by ticketId or walletAddress
+        const cachedTicket = cache[ticketId] || cache[walletAddress];
+        
+        if (cachedTicket) {
           setTicketResult({
             status: 'valid',
             ticketId: ticketId || 'Cached',
             walletAddress: walletAddress,
             message: 'Valid Ticket (Cached)',
             offline: true,
-            ...cache[walletAddress]
+            ...cachedTicket
           });
         } else {
           setTicketResult({
@@ -311,7 +400,9 @@ const ScanTicketScreen = ({ navigation }) => {
       switch (ticketResult.status) {
         case 'valid': return '#10b981';
         case 'used': return '#f59e0b';
+        case 'expired': return '#f59e0b';
         case 'invalid': return '#ef4444';
+        case 'error': return '#ef4444';
         default: return '#6b7280';
       }
     };
@@ -320,7 +411,9 @@ const ScanTicketScreen = ({ navigation }) => {
       switch (ticketResult.status) {
         case 'valid': return '✅';
         case 'used': return '⚠️';
+        case 'expired': return '📅';
         case 'invalid': return '❌';
+        case 'error': return '❌';
         default: return '❓';
       }
     };
@@ -344,6 +437,24 @@ const ScanTicketScreen = ({ navigation }) => {
           <View style={styles.detailsContainer}>
             <DetailRow label="Ticket ID" value={ticketResult.ticketId} />
             
+            {/* New JSON format ticket details */}
+            {ticketResult.route && (
+              <DetailRow label="Route" value={ticketResult.route} />
+            )}
+            {ticketResult.date && (
+              <DetailRow label="Date" value={ticketResult.date} />
+            )}
+            {ticketResult.class && (
+              <DetailRow label="Class" value={ticketResult.class} />
+            )}
+            {ticketResult.seat && (
+              <DetailRow label="Seat" value={ticketResult.seat} />
+            )}
+            {ticketResult.passengers && (
+              <DetailRow label="Passengers" value={ticketResult.passengers.toString()} />
+            )}
+            
+            {/* Legacy Polygon metadata format */}
             {ticketResult.metadata && (
               <>
                 <DetailRow label="Route" value={ticketResult.metadata.attributes?.find(a => a.trait_type === 'Route')?.value || 'N/A'} />
@@ -360,9 +471,23 @@ const ScanTicketScreen = ({ navigation }) => {
                 <DetailRow label="Location" value={ticketResult.location} />
               </>
             )}
+            
+            {ticketResult.status === 'expired' && (
+              <View style={styles.expiredBanner}>
+                <Text style={styles.expiredText}>⚠️ This ticket has expired</Text>
+              </View>
+            )}
+
+            {ticketResult.verifiedOn && (
+              <DetailRow label="Verified On" value={ticketResult.verifiedOn} />
+            )}
 
             {ticketResult.nftAddress && (
               <DetailRow label="NFT Address" value={`${ticketResult.nftAddress.slice(0, 10)}...`} />
+            )}
+            
+            {ticketResult.txHash && (
+              <DetailRow label="TX Hash" value={ticketResult.txHash} />
             )}
           </View>
 
@@ -523,6 +648,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     marginTop: 10,
+  },
+  expiredBanner: {
+    backgroundColor: 'rgba(245, 158, 11, 0.2)',
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#f59e0b',
+  },
+  expiredText: {
+    color: '#f59e0b',
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   button: {
     paddingHorizontal: 30,
