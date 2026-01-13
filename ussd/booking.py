@@ -2,18 +2,33 @@
 Africa Railways USSD Booking System
 Enables ticket booking via USSD for feature phones
 
+Service Code: *384*RAIL# (or *123*RAIL# depending on carrier)
+
 Flow:
-*123*RAIL# → Main Menu → Book Ticket → Select Route → Select Date → Select Class → Confirm → Pay
+Dial Code → Main Menu → Book Ticket → Select Route → Select Date → Select Class → Confirm → Pay
 
 Session data stored in Redis/DB to maintain state across USSD requests
+
+Integration with Africa's Talking:
+- Receives POST requests with sessionId, phoneNumber, text
+- Returns CON (continue) or END (terminate) responses
+- Supports MTN, Airtel, Zamtel across Zambia, Tanzania, Kenya
 """
 
 import os
 import json
 import hashlib
+import logging
 from datetime import datetime, timedelta
 from flask import Flask, request, make_response
 import requests
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
@@ -23,6 +38,22 @@ DATABASE_URL = os.getenv("DATABASE_URL", None)
 AFC_COIN_TYPE = os.getenv("AFC_COIN_TYPE", "0xc68c4cfb63d702227db09c28837e75abd23bbb3adc192e3bc45fecca4dd5b7e8::afc::AFC")
 SUI_RPC_URL = os.getenv("SUI_RPC_URL", "https://fullnode.mainnet.sui.io:443")
 WHATSAPP_NUMBER = "+260966165444"
+AFRICAS_TALKING_API_KEY = os.getenv("AFRICAS_TALKING_API_KEY", "")
+AFRICAS_TALKING_USERNAME = os.getenv("AFRICAS_TALKING_USERNAME", "sandbox")
+
+# Try to import Africa's Talking SDK
+try:
+    import africastalking
+    africastalking.initialize(AFRICAS_TALKING_USERNAME, AFRICAS_TALKING_API_KEY)
+    sms = africastalking.SMS
+    SMS_AVAILABLE = True
+    logger.info("✅ Africa's Talking SMS initialized")
+except ImportError:
+    SMS_AVAILABLE = False
+    logger.warning("⚠️ Africa's Talking SDK not installed. Run: pip install africastalking")
+except Exception as e:
+    SMS_AVAILABLE = False
+    logger.warning(f"⚠️ Africa's Talking initialization failed: {e}")
 
 # In-memory session store (use Redis in production)
 sessions = {}
@@ -171,10 +202,10 @@ def create_ticket(booking_data):
         "status": "confirmed"
     }
 
-# Send SMS confirmation
+# Send SMS confirmation via Africa's Talking
 def send_sms_confirmation(phone_number, booking_data):
     """
-    In production, use Africa's Talking or Twilio SMS API
+    Send SMS confirmation via Africa's Talking API
     """
     message = (
         f"Africa Railways Booking Confirmed!\n"
@@ -182,27 +213,51 @@ def send_sms_confirmation(phone_number, booking_data):
         f"Route: {booking_data['route_name']}\n"
         f"Date: {booking_data['date']}\n"
         f"Class: {booking_data['class']}\n"
-        f"Show this SMS at the station."
+        f"Show this SMS at the station.\n"
+        f"WhatsApp: {WHATSAPP_NUMBER}"
     )
-    # TODO: Send actual SMS
-    print(f"SMS to {phone_number}: {message}")
-    return True
+    
+    if SMS_AVAILABLE:
+        try:
+            response = sms.send(message, [phone_number])
+            logger.info(f"📱 SMS sent to {phone_number}: {response}")
+            return True
+        except Exception as e:
+            logger.error(f"❌ SMS failed: {e}")
+            return False
+    else:
+        # Mock SMS for development
+        logger.info(f"[MOCK SMS] to {phone_number}: {message}")
+        print(f"SMS to {phone_number}: {message}")
+        return True
 
 
 @app.route("/ussd", methods=['POST', 'GET'])
 def ussd_handler():
     """
-    Main USSD handler
-    Africa's Talking sends: sessionId, phoneNumber, text
+    Main USSD handler for Africa's Talking
+    
+    Africa's Talking sends:
+    - sessionId: Unique session identifier
+    - phoneNumber: User's phone number (e.g., +260966165444)
+    - text: User input (e.g., "1*2*1" for nested selections)
+    - serviceCode: USSD code dialed (e.g., *384*RAIL#)
+    - networkCode: Mobile network code
     """
     session_id = request.values.get("sessionId", "")
     phone_number = request.values.get("phoneNumber", "")
     text = request.values.get("text", "")
+    service_code = request.values.get("serviceCode", "*384*RAIL#")
+    network_code = request.values.get("networkCode", "")
     
-    # Detect user's currency
+    # Log request (mask phone number for privacy)
+    masked_phone = phone_number[-4:] if len(phone_number) >= 4 else "****"
+    logger.info(f"📱 USSD Request - Session: {session_id[:10]}..., Phone: ...{masked_phone}, Input: '{text}'")
+    
+    # Detect user's currency based on phone prefix
     currency = detect_currency(phone_number)
     
-    # Parse input levels
+    # Parse input levels (e.g., "1*2*1" → ["1", "2", "1"])
     inputs = text.split("*") if text else []
     level = len(inputs)
     
@@ -211,6 +266,7 @@ def ussd_handler():
     if not session:
         session = {"phone": phone_number, "currency": currency, "step": "main"}
         set_session(session_id, session)
+        logger.info(f"🆕 New session created for ...{masked_phone}, currency: {currency}")
     
     response = ""
     
