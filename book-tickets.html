@@ -294,24 +294,48 @@
 
         // Exchange rates (USD to local currency) - fallback values
         const FALLBACK_RATES = {
-            ZMW: 27.50,  // Zambian Kwacha
+            ZMW: 27.50,   // Zambian Kwacha
             TZS: 2580.00, // Tanzanian Shilling
             KES: 129.00,  // Kenyan Shilling
             ZAR: 18.75,   // South African Rand
             UGX: 3750.00, // Ugandan Shilling
             NGN: 1550.00, // Nigerian Naira
+            BWP: 13.50,   // Botswana Pula
+            MZN: 63.50,   // Mozambican Metical
+            RWF: 1320.00, // Rwandan Franc
+            ETB: 125.00,  // Ethiopian Birr
+            EGP: 49.00,   // Egyptian Pound
+            MAD: 10.00,   // Moroccan Dirham
+            GHS: 15.50,   // Ghanaian Cedi
+            AOA: 825.00,  // Angolan Kwanza
+            CDF: 2750.00, // Congolese Franc
+            NAD: 18.75,   // Namibian Dollar
             USD: 1.00,
+            EUR: 0.92,
+            GBP: 0.79,
         };
 
         // Currency symbols
         const CURRENCY_SYMBOLS = {
-            ZMW: 'ZK',
+            ZMW: 'K',
             TZS: 'TSh',
             KES: 'KSh',
             ZAR: 'R',
             UGX: 'USh',
             NGN: '₦',
+            BWP: 'P',
+            MZN: 'MT',
+            RWF: 'FRw',
+            ETB: 'Br',
+            EGP: 'E£',
+            MAD: 'DH',
+            GHS: 'GH₵',
+            AOA: 'Kz',
+            CDF: 'FC',
+            NAD: 'N$',
             USD: '$',
+            EUR: '€',
+            GBP: '£',
         };
 
         // Currency names
@@ -322,7 +346,19 @@
             ZAR: 'South African Rand',
             UGX: 'Ugandan Shilling',
             NGN: 'Nigerian Naira',
+            BWP: 'Botswana Pula',
+            MZN: 'Mozambican Metical',
+            RWF: 'Rwandan Franc',
+            ETB: 'Ethiopian Birr',
+            EGP: 'Egyptian Pound',
+            MAD: 'Moroccan Dirham',
+            GHS: 'Ghanaian Cedi',
+            AOA: 'Angolan Kwanza',
+            CDF: 'Congolese Franc',
+            NAD: 'Namibian Dollar',
             USD: 'US Dollar',
+            EUR: 'Euro',
+            GBP: 'British Pound',
         };
 
         // Base prices in USD
@@ -710,10 +746,78 @@
             const [isBooking, setIsBooking] = useState(false);
             const [searchMode, setSearchMode] = useState('simple'); // 'simple' or 'advanced'
             const [isReturnTrip, setIsReturnTrip] = useState(false);
-            const [localCurrency, setLocalCurrency] = useState('TZS');
+            const [localCurrency, setLocalCurrency] = useState('USD');
             const [exchangeRates, setExchangeRates] = useState(FALLBACK_RATES);
             const [rateSource, setRateSource] = useState('fallback');
             const [loadingRates, setLoadingRates] = useState(true);
+            const [detectedCountry, setDetectedCountry] = useState('');
+
+            // Country to currency mapping
+            const COUNTRY_CURRENCY_MAP = {
+                'ZM': 'ZMW', // Zambia
+                'TZ': 'TZS', // Tanzania
+                'KE': 'KES', // Kenya
+                'ZA': 'ZAR', // South Africa
+                'UG': 'UGX', // Uganda
+                'NG': 'NGN', // Nigeria
+                'GH': 'GHS', // Ghana
+                'RW': 'RWF', // Rwanda
+                'ET': 'ETB', // Ethiopia
+                'EG': 'EGP', // Egypt
+                'MA': 'MAD', // Morocco
+                'TN': 'TND', // Tunisia
+                'BW': 'BWP', // Botswana
+                'NA': 'NAD', // Namibia
+                'MZ': 'MZN', // Mozambique
+                'AO': 'AOA', // Angola
+                'CD': 'CDF', // DRC
+                'US': 'USD', // USA
+                'GB': 'GBP', // UK
+                'EU': 'EUR', // Europe
+            };
+
+            // Detect user's location via IP address
+            useEffect(() => {
+                const detectLocation = async () => {
+                    try {
+                        // Try multiple IP geolocation services
+                        const services = [
+                            'https://ipapi.co/json/',
+                            'https://ip-api.com/json/',
+                            'https://ipinfo.io/json'
+                        ];
+                        
+                        for (const service of services) {
+                            try {
+                                const response = await fetch(service, { timeout: 5000 });
+                                if (response.ok) {
+                                    const data = await response.json();
+                                    const countryCode = data.country_code || data.countryCode || data.country;
+                                    
+                                    if (countryCode) {
+                                        setDetectedCountry(countryCode);
+                                        const currency = COUNTRY_CURRENCY_MAP[countryCode] || 'USD';
+                                        setLocalCurrency(currency);
+                                        console.log(`📍 Detected location: ${countryCode}, Currency: ${currency}`);
+                                        return;
+                                    }
+                                }
+                            } catch (e) {
+                                console.warn(`IP service ${service} failed:`, e.message);
+                            }
+                        }
+                        
+                        // Fallback to USD if all services fail
+                        console.log('📍 Could not detect location, defaulting to USD');
+                        setLocalCurrency('USD');
+                    } catch (error) {
+                        console.warn('Location detection failed:', error);
+                        setLocalCurrency('USD');
+                    }
+                };
+                
+                detectLocation();
+            }, []);
 
             // Fetch live exchange rates
             useEffect(() => {
@@ -870,7 +974,7 @@
                         </p>
                         
                         {/* Currency Selector */}
-                        <div style={{ marginTop: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                        <div style={{ marginTop: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
                             <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Display prices in:</span>
                             <select 
                                 value={localCurrency}
@@ -885,15 +989,22 @@
                                     cursor: 'pointer'
                                 }}
                             >
-                                <option value="TZS">🇹🇿 TZS - Tanzanian Shilling</option>
                                 <option value="ZMW">🇿🇲 ZMW - Zambian Kwacha</option>
+                                <option value="TZS">🇹🇿 TZS - Tanzanian Shilling</option>
                                 <option value="KES">🇰🇪 KES - Kenyan Shilling</option>
                                 <option value="ZAR">🇿🇦 ZAR - South African Rand</option>
                                 <option value="UGX">🇺🇬 UGX - Ugandan Shilling</option>
                                 <option value="NGN">🇳🇬 NGN - Nigerian Naira</option>
+                                <option value="BWP">🇧🇼 BWP - Botswana Pula</option>
+                                <option value="MZN">🇲🇿 MZN - Mozambican Metical</option>
+                                <option value="RWF">🇷🇼 RWF - Rwandan Franc</option>
+                                <option value="ETB">🇪🇹 ETB - Ethiopian Birr</option>
+                                <option value="EGP">🇪🇬 EGP - Egyptian Pound</option>
+                                <option value="MAD">🇲🇦 MAD - Moroccan Dirham</option>
+                                <option value="USD">🇺🇸 USD - US Dollar</option>
                             </select>
                             <span style={{ color: '#64748b', fontSize: '0.75rem' }}>
-                                {rateSource === 'live' ? '🔄 Live rate' : '📊 Standard rate'}
+                                {detectedCountry ? `📍 ${detectedCountry}` : ''} {rateSource === 'live' ? '🔄 Live' : '📊 Standard'}
                             </span>
                         </div>
                     </div>
