@@ -73,13 +73,30 @@
     <div class="main-container">
         <div class="sidebar-left">
             <a href="../sentinel-dashboard.html" class="menu-item"><div class="menu-icon">📊</div><span>Dashboard</span></a>
+            
+            <div class="menu-section" style="padding: 12px 12px 6px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">Ticketing</div>
             <a href="bookings.html" class="menu-item"><div class="menu-icon">🎫</div><span>Bookings</span></a>
-            <a href="payments.html" class="menu-item"><div class="menu-icon">💰</div><span>Payments</span></a>
-            <a href="users.html" class="menu-item"><div class="menu-icon">👥</div><span>Users</span></a>
+            
+            <div class="menu-section" style="padding: 12px 12px 6px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">Finance</div>
+            <a href="payments.html" class="menu-item"><div class="menu-icon">💳</div><span>Payments</span></a>
+            <a href="transactions.html" class="menu-item"><div class="menu-icon">💰</div><span>$AFC Transactions</span></a>
+            
+            <div class="menu-section" style="padding: 12px 12px 6px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">Operations</div>
             <a href="routes.html" class="menu-item"><div class="menu-icon">🚂</div><span>Routes</span></a>
+            <a href="rolling-stock.html" class="menu-item"><div class="menu-icon">🚃</div><span>Rolling Stock</span></a>
+            <a href="maintenance.html" class="menu-item"><div class="menu-icon">🔧</div><span>Maintenance</span></a>
+            
+            <div class="menu-section" style="padding: 12px 12px 6px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">Users</div>
+            <a href="users.html" class="menu-item"><div class="menu-icon">👥</div><span>Passengers</span></a>
+            
+            <div class="menu-section" style="padding: 12px 12px 6px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">Insights</div>
             <a href="analytics.html" class="menu-item"><div class="menu-icon">📈</div><span>Analytics</span></a>
+            <a href="#" class="menu-item" onclick="showAIAssistant(); return false;"><div class="menu-icon">🤖</div><span>AI Assistant</span></a>
+            
+            <div class="menu-section" style="padding: 12px 12px 6px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">System</div>
             <a href="alerts.html" class="menu-item"><div class="menu-icon">⚠️</div><span>Alerts</span></a>
-            <a href="settings.html" class="menu-item active"><div class="menu-icon">🔧</div><span>Settings</span></a>
+            <a href="notifications.html" class="menu-item"><div class="menu-icon">🔔</div><span>Notifications</span></a>
+            <a href="settings.html" class="menu-item active"><div class="menu-icon">⚙️</div><span>Settings</span></a>
         </div>
         <div class="content">
             <div class="page-title">🔧 Settings</div>
@@ -127,5 +144,6 @@
             }
         }
     </script>
+<script>function showAIAssistant() { alert("🤖 AI Assistant\n\nThe AI Assistant helps you analyze data, detect anomalies, and optimize operations.\n\nComing soon: Natural language queries."); }</script>
 </body>
 </html>
