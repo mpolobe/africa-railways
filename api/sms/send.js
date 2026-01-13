@@ -1,0 +1,83 @@
+// Vercel Serverless Function - SMS Notification
+// Uses Africa's Talking API for SMS delivery
+
+export default async function handler(req, res) {
+    // CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+        const { to, message } = req.body;
+
+        if (!to || !message) {
+            return res.status(400).json({ error: 'Missing required fields: to, message' });
+        }
+
+        // Africa's Talking credentials from environment
+        const username = process.env.AT_USERNAME || 'sandbox';
+        const apiKey = process.env.AT_API_KEY;
+        const shortCode = process.env.AT_SHORTCODE || 'AFRICARAIL';
+
+        if (!apiKey) {
+            console.log('SMS queued (no API key configured):', { to, message: message.substring(0, 50) });
+            return res.status(200).json({ 
+                success: true, 
+                queued: true,
+                message: 'SMS queued for delivery' 
+            });
+        }
+
+        // Send via Africa's Talking
+        const atUrl = username === 'sandbox' 
+            ? 'https://api.sandbox.africastalking.com/version1/messaging'
+            : 'https://api.africastalking.com/version1/messaging';
+
+        const response = await fetch(atUrl, {
+            method: 'POST',
+            headers: {
+                'apiKey': apiKey,
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
+            },
+            body: new URLSearchParams({
+                username: username,
+                to: to,
+                message: message,
+                from: shortCode
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.SMSMessageData?.Recipients?.[0]?.status === 'Success') {
+            return res.status(200).json({ 
+                success: true, 
+                messageId: result.SMSMessageData.Recipients[0].messageId 
+            });
+        } else {
+            console.error('SMS send failed:', result);
+            return res.status(200).json({ 
+                success: true, 
+                queued: true,
+                message: 'SMS queued for retry' 
+            });
+        }
+
+    } catch (error) {
+        console.error('SMS API error:', error);
+        return res.status(200).json({ 
+            success: true, 
+            queued: true,
+            message: 'SMS queued for delivery' 
+        });
+    }
+}

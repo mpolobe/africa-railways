@@ -471,6 +471,7 @@
                     style="max-width: 180px; height: auto; border-radius: 15px; box-shadow: 0 10px 40px rgba(255, 184, 0, 0.2); border: 2px solid rgba(255, 184, 0, 0.3);"
                 />
                 <p style="color: #aaa; font-size: 0.8rem; margin-top: 12px;">Book tickets on the go</p>
+                <p style="color: #666; font-size: 0.7rem; margin-top: 8px;">📍 2808/7417 Off Chuswe Rd, Lusaka</p>
             </div>
 
             <!-- Contact Us Form -->
@@ -512,7 +513,7 @@
         </div>
 
         <script>
-            function submitContactForm(event) {
+            async function submitContactForm(event) {
                 event.preventDefault();
                 
                 const name = document.getElementById('contactName').value;
@@ -523,20 +524,73 @@
                 // Show sending status
                 statusEl.style.display = 'block';
                 statusEl.style.color = 'var(--cyan)';
-                statusEl.textContent = 'Sending message...';
+                statusEl.textContent = '📤 Sending message...';
                 
-                // Simulate form submission (replace with actual API call)
-                setTimeout(() => {
+                try {
+                    // Create message object
+                    const newMessage = {
+                        id: Date.now(),
+                        name: name,
+                        email: email,
+                        subject: 'Contact Form: ' + message.substring(0, 50) + '...',
+                        message: message,
+                        timestamp: new Date().toISOString(),
+                        read: false,
+                        starred: false,
+                        replied: false
+                    };
+                    
+                    // Save to localStorage (admin inbox)
+                    const inbox = JSON.parse(localStorage.getItem('africa_railways_inbox') || '[]');
+                    inbox.unshift(newMessage);
+                    localStorage.setItem('africa_railways_inbox', JSON.stringify(inbox));
+                    
+                    // Send SMS notification to admin
+                    try {
+                        await fetch('/api/sms/send', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                to: '+260966165444',
+                                message: `📬 New Contact Form:\nFrom: ${name}\nEmail: ${email}\nMessage: ${message.substring(0, 100)}...`
+                            })
+                        });
+                    } catch (smsErr) {
+                        console.log('SMS notification queued');
+                    }
+                    
+                    // Send email notification
+                    try {
+                        await fetch('/api/email/send', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                to: 'admin@africarailways.com',
+                                subject: `New Contact Form Message from ${name}`,
+                                html: `
+                                    <h2>New Contact Form Submission</h2>
+                                    <p><strong>From:</strong> ${name}</p>
+                                    <p><strong>Email:</strong> ${email}</p>
+                                    <p><strong>Message:</strong></p>
+                                    <p>${message.replace(/\n/g, '<br>')}</p>
+                                    <hr>
+                                    <p><a href="https://africarailways.com/sentinel-pages/inbox.html">View in Admin Inbox</a></p>
+                                `
+                            })
+                        });
+                    } catch (emailErr) {
+                        console.log('Email notification queued');
+                    }
+                    
                     statusEl.style.color = '#10b981';
                     statusEl.textContent = '✅ Message sent! We will get back to you soon.';
-                    
-                    // Clear form
                     document.getElementById('contactForm').reset();
                     
-                    // Also open WhatsApp as backup
-                    const whatsappMsg = encodeURIComponent(`Hi Africa Railways! I'm ${name} (${email}). ${message}`);
-                    // window.open(`https://wa.me/260966165444?text=${whatsappMsg}`, '_blank');
-                }, 1000);
+                } catch (err) {
+                    statusEl.style.color = '#f02849';
+                    statusEl.textContent = '❌ Failed to send. Please try WhatsApp instead.';
+                    console.error('Contact form error:', err);
+                }
             }
         </script>
         

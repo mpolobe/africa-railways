@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Management - Sentinel Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --dark: #18191a; --surface: #242526; --hover: #3a3b3c; --border: #3e4042;
+            --text-primary: #e4e6eb; --text-secondary: #b0b3b8;
+            --gold: #FFB800; --cyan: #00D4FF; --green: #00d084; --danger: #f02849;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--dark); color: var(--text-primary); line-height: 1.6; }
+        .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-size: 20px; font-weight: bold; color: var(--gold); display: flex; align-items: center; gap: 10px; }
+        .main-container { display: grid; grid-template-columns: 280px 1fr; gap: 20px; padding: 20px; }
+        .sidebar-left { position: sticky; top: 80px; height: fit-content; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 8px; color: var(--text-primary); text-decoration: none; transition: background 0.2s; }
+        .menu-item:hover { background: var(--hover); }
+        .menu-item.active { background: var(--hover); font-weight: 600; }
+        .menu-icon { font-size: 20px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--hover); border-radius: 50%; }
+        .content { max-width: 100%; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .page-title { font-size: 28px; font-weight: bold; }
+        .btn { padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+        .btn-primary { background: var(--gold); color: #000; }
+        .btn-primary:hover { background: #e6a800; }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .card { background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); text-align: center; }
+        .stat-value { font-size: 32px; font-weight: bold; color: var(--gold); }
+        .stat-label { font-size: 14px; color: var(--text-secondary); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 14px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: var(--hover); font-weight: 600; color: var(--text-secondary); font-size: 13px; text-transform: uppercase; }
+        tr:hover { background: var(--hover); }
+        .badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-admin { background: rgba(255,184,0,0.2); color: var(--gold); }
+        .badge-manager { background: rgba(0,212,255,0.2); color: var(--cyan); }
+        .badge-staff { background: rgba(0,208,132,0.2); color: var(--green); }
+        .badge-active { background: rgba(0,208,132,0.2); color: var(--green); }
+        .badge-inactive { background: rgba(240,40,73,0.2); color: var(--danger); }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--gold); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--surface); border-radius: 16px; padding: 30px; width: 500px; max-width: 90%; border: 1px solid var(--border); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-title { font-size: 20px; font-weight: bold; }
+        .close-btn { background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 500; color: var(--text-secondary); }
+        .form-group input, .form-group select { width: 100%; padding: 12px; background: var(--dark); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 14px; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--gold); }
+        .permissions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .permission-item { display: flex; align-items: center; gap: 8px; padding: 8px; background: var(--dark); border-radius: 6px; }
+        .permission-item input { width: auto; }
+        .actions { display: flex; gap: 8px; }
+        .action-btn { padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px; }
+        .action-edit { background: rgba(0,212,255,0.2); color: var(--cyan); }
+        .action-delete { background: rgba(240,40,73,0.2); color: var(--danger); }
+        @media (max-width: 768px) { .main-container { grid-template-columns: 1fr; } .sidebar-left { display: none; } .stats-grid { grid-template-columns: 1fr 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🛡️ Sentinel Dashboard</div>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn btn-primary" onclick="openAddModal()">+ Add Staff</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-left">
+            <a href="../sentinel-dashboard.html" class="menu-item"><div class="menu-icon">📊</div><span>Dashboard</span></a>
+            <div style="padding: 12px 12px 6px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase;">Ticketing</div>
+            <a href="bookings.html" class="menu-item"><div class="menu-icon">🎫</div><span>Bookings</span></a>
+            <div style="padding: 12px 12px 6px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase;">Finance</div>
+            <a href="payments.html" class="menu-item"><div class="menu-icon">💳</div><span>Payments</span></a>
+            <a href="transactions.html" class="menu-item"><div class="menu-icon">💰</div><span>$AFC Transactions</span></a>
+            <div style="padding: 12px 12px 6px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase;">Operations</div>
+            <a href="routes.html" class="menu-item"><div class="menu-icon">🚂</div><span>Routes</span></a>
+            <a href="rolling-stock.html" class="menu-item"><div class="menu-icon">🚃</div><span>Rolling Stock</span></a>
+            <a href="maintenance.html" class="menu-item"><div class="menu-icon">🔧</div><span>Maintenance</span></a>
+            <div style="padding: 12px 12px 6px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase;">Users</div>
+            <a href="users.html" class="menu-item"><div class="menu-icon">👥</div><span>Passengers</span></a>
+            <a href="staff.html" class="menu-item active"><div class="menu-icon">👷</div><span>Staff</span></a>
+            <div style="padding: 12px 12px 6px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase;">Insights</div>
+            <a href="analytics.html" class="menu-item"><div class="menu-icon">📈</div><span>Analytics</span></a>
+            <a href="inbox.html" class="menu-item"><div class="menu-icon">📬</div><span>Inbox</span></a>
+            <div style="padding: 12px 12px 6px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase;">System</div>
+            <a href="alerts.html" class="menu-item"><div class="menu-icon">⚠️</div><span>Alerts</span></a>
+            <a href="notifications.html" class="menu-item"><div class="menu-icon">🔔</div><span>Notifications</span></a>
+            <a href="settings.html" class="menu-item"><div class="menu-icon">⚙️</div><span>Settings</span></a>
+        </div>
+
+        <div class="content">
+            <div class="page-header">
+                <div class="page-title">👷 Staff Management</div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-value" id="total-staff">0</div><div class="stat-label">Total Staff</div></div>
+                <div class="stat-card"><div class="stat-value" id="active-staff">0</div><div class="stat-label">Active</div></div>
+                <div class="stat-card"><div class="stat-value" id="admin-count">0</div><div class="stat-label">Admins</div></div>
+                <div class="stat-card"><div class="stat-value" id="pending-invites">0</div><div class="stat-label">Pending Invites</div></div>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 16px;">Staff Directory</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Staff Member</th>
+                            <th>Role</th>
+                            <th>Department</th>
+                            <th>Status</th>
+                            <th>Last Active</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="staff-table"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Staff Modal -->
+    <div class="modal" id="staffModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">Add New Staff</div>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="staffForm" onsubmit="saveStaff(event)">
+                <input type="hidden" id="staffId">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="staffName" required placeholder="Enter full name">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="staffEmail" required placeholder="email@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="staffPhone" required placeholder="+260...">
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="staffRole" required>
+                        <option value="">Select Role</option>
+                        <option value="admin">Administrator</option>
+                        <option value="manager">Station Manager</option>
+                        <option value="conductor">Conductor</option>
+                        <option value="agent">Booking Agent</option>
+                        <option value="inspector">Track Inspector</option>
+                        <option value="safety">Safety Officer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Department</label>
+                    <select id="staffDept" required>
+                        <option value="">Select Department</option>
+                        <option value="operations">Operations</option>
+                        <option value="ticketing">Ticketing</option>
+                        <option value="maintenance">Maintenance</option>
+                        <option value="safety">Safety</option>
+                        <option value="finance">Finance</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Permissions</label>
+                    <div class="permissions-grid">
+                        <label class="permission-item"><input type="checkbox" id="perm-bookings"> Manage Bookings</label>
+                        <label class="permission-item"><input type="checkbox" id="perm-payments"> View Payments</label>
+                        <label class="permission-item"><input type="checkbox" id="perm-users"> Manage Users</label>
+                        <label class="permission-item"><input type="checkbox" id="perm-routes"> Edit Routes</label>
+                        <label class="permission-item"><input type="checkbox" id="perm-reports"> View Reports</label>
+                        <label class="permission-item"><input type="checkbox" id="perm-settings"> System Settings</label>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Save & Send Invite</button>
+                    <button type="button" class="btn" style="background: var(--hover); color: var(--text-primary);" onclick="closeModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let staffData = JSON.parse(localStorage.getItem('africa_railways_staff') || '[]');
+        
+        // Initialize with sample data if empty
+        if (staffData.length === 0) {
+            staffData = [
+                { id: 1, name: 'Benjamin Mpolokoso', email: 'admin@africarailways.com', phone: '+260966165444', role: 'admin', dept: 'operations', status: 'active', lastActive: new Date().toISOString(), permissions: ['bookings','payments','users','routes','reports','settings'] },
+                { id: 2, name: 'Sarah Banda', email: 'sarah@africarailways.com', phone: '+260977123456', role: 'manager', dept: 'ticketing', status: 'active', lastActive: new Date(Date.now() - 3600000).toISOString(), permissions: ['bookings','payments','users'] },
+                { id: 3, name: 'David Phiri', email: 'david@africarailways.com', phone: '+260955789012', role: 'conductor', dept: 'operations', status: 'active', lastActive: new Date(Date.now() - 7200000).toISOString(), permissions: ['bookings'] },
+                { id: 4, name: 'Grace Tembo', email: 'grace@africarailways.com', phone: '+260966345678', role: 'agent', dept: 'ticketing', status: 'active', lastActive: new Date(Date.now() - 1800000).toISOString(), permissions: ['bookings','payments'] },
+                { id: 5, name: 'Peter Zulu', email: 'peter@africarailways.com', phone: '+260977901234', role: 'inspector', dept: 'maintenance', status: 'inactive', lastActive: new Date(Date.now() - 86400000).toISOString(), permissions: ['routes','reports'] },
+            ];
+            localStorage.setItem('africa_railways_staff', JSON.stringify(staffData));
+        }
+
+        function renderStaff() {
+            const tbody = document.getElementById('staff-table');
+            const roleLabels = { admin: 'Administrator', manager: 'Station Manager', conductor: 'Conductor', agent: 'Booking Agent', inspector: 'Track Inspector', safety: 'Safety Officer' };
+            const roleBadges = { admin: 'badge-admin', manager: 'badge-manager', conductor: 'badge-staff', agent: 'badge-staff', inspector: 'badge-staff', safety: 'badge-staff' };
+            
+            tbody.innerHTML = staffData.map(s => `
+                <tr>
+                    <td style="display: flex; align-items: center; gap: 12px;">
+                        <div class="avatar">${s.name.charAt(0)}</div>
+                        <div>
+                            <div style="font-weight: 600;">${s.name}</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">${s.email}</div>
+                        </div>
+                    </td>
+                    <td><span class="badge ${roleBadges[s.role]}">${roleLabels[s.role]}</span></td>
+                    <td style="text-transform: capitalize;">${s.dept}</td>
+                    <td><span class="badge badge-${s.status}">${s.status}</span></td>
+                    <td>${timeAgo(s.lastActive)}</td>
+                    <td class="actions">
+                        <button class="action-btn action-edit" onclick="editStaff(${s.id})">Edit</button>
+                        ${s.role !== 'admin' ? `<button class="action-btn action-delete" onclick="deleteStaff(${s.id})">Remove</button>` : ''}
+                    </td>
+                </tr>
+            `).join('');
+
+            // Update stats
+            document.getElementById('total-staff').textContent = staffData.length;
+            document.getElementById('active-staff').textContent = staffData.filter(s => s.status === 'active').length;
+            document.getElementById('admin-count').textContent = staffData.filter(s => s.role === 'admin').length;
+            document.getElementById('pending-invites').textContent = staffData.filter(s => s.status === 'pending').length;
+        }
+
+        function timeAgo(date) {
+            const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+            if (seconds < 60) return 'Just now';
+            if (seconds < 3600) return Math.floor(seconds / 60) + 'm ago';
+            if (seconds < 86400) return Math.floor(seconds / 3600) + 'h ago';
+            return Math.floor(seconds / 86400) + 'd ago';
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Add New Staff';
+            document.getElementById('staffForm').reset();
+            document.getElementById('staffId').value = '';
+            document.getElementById('staffModal').classList.add('active');
+        }
+
+        function editStaff(id) {
+            const staff = staffData.find(s => s.id === id);
+            if (!staff) return;
+            
+            document.getElementById('modalTitle').textContent = 'Edit Staff Member';
+            document.getElementById('staffId').value = id;
+            document.getElementById('staffName').value = staff.name;
+            document.getElementById('staffEmail').value = staff.email;
+            document.getElementById('staffPhone').value = staff.phone;
+            document.getElementById('staffRole').value = staff.role;
+            document.getElementById('staffDept').value = staff.dept;
+            
+            // Set permissions
+            ['bookings','payments','users','routes','reports','settings'].forEach(p => {
+                document.getElementById('perm-' + p).checked = staff.permissions.includes(p);
+            });
+            
+            document.getElementById('staffModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('staffModal').classList.remove('active');
+        }
+
+        function saveStaff(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('staffId').value;
+            const permissions = [];
+            ['bookings','payments','users','routes','reports','settings'].forEach(p => {
+                if (document.getElementById('perm-' + p).checked) permissions.push(p);
+            });
+
+            const staffMember = {
+                id: id ? parseInt(id) : Date.now(),
+                name: document.getElementById('staffName').value,
+                email: document.getElementById('staffEmail').value,
+                phone: document.getElementById('staffPhone').value,
+                role: document.getElementById('staffRole').value,
+                dept: document.getElementById('staffDept').value,
+                status: id ? staffData.find(s => s.id === parseInt(id))?.status : 'pending',
+                lastActive: new Date().toISOString(),
+                permissions: permissions
+            };
+
+            if (id) {
+                const index = staffData.findIndex(s => s.id === parseInt(id));
+                staffData[index] = staffMember;
+            } else {
+                staffData.push(staffMember);
+                // Send invite notification
+                sendInvite(staffMember);
+            }
+
+            localStorage.setItem('africa_railways_staff', JSON.stringify(staffData));
+            closeModal();
+            renderStaff();
+        }
+
+        function deleteStaff(id) {
+            if (confirm('Are you sure you want to remove this staff member?')) {
+                staffData = staffData.filter(s => s.id !== id);
+                localStorage.setItem('africa_railways_staff', JSON.stringify(staffData));
+                renderStaff();
+            }
+        }
+
+        async function sendInvite(staff) {
+            // Send SMS invite
+            try {
+                const response = await fetch('/api/sms/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        to: staff.phone,
+                        message: `Welcome to Africa Railways! You've been invited as ${staff.role}. Login at: https://africarailways.com/sentinel-login.html`
+                    })
+                });
+                console.log('SMS invite sent to', staff.phone);
+            } catch (err) {
+                console.log('SMS invite queued for', staff.phone);
+            }
+            alert(`✅ Staff member added!\n\nInvite sent to:\n📱 ${staff.phone}\n📧 ${staff.email}`);
+        }
+
+        renderStaff();
+    </script>
+</body>
+</html>

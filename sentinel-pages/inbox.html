@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inbox - Sentinel Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --dark: #18191a; --surface: #242526; --hover: #3a3b3c; --border: #3e4042;
+            --text-primary: #e4e6eb; --text-secondary: #b0b3b8;
+            --gold: #FFB800; --cyan: #00D4FF; --green: #00d084; --danger: #f02849;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--dark); color: var(--text-primary); line-height: 1.6; }
+        .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-size: 20px; font-weight: bold; color: var(--gold); }
+        .main-container { display: grid; grid-template-columns: 280px 1fr; gap: 20px; padding: 20px; }
+        .sidebar-left { position: sticky; top: 80px; height: fit-content; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 8px; color: var(--text-primary); text-decoration: none; transition: background 0.2s; }
+        .menu-item:hover { background: var(--hover); }
+        .menu-item.active { background: var(--hover); font-weight: 600; }
+        .menu-icon { font-size: 20px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--hover); border-radius: 50%; }
+        .content { max-width: 100%; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .page-title { font-size: 28px; font-weight: bold; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); text-align: center; }
+        .stat-value { font-size: 32px; font-weight: bold; color: var(--gold); }
+        .stat-label { font-size: 14px; color: var(--text-secondary); }
+        .inbox-container { display: grid; grid-template-columns: 350px 1fr; gap: 20px; height: calc(100vh - 200px); }
+        .message-list { background: var(--surface); border-radius: 12px; border: 1px solid var(--border); overflow-y: auto; }
+        .message-item { padding: 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s; }
+        .message-item:hover { background: var(--hover); }
+        .message-item.active { background: var(--hover); border-left: 3px solid var(--gold); }
+        .message-item.unread { background: rgba(255,184,0,0.05); }
+        .message-item.unread .message-sender { font-weight: 700; }
+        .message-sender { font-weight: 600; margin-bottom: 4px; display: flex; justify-content: space-between; }
+        .message-preview { font-size: 13px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .message-time { font-size: 11px; color: var(--text-secondary); }
+        .message-detail { background: var(--surface); border-radius: 12px; border: 1px solid var(--border); padding: 24px; display: flex; flex-direction: column; }
+        .message-detail-header { border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 16px; }
+        .message-detail-sender { font-size: 20px; font-weight: bold; margin-bottom: 8px; }
+        .message-detail-meta { font-size: 13px; color: var(--text-secondary); display: flex; gap: 20px; }
+        .message-detail-body { flex: 1; font-size: 15px; line-height: 1.8; white-space: pre-wrap; }
+        .message-actions { display: flex; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+        .btn { padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+        .btn-primary { background: var(--gold); color: #000; }
+        .btn-secondary { background: var(--hover); color: var(--text-primary); }
+        .btn-danger { background: rgba(240,40,73,0.2); color: var(--danger); }
+        .unread-badge { background: var(--danger); color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 10px; }
+        .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-secondary); }
+        .empty-state-icon { font-size: 48px; margin-bottom: 16px; }
+        .filter-tabs { display: flex; gap: 10px; margin-bottom: 16px; }
+        .filter-tab { padding: 8px 16px; border-radius: 20px; background: var(--hover); color: var(--text-secondary); cursor: pointer; font-size: 13px; border: none; }
+        .filter-tab.active { background: var(--gold); color: #000; }
+        @media (max-width: 1024px) { .inbox-container { grid-template-columns: 1fr; } .message-detail { display: none; } .message-detail.active { display: flex; } }
+        @media (max-width: 768px) { .main-container { grid-template-columns: 1fr; } .sidebar-left { display: none; } .stats-grid { grid-template-columns: 1fr 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">📬 Admin Inbox</div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <span id="unread-count" class="unread-badge" style="display: none;">0</span>
+            <button class="btn btn-secondary" onclick="markAllRead()">Mark All Read</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-left">
+            <a href="../sentinel-dashboard.html" class="menu-item"><div class="menu-icon">📊</div><span>Dashboard</span></a>
+            <div style="padding: 12px 12px 6px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase;">Ticketing</div>
+            <a href="bookings.html" class="menu-item"><div class="menu-icon">🎫</div><span>Bookings</span></a>
+            <div style="padding: 12px 12px 6px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase;">Finance</div>
+            <a href="payments.html" class="menu-item"><div class="menu-icon">💳</div><span>Payments</span></a>
+            <a href="transactions.html" class="menu-item"><div class="menu-icon">💰</div><span>$AFC Transactions</span></a>
+            <div style="padding: 12px 12px 6px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase;">Operations</div>
+            <a href="routes.html" class="menu-item"><div class="menu-icon">🚂</div><span>Routes</span></a>
+            <a href="rolling-stock.html" class="menu-item"><div class="menu-icon">🚃</div><span>Rolling Stock</span></a>
+            <a href="maintenance.html" class="menu-item"><div class="menu-icon">🔧</div><span>Maintenance</span></a>
+            <div style="padding: 12px 12px 6px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase;">Users</div>
+            <a href="users.html" class="menu-item"><div class="menu-icon">👥</div><span>Passengers</span></a>
+            <a href="staff.html" class="menu-item"><div class="menu-icon">👷</div><span>Staff</span></a>
+            <div style="padding: 12px 12px 6px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase;">Insights</div>
+            <a href="analytics.html" class="menu-item"><div class="menu-icon">📈</div><span>Analytics</span></a>
+            <a href="inbox.html" class="menu-item active"><div class="menu-icon">📬</div><span>Inbox</span></a>
+            <div style="padding: 12px 12px 6px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase;">System</div>
+            <a href="alerts.html" class="menu-item"><div class="menu-icon">⚠️</div><span>Alerts</span></a>
+            <a href="notifications.html" class="menu-item"><div class="menu-icon">🔔</div><span>Notifications</span></a>
+            <a href="settings.html" class="menu-item"><div class="menu-icon">⚙️</div><span>Settings</span></a>
+        </div>
+
+        <div class="content">
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-value" id="total-messages">0</div><div class="stat-label">Total Messages</div></div>
+                <div class="stat-card"><div class="stat-value" id="unread-messages">0</div><div class="stat-label">Unread</div></div>
+                <div class="stat-card"><div class="stat-value" id="today-messages">0</div><div class="stat-label">Today</div></div>
+                <div class="stat-card"><div class="stat-value" id="replied-messages">0</div><div class="stat-label">Replied</div></div>
+            </div>
+
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="filterMessages('all')">All</button>
+                <button class="filter-tab" onclick="filterMessages('unread')">Unread</button>
+                <button class="filter-tab" onclick="filterMessages('starred')">Starred</button>
+            </div>
+
+            <div class="inbox-container">
+                <div class="message-list" id="messageList"></div>
+                <div class="message-detail" id="messageDetail">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <div>Select a message to view</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let messages = JSON.parse(localStorage.getItem('africa_railways_inbox') || '[]');
+        let currentFilter = 'all';
+        let selectedMessage = null;
+
+        // Initialize with sample data if empty
+        if (messages.length === 0) {
+            messages = [
+                { id: 1, name: 'John Mwamba', email: 'john@example.com', subject: 'Booking Inquiry', message: 'Hello,\n\nI would like to inquire about booking tickets for a group of 15 people traveling from Lusaka to Dar es Salaam next month.\n\nCan you provide information about group discounts and available dates?\n\nThank you,\nJohn', timestamp: new Date(Date.now() - 3600000).toISOString(), read: false, starred: false, replied: false },
+                { id: 2, name: 'Sarah Tembo', email: 'sarah.tembo@gmail.com', subject: 'Partnership Opportunity', message: 'Dear Africa Railways Team,\n\nI represent a tourism company in Zambia and we are interested in partnering with you for tour packages.\n\nPlease let me know who I can speak with about this opportunity.\n\nBest regards,\nSarah Tembo', timestamp: new Date(Date.now() - 7200000).toISOString(), read: true, starred: true, replied: true },
+                { id: 3, name: 'David Phiri', email: 'david.phiri@company.co.zm', subject: 'Technical Issue with Booking', message: 'Hi,\n\nI tried to book a ticket but the payment failed. My reference number is AFC-X8K2M9.\n\nCan you help me resolve this?\n\nThanks,\nDavid', timestamp: new Date(Date.now() - 86400000).toISOString(), read: false, starred: false, replied: false },
+                { id: 4, name: 'Grace Banda', email: 'grace@outlook.com', subject: 'Feedback on Service', message: 'Hello,\n\nI just wanted to say thank you for the excellent service on my recent trip from Kapiri Mposhi to Dar es Salaam.\n\nThe staff were very helpful and the journey was comfortable.\n\nKeep up the good work!\n\nGrace', timestamp: new Date(Date.now() - 172800000).toISOString(), read: true, starred: false, replied: true },
+            ];
+            localStorage.setItem('africa_railways_inbox', JSON.stringify(messages));
+        }
+
+        function renderMessages() {
+            const list = document.getElementById('messageList');
+            let filtered = messages;
+            
+            if (currentFilter === 'unread') filtered = messages.filter(m => !m.read);
+            if (currentFilter === 'starred') filtered = messages.filter(m => m.starred);
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><div>No messages</div></div>';
+            } else {
+                list.innerHTML = filtered.map(m => `
+                    <div class="message-item ${!m.read ? 'unread' : ''} ${selectedMessage?.id === m.id ? 'active' : ''}" onclick="selectMessage(${m.id})">
+                        <div class="message-sender">
+                            <span>${m.starred ? '⭐ ' : ''}${m.name}</span>
+                            <span class="message-time">${timeAgo(m.timestamp)}</span>
+                        </div>
+                        <div style="font-weight: 500; font-size: 14px; margin-bottom: 4px;">${m.subject}</div>
+                        <div class="message-preview">${m.message.substring(0, 80)}...</div>
+                    </div>
+                `).join('');
+            }
+
+            // Update stats
+            document.getElementById('total-messages').textContent = messages.length;
+            document.getElementById('unread-messages').textContent = messages.filter(m => !m.read).length;
+            document.getElementById('today-messages').textContent = messages.filter(m => isToday(m.timestamp)).length;
+            document.getElementById('replied-messages').textContent = messages.filter(m => m.replied).length;
+
+            const unreadCount = messages.filter(m => !m.read).length;
+            const badge = document.getElementById('unread-count');
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount;
+                badge.style.display = 'inline';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function selectMessage(id) {
+            const message = messages.find(m => m.id === id);
+            if (!message) return;
+
+            selectedMessage = message;
+            message.read = true;
+            localStorage.setItem('africa_railways_inbox', JSON.stringify(messages));
+
+            document.getElementById('messageDetail').innerHTML = `
+                <div class="message-detail-header">
+                    <div class="message-detail-sender">${message.subject}</div>
+                    <div class="message-detail-meta">
+                        <span>👤 ${message.name}</span>
+                        <span>📧 ${message.email}</span>
+                        <span>🕐 ${new Date(message.timestamp).toLocaleString()}</span>
+                    </div>
+                </div>
+                <div class="message-detail-body">${message.message}</div>
+                <div class="message-actions">
+                    <button class="btn btn-primary" onclick="replyMessage(${message.id})">📧 Reply</button>
+                    <button class="btn btn-secondary" onclick="toggleStar(${message.id})">${message.starred ? '⭐ Unstar' : '☆ Star'}</button>
+                    <button class="btn btn-danger" onclick="deleteMessage(${message.id})">🗑️ Delete</button>
+                </div>
+            `;
+
+            renderMessages();
+        }
+
+        function replyMessage(id) {
+            const message = messages.find(m => m.id === id);
+            if (!message) return;
+            
+            const reply = prompt(`Reply to ${message.name} (${message.email}):\n\nEnter your message:`);
+            if (reply) {
+                message.replied = true;
+                localStorage.setItem('africa_railways_inbox', JSON.stringify(messages));
+                
+                // In production, this would send via API
+                alert(`✅ Reply sent to ${message.email}\n\nMessage: ${reply.substring(0, 100)}...`);
+                renderMessages();
+                selectMessage(id);
+            }
+        }
+
+        function toggleStar(id) {
+            const message = messages.find(m => m.id === id);
+            if (message) {
+                message.starred = !message.starred;
+                localStorage.setItem('africa_railways_inbox', JSON.stringify(messages));
+                renderMessages();
+                selectMessage(id);
+            }
+        }
+
+        function deleteMessage(id) {
+            if (confirm('Delete this message?')) {
+                messages = messages.filter(m => m.id !== id);
+                localStorage.setItem('africa_railways_inbox', JSON.stringify(messages));
+                selectedMessage = null;
+                document.getElementById('messageDetail').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><div>Select a message to view</div></div>';
+                renderMessages();
+            }
+        }
+
+        function markAllRead() {
+            messages.forEach(m => m.read = true);
+            localStorage.setItem('africa_railways_inbox', JSON.stringify(messages));
+            renderMessages();
+        }
+
+        function filterMessages(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            renderMessages();
+        }
+
+        function timeAgo(date) {
+            const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+            if (seconds < 60) return 'Just now';
+            if (seconds < 3600) return Math.floor(seconds / 60) + 'm ago';
+            if (seconds < 86400) return Math.floor(seconds / 3600) + 'h ago';
+            return Math.floor(seconds / 86400) + 'd ago';
+        }
+
+        function isToday(date) {
+            const today = new Date();
+            const d = new Date(date);
+            return d.getDate() === today.getDate() && d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear();
+        }
+
+        // Listen for new messages from contact form
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'africa_railways_inbox') {
+                messages = JSON.parse(e.newValue || '[]');
+                renderMessages();
+            }
+        });
+
+        renderMessages();
+    </script>
+</body>
+</html>
