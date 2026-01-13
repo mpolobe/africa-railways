@@ -1194,6 +1194,25 @@
                                             ↩️ <strong>Return trip</strong> - Your ticket includes the journey back!
                                         </div>
                                     )}
+                                    <div style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid #333' }}>
+                                        <strong>Need help?</strong>
+                                        <button 
+                                            onClick={() => contactWhatsAppSupport()}
+                                            style={{ 
+                                                background: '#25D366', 
+                                                color: 'white', 
+                                                border: 'none', 
+                                                padding: '8px 16px', 
+                                                borderRadius: '6px', 
+                                                cursor: 'pointer',
+                                                marginLeft: '10px',
+                                                fontSize: '0.85rem',
+                                                fontWeight: '600'
+                                            }}
+                                        >
+                                            <i className="fab fa-whatsapp"></i> Chat with us
+                                        </button>
+                                    </div>
                                 </div>
 
                                 {/* Share Buttons */}
@@ -1271,6 +1290,9 @@
             );
         }
 
+        // Africa Railways WhatsApp contact
+        const WHATSAPP_NUMBER = '260966165444';
+
         // Share functions
         function shareViaWhatsApp(from, to, date, classData, price, currency) {
             const message = `🚂 *Africa Railways Booking*\n\n` +
@@ -1281,6 +1303,13 @@
                 `Book your ticket: https://africarailways.com/book-tickets.html`;
             
             const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+
+        // Contact support via WhatsApp
+        function contactWhatsAppSupport() {
+            const message = `Hello Africa Railways! I need help with my booking.`;
+            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
             window.open(url, '_blank');
         }
 
