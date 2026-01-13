@@ -181,6 +181,41 @@
             font-size: 0.9rem;
         }
         
+        .route-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .route-tab {
+            flex: 1;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #333;
+            border-radius: 10px;
+            color: #94a3b8;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .route-tab:hover {
+            border-color: var(--gold);
+            color: white;
+        }
+        
+        .route-tab.active {
+            background: rgba(255, 184, 0, 0.15);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+        
+        .route-tab .flag {
+            font-size: 1.2rem;
+            margin-right: 8px;
+        }
+        
         .subscription-tiers {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -338,7 +373,8 @@
     <script type="text/babel">
         const { useState } = React;
 
-        const TAZARA_ROUTES = [
+        // Routes organized by origin country
+        const ROUTES_FROM_TANZANIA = [
             {
                 id: 'dar-kapiri',
                 name: 'Dar es Salaam → Kapiri Mposhi',
@@ -357,7 +393,17 @@
                 distance: '850 km',
                 duration: '22 hours',
                 basePrice: 25,
-                description: 'Southern Tanzania route'
+                description: 'Southern Tanzania scenic route'
+            },
+            {
+                id: 'dar-kasama',
+                name: 'Dar es Salaam → Kasama',
+                from: 'Dar es Salaam, Tanzania',
+                to: 'Kasama, Zambia',
+                distance: '1,450 km',
+                duration: '38 hours',
+                basePrice: 38,
+                description: 'Cross-border to Northern Zambia'
             },
             {
                 id: 'mbeya-kapiri',
@@ -367,17 +413,60 @@
                 distance: '1,010 km',
                 duration: '26 hours',
                 basePrice: 30,
-                description: 'Cross-border route to Zambia'
+                description: 'Border crossing route to Zambia'
+            }
+        ];
+
+        const ROUTES_FROM_ZAMBIA = [
+            {
+                id: 'kapiri-dar',
+                name: 'Kapiri Mposhi → Dar es Salaam',
+                from: 'Kapiri Mposhi, Zambia',
+                to: 'Dar es Salaam, Tanzania',
+                distance: '1,860 km',
+                duration: '48 hours',
+                basePrice: 45,
+                description: 'Full TAZARA route to the Indian Ocean'
             },
             {
-                id: 'kapiri-lusaka',
-                name: 'Kapiri Mposhi → Lusaka',
+                id: 'lusaka-dar',
+                name: 'Lusaka → Dar es Salaam',
+                from: 'Lusaka, Zambia',
+                to: 'Dar es Salaam, Tanzania',
+                distance: '2,060 km',
+                duration: '52 hours',
+                basePrice: 55,
+                description: 'Capital to coast via TAZARA'
+            },
+            {
+                id: 'kapiri-mbeya',
+                name: 'Kapiri Mposhi → Mbeya',
                 from: 'Kapiri Mposhi, Zambia',
-                to: 'Lusaka, Zambia',
-                distance: '200 km',
-                duration: '5 hours',
-                basePrice: 15,
-                description: 'Zambia Railways connection to capital'
+                to: 'Mbeya, Tanzania',
+                distance: '1,010 km',
+                duration: '26 hours',
+                basePrice: 30,
+                description: 'Cross-border to Southern Tanzania'
+            },
+            {
+                id: 'kasama-dar',
+                name: 'Kasama → Dar es Salaam',
+                from: 'Kasama, Zambia',
+                to: 'Dar es Salaam, Tanzania',
+                distance: '1,450 km',
+                duration: '38 hours',
+                basePrice: 38,
+                description: 'Northern Zambia to Tanzania coast'
+            },
+            {
+                id: 'ndola-dar',
+                name: 'Ndola → Dar es Salaam',
+                from: 'Ndola, Zambia',
+                to: 'Dar es Salaam, Tanzania',
+                distance: '1,950 km',
+                duration: '50 hours',
+                basePrice: 48,
+                description: 'Copperbelt to Indian Ocean'
             }
         ];
 
@@ -414,11 +503,17 @@
             const [passengers, setPassengers] = useState(1);
             const [status, setStatus] = useState('');
             const [isBooking, setIsBooking] = useState(false);
+            const [activeTab, setActiveTab] = useState('tanzania'); // 'tanzania' or 'zambia'
+            const [isReturnTrip, setIsReturnTrip] = useState(false);
 
-            const route = TAZARA_ROUTES.find(r => r.id === selectedRoute);
+            // Get routes based on active tab
+            const currentRoutes = activeTab === 'tanzania' ? ROUTES_FROM_TANZANIA : ROUTES_FROM_ZAMBIA;
+            const route = currentRoutes.find(r => r.id === selectedRoute);
             const tier = SUBSCRIPTION_TIERS.find(t => t.id === selectedTier);
             
-            const basePrice = route ? route.basePrice * passengers : 0;
+            // Calculate price (1.8x for return trip = 10% discount on round trip)
+            const tripMultiplier = isReturnTrip ? 1.8 : 1;
+            const basePrice = route ? route.basePrice * passengers * tripMultiplier : 0;
             const discount = tier ? (basePrice * tier.discount / 100) : 0;
             const finalPrice = basePrice - discount;
             const subscriptionCost = tier ? tier.monthlyPrice : 0;
@@ -485,7 +580,66 @@
                         <div>
                             <div className="card">
                                 <h2>Select Your Route</h2>
-                                {TAZARA_ROUTES.map(route => (
+                                
+                                {/* Country Tabs */}
+                                <div className="route-tabs">
+                                    <div 
+                                        className={`route-tab ${activeTab === 'tanzania' ? 'active' : ''}`}
+                                        onClick={() => { setActiveTab('tanzania'); setSelectedRoute(null); }}
+                                    >
+                                        <span className="flag">🇹🇿</span> From Tanzania
+                                    </div>
+                                    <div 
+                                        className={`route-tab ${activeTab === 'zambia' ? 'active' : ''}`}
+                                        onClick={() => { setActiveTab('zambia'); setSelectedRoute(null); }}
+                                    >
+                                        <span className="flag">🇿🇲</span> From Zambia
+                                    </div>
+                                </div>
+
+                                {/* Return Trip Toggle */}
+                                <div style={{ 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'space-between',
+                                    padding: '12px 16px',
+                                    background: 'rgba(255, 255, 255, 0.05)',
+                                    borderRadius: '10px',
+                                    marginBottom: '20px'
+                                }}>
+                                    <div>
+                                        <div style={{ fontWeight: '600', marginBottom: '2px' }}>🔄 Return Trip</div>
+                                        <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
+                                            {isReturnTrip ? 'Round trip (10% savings)' : 'One way only'}
+                                        </div>
+                                    </div>
+                                    <div 
+                                        onClick={() => setIsReturnTrip(!isReturnTrip)}
+                                        style={{
+                                            width: '50px',
+                                            height: '28px',
+                                            background: isReturnTrip ? 'var(--gold)' : '#333',
+                                            borderRadius: '14px',
+                                            cursor: 'pointer',
+                                            position: 'relative',
+                                            transition: 'all 0.3s'
+                                        }}
+                                    >
+                                        <div style={{
+                                            width: '22px',
+                                            height: '22px',
+                                            background: 'white',
+                                            borderRadius: '50%',
+                                            position: 'absolute',
+                                            top: '3px',
+                                            left: isReturnTrip ? '25px' : '3px',
+                                            transition: 'all 0.3s'
+                                        }}></div>
+                                    </div>
+                                </div>
+
+                                {/* Route Cards */}
+                                {currentRoutes.map(route => (
                                     <div 
                                         key={route.id}
                                         className={`route-card ${selectedRoute === route.id ? 'selected' : ''}`}
@@ -493,11 +647,16 @@
                                     >
                                         <div className="route-header">
                                             <div className="route-name">{route.name}</div>
-                                            <div className="route-price">${route.basePrice} AFRC</div>
+                                            <div className="route-price">
+                                                ${isReturnTrip ? (route.basePrice * 1.8).toFixed(0) : route.basePrice} AFRC
+                                                {isReturnTrip && <span style={{ fontSize: '0.7rem', color: '#10b981', marginLeft: '5px' }}>-10%</span>}
+                                            </div>
                                         </div>
                                         <div className="route-details">
-                                            📍 {route.from} → {route.to}<br/>
-                                            🛤️ {route.distance} • ⏱️ {route.duration}<br/>
+                                            📍 {route.from} → {route.to}
+                                            {isReturnTrip && <span style={{ color: 'var(--gold)' }}> ↔</span>}<br/>
+                                            🛤️ {route.distance} • ⏱️ {route.duration}
+                                            {isReturnTrip && <span style={{ color: '#94a3b8' }}> (each way)</span>}<br/>
                                             {route.description}
                                         </div>
                                     </div>
@@ -571,12 +730,18 @@
                                             <span style={{ textAlign: 'right' }}>{route.name}</span>
                                         </div>
                                         <div className="summary-item">
+                                            <span>Trip Type</span>
+                                            <span style={{ color: isReturnTrip ? 'var(--gold)' : '#94a3b8' }}>
+                                                {isReturnTrip ? '🔄 Return Trip' : '➡️ One Way'}
+                                            </span>
+                                        </div>
+                                        <div className="summary-item">
                                             <span>Passengers</span>
                                             <span>{passengers}</span>
                                         </div>
                                         <div className="summary-item">
-                                            <span>Base Price</span>
-                                            <span>${basePrice} AFRC</span>
+                                            <span>Base Price {isReturnTrip && '(10% off)'}</span>
+                                            <span>${basePrice.toFixed(2)} AFRC</span>
                                         </div>
                                         <div className="summary-item">
                                             <span>Subscription</span>
