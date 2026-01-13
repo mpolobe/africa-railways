@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$AFC Transactions - Sentinel Dashboard</title>
+    <style>
+        :root {
+            --bg-primary: #0a0f1c;
+            --bg-secondary: #111827;
+            --surface: #1a1f2e;
+            --gold: #FFB800;
+            --green: #10b981;
+            --red: #ef4444;
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--surface);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            color: var(--gold);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-card .label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .stat-card .change {
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .stat-card .change.positive {
+            color: var(--green);
+        }
+
+        .stat-card .change.negative {
+            color: var(--red);
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        select, input[type="date"], input[type="text"] {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h2 {
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover {
+            background: rgba(255, 184, 0, 0.05);
+        }
+
+        .tx-type {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .tx-type.payment {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--green);
+        }
+
+        .tx-type.reward {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--purple);
+        }
+
+        .tx-type.stake {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--blue);
+        }
+
+        .tx-type.transfer {
+            background: rgba(255, 184, 0, 0.15);
+            color: var(--gold);
+        }
+
+        .tx-type.refund {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--red);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-badge.confirmed {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--green);
+        }
+
+        .status-badge.pending {
+            background: rgba(255, 184, 0, 0.15);
+            color: var(--gold);
+        }
+
+        .status-badge.failed {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--red);
+        }
+
+        .amount {
+            font-weight: 600;
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        .amount.positive {
+            color: var(--green);
+        }
+
+        .amount.negative {
+            color: var(--red);
+        }
+
+        .wallet-address {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .tx-hash {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.8rem;
+            color: var(--blue);
+            text-decoration: none;
+        }
+
+        .tx-hash:hover {
+            text-decoration: underline;
+        }
+
+        .timestamp {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .pagination button {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .pagination button:hover {
+            border-color: var(--gold);
+        }
+
+        .pagination button.active {
+            background: var(--gold);
+            color: var(--bg-primary);
+            border-color: var(--gold);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .refresh-btn {
+            background: var(--gold);
+            color: var(--bg-primary);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .refresh-btn:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>💰 $AFC Transactions</h1>
+        <a href="../sentinel-dashboard.html" class="back-link">← Back to Dashboard</a>
+    </div>
+
+    <div class="container">
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="label">Total Volume (24h)</div>
+                <div class="value">12,450 $AFC</div>
+                <div class="change positive">↑ 15.3% vs yesterday</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Transactions (24h)</div>
+                <div class="value">847</div>
+                <div class="change positive">↑ 8.2% vs yesterday</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Unique Wallets</div>
+                <div class="value">2,341</div>
+                <div class="change positive">↑ 124 new today</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Avg Transaction</div>
+                <div class="value">14.7 $AFC</div>
+                <div class="change negative">↓ 2.1% vs yesterday</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Total Staked</div>
+                <div class="value">89,230 $AFC</div>
+                <div class="change positive">↑ 3.4% this week</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Rewards Distributed</div>
+                <div class="value">1,245 $AFC</div>
+                <div class="change positive">Today</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <div class="filter-group">
+                <label>Type:</label>
+                <select id="filter-type">
+                    <option value="">All Types</option>
+                    <option value="payment">Payment</option>
+                    <option value="reward">Reward</option>
+                    <option value="stake">Stake</option>
+                    <option value="unstake">Unstake</option>
+                    <option value="transfer">Transfer</option>
+                    <option value="refund">Refund</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Status:</label>
+                <select id="filter-status">
+                    <option value="">All Status</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="pending">Pending</option>
+                    <option value="failed">Failed</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>From:</label>
+                <input type="date" id="filter-from">
+            </div>
+            <div class="filter-group">
+                <label>To:</label>
+                <input type="date" id="filter-to">
+            </div>
+            <div class="filter-group">
+                <label>Search:</label>
+                <input type="text" id="filter-search" placeholder="Wallet, TX hash, phone...">
+            </div>
+            <button class="refresh-btn" onclick="refreshTransactions()">
+                🔄 Refresh
+            </button>
+        </div>
+
+        <!-- Transactions Table -->
+        <div class="card">
+            <div class="card-header">
+                <h2>📜 Recent Transactions</h2>
+                <span style="color: var(--text-secondary); font-size: 0.85rem;">
+                    Showing 1-20 of 847 transactions
+                </span>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>TX Reference</th>
+                        <th>Type</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Time</th>
+                        <th>TX Hash</th>
+                    </tr>
+                </thead>
+                <tbody id="transactions-table">
+                    <tr>
+                        <td><strong>AFC-X8K2M9</strong></td>
+                        <td><span class="tx-type payment">💳 Payment</span></td>
+                        <td class="wallet-address">0x742d...f8fE</td>
+                        <td class="wallet-address">0x1234...abcd</td>
+                        <td class="amount negative">-45.00 $AFC</td>
+                        <td><span class="status-badge confirmed">✓ Confirmed</span></td>
+                        <td class="timestamp">2 min ago</td>
+                        <td><a href="#" class="tx-hash">0x9f8e...3d2c</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>AFC-P3N7Q1</strong></td>
+                        <td><span class="tx-type reward">🎁 Reward</span></td>
+                        <td class="wallet-address">System</td>
+                        <td class="wallet-address">0x5678...efgh</td>
+                        <td class="amount positive">+2.25 $AFC</td>
+                        <td><span class="status-badge confirmed">✓ Confirmed</span></td>
+                        <td class="timestamp">5 min ago</td>
+                        <td><a href="#" class="tx-hash">0xa1b2...c3d4</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>AFC-S9T4W2</strong></td>
+                        <td><span class="tx-type stake">📈 Stake</span></td>
+                        <td class="wallet-address">0x9abc...ijkl</td>
+                        <td class="wallet-address">Staking Pool</td>
+                        <td class="amount negative">-100.00 $AFC</td>
+                        <td><span class="status-badge confirmed">✓ Confirmed</span></td>
+                        <td class="timestamp">12 min ago</td>
+                        <td><a href="#" class="tx-hash">0xe5f6...g7h8</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>AFC-T2U8V5</strong></td>
+                        <td><span class="tx-type transfer">↔️ Transfer</span></td>
+                        <td class="wallet-address">0xdef0...mnop</td>
+                        <td class="wallet-address">0x1111...qrst</td>
+                        <td class="amount">50.00 $AFC</td>
+                        <td><span class="status-badge pending">⏳ Pending</span></td>
+                        <td class="timestamp">15 min ago</td>
+                        <td><a href="#" class="tx-hash">0xi9j0...k1l2</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>AFC-R6Y3Z0</strong></td>
+                        <td><span class="tx-type payment">💳 Payment</span></td>
+                        <td class="wallet-address">0x2222...uvwx</td>
+                        <td class="wallet-address">0x3333...yzab</td>
+                        <td class="amount negative">-32.50 $AFC</td>
+                        <td><span class="status-badge confirmed">✓ Confirmed</span></td>
+                        <td class="timestamp">23 min ago</td>
+                        <td><a href="#" class="tx-hash">0xm3n4...o5p6</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>AFC-L1M5N8</strong></td>
+                        <td><span class="tx-type refund">↩️ Refund</span></td>
+                        <td class="wallet-address">0x4444...cdef</td>
+                        <td class="wallet-address">0x5555...ghij</td>
+                        <td class="amount positive">+45.00 $AFC</td>
+                        <td><span class="status-badge confirmed">✓ Confirmed</span></td>
+                        <td class="timestamp">45 min ago</td>
+                        <td><a href="#" class="tx-hash">0xq7r8...s9t0</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>AFC-K4J7H2</strong></td>
+                        <td><span class="tx-type reward">🎁 Reward</span></td>
+                        <td class="wallet-address">System</td>
+                        <td class="wallet-address">0x6666...klmn</td>
+                        <td class="amount positive">+5.50 $AFC</td>
+                        <td><span class="status-badge confirmed">✓ Confirmed</span></td>
+                        <td class="timestamp">1 hour ago</td>
+                        <td><a href="#" class="tx-hash">0xu1v2...w3x4</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>AFC-G9F2E5</strong></td>
+                        <td><span class="tx-type payment">💳 Payment</span></td>
+                        <td class="wallet-address">0x7777...opqr</td>
+                        <td class="wallet-address">0x8888...stuv</td>
+                        <td class="amount negative">-78.00 $AFC</td>
+                        <td><span class="status-badge failed">✗ Failed</span></td>
+                        <td class="timestamp">1 hour ago</td>
+                        <td><a href="#" class="tx-hash">0xy5z6...a7b8</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>AFC-D8C1B4</strong></td>
+                        <td><span class="tx-type stake">📈 Stake</span></td>
+                        <td class="wallet-address">0x9999...wxyz</td>
+                        <td class="wallet-address">Staking Pool</td>
+                        <td class="amount negative">-250.00 $AFC</td>
+                        <td><span class="status-badge confirmed">✓ Confirmed</span></td>
+                        <td class="timestamp">2 hours ago</td>
+                        <td><a href="#" class="tx-hash">0xc9d0...e1f2</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>AFC-A7Z0Y3</strong></td>
+                        <td><span class="tx-type payment">💳 Payment</span></td>
+                        <td class="wallet-address">0xaaaa...1234</td>
+                        <td class="wallet-address">0xbbbb...5678</td>
+                        <td class="amount negative">-22.75 $AFC</td>
+                        <td><span class="status-badge confirmed">✓ Confirmed</span></td>
+                        <td class="timestamp">3 hours ago</td>
+                        <td><a href="#" class="tx-hash">0xg3h4...i5j6</a></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="pagination">
+                <button class="active">1</button>
+                <button>2</button>
+                <button>3</button>
+                <button>4</button>
+                <button>5</button>
+                <button>→</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function refreshTransactions() {
+            // In production, fetch from /api/afrc/transactions
+            alert('Refreshing transactions from SUI blockchain...');
+        }
+
+        // Set default date filters
+        const today = new Date().toISOString().split('T')[0];
+        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        document.getElementById('filter-from').value = weekAgo;
+        document.getElementById('filter-to').value = today;
+    </script>
+</body>
+</html>

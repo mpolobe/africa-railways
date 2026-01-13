@@ -247,6 +247,22 @@
             position: sticky;
             top: 80px;
             height: fit-content;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        .menu-section {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            padding: 16px 12px 8px 12px;
+            margin-top: 8px;
+        }
+
+        .menu-section:first-of-type {
+            margin-top: 0;
         }
 
         .menu-item {
@@ -1464,18 +1480,35 @@
                 <div class="menu-icon">📊</div>
                 <span>Dashboard</span>
             </a>
+            
+            <!-- Ticketing Section -->
+            <div class="menu-section">Ticketing</div>
             <a href="sentinel-pages/bookings.html" class="menu-item">
                 <div class="menu-icon">🎫</div>
                 <span>Bookings</span>
             </a>
+            <a href="sentinel-pages/tickets.html" class="menu-item">
+                <div class="menu-icon">🎟️</div>
+                <span>Tickets & NFTs</span>
+            </a>
+            
+            <!-- Finance Section -->
+            <div class="menu-section">Finance</div>
             <a href="sentinel-pages/payments.html" class="menu-item">
-                <div class="menu-icon">💰</div>
+                <div class="menu-icon">💳</div>
                 <span>Payments</span>
             </a>
-            <a href="sentinel-pages/users.html" class="menu-item">
-                <div class="menu-icon">👥</div>
-                <span>Users</span>
+            <a href="sentinel-pages/transactions.html" class="menu-item">
+                <div class="menu-icon">💰</div>
+                <span>AFRC Transactions</span>
             </a>
+            <a href="sentinel-pages/revenue.html" class="menu-item">
+                <div class="menu-icon">📊</div>
+                <span>Revenue</span>
+            </a>
+            
+            <!-- Operations Section -->
+            <div class="menu-section">Operations</div>
             <a href="sentinel-pages/routes.html" class="menu-item">
                 <div class="menu-icon">🚂</div>
                 <span>Routes</span>
@@ -1488,6 +1521,24 @@
                 <div class="menu-icon">🔧</div>
                 <span>Maintenance</span>
             </a>
+            
+            <!-- Users Section -->
+            <div class="menu-section">Users</div>
+            <a href="sentinel-pages/users.html" class="menu-item">
+                <div class="menu-icon">👥</div>
+                <span>Passengers</span>
+            </a>
+            <a href="sentinel-pages/sentinels.html" class="menu-item">
+                <div class="menu-icon">🛡️</div>
+                <span>Sentinels</span>
+            </a>
+            <a href="sentinel-pages/staff.html" class="menu-item">
+                <div class="menu-icon">👷</div>
+                <span>Staff</span>
+            </a>
+            
+            <!-- Analytics Section -->
+            <div class="menu-section">Insights</div>
             <a href="sentinel-pages/analytics.html" class="menu-item">
                 <div class="menu-icon">📈</div>
                 <span>Analytics</span>
@@ -1496,6 +1547,9 @@
                 <div class="menu-icon">🤖</div>
                 <span>AI Assistant</span>
             </a>
+            
+            <!-- System Section -->
+            <div class="menu-section">System</div>
             <a href="sentinel-pages/alerts.html" class="menu-item">
                 <div class="menu-icon">⚠️</div>
                 <span>Alerts</span>
