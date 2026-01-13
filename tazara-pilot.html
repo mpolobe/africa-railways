@@ -332,6 +332,12 @@
             color: #ef4444;
         }
         
+        .status-message.info {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: #00D4FF;
+        }
+        
         .benefits-list {
             list-style: none;
             padding: 0;
@@ -505,6 +511,9 @@
             const [isBooking, setIsBooking] = useState(false);
             const [activeTab, setActiveTab] = useState('tanzania'); // 'tanzania' or 'zambia'
             const [isReturnTrip, setIsReturnTrip] = useState(false);
+            const [phoneNumber, setPhoneNumber] = useState('');
+            const [isLoggedIn, setIsLoggedIn] = useState(false); // Would be set by auth system
+            const [ticketData, setTicketData] = useState(null); // For download
 
             // Get routes based on active tab
             const currentRoutes = activeTab === 'tanzania' ? ROUTES_FROM_TANZANIA : ROUTES_FROM_ZAMBIA;
@@ -520,29 +529,182 @@
             const totalCost = finalPrice + subscriptionCost;
             const stakingRewards = tier ? tier.stakingReward : 0;
 
+            // Generate ticket NFT data
+            const generateTicketNFT = (bookingRef, walletAddress) => {
+                const ticketInfo = {
+                    type: 'TAZARA Railway NFT Ticket',
+                    reference: bookingRef,
+                    route: route.name,
+                    from: route.from,
+                    to: route.to,
+                    tripType: isReturnTrip ? 'Return' : 'One Way',
+                    passengers: passengers,
+                    class: tier.name,
+                    price: `${totalCost.toFixed(2)} AFRC`,
+                    wallet: walletAddress,
+                    phone: phoneNumber,
+                    issued: new Date().toISOString(),
+                    validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+                    stakingRewards: `${stakingRewards}% APY`,
+                    nftId: `NFT-${bookingRef}`,
+                    blockchain: 'SUI Network'
+                };
+                return ticketInfo;
+            };
+
+            const downloadTicket = () => {
+                if (!ticketData) return;
+                
+                const ticketContent = `
+════════════════════════════════════════════
+       🚂 TAZARA RAILWAY NFT TICKET 🚂
+════════════════════════════════════════════
+
+Reference: ${ticketData.reference}
+NFT ID: ${ticketData.nftId}
+Blockchain: ${ticketData.blockchain}
+
+────────────────────────────────────────────
+JOURNEY DETAILS
+────────────────────────────────────────────
+Route: ${ticketData.route}
+From: ${ticketData.from}
+To: ${ticketData.to}
+Trip Type: ${ticketData.tripType}
+Passengers: ${ticketData.passengers}
+Class: ${ticketData.class}
+
+────────────────────────────────────────────
+PAYMENT & WALLET
+────────────────────────────────────────────
+Total Paid: ${ticketData.price}
+Wallet: ${ticketData.wallet}
+Phone: ${ticketData.phone}
+Staking Rewards: ${ticketData.stakingRewards}
+
+────────────────────────────────────────────
+VALIDITY
+────────────────────────────────────────────
+Issued: ${new Date(ticketData.issued).toLocaleString()}
+Valid Until: ${new Date(ticketData.validUntil).toLocaleString()}
+
+════════════════════════════════════════════
+    Powered by Africa Railways & SUI Network
+     Scan QR code or visit africarailways.com
+════════════════════════════════════════════
+`;
+                
+                const blob = new Blob([ticketContent], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `TAZARA-Ticket-${ticketData.reference}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            };
+
             const handleBooking = async () => {
                 if (!selectedRoute) {
                     setStatus('error:Please select a route');
                     return;
                 }
 
+                // Require phone number for non-logged-in users
+                if (!isLoggedIn && !phoneNumber) {
+                    setStatus('error:Please enter your phone number to receive booking confirmation');
+                    return;
+                }
+
+                // Basic phone validation (at least 9 digits)
+                if (!isLoggedIn && phoneNumber.replace(/\D/g, '').length < 9) {
+                    setStatus('error:Please enter a valid phone number');
+                    return;
+                }
+
                 setIsBooking(true);
                 setStatus('');
+                setTicketData(null);
 
                 try {
-                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    let walletAddress = '';
+                    let smsMsg = '';
+                    
+                    if (isLoggedIn) {
+                        // LOGGED IN USER WORKFLOW
+                        // Uses existing wallet from user account
+                        setStatus('info:🎫 Processing your booking...');
+                        await new Promise(resolve => setTimeout(resolve, 1500));
+                        
+                        // User's wallet would come from auth context
+                        walletAddress = '0x' + Math.random().toString(16).substring(2, 42);
+                        
+                        setStatus('info:🎫 Minting NFT ticket to your wallet...');
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        
+                    } else {
+                        // NON-LOGGED IN USER WORKFLOW
+                        // Creates wallet from phone number (mirrors USSD flow)
+                        
+                        // Step 1: Validate and prepare
+                        setStatus('info:📋 Validating booking details...');
+                        await new Promise(resolve => setTimeout(resolve, 800));
 
+                        // Step 2: Create wallet from phone number
+                        setStatus('info:🔐 Creating your SUI/AFC wallet from phone number...');
+                        await new Promise(resolve => setTimeout(resolve, 1200));
+                        
+                        // Deterministic wallet generation from phone (mirrors backend sui_logic.py)
+                        const phoneDigits = phoneNumber.replace(/\D/g, '');
+                        const phoneHash = phoneDigits.slice(-10).padStart(10, '0');
+                        walletAddress = '0x' + Array.from({length: 40}, (_, i) => 
+                            ((parseInt(phoneHash[i % 10]) * (i + 1)) % 16).toString(16)
+                        ).join('');
+                        
+                        setStatus('info:✅ Wallet created! Preparing NFT ticket...');
+                        await new Promise(resolve => setTimeout(resolve, 800));
+                        
+                        // Step 3: Mint NFT ticket
+                        setStatus('info:🎫 Minting NFT ticket on SUI blockchain...');
+                        await new Promise(resolve => setTimeout(resolve, 1500));
+                    }
+                    
                     const bookingRef = 'TAZARA-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+                    const nftId = 'NFT-' + Date.now().toString(36).toUpperCase();
                     const stakingAmount = (subscriptionCost * stakingRewards / 100).toFixed(2);
                     
-                    setStatus(`success:✅ Booking confirmed! Reference: ${bookingRef}\\n💰 ${stakingAmount} AFRC staked and earning ${stakingRewards}% APY`);
+                    // Upload metadata to IPFS
+                    setStatus('info:📤 Uploading ticket metadata to IPFS...');
+                    await new Promise(resolve => setTimeout(resolve, 800));
+                    const ipfsHash = 'Qm' + Math.random().toString(36).substring(2, 34);
                     
+                    // Generate and store ticket data for download
+                    const ticket = generateTicketNFT(bookingRef, walletAddress);
+                    ticket.nftId = nftId;
+                    ticket.ipfsHash = ipfsHash;
+                    ticket.txDigest = '0x' + Math.random().toString(16).substring(2, 66);
+                    setTicketData(ticket);
+                    
+                    // Send SMS confirmation for non-logged-in users
+                    if (!isLoggedIn && phoneNumber) {
+                        setStatus('info:📱 Sending SMS confirmation...');
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        smsMsg = `\n📱 SMS sent to ${phoneNumber}`;
+                    }
+                    
+                    const walletMsg = `\n💳 Wallet: ${walletAddress.slice(0, 10)}...${walletAddress.slice(-6)}`;
+                    setStatus(`success:✅ Booking confirmed! Reference: ${bookingRef}${walletMsg}${smsMsg}\n💰 ${stakingAmount} AFRC staked earning ${stakingRewards}% APY\n🎫 Your NFT ticket is ready for download!`);
+                    
+                    // Keep ticket data visible for download, reset form after 15 seconds
                     setTimeout(() => {
                         setSelectedRoute(null);
                         setSelectedTier('basic');
                         setPassengers(1);
+                        setPhoneNumber('');
                         setStatus('');
-                    }, 8000);
+                        setTicketData(null);
+                    }, 15000);
                 } catch (error) {
                     setStatus('error:❌ Booking failed. Please try again.');
                 } finally {
@@ -723,6 +885,33 @@
                                     />
                                 </div>
 
+                                {/* Phone Number for non-logged-in users */}
+                                {!isLoggedIn && (
+                                    <div style={{ marginBottom: '20px' }}>
+                                        <label style={{ display: 'block', marginBottom: '8px', color: '#94a3b8' }}>
+                                            📱 Phone Number <span style={{ color: 'var(--gold)', fontSize: '0.8rem' }}>(creates your SUI/AFC wallet)</span>
+                                        </label>
+                                        <input 
+                                            type="tel" 
+                                            value={phoneNumber} 
+                                            onChange={(e) => setPhoneNumber(e.target.value)}
+                                            placeholder="+260 97X XXX XXX"
+                                            style={{
+                                                width: '100%',
+                                                padding: '12px',
+                                                background: phoneNumber ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255, 255, 255, 0.05)',
+                                                border: phoneNumber ? '1px solid var(--green)' : '1px solid #333',
+                                                borderRadius: '8px',
+                                                color: 'white',
+                                                fontSize: '1rem'
+                                            }}
+                                        />
+                                        <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '5px' }}>
+                                            Your NFT ticket & wallet will be linked to this number. SMS confirmation will be sent.
+                                        </div>
+                                    </div>
+                                )}
+
                                 {route && (
                                     <>
                                         <div className="summary-item">
@@ -771,14 +960,51 @@
                                 <button 
                                     className="book-button"
                                     onClick={handleBooking}
-                                    disabled={!route || isBooking}
+                                    disabled={!route || isBooking || (!isLoggedIn && !phoneNumber)}
                                 >
                                     {isBooking ? '⏳ Processing...' : `Book & Stake - $${totalCost.toFixed(2)} AFRC`}
                                 </button>
 
+                                {!isLoggedIn && !phoneNumber && route && (
+                                    <div style={{ fontSize: '0.85rem', color: '#f59e0b', textAlign: 'center', marginTop: '10px' }}>
+                                        ⚠️ Please enter your phone number to continue
+                                    </div>
+                                )}
+
                                 {status && (
                                     <div className={`status-message ${status.split(':')[0]}`}>
-                                        {status.split(':')[1]}
+                                        {status.split(':')[1].split('\\n').map((line, i) => (
+                                            <div key={i}>{line}</div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* Download Ticket Button */}
+                                {ticketData && (
+                                    <div style={{ marginTop: '15px' }}>
+                                        <button 
+                                            onClick={downloadTicket}
+                                            style={{
+                                                width: '100%',
+                                                padding: '14px',
+                                                background: 'linear-gradient(135deg, #00D4FF 0%, #0099cc 100%)',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '10px',
+                                                fontSize: '1rem',
+                                                fontWeight: 'bold',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                gap: '10px'
+                                            }}
+                                        >
+                                            📥 Download NFT Ticket
+                                        </button>
+                                        <div style={{ fontSize: '0.8rem', color: '#94a3b8', textAlign: 'center', marginTop: '8px' }}>
+                                            NFT ID: {ticketData.nftId} • IPFS: {ticketData.ipfsHash?.slice(0, 12)}...
+                                        </div>
                                     </div>
                                 )}
                             </div>

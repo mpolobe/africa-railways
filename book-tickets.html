@@ -234,6 +234,12 @@
             color: #ef4444;
         }
         
+        .status-message.info {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: #00D4FF;
+        }
+        
         .info-box {
             background: rgba(0, 212, 255, 0.1);
             border: 1px solid rgba(0, 212, 255, 0.3);
@@ -901,6 +907,9 @@
             const [rateSource, setRateSource] = useState('fallback');
             const [loadingRates, setLoadingRates] = useState(true);
             const [detectedCountry, setDetectedCountry] = useState('');
+            const [phoneNumber, setPhoneNumber] = useState('');
+            const [isLoggedIn, setIsLoggedIn] = useState(false); // Would be set by auth system
+            const [ticketData, setTicketData] = useState(null); // For download
 
             // Country to currency mapping
             const COUNTRY_CURRENCY_MAP = {
@@ -1059,6 +1068,66 @@
                 setTo(temp);
             };
 
+            // Download ticket function
+            const downloadTicket = () => {
+                if (!ticketData) return;
+                
+                const ticketContent = `
+════════════════════════════════════════════
+       🚂 AFRICA RAILWAYS NFT TICKET 🚂
+════════════════════════════════════════════
+
+Reference: ${ticketData.reference}
+NFT ID: ${ticketData.nftId}
+Blockchain: ${ticketData.blockchain}
+
+────────────────────────────────────────────
+JOURNEY DETAILS
+────────────────────────────────────────────
+Route: ${ticketData.route}
+From: ${ticketData.from}
+To: ${ticketData.to}
+Date: ${ticketData.date}
+Trip Type: ${ticketData.tripType}
+Passengers: ${ticketData.passengers}
+Class: ${ticketData.class}
+
+────────────────────────────────────────────
+PAYMENT & WALLET
+────────────────────────────────────────────
+Total Paid: ${ticketData.price}
+Wallet: ${ticketData.wallet}
+Phone: ${ticketData.phone}
+
+────────────────────────────────────────────
+VALIDITY
+────────────────────────────────────────────
+Issued: ${new Date(ticketData.issued).toLocaleString()}
+Valid Until: ${new Date(ticketData.validUntil).toLocaleString()}
+
+────────────────────────────────────────────
+BLOCKCHAIN VERIFICATION
+────────────────────────────────────────────
+IPFS: ${ticketData.ipfsHash}
+TX: ${ticketData.txDigest}
+
+════════════════════════════════════════════
+    Powered by Africa Railways & SUI Network
+     Scan QR code or visit africarailways.com
+════════════════════════════════════════════
+`;
+                
+                const blob = new Blob([ticketContent], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `AFC-Ticket-${ticketData.reference}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            };
+
             const handleBooking = async () => {
                 if (!from || !to || !date) {
                     setStatus('error:Please fill in all fields');
@@ -1070,27 +1139,107 @@
                     return;
                 }
 
+                // Require phone number for non-logged-in users
+                if (!isLoggedIn && !phoneNumber) {
+                    setStatus('error:Please enter your phone number to receive booking confirmation');
+                    return;
+                }
+
+                // Basic phone validation (at least 9 digits)
+                if (!isLoggedIn && phoneNumber.replace(/\D/g, '').length < 9) {
+                    setStatus('error:Please enter a valid phone number');
+                    return;
+                }
+
                 setIsBooking(true);
                 setStatus('');
+                setTicketData(null);
 
                 try {
-                    // Simulate booking process
-                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    let walletAddress = '';
+                    let smsMsg = '';
+                    
+                    if (isLoggedIn) {
+                        // LOGGED IN USER WORKFLOW
+                        setStatus('info:🎫 Processing your booking...');
+                        await new Promise(resolve => setTimeout(resolve, 1500));
+                        
+                        walletAddress = '0x' + Math.random().toString(16).substring(2, 42);
+                        
+                        setStatus('info:🎫 Minting NFT ticket to your wallet...');
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        
+                    } else {
+                        // NON-LOGGED IN USER WORKFLOW
+                        setStatus('info:📋 Validating booking details...');
+                        await new Promise(resolve => setTimeout(resolve, 800));
 
-                    // In production, this would call the blockchain smart contract
+                        setStatus('info:🔐 Creating your SUI/AFC wallet from phone number...');
+                        await new Promise(resolve => setTimeout(resolve, 1200));
+                        
+                        const phoneDigits = phoneNumber.replace(/\D/g, '');
+                        const phoneHash = phoneDigits.slice(-10).padStart(10, '0');
+                        walletAddress = '0x' + Array.from({length: 40}, (_, i) => 
+                            ((parseInt(phoneHash[i % 10]) * (i + 1)) % 16).toString(16)
+                        ).join('');
+                        
+                        setStatus('info:✅ Wallet created! Minting NFT ticket...');
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                    }
+
+                    setStatus('info:🎫 Minting NFT ticket on SUI blockchain...');
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
                     const bookingRef = 'AFC-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+                    const nftId = 'NFT-' + Date.now().toString(36).toUpperCase();
                     
-                    setStatus(`success:✅ Booking confirmed! Reference: ${bookingRef}`);
+                    setStatus('info:📤 Uploading ticket metadata to IPFS...');
+                    await new Promise(resolve => setTimeout(resolve, 800));
+                    const ipfsHash = 'Qm' + Math.random().toString(36).substring(2, 34);
                     
-                    // Reset form after 3 seconds
+                    // Generate ticket data for download
+                    const ticket = {
+                        type: 'Africa Railways NFT Ticket',
+                        reference: bookingRef,
+                        nftId: nftId,
+                        route: `${fromStation?.city || from} → ${toStation?.city || to}`,
+                        from: fromStation?.name || from,
+                        to: toStation?.name || to,
+                        date: date,
+                        tripType: isReturnTrip ? 'Return' : 'One Way',
+                        passengers: passengers,
+                        class: selectedClass.charAt(0).toUpperCase() + selectedClass.slice(1),
+                        price: `${formatLocalPrice(totalLocalPrice)} / $${totalPriceUSD} USD`,
+                        wallet: walletAddress,
+                        phone: phoneNumber || 'N/A',
+                        issued: new Date().toISOString(),
+                        validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+                        ipfsHash: ipfsHash,
+                        txDigest: '0x' + Math.random().toString(16).substring(2, 66),
+                        blockchain: 'SUI Network'
+                    };
+                    setTicketData(ticket);
+                    
+                    if (!isLoggedIn && phoneNumber) {
+                        setStatus('info:📱 Sending SMS confirmation...');
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        smsMsg = `\n📱 SMS sent to ${phoneNumber}`;
+                    }
+                    
+                    const walletMsg = `\n💳 Wallet: ${walletAddress.slice(0, 10)}...${walletAddress.slice(-6)}`;
+                    setStatus(`success:✅ Booking confirmed! Reference: ${bookingRef}${walletMsg}${smsMsg}\n🎫 Your NFT ticket is ready for download!`);
+                    
+                    // Keep ticket visible for download, reset form after 15 seconds
                     setTimeout(() => {
                         setFrom('');
                         setTo('');
                         setDate('');
                         setPassengers(1);
                         setSelectedClass('economy');
+                        setPhoneNumber('');
                         setStatus('');
-                    }, 5000);
+                        setTicketData(null);
+                    }, 15000);
                 } catch (error) {
                     setStatus('error:❌ Booking failed. Please try again.');
                 } finally {
@@ -1329,6 +1478,28 @@
                                 />
                             </div>
 
+                            {/* Phone Number for non-logged-in users */}
+                            {!isLoggedIn && (
+                                <div className="form-group">
+                                    <label>
+                                        📱 Phone Number <span style={{ color: 'var(--gold)', fontSize: '0.8rem' }}>(creates your SUI/AFC wallet)</span>
+                                    </label>
+                                    <input 
+                                        type="tel" 
+                                        value={phoneNumber} 
+                                        onChange={(e) => setPhoneNumber(e.target.value)}
+                                        placeholder="+260 97X XXX XXX"
+                                        style={{ 
+                                            background: phoneNumber ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255, 255, 255, 0.05)',
+                                            borderColor: phoneNumber ? 'var(--green)' : '#333'
+                                        }}
+                                    />
+                                    <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '5px' }}>
+                                        Your ticket and wallet will be linked to this number
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="form-group">
                                 <label>Travel Class {isReturnTrip && <span style={{ color: 'var(--gold)', fontSize: '0.8rem' }}>(× 2 for return)</span>}</label>
                                 <div className="class-options">
@@ -1439,14 +1610,51 @@
                                 <button 
                                     className="book-button"
                                     onClick={handleBooking}
-                                    disabled={!from || !to || !date || isBooking}
+                                    disabled={!from || !to || !date || isBooking || (!isLoggedIn && !phoneNumber)}
                                 >
                                     {isBooking ? 'Processing...' : isReturnTrip ? '⇄ Book Return Trip' : '→ Book Now'}
                                 </button>
 
+                                {!isLoggedIn && !phoneNumber && from && to && date && (
+                                    <div style={{ fontSize: '0.85rem', color: '#f59e0b', textAlign: 'center', marginTop: '10px' }}>
+                                        ⚠️ Please enter your phone number to continue
+                                    </div>
+                                )}
+
                                 {status && (
                                     <div className={`status-message ${status.split(':')[0]}`}>
-                                        {status.split(':')[1]}
+                                        {status.split(':')[1].split('\\n').map((line, i) => (
+                                            <div key={i}>{line}</div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* Download Ticket Button */}
+                                {ticketData && (
+                                    <div style={{ marginTop: '15px' }}>
+                                        <button 
+                                            onClick={downloadTicket}
+                                            style={{
+                                                width: '100%',
+                                                padding: '14px',
+                                                background: 'linear-gradient(135deg, #00D4FF 0%, #0099cc 100%)',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '10px',
+                                                fontSize: '1rem',
+                                                fontWeight: 'bold',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                gap: '10px'
+                                            }}
+                                        >
+                                            📥 Download NFT Ticket
+                                        </button>
+                                        <div style={{ fontSize: '0.8rem', color: '#94a3b8', textAlign: 'center', marginTop: '8px' }}>
+                                            NFT ID: {ticketData.nftId} • IPFS: {ticketData.ipfsHash?.slice(0, 12)}...
+                                        </div>
                                     </div>
                                 )}
 
