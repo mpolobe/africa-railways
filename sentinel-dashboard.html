@@ -3028,9 +3028,9 @@
             }
         }
 
-        // Gemini API configuration
-        const GEMINI_API_KEY = 'AIzaSyAqJaTc_LubzhXsohzA8Qi4PyQ-LtNPrhc';
-        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+        // OpenAI ChatGPT API configuration
+        // API key loaded from localStorage (set by admin) - never committed to git
+        const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
         
         // System context for the AI assistant
         const AI_SYSTEM_CONTEXT = `You are an AI assistant for Africa Railways Sentinel Dashboard. 
@@ -3048,6 +3048,20 @@ Keep responses concise and professional. Use bullet points for lists.
 If asked about specific incidents, remind users to file official reports through the dashboard.`;
 
         let conversationHistory = [];
+        
+        // Get API key from localStorage
+        function getOpenAIKey() {
+            return localStorage.getItem('OPENAI_API_KEY');
+        }
+        
+        // Set API key (for admin use)
+        function setOpenAIKey(key) {
+            if (key && key.startsWith('sk-')) {
+                localStorage.setItem('OPENAI_API_KEY', key);
+                return true;
+            }
+            return false;
+        }
 
         async function sendAIMessage() {
             const input = document.getElementById('ai-chat-input');
@@ -3055,44 +3069,45 @@ If asked about specific incidents, remind users to file official reports through
             
             if (!message) return;
             
+            const apiKey = getOpenAIKey();
+            
+            // Check if API key is configured
+            if (!apiKey) {
+                addMessageToChat('user', message);
+                input.value = '';
+                addMessageToChat('ai', '⚠️ AI Assistant not configured.\n\nAdmin: Open browser console and run:\nsetOpenAIKey("your-api-key-here")');
+                return;
+            }
+            
             // Add user message to chat
             addMessageToChat('user', message);
             input.value = '';
             
-            // Add to conversation history
-            conversationHistory.push({ role: 'user', parts: [{ text: message }] });
+            // Build conversation history for context
+            conversationHistory.push({ role: 'user', content: message });
             
             // Show typing indicator
             addTypingIndicator();
             
             try {
-                // Build conversation with context
-                const contents = [
-                    { role: 'user', parts: [{ text: AI_SYSTEM_CONTEXT }] },
-                    { role: 'model', parts: [{ text: 'Understood. I am ready to assist with Africa Railways Sentinel operations. How can I help you today?' }] },
-                    ...conversationHistory
+                // Build messages array with system context
+                const messages = [
+                    { role: 'system', content: AI_SYSTEM_CONTEXT },
+                    ...conversationHistory.slice(-10) // Keep last 10 messages for context
                 ];
                 
-                // Call Gemini API directly
-                const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                // Call OpenAI ChatGPT API
+                const response = await fetch(OPENAI_API_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
                     },
                     body: JSON.stringify({
-                        contents: contents,
-                        generationConfig: {
-                            temperature: 0.7,
-                            topK: 40,
-                            topP: 0.95,
-                            maxOutputTokens: 1024,
-                        },
-                        safetySettings: [
-                            { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-                            { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-                            { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-                            { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-                        ]
+                        model: 'gpt-3.5-turbo',
+                        messages: messages,
+                        max_tokens: 1024,
+                        temperature: 0.7,
                     }),
                 });
                 
@@ -3101,13 +3116,13 @@ If asked about specific incidents, remind users to file official reports through
                 // Remove typing indicator
                 removeTypingIndicator();
                 
-                if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-                    const aiResponse = data.candidates[0].content.parts[0].text;
+                if (data.choices && data.choices[0] && data.choices[0].message) {
+                    const aiResponse = data.choices[0].message.content;
                     
                     // Add to conversation history
-                    conversationHistory.push({ role: 'model', parts: [{ text: aiResponse }] });
+                    conversationHistory.push({ role: 'assistant', content: aiResponse });
                     
-                    // Keep conversation history manageable (last 10 exchanges)
+                    // Keep conversation history manageable
                     if (conversationHistory.length > 20) {
                         conversationHistory = conversationHistory.slice(-20);
                     }
@@ -3115,15 +3130,23 @@ If asked about specific incidents, remind users to file official reports through
                     // Add AI response
                     addMessageToChat('ai', aiResponse);
                 } else if (data.error) {
-                    console.error('Gemini API error:', data.error);
-                    addMessageToChat('ai', `Sorry, I encountered an error: ${data.error.message || 'Unknown error'}. Please try again.`);
+                    console.error('OpenAI API error:', data.error);
+                    
+                    if (data.error.code === 'insufficient_quota') {
+                        addMessageToChat('ai', '❌ Insufficient credits on OpenAI account. Please add credits at https://platform.openai.com/account/billing');
+                    } else if (data.error.code === 'invalid_api_key') {
+                        addMessageToChat('ai', '❌ Invalid API key. Please reconfigure.');
+                        localStorage.removeItem('OPENAI_API_KEY');
+                    } else {
+                        addMessageToChat('ai', `❌ Error: ${data.error.message || 'Unknown error'}. Please try again.`);
+                    }
                 } else {
                     addMessageToChat('ai', 'Sorry, I could not generate a response. Please try again.');
                 }
                 
             } catch (error) {
                 removeTypingIndicator();
-                addMessageToChat('ai', 'Sorry, I encountered a connection error. Please check your internet and try again.');
+                addMessageToChat('ai', '❌ Connection error. Please check your internet and try again.');
                 console.error('AI chat error:', error);
             }
         }
