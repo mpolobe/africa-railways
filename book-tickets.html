@@ -1158,44 +1158,88 @@ TX: ${ticketData.txDigest}
                 try {
                     let walletAddress = '';
                     let smsMsg = '';
+                    let bookingRef, nftId, ipfsHash, txDigest, nftObjectId;
                     
-                    if (isLoggedIn) {
-                        // LOGGED IN USER WORKFLOW
-                        setStatus('info:🎫 Processing your booking...');
-                        await new Promise(resolve => setTimeout(resolve, 1500));
-                        
-                        walletAddress = '0x' + Math.random().toString(16).substring(2, 42);
-                        
-                        setStatus('info:🎫 Minting NFT ticket to your wallet...');
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-                        
-                    } else {
-                        // NON-LOGGED IN USER WORKFLOW
+                    // Try to use the booking API
+                    try {
                         setStatus('info:📋 Validating booking details...');
-                        await new Promise(resolve => setTimeout(resolve, 800));
+                        
+                        const bookingPayload = {
+                            phoneNumber: phoneNumber || 'guest',
+                            from: fromStation?.city || from,
+                            to: toStation?.city || to,
+                            date: date,
+                            passengers: passengers,
+                            ticketClass: selectedClass,
+                            tripType: isReturnTrip ? 'return' : 'one-way',
+                            priceUsd: totalPriceUSD,
+                            currency: localCurrency
+                        };
+                        
+                        setStatus('info:🔐 Creating SUI/$AFC wallet...');
+                        
+                        const response = await fetch('/api/booking/create', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(bookingPayload)
+                        });
+                        
+                        if (response.ok) {
+                            const result = await response.json();
+                            if (result.success) {
+                                walletAddress = result.wallet.address;
+                                bookingRef = result.booking.id;
+                                nftId = result.nft.id;
+                                ipfsHash = result.nft.ipfsHash;
+                                txDigest = result.nft.txDigest;
+                                nftObjectId = result.nft.objectId;
+                                
+                                setStatus(`info:✅ Wallet: ${walletAddress.slice(0, 16)}...`);
+                                setStatus(`info:💱 Converted: $${totalPriceUSD} → ${result.payment.afcAmount} $AFC`);
+                                setStatus(`info:🎫 NFT minted! TX: ${txDigest.slice(0, 16)}...`);
+                            } else {
+                                throw new Error(result.error || 'Booking failed');
+                            }
+                        } else {
+                            throw new Error('API unavailable');
+                        }
+                    } catch (apiError) {
+                        // Fallback to client-side simulation
+                        console.log('Using client-side booking:', apiError.message);
+                        
+                        if (isLoggedIn) {
+                            setStatus('info:🎫 Processing your booking...');
+                            await new Promise(resolve => setTimeout(resolve, 1000));
+                            walletAddress = '0x' + Math.random().toString(16).substring(2, 42);
+                        } else {
+                            setStatus('info:🔐 Creating your SUI/$AFC wallet from phone number...');
+                            await new Promise(resolve => setTimeout(resolve, 800));
+                            
+                            const phoneDigits = phoneNumber.replace(/\D/g, '');
+                            const phoneHash = phoneDigits.slice(-10).padStart(10, '0');
+                            walletAddress = '0x' + Array.from({length: 64}, (_, i) => 
+                                ((parseInt(phoneHash[i % 10]) * (i + 1)) % 16).toString(16)
+                            ).join('');
+                            
+                            setStatus('info:✅ Wallet created!');
+                        }
 
-                        setStatus('info:🔐 Creating your SUI/AFC wallet from phone number...');
+                        setStatus('info:💱 Converting payment to $AFC...');
+                        await new Promise(resolve => setTimeout(resolve, 600));
+                        setStatus(`info:✅ Converted: $${totalPriceUSD} USD → ${totalPriceUSD} $AFC`);
+                        
+                        setStatus('info:🎫 Minting NFT ticket on SUI blockchain...');
                         await new Promise(resolve => setTimeout(resolve, 1200));
                         
-                        const phoneDigits = phoneNumber.replace(/\D/g, '');
-                        const phoneHash = phoneDigits.slice(-10).padStart(10, '0');
-                        walletAddress = '0x' + Array.from({length: 40}, (_, i) => 
-                            ((parseInt(phoneHash[i % 10]) * (i + 1)) % 16).toString(16)
-                        ).join('');
+                        bookingRef = 'AFC-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+                        nftId = 'NFT-' + Date.now().toString(36).toUpperCase();
+                        txDigest = '0x' + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join('');
+                        nftObjectId = '0x' + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join('');
                         
-                        setStatus('info:✅ Wallet created! Minting NFT ticket...');
-                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        setStatus('info:📤 Uploading ticket metadata to IPFS...');
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        ipfsHash = 'Qm' + Math.random().toString(36).substring(2, 46);
                     }
-
-                    setStatus('info:🎫 Minting NFT ticket on SUI blockchain...');
-                    await new Promise(resolve => setTimeout(resolve, 1500));
-                    
-                    const bookingRef = 'AFC-' + Math.random().toString(36).substring(2, 10).toUpperCase();
-                    const nftId = 'NFT-' + Date.now().toString(36).toUpperCase();
-                    
-                    setStatus('info:📤 Uploading ticket metadata to IPFS...');
-                    await new Promise(resolve => setTimeout(resolve, 800));
-                    const ipfsHash = 'Qm' + Math.random().toString(36).substring(2, 34);
                     
                     // Generate ticket data for download
                     const ticket = {
