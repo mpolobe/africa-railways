@@ -3028,6 +3028,27 @@
             }
         }
 
+        // Gemini API configuration
+        const GEMINI_API_KEY = 'AIzaSyAqJaTc_LubzhXsohzA8Qi4PyQ-LtNPrhc';
+        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+        
+        // System context for the AI assistant
+        const AI_SYSTEM_CONTEXT = `You are an AI assistant for Africa Railways Sentinel Dashboard. 
+You help railway safety officers, track inspectors, and station masters with:
+- Railway safety protocols and procedures
+- Track inspection guidelines
+- Incident reporting assistance
+- Equipment maintenance schedules
+- Emergency response procedures
+- TAZARA railway operations (Tanzania-Zambia Railway)
+- Train scheduling and delays
+- Passenger safety information
+
+Keep responses concise and professional. Use bullet points for lists.
+If asked about specific incidents, remind users to file official reports through the dashboard.`;
+
+        let conversationHistory = [];
+
         async function sendAIMessage() {
             const input = document.getElementById('ai-chat-input');
             const message = input.value.trim();
@@ -3038,19 +3059,40 @@
             addMessageToChat('user', message);
             input.value = '';
             
+            // Add to conversation history
+            conversationHistory.push({ role: 'user', parts: [{ text: message }] });
+            
             // Show typing indicator
             addTypingIndicator();
             
             try {
-                // Call AI API
-                const response = await fetch('/api/ai/chat', {
+                // Build conversation with context
+                const contents = [
+                    { role: 'user', parts: [{ text: AI_SYSTEM_CONTEXT }] },
+                    { role: 'model', parts: [{ text: 'Understood. I am ready to assist with Africa Railways Sentinel operations. How can I help you today?' }] },
+                    ...conversationHistory
+                ];
+                
+                // Call Gemini API directly
+                const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        message: message,
-                        context: 'sentinel_dashboard',
+                        contents: contents,
+                        generationConfig: {
+                            temperature: 0.7,
+                            topK: 40,
+                            topP: 0.95,
+                            maxOutputTokens: 1024,
+                        },
+                        safetySettings: [
+                            { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+                            { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+                            { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+                            { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+                        ]
                     }),
                 });
                 
@@ -3059,12 +3101,29 @@
                 // Remove typing indicator
                 removeTypingIndicator();
                 
-                // Add AI response
-                addMessageToChat('ai', data.response);
+                if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                    const aiResponse = data.candidates[0].content.parts[0].text;
+                    
+                    // Add to conversation history
+                    conversationHistory.push({ role: 'model', parts: [{ text: aiResponse }] });
+                    
+                    // Keep conversation history manageable (last 10 exchanges)
+                    if (conversationHistory.length > 20) {
+                        conversationHistory = conversationHistory.slice(-20);
+                    }
+                    
+                    // Add AI response
+                    addMessageToChat('ai', aiResponse);
+                } else if (data.error) {
+                    console.error('Gemini API error:', data.error);
+                    addMessageToChat('ai', `Sorry, I encountered an error: ${data.error.message || 'Unknown error'}. Please try again.`);
+                } else {
+                    addMessageToChat('ai', 'Sorry, I could not generate a response. Please try again.');
+                }
                 
             } catch (error) {
                 removeTypingIndicator();
-                addMessageToChat('ai', 'Sorry, I encountered an error. Please try again.');
+                addMessageToChat('ai', 'Sorry, I encountered a connection error. Please check your internet and try again.');
                 console.error('AI chat error:', error);
             }
         }
