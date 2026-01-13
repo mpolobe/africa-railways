@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"sync"
 	"time"
 )
@@ -83,7 +84,7 @@ You help railway safety officers, track inspectors, and station masters with:
 Keep responses concise and professional. Use bullet points for lists.
 If asked about specific incidents, remind users to file official reports through the dashboard.`
 
-// getOpenAIKey retrieves the API key from database with caching
+// getOpenAIKey retrieves the API key from environment or database with caching
 func getOpenAIKey() (string, error) {
 	openaiKeyMutex.RLock()
 	if openaiAPIKey != "" && time.Since(openaiKeyLastFetch) < openaiKeyCacheTTL {
@@ -93,7 +94,6 @@ func getOpenAIKey() (string, error) {
 	}
 	openaiKeyMutex.RUnlock()
 
-	// Fetch from database
 	openaiKeyMutex.Lock()
 	defer openaiKeyMutex.Unlock()
 
@@ -102,27 +102,31 @@ func getOpenAIKey() (string, error) {
 		return openaiAPIKey, nil
 	}
 
-	if db == nil {
-		return "", fmt.Errorf("database not initialized")
+	// Priority 1: Environment variable (from GitHub Secrets)
+	if envKey := os.Getenv("OPENAI_API_KEY"); envKey != "" {
+		log.Println("🤖 Using OpenAI API key from environment")
+		openaiAPIKey = envKey
+		openaiKeyLastFetch = time.Now()
+		return envKey, nil
 	}
 
-	var key string
-	err := db.QueryRow(`
-		SELECT api_key FROM api_keys 
-		WHERE service_name = 'openai' AND is_active = true
-	`).Scan(&key)
+	// Priority 2: Database
+	if db != nil {
+		var key string
+		err := db.QueryRow(`
+			SELECT api_key FROM api_keys 
+			WHERE service_name = 'openai' AND is_active = true
+		`).Scan(&key)
 
-	if err != nil {
-		return "", fmt.Errorf("failed to get OpenAI API key: %w", err)
+		if err == nil && key != "" && key != "placeholder" {
+			log.Println("🤖 Using OpenAI API key from database")
+			openaiAPIKey = key
+			openaiKeyLastFetch = time.Now()
+			return key, nil
+		}
 	}
 
-	if key == "" || key == "placeholder" {
-		return "", fmt.Errorf("OpenAI API key not configured")
-	}
-
-	openaiAPIKey = key
-	openaiKeyLastFetch = time.Now()
-	return key, nil
+	return "", fmt.Errorf("OpenAI API key not configured (set OPENAI_API_KEY env var or add to database)")
 }
 
 // aiChatHandler handles AI chat requests
