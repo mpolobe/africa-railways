@@ -64,7 +64,7 @@ jobs:
             -ldflags="-s -w -X main.version=${{ github.sha }} -X main.buildTime=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
             -trimpath \
             -o ../bin/sovereign-engine \
-            main.go reports.go newsfeed.go notifications.go sentinel_api.go facebook.go stations_api.go operators_api.go ai_chat.go
+            main.go reports.go newsfeed.go notifications.go sentinel_api.go facebook.go stations_api.go operators_api.go ai_chat.go sms_service.go
           
           echo "Binary size:"
           ls -lh ../bin/sovereign-engine

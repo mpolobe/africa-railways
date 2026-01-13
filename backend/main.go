@@ -234,6 +234,10 @@ func main() {
 	mux.HandleFunc("/api/ai/chat", aiChatHandler)
 	mux.HandleFunc("/api/admin/apikey", updateAPIKeyHandler)
 
+	// SMS endpoints
+	mux.HandleFunc("/api/sms/send", smsHandler)
+	mux.HandleFunc("/api/sms/booking-confirmation", bookingConfirmationHandler)
+
 	log.Println("🛰️  Sentinel Engine Live on :" + port)
 	log.Println("📡 WebSocket endpoint: /ws")
 	log.Println("📩 Add event endpoint: /add-event")
