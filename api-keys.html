@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔑 API Keys - Africa Railways</title>
+    <script>
+        // Check authentication before loading page
+        (function() {
+            const authToken = sessionStorage.getItem('dev_auth_token');
+            const authExpiry = sessionStorage.getItem('dev_auth_expiry');
+            
+            if (!authToken || !authExpiry || Date.now() >= parseInt(authExpiry)) {
+                // Not authenticated, redirect to login
+                window.location.href = 'developer-login.html?redirect=api-keys.html';
+            }
+        })();
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --navy: #0a0e1a;
+            --gold: #FFB800;
+            --cyan: #00D4FF;
+            --green: #10b981;
+            --red: #ef4444;
+            --surface: #16203a;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--navy);
+            color: white;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: var(--surface);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            background: rgba(255, 184, 0, 0.1);
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .user-info span {
+            color: var(--gold);
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #333;
+            color: white;
+        }
+        
+        .btn-outline:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: var(--surface);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .card h2 {
+            color: var(--gold);
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card h3 {
+            color: var(--cyan);
+            font-size: 1rem;
+            margin: 20px 0 10px;
+        }
+        
+        .api-key-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            position: relative;
+        }
+        
+        .api-key-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+        
+        .api-key-value {
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            color: var(--cyan);
+            word-break: break-all;
+            filter: blur(5px);
+            transition: filter 0.3s;
+            user-select: none;
+        }
+        
+        .api-key-value.revealed {
+            filter: blur(0);
+            user-select: text;
+        }
+        
+        .api-key-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+        
+        .btn-reveal {
+            background: rgba(255, 184, 0, 0.2);
+            color: var(--gold);
+        }
+        
+        .btn-reveal:hover {
+            background: rgba(255, 184, 0, 0.3);
+        }
+        
+        .btn-copy {
+            background: rgba(0, 212, 255, 0.2);
+            color: var(--cyan);
+        }
+        
+        .btn-copy:hover {
+            background: rgba(0, 212, 255, 0.3);
+        }
+        
+        .warning-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .warning-box i {
+            color: var(--red);
+            font-size: 1.2rem;
+            margin-top: 2px;
+        }
+        
+        .warning-box p {
+            color: #fca5a5;
+            font-size: 0.9rem;
+        }
+        
+        .info-box {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .info-box p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.85rem;
+            color: var(--cyan);
+        }
+        
+        pre {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        pre code {
+            background: none;
+            padding: 0;
+            color: #e2e8f0;
+        }
+        
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .checklist li {
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+        
+        .checklist input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--gold);
+        }
+        
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: var(--gold);
+            color: var(--navy);
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-right: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        
+        th {
+            color: var(--gold);
+            font-weight: 600;
+        }
+        
+        td {
+            color: #94a3b8;
+        }
+        
+        .generate-section {
+            text-align: center;
+            padding: 30px;
+            border: 2px dashed #333;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        .btn-generate {
+            background: linear-gradient(135deg, var(--gold), #ff9500);
+            color: var(--navy);
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 184, 0, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .api-key-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="/" class="logo">
+            <i class="fas fa-train"></i> Africa Railways
+        </a>
+        <div class="header-actions">
+            <div class="user-info">
+                <i class="fas fa-user"></i>
+                <span id="userName">Developer</span>
+            </div>
+            <button class="btn btn-outline" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>🔑 API Keys Setup Guide</h1>
+        <p class="subtitle">Manage your Africa Railways API credentials</p>
+
+        <div class="warning-box">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p><strong>Security Warning:</strong> These API keys are sensitive credentials. Never share them publicly, commit them to git, or expose them in client-side code.</p>
+        </div>
+
+        <!-- Generate New Keys Section -->
+        <div class="card">
+            <h2><i class="fas fa-plus-circle"></i> Generate New API Keys</h2>
+            <p style="color: #94a3b8; margin-bottom: 20px;">Generate a new set of API keys for your application. Old keys will remain active for 7 days after generating new ones.</p>
+            
+            <div class="generate-section">
+                <button class="btn-generate" onclick="generateNewKeys()">
+                    <i class="fas fa-key"></i> Generate New API Keys
+                </button>
+                <p style="color: #64748b; font-size: 0.85rem; margin-top: 15px;">Keys are generated securely and encrypted</p>
+            </div>
+        </div>
+
+        <!-- Your API Keys -->
+        <div class="card">
+            <h2><i class="fas fa-key"></i> Your API Keys</h2>
+            
+            <!-- No keys message -->
+            <div id="noKeysMessage" style="text-align: center; padding: 30px; color: #94a3b8;">
+                <i class="fas fa-key" style="font-size: 3rem; color: #333; margin-bottom: 15px; display: block;"></i>
+                <p>You haven't generated any API keys yet.</p>
+                <p style="font-size: 0.85rem;">Click "Generate New API Keys" above to create your first keys.</p>
+            </div>
+            
+            <!-- Keys container (hidden until keys exist) -->
+            <div id="keysContainer" style="display: none;">
+                <div class="info-box" style="margin-bottom: 20px;">
+                    <p><i class="fas fa-info-circle"></i> For security, full API keys are only shown once when generated. Below you can see key hints to identify your keys.</p>
+                </div>
+                
+                <div class="api-key-box">
+                    <div class="api-key-label">🚂 RAILWAYS_API_KEY</div>
+                    <div class="api-key-value" id="railwaysKey"><span id="railwaysKeyHint">rw_••••••••••••••••••••••••••••••••••••••••</span></div>
+                    <div class="api-key-actions">
+                        <button class="btn-small btn-reveal" onclick="toggleReveal('railwaysKey', this)">
+                            <i class="fas fa-eye"></i> Show Hint
+                        </button>
+                        <button class="btn-small btn-copy" onclick="copyKey('railwaysKey')">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                </div>
+
+                <div class="api-key-box">
+                    <div class="api-key-label">💰 AFRICOIN_API_KEY</div>
+                    <div class="api-key-value" id="africoinKey"><span id="africoinKeyHint">ac_••••••••••••••••••••••••••••••••••••••••</span></div>
+                    <div class="api-key-actions">
+                        <button class="btn-small btn-reveal" onclick="toggleReveal('africoinKey', this)">
+                            <i class="fas fa-eye"></i> Show Hint
+                        </button>
+                        <button class="btn-small btn-copy" onclick="copyKey('africoinKey')">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Setup Checklist -->
+        <div class="card">
+            <h2><i class="fas fa-tasks"></i> Setup Checklist</h2>
+            <p style="color: #94a3b8; margin-bottom: 15px;">Add your API keys to these locations:</p>
+            
+            <ul class="checklist">
+                <li>
+                    <input type="checkbox" id="check1">
+                    <label for="check1">GitHub Secrets (for mobile app builds)</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="check2">
+                    <label for="check2">Vercel Environment Variables (for backend)</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="check3">
+                    <label for="check3">EAS Secrets (optional, for additional security)</label>
+                </li>
+            </ul>
+        </div>
+
+        <!-- GitHub Secrets -->
+        <div class="card">
+            <h2><span class="step-number">1</span> Add to GitHub Secrets</h2>
+            
+            <h3>Steps:</h3>
+            <ol style="color: #94a3b8; padding-left: 20px;">
+                <li>Go to your repository settings</li>
+                <li>Navigate to <code>Settings → Secrets → Actions</code></li>
+                <li>Click "New repository secret"</li>
+                <li>Add <code>RAILWAYS_API_KEY</code> with your key value</li>
+                <li>Add <code>AFRICOIN_API_KEY</code> with your key value</li>
+            </ol>
+
+            <h3>Verify with CLI:</h3>
+            <pre><code>gh secret list --repo mpolobe/africa-railways</code></pre>
+        </div>
+
+        <!-- Vercel -->
+        <div class="card">
+            <h2><span class="step-number">2</span> Add to Vercel Environment Variables</h2>
+            
+            <ol style="color: #94a3b8; padding-left: 20px;">
+                <li>Go to <a href="https://vercel.com" target="_blank" style="color: var(--cyan);">Vercel Dashboard</a></li>
+                <li>Select your project (africa-railways)</li>
+                <li>Go to <code>Settings → Environment Variables</code></li>
+                <li>Add both API keys for all environments</li>
+                <li>Redeploy your backend</li>
+            </ol>
+        </div>
+
+        <!-- Testing -->
+        <div class="card">
+            <h2><span class="step-number">3</span> Test Your Setup</h2>
+            
+            <h3>Test API Connection:</h3>
+            <pre><code># Test Railways API key
+curl -H "Authorization: Bearer YOUR_RAILWAYS_KEY" \
+     https://africarailways.com/api/health
+
+# Test Africoin API key  
+curl -H "Authorization: Bearer YOUR_AFRICOIN_KEY" \
+     https://africarailways.com/api/health</code></pre>
+
+            <div class="info-box">
+                <p><i class="fas fa-info-circle"></i> Valid keys return <code>200 OK</code>. Invalid keys return <code>401 Unauthorized</code>.</p>
+            </div>
+        </div>
+
+        <!-- Security Best Practices -->
+        <div class="card">
+            <h2><i class="fas fa-shield-alt"></i> Security Best Practices</h2>
+            
+            <table>
+                <tr>
+                    <th>✅ Do</th>
+                    <th>❌ Don't</th>
+                </tr>
+                <tr>
+                    <td>Keep keys in environment variables</td>
+                    <td>Commit keys to git</td>
+                </tr>
+                <tr>
+                    <td>Rotate keys every 90 days</td>
+                    <td>Share keys publicly</td>
+                </tr>
+                <tr>
+                    <td>Use HTTPS only</td>
+                    <td>Log keys in backend</td>
+                </tr>
+                <tr>
+                    <td>Monitor API usage</td>
+                    <td>Hardcode keys in source</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Support -->
+        <div class="card">
+            <h2><i class="fas fa-headset"></i> Need Help?</h2>
+            <p style="color: #94a3b8;">Contact our developer support team:</p>
+            <div style="margin-top: 15px; display: flex; gap: 15px; flex-wrap: wrap;">
+                <a href="https://wa.me/260966165444" target="_blank" class="btn btn-outline" style="background: rgba(37, 211, 102, 0.1); border-color: #25D366; color: #25D366;">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </a>
+                <a href="mailto:api@africarailways.com" class="btn btn-outline">
+                    <i class="fas fa-envelope"></i> api@africarailways.com
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        // Supabase configuration
+        const SUPABASE_URL = 'https://your-project.supabase.co'; // Replace with actual URL
+        const SUPABASE_ANON_KEY = 'your-anon-key'; // Replace with actual anon key
+        
+        let supabase;
+        let userApiKeys = { railways: null, africoin: null };
+        
+        // Initialize Supabase client
+        function initSupabase() {
+            if (typeof window.supabase !== 'undefined') {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+        }
+
+        // Generate a secure random API key
+        function generateSecureKey(prefix) {
+            const array = new Uint8Array(24);
+            crypto.getRandomValues(array);
+            const key = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+            return `${prefix}_${key}`;
+        }
+
+        // Hash a key for storage (we store hash, not the actual key)
+        async function hashKey(key) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(key);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // Load user's API keys from Supabase
+        async function loadApiKeys() {
+            const userEmail = sessionStorage.getItem('dev_user_email');
+            
+            if (!supabase || !userEmail) {
+                console.log('Supabase not initialized or user not logged in');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase
+                    .from('api_keys')
+                    .select('*')
+                    .eq('user_email', userEmail)
+                    .eq('is_active', true);
+
+                if (error) {
+                    console.error('Error loading API keys:', error);
+                    return;
+                }
+
+                if (data && data.length > 0) {
+                    data.forEach(key => {
+                        if (key.key_type === 'railways') {
+                            userApiKeys.railways = key;
+                            document.getElementById('railwaysKeyHint').textContent = 
+                                `rw_••••••••••••••••••••••••••••••••••••••${key.key_hint}`;
+                        } else if (key.key_type === 'africoin') {
+                            userApiKeys.africoin = key;
+                            document.getElementById('africoinKeyHint').textContent = 
+                                `ac_••••••••••••••••••••••••••••••••••••••${key.key_hint}`;
+                        }
+                    });
+                    
+                    document.getElementById('noKeysMessage').style.display = 'none';
+                    document.getElementById('keysContainer').style.display = 'block';
+                } else {
+                    document.getElementById('noKeysMessage').style.display = 'block';
+                    document.getElementById('keysContainer').style.display = 'none';
+                }
+            } catch (err) {
+                console.error('Failed to load API keys:', err);
+            }
+        }
+
+        // Generate new API keys and save to Supabase
+        async function generateNewKeys() {
+            const userEmail = sessionStorage.getItem('dev_user_email');
+            const userName = sessionStorage.getItem('dev_user_name');
+            
+            if (!confirm('Are you sure you want to generate new API keys? Old keys will be deactivated after 7 days.')) {
+                return;
+            }
+
+            const generateBtn = document.querySelector('.btn-generate');
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+
+            try {
+                // Generate new keys
+                const railwaysKey = generateSecureKey('rw');
+                const africoinKey = generateSecureKey('ac');
+                
+                // Hash keys for storage
+                const railwaysHash = await hashKey(railwaysKey);
+                const africoinHash = await hashKey(africoinKey);
+
+                if (supabase) {
+                    // Deactivate old keys (set to expire in 7 days)
+                    await supabase
+                        .from('api_keys')
+                        .update({ 
+                            expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() 
+                        })
+                        .eq('user_email', userEmail)
+                        .eq('is_active', true);
+
+                    // Insert new railways key
+                    await supabase.from('api_keys').insert({
+                        user_email: userEmail,
+                        user_name: userName,
+                        key_type: 'railways',
+                        key_prefix: 'rw_',
+                        key_hash: railwaysHash,
+                        key_hint: railwaysKey.slice(-4),
+                        is_active: true
+                    });
+
+                    // Insert new africoin key
+                    await supabase.from('api_keys').insert({
+                        user_email: userEmail,
+                        user_name: userName,
+                        key_type: 'africoin',
+                        key_prefix: 'ac_',
+                        key_hash: africoinHash,
+                        key_hint: africoinKey.slice(-4),
+                        is_active: true
+                    });
+                }
+
+                // Store keys temporarily in session for display (only time user sees full key)
+                sessionStorage.setItem('temp_railways_key', railwaysKey);
+                sessionStorage.setItem('temp_africoin_key', africoinKey);
+
+                // Show the newly generated keys
+                document.getElementById('noKeysMessage').style.display = 'none';
+                document.getElementById('keysContainer').style.display = 'block';
+                document.getElementById('railwaysKeyHint').textContent = `rw_••••••••••••••••••••••••••••••••••••••${railwaysKey.slice(-4)}`;
+                document.getElementById('africoinKeyHint').textContent = `ac_••••••••••••••••••••••••••••••••••••••${africoinKey.slice(-4)}`;
+
+                // Show success message with the actual keys
+                showNewKeysModal(railwaysKey, africoinKey);
+
+            } catch (err) {
+                console.error('Failed to generate keys:', err);
+                alert('Failed to generate API keys. Please try again.');
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '<i class="fas fa-key"></i> Generate New API Keys';
+            }
+        }
+
+        // Show modal with newly generated keys (only time user sees them)
+        function showNewKeysModal(railwaysKey, africoinKey) {
+            const modal = document.createElement('div');
+            modal.id = 'newKeysModal';
+            modal.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 9999;">
+                    <div style="background: var(--surface); border: 1px solid var(--gold); border-radius: 16px; padding: 30px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;">
+                        <h2 style="color: var(--gold); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-check-circle" style="color: var(--green);"></i> API Keys Generated!
+                        </h2>
+                        
+                        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                            <p style="color: #fca5a5; font-size: 0.9rem; margin: 0;">
+                                <i class="fas fa-exclamation-triangle"></i> <strong>Important:</strong> This is the only time you will see these keys. Copy them now and store them securely!
+                            </p>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="color: #94a3b8; font-size: 0.85rem;">🚂 RAILWAYS_API_KEY</label>
+                            <div style="background: rgba(0,0,0,0.3); border: 1px solid #333; border-radius: 8px; padding: 12px; margin-top: 8px; display: flex; align-items: center; gap: 10px;">
+                                <code style="color: var(--cyan); word-break: break-all; flex: 1;" id="modalRailwaysKey">${railwaysKey}</code>
+                                <button onclick="copyToClipboard('${railwaysKey}')" style="background: var(--cyan); color: var(--navy); border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer;">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 25px;">
+                            <label style="color: #94a3b8; font-size: 0.85rem;">💰 AFRICOIN_API_KEY</label>
+                            <div style="background: rgba(0,0,0,0.3); border: 1px solid #333; border-radius: 8px; padding: 12px; margin-top: 8px; display: flex; align-items: center; gap: 10px;">
+                                <code style="color: var(--cyan); word-break: break-all; flex: 1;" id="modalAfricoinKey">${africoinKey}</code>
+                                <button onclick="copyToClipboard('${africoinKey}')" style="background: var(--cyan); color: var(--navy); border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer;">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="copyBothKeys('${railwaysKey}', '${africoinKey}')" style="flex: 1; background: var(--gold); color: var(--navy); border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                                <i class="fas fa-copy"></i> Copy Both Keys
+                            </button>
+                            <button onclick="closeNewKeysModal()" style="flex: 1; background: transparent; border: 1px solid #333; color: white; padding: 12px; border-radius: 8px; cursor: pointer;">
+                                I've Saved My Keys
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function closeNewKeysModal() {
+            const modal = document.getElementById('newKeysModal');
+            if (modal) {
+                modal.remove();
+            }
+            // Clear temporary keys from session
+            sessionStorage.removeItem('temp_railways_key');
+            sessionStorage.removeItem('temp_africoin_key');
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copied to clipboard!');
+            }).catch(() => {
+                prompt('Copy this key:', text);
+            });
+        }
+
+        function copyBothKeys(railwaysKey, africoinKey) {
+            const text = `RAILWAYS_API_KEY=${railwaysKey}\nAFRICOIN_API_KEY=${africoinKey}`;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Both keys copied to clipboard!');
+            }).catch(() => {
+                prompt('Copy these keys:', text);
+            });
+        }
+
+        // Toggle reveal for stored keys (shows hint only, not full key)
+        function toggleReveal(keyId, button) {
+            const keyElement = document.getElementById(keyId);
+            const isRevealed = keyElement.classList.contains('revealed');
+            
+            // For security, we can only show the key hint, not the full key
+            // Full key is only shown once when generated
+            if (isRevealed) {
+                keyElement.classList.remove('revealed');
+                button.innerHTML = '<i class="fas fa-eye"></i> Show Hint';
+            } else {
+                keyElement.classList.add('revealed');
+                button.innerHTML = '<i class="fas fa-eye-slash"></i> Hide';
+                
+                // Check if we have the temp key in session (just generated)
+                const tempKey = keyId === 'railwaysKey' 
+                    ? sessionStorage.getItem('temp_railways_key')
+                    : sessionStorage.getItem('temp_africoin_key');
+                    
+                if (tempKey) {
+                    keyElement.textContent = tempKey;
+                }
+            }
+        }
+
+        function copyKey(keyId) {
+            const tempKey = keyId === 'railwaysKey' 
+                ? sessionStorage.getItem('temp_railways_key')
+                : sessionStorage.getItem('temp_africoin_key');
+                
+            if (tempKey) {
+                navigator.clipboard.writeText(tempKey).then(() => {
+                    alert('API key copied to clipboard!');
+                }).catch(() => {
+                    prompt('Copy this key:', tempKey);
+                });
+            } else {
+                alert('For security, full API keys can only be copied immediately after generation. Please generate new keys if you need to copy them.');
+            }
+        }
+
+        function logout() {
+            sessionStorage.removeItem('dev_auth_token');
+            sessionStorage.removeItem('dev_auth_expiry');
+            sessionStorage.removeItem('dev_user_email');
+            sessionStorage.removeItem('dev_user_name');
+            sessionStorage.removeItem('temp_railways_key');
+            sessionStorage.removeItem('temp_africoin_key');
+            window.location.href = 'developer-login.html';
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const userName = sessionStorage.getItem('dev_user_name') || sessionStorage.getItem('dev_user_email') || 'Developer';
+            document.getElementById('userName').textContent = userName;
+            
+            initSupabase();
+            loadApiKeys();
+        });
+    </script>
+</body>
+</html>
