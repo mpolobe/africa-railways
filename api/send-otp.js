@@ -170,18 +170,22 @@ async function sendAfricasTalkingSMS(phone, otp, message) {
     
     console.log('Africa\'s Talking response:', JSON.stringify(data));
     
-    if (data.SMSMessageData?.Recipients?.[0]?.statusCode === '101') {
+    const recipient = data.SMSMessageData?.Recipients?.[0];
+    const statusCode = recipient?.statusCode;
+    
+    // Status codes: 100 = Sent, 101 = Sent (to mobile), 102 = Queued
+    if (statusCode === '100' || statusCode === '101' || statusCode === '102' || statusCode === 100 || statusCode === 101 || statusCode === 102) {
       return { 
         success: true, 
-        messageId: data.SMSMessageData.Recipients[0].messageId 
+        messageId: recipient.messageId 
       };
     }
     
-    // Check for other success statuses
-    if (data.SMSMessageData?.Recipients?.[0]?.status === 'Success') {
+    // Check for Success status string
+    if (recipient?.status === 'Success') {
       return { 
         success: true, 
-        messageId: data.SMSMessageData.Recipients[0].messageId 
+        messageId: recipient.messageId 
       };
     }
     
