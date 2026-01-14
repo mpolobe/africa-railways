@@ -253,6 +253,9 @@ func main() {
 	mux.HandleFunc("/api/tickets/validate", ticketValidateHandler)
 	mux.HandleFunc("/api/tickets/use", ticketUseHandler)
 
+	// AFC Payment endpoints
+	RegisterAFCHandlers(mux)
+
 	log.Println("🛰️  Sentinel Engine Live on :" + port)
 	log.Println("📡 WebSocket endpoint: /ws")
 	log.Println("📩 Add event endpoint: /add-event")
@@ -267,5 +270,6 @@ func main() {
 	log.Println("🎫 Bookings API: /api/bookings/*")
 	log.Println("🔐 Auth OTP API: /api/auth/*")
 	log.Println("💳 Payments API: /api/payments")
+	log.Println("🪙 AFC Payment API: /api/afc/*")
 	log.Fatal(http.ListenAndServe(":"+port, corsMiddleware(mux)))
 }
