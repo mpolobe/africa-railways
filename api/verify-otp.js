@@ -1,5 +1,12 @@
 // Vercel Serverless Function: Verify OTP
 
+// Pre-registered wallets (phone -> SUI wallet address)
+// These are existing wallets with AFC tokens
+const REGISTERED_WALLETS = {
+  '+260975190740': '0x4284dee31121675fce54b211eddf0eb786ed5d6880b8ec728d2c0a3cc104e3c8', // Benjamin Mpolokoso
+  '+260966165444': '0x4284dee31121675fce54b211eddf0eb786ed5d6880b8ec728d2c0a3cc104e3c8', // Master Visionary
+};
+
 export default async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -27,7 +34,7 @@ export default async function handler(req, res) {
   // Demo mode: accept any 6-digit code if no OTP stored (for testing)
   if (!entry) {
     if (code.length === 6 && /^\d+$/.test(code)) {
-      const wallet = generateWalletFromPhone(phone);
+      const wallet = getWalletForPhone(phone);
       return res.status(200).json({
         success: true,
         message: 'Phone verified (demo mode)',
@@ -69,15 +76,41 @@ export default async function handler(req, res) {
     });
   }
 
-  // Success - remove OTP and generate wallet
+  // Success - remove OTP and get/generate wallet
   global.otpStore.delete(phone);
-  const wallet = generateWalletFromPhone(phone);
+  
+  // Check for pre-registered wallet first
+  const wallet = getWalletForPhone(phone);
 
   return res.status(200).json({
     success: true,
     message: 'Phone verified successfully',
     wallet: wallet
   });
+}
+
+function getWalletForPhone(phone) {
+  // Normalize phone number for lookup
+  const normalized = phone.replace(/\s/g, '');
+  
+  // Check pre-registered wallets
+  if (REGISTERED_WALLETS[normalized]) {
+    return REGISTERED_WALLETS[normalized];
+  }
+  
+  // Also check without + prefix
+  const withPlus = normalized.startsWith('+') ? normalized : '+' + normalized;
+  const withoutPlus = normalized.startsWith('+') ? normalized.slice(1) : normalized;
+  
+  if (REGISTERED_WALLETS[withPlus]) {
+    return REGISTERED_WALLETS[withPlus];
+  }
+  if (REGISTERED_WALLETS[withoutPlus]) {
+    return REGISTERED_WALLETS[withoutPlus];
+  }
+  
+  // Generate new wallet if not registered
+  return generateWalletFromPhone(phone);
 }
 
 function generateWalletFromPhone(phone) {
