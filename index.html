@@ -1212,13 +1212,9 @@
             sendBtn.textContent = 'Sending...';
             sendBtn.disabled = true;
             
-            // Send OTP via backend API
+            // Send OTP via Vercel API
             try {
-                const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-                    ? 'http://localhost:8080/api/auth/send-otp'
-                    : 'https://api.africa-railways.com/api/auth/send-otp';
-                
-                const response = await fetch(apiUrl, {
+                const response = await fetch('/api/send-otp', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
@@ -1286,11 +1282,7 @@
             verifyBtn.disabled = true;
             
             try {
-                const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-                    ? 'http://localhost:8080/api/auth/verify-otp'
-                    : 'https://api.africa-railways.com/api/auth/verify-otp';
-                
-                const response = await fetch(apiUrl, {
+                const response = await fetch('/api/verify-otp', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
@@ -1367,11 +1359,7 @@
             const method = sessionStorage.getItem('otp_method') || 'sms';
             
             try {
-                const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-                    ? 'http://localhost:8080/api/auth/send-otp'
-                    : 'https://api.africa-railways.com/api/auth/send-otp';
-                
-                const response = await fetch(apiUrl, {
+                const response = await fetch('/api/send-otp', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ phone, method })
