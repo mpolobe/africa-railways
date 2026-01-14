@@ -532,7 +532,7 @@
                 </div>
                 <div>
                     <label style="display: block; color: #64748b; font-size: 0.8rem; margin-bottom: 5px;">BALANCE</label>
-                    <p style="color: var(--cyan); font-size: 1.2rem; font-weight: 700;">0 $AFC</p>
+                    <p id="walletMenuBalance" style="color: var(--cyan); font-size: 1.2rem; font-weight: 700;">Loading...</p>
                 </div>
             </div>
             
@@ -1187,8 +1187,62 @@
             if (walletStatusNav) {
                 walletStatusNav.style.display = 'flex';
                 walletStatusNav.style.alignItems = 'center';
+                document.getElementById('walletBalanceNav').textContent = 'Loading...';
+            }
+            
+            // Fetch actual AFC balance from SUI blockchain
+            fetchAFCBalance(wallet.address);
+        }
+        
+        // AFC Token Configuration
+        const AFC_COIN_TYPE = '0xc68c4cfb63d702227db09c28837e75abd23bbb3adc192e3bc45fecca4dd5b7e8::afc::AFC';
+        const SUI_RPC_URL = 'https://fullnode.mainnet.sui.io:443';
+        
+        async function fetchAFCBalance(walletAddress) {
+            try {
+                const response = await fetch(SUI_RPC_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        jsonrpc: '2.0',
+                        id: 1,
+                        method: 'suix_getBalance',
+                        params: [walletAddress, AFC_COIN_TYPE]
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.result && data.result.totalBalance) {
+                    // AFC has 9 decimals
+                    const balance = parseInt(data.result.totalBalance) / 1e9;
+                    const formattedBalance = formatBalance(balance);
+                    
+                    // Update all balance displays
+                    const balanceNav = document.getElementById('walletBalanceNav');
+                    const balanceMenu = document.querySelector('#walletMenuModal p[style*="cyan"]');
+                    
+                    if (balanceNav) balanceNav.textContent = `${formattedBalance} $AFC`;
+                    if (balanceMenu) balanceMenu.textContent = `${formattedBalance} $AFC`;
+                    
+                    // Store balance in localStorage
+                    const wallet = JSON.parse(localStorage.getItem('africa_railways_wallet') || '{}');
+                    wallet.balance = balance;
+                    localStorage.setItem('africa_railways_wallet', JSON.stringify(wallet));
+                } else {
+                    document.getElementById('walletBalanceNav').textContent = '0 $AFC';
+                }
+            } catch (error) {
+                console.error('Failed to fetch AFC balance:', error);
                 document.getElementById('walletBalanceNav').textContent = '0 $AFC';
             }
+        }
+        
+        function formatBalance(balance) {
+            if (balance >= 1e9) return (balance / 1e9).toFixed(2) + 'B';
+            if (balance >= 1e6) return (balance / 1e6).toFixed(2) + 'M';
+            if (balance >= 1e3) return (balance / 1e3).toFixed(2) + 'K';
+            return balance.toFixed(2);
         }
         
         function openWalletMenu() {
@@ -1202,6 +1256,16 @@
             document.getElementById('walletMenuModal').classList.add('active');
             document.getElementById('walletMenuAddress').textContent = wallet.address.slice(0, 10) + '...' + wallet.address.slice(-8);
             document.getElementById('walletMenuPhone').textContent = wallet.phone || 'Not set';
+            
+            // Update balance display in menu
+            const balanceDisplay = document.getElementById('walletMenuBalance');
+            if (balanceDisplay) {
+                const balance = wallet.balance ? formatBalance(wallet.balance) : '0';
+                balanceDisplay.textContent = `${balance} $AFC`;
+            }
+            
+            // Refresh balance
+            fetchAFCBalance(wallet.address);
         }
         
         function closeWalletMenu() {
