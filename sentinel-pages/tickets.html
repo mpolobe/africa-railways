@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tickets & NFTs - Sentinel Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #1877f2; --secondary: #42b72a; --dark: #18191a;
+            --surface: #242526; --hover: #3a3b3c; --border: #3e4042;
+            --text-primary: #e4e6eb; --text-secondary: #b0b3b8;
+            --gold: #FFB800; --success: #00d084; --danger: #f02849;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--dark); color: var(--text-primary); min-height: 100vh;
+        }
+        .header {
+            background: var(--surface); border-bottom: 1px solid var(--border);
+            padding: 12px 20px; position: sticky; top: 0; z-index: 1000;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo { font-size: 24px; font-weight: bold; color: var(--gold); display: flex; align-items: center; gap: 12px; }
+        .logo-img { width: 40px; height: 40px; border-radius: 8px; }
+        .main-container { display: grid; grid-template-columns: 280px 1fr; gap: 20px; padding: 20px; }
+        .sidebar-left { position: sticky; top: 80px; height: fit-content; }
+        .menu-section { padding: 12px 12px 6px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+        .menu-item {
+            display: flex; align-items: center; gap: 12px; padding: 12px;
+            border-radius: 8px; cursor: pointer; color: var(--text-primary);
+            text-decoration: none; transition: background 0.2s;
+        }
+        .menu-item:hover { background: var(--hover); }
+        .menu-item.active { background: var(--hover); font-weight: 600; }
+        .menu-icon { font-size: 20px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--hover); border-radius: 50%; }
+        .content { max-width: 100%; }
+        .page-header { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+        .page-title { font-size: 28px; font-weight: bold; margin-bottom: 8px; }
+        .page-subtitle { color: var(--text-secondary); font-size: 14px; }
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+        .tab { padding: 10px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; color: var(--text-secondary); }
+        .tab.active { background: var(--gold); color: var(--dark); border-color: var(--gold); font-weight: 600; }
+        .card { background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border); }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
+        .stat-value { font-size: 32px; font-weight: bold; color: var(--gold); }
+        .stat-label { color: var(--text-secondary); font-size: 14px; margin-top: 4px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: var(--hover); font-weight: 600; color: var(--text-secondary); font-size: 13px; }
+        tr:hover { background: var(--hover); }
+        .status-badge { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+        .status-valid { background: rgba(0, 208, 132, 0.2); color: var(--success); }
+        .status-used { background: rgba(176, 179, 184, 0.2); color: var(--text-secondary); }
+        .status-expired { background: rgba(240, 40, 73, 0.2); color: var(--danger); }
+        .btn { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; font-size: 14px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-gold { background: var(--gold); color: var(--dark); }
+        .search-bar { background: var(--hover); border: 1px solid var(--border); border-radius: 20px; padding: 10px 16px; color: var(--text-primary); width: 300px; }
+        .nft-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .nft-card { background: var(--surface); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); transition: transform 0.2s; }
+        .nft-card:hover { transform: translateY(-4px); border-color: var(--gold); }
+        .nft-image { width: 100%; height: 180px; object-fit: cover; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); display: flex; align-items: center; justify-content: center; font-size: 64px; }
+        .nft-info { padding: 16px; }
+        .nft-name { font-weight: 600; margin-bottom: 4px; }
+        .nft-route { color: var(--text-secondary); font-size: 13px; margin-bottom: 8px; }
+        .nft-meta { display: flex; justify-content: space-between; align-items: center; }
+        .nft-rarity { font-size: 12px; padding: 4px 8px; border-radius: 4px; background: rgba(255, 184, 0, 0.2); color: var(--gold); }
+        .qr-code { width: 120px; height: 120px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+        @media (max-width: 768px) {
+            .main-container { grid-template-columns: 1fr; }
+            .sidebar-left { display: none; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <img src="https://fuchsia-written-horse-361.mypinata.cloud/ipfs/bafkreihazljw6e4axcfro62q4l65cy6xukenisy2h7t2aws7iyop3lebcm" alt="Sentinel" class="logo-img">
+            🛡️ Sentinel Dashboard
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <div style="background: var(--success); padding: 4px 12px; border-radius: 12px; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                <span style="width: 8px; height: 8px; background: white; border-radius: 50%; animation: pulse 1s infinite;"></span> LIVE
+            </div>
+            <button class="btn" onclick="window.location.href='settings.html'" style="background: var(--hover);">⚙️</button>
+            <button class="btn" onclick="logout()" style="background: var(--danger); color: white;">🚪</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar-left">
+            <a href="../sentinel-dashboard.html" class="menu-item"><div class="menu-icon">📊</div><span>Dashboard</span></a>
+            <div class="menu-section">Ticketing</div>
+            <a href="bookings.html" class="menu-item"><div class="menu-icon">🎫</div><span>Bookings</span></a>
+            <a href="tickets.html" class="menu-item active"><div class="menu-icon">🎟️</div><span>Tickets & NFTs</span></a>
+            <div class="menu-section">Finance</div>
+            <a href="payments.html" class="menu-item"><div class="menu-icon">💳</div><span>Payments</span></a>
+            <a href="transactions.html" class="menu-item"><div class="menu-icon">💰</div><span>AFRC Transactions</span></a>
+            <div class="menu-section">Operations</div>
+            <a href="routes.html" class="menu-item"><div class="menu-icon">🚂</div><span>Routes</span></a>
+            <a href="rolling-stock.html" class="menu-item"><div class="menu-icon">🚃</div><span>Rolling Stock</span></a>
+            <div class="menu-section">Users</div>
+            <a href="users.html" class="menu-item"><div class="menu-icon">👥</div><span>Passengers</span></a>
+            <a href="staff.html" class="menu-item"><div class="menu-icon">👷</div><span>Staff</span></a>
+            <div class="menu-section">System</div>
+            <a href="alerts.html" class="menu-item"><div class="menu-icon">⚠️</div><span>Alerts</span></a>
+            <a href="settings.html" class="menu-item"><div class="menu-icon">⚙️</div><span>Settings</span></a>
+        </div>
+
+        <div class="content">
+            <div class="page-header">
+                <div class="page-title">🎟️ Tickets & NFTs</div>
+                <div class="page-subtitle">Manage digital tickets and NFT souvenirs</div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-tickets">1,247</div>
+                    <div class="stat-label">Total Tickets</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="valid-tickets" style="color: var(--success);">892</div>
+                    <div class="stat-label">Valid Tickets</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="total-nfts" style="color: #8B5CF6;">1,156</div>
+                    <div class="stat-label">NFTs Minted</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="scanned-today">127</div>
+                    <div class="stat-label">Scanned Today</div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('tickets')">🎫 Tickets</div>
+                <div class="tab" onclick="showTab('nfts')">🖼️ NFT Souvenirs</div>
+                <div class="tab" onclick="showTab('scanner')">📱 Scanner</div>
+            </div>
+
+            <!-- Tickets Tab -->
+            <div id="tickets-tab" class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <input type="text" class="search-bar" placeholder="Search by ticket ID, passenger..." id="ticket-search">
+                    <button class="btn btn-gold">+ Issue Ticket</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ticket ID</th>
+                            <th>Passenger</th>
+                            <th>Route</th>
+                            <th>Date</th>
+                            <th>Class</th>
+                            <th>Seat</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tickets-table"></tbody>
+                </table>
+            </div>
+
+            <!-- NFTs Tab -->
+            <div id="nfts-tab" class="card" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <input type="text" class="search-bar" placeholder="Search NFTs..." id="nft-search">
+                    <select class="search-bar" style="width: 150px;" id="nft-filter">
+                        <option value="all">All Types</option>
+                        <option value="souvenir">Souvenirs</option>
+                        <option value="achievement">Achievements</option>
+                        <option value="collectible">Collectibles</option>
+                    </select>
+                </div>
+                <div class="nft-grid" id="nft-grid"></div>
+            </div>
+
+            <!-- Scanner Tab -->
+            <div id="scanner-tab" class="card" style="display: none;">
+                <div style="text-align: center; padding: 40px;">
+                    <div class="qr-code">
+                        <span style="font-size: 48px;">📷</span>
+                    </div>
+                    <h3 style="margin-bottom: 8px;">Ticket Scanner</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 20px;">Scan QR codes to validate tickets</p>
+                    <input type="text" class="search-bar" placeholder="Or enter ticket ID manually..." id="manual-ticket" style="width: 100%; max-width: 400px; margin-bottom: 16px;">
+                    <br>
+                    <button class="btn btn-gold" onclick="validateTicket()">Validate Ticket</button>
+                    
+                    <div id="scan-result" style="margin-top: 24px;"></div>
+                    
+                    <h4 style="margin-top: 32px; margin-bottom: 16px; text-align: left;">Recent Scans</h4>
+                    <table>
+                        <thead>
+                            <tr><th>Time</th><th>Ticket ID</th><th>Passenger</th><th>Result</th></tr>
+                        </thead>
+                        <tbody id="scan-history"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        const tickets = [
+            { id: 'TKT-M4X9K2-A1B2', passenger: 'John Mwamba', phone: '+260971234567', route: 'Kapiri Mposhi → Dar es Salaam', date: '2026-01-15', class: 'First', seat: 'Car 1, Seat 12A', status: 'valid' },
+            { id: 'TKT-N5Y8L3-C3D4', passenger: 'Sarah Banda', phone: '+255712345678', route: 'Dar es Salaam → Kapiri Mposhi', date: '2026-01-16', class: 'Economy', seat: 'Car 4, Seat 28B', status: 'valid' },
+            { id: 'TKT-P6Z7M4-E5F6', passenger: 'David Phiri', phone: '+260955678901', route: 'Kapiri Mposhi → Mbeya', date: '2026-01-14', class: 'Business', seat: 'Car 2, Seat 8C', status: 'used' },
+            { id: 'TKT-Q7A8N5-G7H8', passenger: 'Grace Tembo', phone: '+260966789012', route: 'Tunduma → Dar es Salaam', date: '2026-01-13', class: 'Economy', seat: 'Car 5, Seat 35D', status: 'used' },
+            { id: 'TKT-R8B9O6-I9J0', passenger: 'Peter Zulu', phone: '+255723456789', route: 'Mbeya → Kapiri Mposhi', date: '2026-01-10', class: 'First', seat: 'Car 1, Seat 5A', status: 'expired' },
+            { id: 'TKT-S9C0P7-K1L2', passenger: 'Mary Chanda', phone: '+260977890123', route: 'Kapiri Mposhi → Kasama', date: '2026-01-17', class: 'Economy', seat: 'Car 3, Seat 22A', status: 'valid' },
+            { id: 'TKT-T0D1Q8-M3N4', passenger: 'James Mulenga', phone: '+260988901234', route: 'Dar es Salaam → Mbeya', date: '2026-01-18', class: 'Business', seat: 'Car 2, Seat 15B', status: 'valid' },
+            { id: 'TKT-U1E2R9-O5P6', passenger: 'Ruth Sakala', phone: '+255734567890', route: 'Kasama → Dar es Salaam', date: '2026-01-19', class: 'First', seat: 'Car 1, Seat 3C', status: 'valid' },
+        ];
+
+        const nfts = [
+            { id: 'NFT-001', name: 'Swahili Coast Sunrise', route: 'Dar es Salaam → Kapiri Mposhi', type: 'souvenir', rarity: 'Unique', theme: 'Indian Ocean', image: '🌅' },
+            { id: 'NFT-002', name: 'TAZARA Heritage', route: 'Kapiri Mposhi → Dar es Salaam', type: 'souvenir', rarity: 'Unique', theme: 'Railway Junction', image: '🚂' },
+            { id: 'NFT-003', name: 'Copperbelt Pride', route: 'Ndola → Dar es Salaam', type: 'souvenir', rarity: 'Rare', theme: 'Mining Heritage', image: '⛏️' },
+            { id: 'NFT-004', name: 'Victoria Falls Mist', route: 'Livingstone → Lusaka', type: 'souvenir', rarity: 'Epic', theme: 'Natural Wonder', image: '💧' },
+            { id: 'NFT-005', name: 'First Journey', route: 'Achievement', type: 'achievement', rarity: 'Common', theme: 'Milestone', image: '🎖️' },
+            { id: 'NFT-006', name: '1000km Traveler', route: 'Achievement', type: 'achievement', rarity: 'Rare', theme: 'Distance', image: '🏆' },
+            { id: 'NFT-007', name: 'TAZARA 50th Anniversary', route: 'Limited Edition', type: 'collectible', rarity: 'Legendary', theme: 'Historic', image: '🎉' },
+            { id: 'NFT-008', name: 'Kilimanjaro View', route: 'Special Collection', type: 'collectible', rarity: 'Epic', theme: 'Scenic', image: '🏔️' },
+        ];
+
+        const scanHistory = [
+            { time: '14:32', ticketId: 'TKT-M4X9K2-A1B2', passenger: 'John Mwamba', result: 'valid' },
+            { time: '14:28', ticketId: 'TKT-P6Z7M4-E5F6', passenger: 'David Phiri', result: 'used' },
+            { time: '14:15', ticketId: 'TKT-N5Y8L3-C3D4', passenger: 'Sarah Banda', result: 'valid' },
+        ];
+
+        function showTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('[id$="-tab"]').forEach(t => t.style.display = 'none');
+            event.target.classList.add('active');
+            document.getElementById(tab + '-tab').style.display = 'block';
+        }
+
+        function renderTickets(data = tickets) {
+            document.getElementById('tickets-table').innerHTML = data.map(t => `
+                <tr>
+                    <td><strong style="color: var(--gold);">${t.id}</strong></td>
+                    <td>${t.passenger}<br><small style="color: var(--text-secondary);">${t.phone}</small></td>
+                    <td>${t.route}</td>
+                    <td>${t.date}</td>
+                    <td>${t.class}</td>
+                    <td>${t.seat}</td>
+                    <td><span class="status-badge status-${t.status}">${t.status.toUpperCase()}</span></td>
+                    <td>
+                        <button class="btn btn-primary" style="padding: 4px 12px; font-size: 12px;" onclick="viewTicket('${t.id}')">View</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderNFTs(data = nfts) {
+            document.getElementById('nft-grid').innerHTML = data.map(n => `
+                <div class="nft-card">
+                    <div class="nft-image">${n.image}</div>
+                    <div class="nft-info">
+                        <div class="nft-name">${n.name}</div>
+                        <div class="nft-route">${n.route}</div>
+                        <div class="nft-meta">
+                            <span class="nft-rarity">${n.rarity}</span>
+                            <span style="color: var(--text-secondary); font-size: 12px;">${n.type}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderScanHistory() {
+            document.getElementById('scan-history').innerHTML = scanHistory.map(s => `
+                <tr>
+                    <td>${s.time}</td>
+                    <td><strong>${s.ticketId}</strong></td>
+                    <td>${s.passenger}</td>
+                    <td><span class="status-badge status-${s.result}">${s.result.toUpperCase()}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function validateTicket() {
+            const ticketId = document.getElementById('manual-ticket').value.trim();
+            if (!ticketId) {
+                alert('Please enter a ticket ID');
+                return;
+            }
+            
+            const ticket = tickets.find(t => t.id.toLowerCase() === ticketId.toLowerCase());
+            const resultDiv = document.getElementById('scan-result');
+            
+            if (!ticket) {
+                resultDiv.innerHTML = `<div style="background: rgba(240, 40, 73, 0.2); padding: 20px; border-radius: 12px; border: 2px solid var(--danger);">
+                    <span style="font-size: 48px;">❌</span>
+                    <h3 style="color: var(--danger);">INVALID TICKET</h3>
+                    <p>Ticket not found in system</p>
+                </div>`;
+            } else if (ticket.status === 'used') {
+                resultDiv.innerHTML = `<div style="background: rgba(176, 179, 184, 0.2); padding: 20px; border-radius: 12px; border: 2px solid var(--text-secondary);">
+                    <span style="font-size: 48px;">⚠️</span>
+                    <h3>ALREADY USED</h3>
+                    <p>${ticket.passenger} - ${ticket.route}</p>
+                </div>`;
+            } else if (ticket.status === 'expired') {
+                resultDiv.innerHTML = `<div style="background: rgba(240, 40, 73, 0.2); padding: 20px; border-radius: 12px; border: 2px solid var(--danger);">
+                    <span style="font-size: 48px;">⏰</span>
+                    <h3 style="color: var(--danger);">EXPIRED</h3>
+                    <p>Ticket date has passed</p>
+                </div>`;
+            } else {
+                resultDiv.innerHTML = `<div style="background: rgba(0, 208, 132, 0.2); padding: 20px; border-radius: 12px; border: 2px solid var(--success);">
+                    <span style="font-size: 48px;">✅</span>
+                    <h3 style="color: var(--success);">VALID TICKET</h3>
+                    <p><strong>${ticket.passenger}</strong></p>
+                    <p>${ticket.route}</p>
+                    <p>${ticket.class} - ${ticket.seat}</p>
+                    <button class="btn btn-gold" style="margin-top: 12px;" onclick="markAsUsed('${ticket.id}')">Mark as Used</button>
+                </div>`;
+            }
+        }
+
+        function markAsUsed(ticketId) {
+            const ticket = tickets.find(t => t.id === ticketId);
+            if (ticket) {
+                ticket.status = 'used';
+                renderTickets();
+                validateTicket();
+                alert('Ticket marked as used!');
+            }
+        }
+
+        function viewTicket(ticketId) {
+            const ticket = tickets.find(t => t.id === ticketId);
+            if (ticket) {
+                alert(`Ticket Details:\n\nID: ${ticket.id}\nPassenger: ${ticket.passenger}\nRoute: ${ticket.route}\nDate: ${ticket.date}\nClass: ${ticket.class}\nSeat: ${ticket.seat}\nStatus: ${ticket.status}`);
+            }
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('sentinel_session');
+                window.location.href = '../index.html';
+            }
+        }
+
+        // Search functionality
+        document.getElementById('ticket-search').addEventListener('input', (e) => {
+            const q = e.target.value.toLowerCase();
+            renderTickets(tickets.filter(t => 
+                t.id.toLowerCase().includes(q) || 
+                t.passenger.toLowerCase().includes(q) ||
+                t.route.toLowerCase().includes(q)
+            ));
+        });
+
+        document.getElementById('nft-filter').addEventListener('change', (e) => {
+            const filter = e.target.value;
+            renderNFTs(filter === 'all' ? nfts : nfts.filter(n => n.type === filter));
+        });
+
+        // Initialize
+        renderTickets();
+        renderNFTs();
+        renderScanHistory();
+    </script>
+</body>
+</html>

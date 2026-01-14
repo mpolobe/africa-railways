@@ -31,7 +31,34 @@ const HomeScreen = ({ navigation }) => {
           </View>
         </View>
 
-        {/* Quick Actions */}
+        {/* Quick Actions - Row 1 */}
+        <View style={styles.actionsContainer}>
+          <TouchableOpacity 
+            style={styles.actionButton}
+            onPress={() => navigation.navigate('TicketBooking')}
+          >
+            <Text style={styles.actionIcon}>🎫</Text>
+            <Text style={styles.actionText}>Book Ticket</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.actionButton}
+            onPress={() => navigation.navigate('MyTickets')}
+          >
+            <Text style={styles.actionIcon}>📋</Text>
+            <Text style={styles.actionText}>My Tickets</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.actionButton}
+            onPress={() => navigation.navigate('NFTGallery')}
+          >
+            <Text style={styles.actionIcon}>🖼️</Text>
+            <Text style={styles.actionText}>NFT Gallery</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Quick Actions - Row 2 */}
         <View style={styles.actionsContainer}>
           <TouchableOpacity 
             style={styles.actionButton}

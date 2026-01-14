@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import QRCode from 'react-native-qrcode-svg';
+import { getNFTs } from '../services/ticketService';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 48) / 2;
@@ -380,16 +381,49 @@ const SAMPLE_NFTS = [
 ];
 
 const NFTGalleryScreen = ({ navigation }) => {
-  const [nfts, setNfts] = useState(SAMPLE_NFTS);
+  const [nfts, setNfts] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedNFT, setSelectedNFT] = useState(null);
   const [filter, setFilter] = useState('all');
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const loadNFTs = useCallback(async () => {
+    try {
+      const userNFTs = await getNFTs();
+      // Combine user NFTs with sample NFTs for demo
+      const allNFTs = [...userNFTs.map(nft => ({
+        ...nft,
+        type: NFT_TYPES.SOUVENIR,
+        artwork: {
+          image: nft.image_url,
+          theme: nft.theme,
+          colors: nft.colors || ['#FFB800', '#FF6B35', '#1A1A2E'],
+          culture: nft.culture,
+        },
+      })), ...SAMPLE_NFTS];
+      setNfts(allNFTs);
+    } catch (error) {
+      console.error('Failed to load NFTs:', error);
+      setNfts(SAMPLE_NFTS);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadNFTs();
+    
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadNFTs();
+    });
+    
+    return unsubscribe;
+  }, [navigation, loadNFTs]);
 
   const onRefresh = async () => {
     setRefreshing(true);
-    // Fetch NFTs from blockchain/API
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await loadNFTs();
     setRefreshing(false);
   };
 

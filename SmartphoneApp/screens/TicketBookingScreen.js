@@ -10,6 +10,7 @@ import {
   EXCHANGE_RATES
 } from '../utils/currencyConverter';
 import { getExchangeRates } from '../services/exchangeRateService';
+import { createBooking as createTicket } from '../services/ticketService';
 
 /**
  * Ticket Booking Screen
@@ -26,6 +27,7 @@ const TicketBookingScreen = ({ route, navigation }) => {
   const [exchangeRate, setExchangeRate] = useState(EXCHANGE_RATES['ZMW'] || 27.5);
   const [rateSource, setRateSource] = useState('static');
   const [loadingRates, setLoadingRates] = useState(true);
+  const [isBooking, setIsBooking] = useState(false);
 
   // Detect user's local currency and fetch live rates
   useEffect(() => {
@@ -83,8 +85,10 @@ const TicketBookingScreen = ({ route, navigation }) => {
   const priceLocal = priceUSD * exchangeRate;
   const priceAFC = priceUSD; // 1 AFC = 1 USD
 
-  const handleBooking = () => {
-    const tripType = isReturnTrip ? 'Return Trip' : 'One Way';
+  const handleBooking = async () => {
+    if (isBooking) return;
+    
+    setIsBooking(true);
     const localSymbol = getCurrencySymbol(localCurrency);
     
     const paymentAmounts = {
@@ -93,14 +97,40 @@ const TicketBookingScreen = ({ route, navigation }) => {
       usd: `$${priceUSD.toFixed(2)} USD`,
     };
 
-    Alert.alert(
-      'Booking Confirmed',
-      `Your ticket has been booked!\n\nRoute: ${currentSchedule.route}${isReturnTrip ? `\nReturn: ${returnRoute}` : ''}\nTrip Type: ${tripType}\nClass: ${selectedClass.toUpperCase()}\nPayment: ${paymentAmounts[paymentMethod]}\n\nA confirmation will be sent to your wallet.`,
-      [
-        { text: 'View Ticket', onPress: () => navigation.navigate('Home') },
-        { text: 'OK' }
-      ]
-    );
+    try {
+      const { ticket, nft } = await createTicket({
+        route: currentSchedule.route,
+        train: currentSchedule.train,
+        date: currentSchedule.date,
+        departureTime: currentSchedule.departure,
+        arrivalTime: currentSchedule.arrival,
+        class: selectedClass,
+        isReturnTrip,
+        priceUSD,
+        priceLocal,
+        localCurrency,
+        paymentMethod,
+      });
+
+      Alert.alert(
+        '✅ Booking Confirmed!',
+        `Your ticket has been created.\n\nTicket ID: ${ticket.ticket_id}\nRoute: ${ticket.route}\nSeat: ${ticket.seat}\nClass: ${selectedClass.toUpperCase()}\nPayment: ${paymentAmounts[paymentMethod]}\n\nYour NFT souvenir is ready!`,
+        [
+          { 
+            text: 'View My Tickets', 
+            onPress: () => navigation.navigate('MyTickets')
+          },
+          { 
+            text: 'View NFT', 
+            onPress: () => navigation.navigate('NFTGallery')
+          },
+        ]
+      );
+    } catch (error) {
+      Alert.alert('Booking Failed', error.message || 'Please try again');
+    } finally {
+      setIsBooking(false);
+    }
   };
 
   return (
@@ -364,10 +394,18 @@ const TicketBookingScreen = ({ route, navigation }) => {
       </View>
 
       {/* Book Button */}
-      <TouchableOpacity style={styles.bookButton} onPress={handleBooking}>
-        <Text style={styles.bookButtonText}>
-          {isReturnTrip ? 'Book Return Trip' : 'Confirm Booking'}
-        </Text>
+      <TouchableOpacity 
+        style={[styles.bookButton, isBooking && styles.bookButtonDisabled]} 
+        onPress={handleBooking}
+        disabled={isBooking}
+      >
+        {isBooking ? (
+          <ActivityIndicator color="#020617" />
+        ) : (
+          <Text style={styles.bookButtonText}>
+            {isReturnTrip ? 'Book Return Trip' : 'Confirm Booking'}
+          </Text>
+        )}
       </TouchableOpacity>
 
       {/* Info Footer */}
@@ -708,6 +746,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 20,
+  },
+  bookButtonDisabled: {
+    opacity: 0.7,
   },
   bookButtonText: {
     color: '#020617',

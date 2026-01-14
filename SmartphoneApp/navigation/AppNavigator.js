@@ -8,6 +8,8 @@ import ScanTicketScreen from '../screens/ScanTicketScreen';
 import TicketDetailsScreen from '../screens/TicketDetailsScreen';
 import SchedulesScreen from '../screens/SchedulesScreen';
 import TicketBookingScreen from '../screens/TicketBookingScreen';
+import MyTicketsScreen from '../screens/MyTicketsScreen';
+import NFTGalleryScreen from '../screens/NFTGalleryScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 
 const Stack = createStackNavigator();
@@ -75,6 +77,24 @@ export const AppNavigator = () => {
           component={TicketBookingScreen}
           options={{
             title: 'Book Ticket',
+            headerShown: true,
+          }}
+        />
+        
+        <Stack.Screen 
+          name="MyTickets" 
+          component={MyTicketsScreen}
+          options={{
+            title: 'My Tickets',
+            headerShown: true,
+          }}
+        />
+        
+        <Stack.Screen 
+          name="NFTGallery" 
+          component={NFTGalleryScreen}
+          options={{
+            title: 'NFT Collection',
             headerShown: true,
           }}
         />
