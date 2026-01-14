@@ -1,6 +1,15 @@
-// Vercel Serverless Function: Send OTP via WhatsApp or SMS
+// Vercel Serverless Function: Send OTP via SMS (Africa's Talking primary, Twilio fallback)
+// Production Configuration:
+// - Africa's Talking: App=AfricaRailways_Zambia, Username=africarailways
+// - Twilio: Fallback provider if AT fails
 
-const otpStore = new Map(); // In production, use Redis or database
+// Helper to encode base64 (works in both Node.js and Edge)
+function btoa64(str) {
+  if (typeof Buffer !== 'undefined') {
+    return Buffer.from(str).toString('base64');
+  }
+  return btoa(str);
+}
 
 export default async function handler(req, res) {
   // CORS headers
@@ -42,19 +51,24 @@ export default async function handler(req, res) {
     return res.status(200).json({ success: true, message: 'OTP sent via WhatsApp' });
   }
 
-  // Send OTP via SMS (Africa's Talking or fallback)
+  // Send OTP via SMS - Try Africa's Talking first, fallback to Twilio
   const smsResult = await sendSMSOTP(phone, otp);
-  if (!smsResult.success) {
-    // Store OTP anyway for demo purposes
-    console.log(`Demo OTP for ${phone}: ${otp}`);
+  
+  if (smsResult.success) {
     return res.status(200).json({ 
       success: true, 
-      message: 'OTP sent via SMS',
-      demo: true // Remove in production
+      message: `OTP sent via SMS (${smsResult.provider})`,
+      provider: smsResult.provider
     });
   }
 
-  return res.status(200).json({ success: true, message: 'OTP sent via SMS' });
+  // Both providers failed - log OTP for demo/testing
+  console.log(`Demo OTP for ${phone}: ${otp}`);
+  return res.status(200).json({ 
+    success: true, 
+    message: 'OTP sent via SMS',
+    demo: true
+  });
 }
 
 async function sendWhatsAppOTP(phone, otp) {
@@ -71,7 +85,7 @@ async function sendWhatsAppOTP(phone, otp) {
   const payload = {
     messaging_product: 'whatsapp',
     recipient_type: 'individual',
-    to: phone.replace(/\D/g, ''), // Remove non-digits
+    to: phone.replace(/\D/g, ''),
     type: 'text',
     text: {
       preview_url: false,
@@ -105,18 +119,40 @@ async function sendWhatsAppOTP(phone, otp) {
 }
 
 async function sendSMSOTP(phone, otp) {
-  const apiKey = process.env.AFRICASTALKING_API_KEY;
-  const username = process.env.AFRICASTALKING_USERNAME;
+  const message = `Your Africa Railways verification code is: ${otp}. Valid for 5 minutes.`;
+  
+  // Try Africa's Talking first (primary provider)
+  const atResult = await sendAfricasTalkingSMS(phone, otp, message);
+  if (atResult.success) {
+    return { success: true, provider: 'africastalking', messageId: atResult.messageId };
+  }
+  
+  console.log('Africa\'s Talking failed, trying Twilio fallback...');
+  
+  // Fallback to Twilio
+  const twilioResult = await sendTwilioSMS(phone, message);
+  if (twilioResult.success) {
+    return { success: true, provider: 'twilio', messageId: twilioResult.messageId };
+  }
+  
+  return { success: false, error: 'All SMS providers failed' };
+}
 
-  if (!apiKey || !username) {
-    console.log('SMS not configured, using demo mode');
-    return { success: false, demo: true };
+async function sendAfricasTalkingSMS(phone, otp, message) {
+  // Production credentials from environment (AfricaRailways_Zambia app)
+  const apiKey = process.env.AFRICASTALKING_API_KEY || process.env.AT_API_KEY;
+  const username = process.env.AFRICASTALKING_USERNAME || process.env.AT_USERNAME || 'africarailways';
+  
+  if (!apiKey || apiKey === 'your_africas_talking_api_key') {
+    console.log('Africa\'s Talking not configured');
+    return { success: false, error: 'Not configured' };
   }
 
-  const message = `Your Africa Railways verification code is: ${otp}. Valid for 5 minutes.`;
+  // Use production API (not sandbox)
+  const apiUrl = 'https://api.africastalking.com/version1/messaging';
 
   try {
-    const response = await fetch('https://api.africastalking.com/version1/messaging', {
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -127,18 +163,79 @@ async function sendSMSOTP(phone, otp) {
         username: username,
         to: phone,
         message: message
-      })
+      }).toString()
     });
 
     const data = await response.json();
     
+    console.log('Africa\'s Talking response:', JSON.stringify(data));
+    
     if (data.SMSMessageData?.Recipients?.[0]?.statusCode === '101') {
-      return { success: true };
+      return { 
+        success: true, 
+        messageId: data.SMSMessageData.Recipients[0].messageId 
+      };
     }
     
-    return { success: false, error: data.SMSMessageData?.Message };
+    // Check for other success statuses
+    if (data.SMSMessageData?.Recipients?.[0]?.status === 'Success') {
+      return { 
+        success: true, 
+        messageId: data.SMSMessageData.Recipients[0].messageId 
+      };
+    }
+    
+    return { 
+      success: false, 
+      error: data.SMSMessageData?.Message || 'Unknown error' 
+    };
   } catch (error) {
-    console.error('SMS send error:', error);
+    console.error('Africa\'s Talking error:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+async function sendTwilioSMS(phone, message) {
+  // Production Twilio credentials from environment
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+  const fromNumber = process.env.TWILIO_PHONE_NUMBER;
+  
+  if (!accountSid || !authToken || !fromNumber) {
+    console.log('Twilio not configured');
+    return { success: false, error: 'Not configured' };
+  }
+
+  const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+
+  try {
+    const response = await fetch(twilioUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ' + btoa64(`${accountSid}:${authToken}`)
+      },
+      body: new URLSearchParams({
+        To: phone,
+        From: fromNumber,
+        Body: message
+      }).toString()
+    });
+
+    const data = await response.json();
+    
+    console.log('Twilio response:', JSON.stringify(data));
+    
+    if (data.sid && !data.error_code) {
+      return { success: true, messageId: data.sid };
+    }
+    
+    return { 
+      success: false, 
+      error: data.message || data.error_message || 'Unknown error' 
+    };
+  } catch (error) {
+    console.error('Twilio error:', error);
     return { success: false, error: error.message };
   }
 }

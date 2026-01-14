@@ -27,11 +27,10 @@ export default async function handler(req, res) {
         }
 
         // Africa's Talking credentials from environment
-        // Sandbox: username = 'sandbox', use sandbox API
-        // Production: username = 'africarailways', use production API
-        const username = process.env.AT_USERNAME || 'sandbox';
-        const apiKey = process.env.AT_API_KEY;
-        const shortCode = process.env.AT_SHORTCODE || 'AFRICARAIL';
+        // Production: App=AfricaRailways_Zambia, Username=africarailways
+        const username = process.env.AT_USERNAME || process.env.AFRICASTALKING_USERNAME || 'africarailways';
+        const apiKey = process.env.AT_API_KEY || process.env.AFRICASTALKING_API_KEY;
+        const shortCode = process.env.AT_SHORTCODE || process.env.AT_SENDER_ID || 'AFRICARAIL';
         const ussdCode = '*384*26621#';
 
         if (!apiKey) {
@@ -43,10 +42,8 @@ export default async function handler(req, res) {
             });
         }
 
-        // Send via Africa's Talking
-        const atUrl = username === 'sandbox' 
-            ? 'https://api.sandbox.africastalking.com/version1/messaging'
-            : 'https://api.africastalking.com/version1/messaging';
+        // Send via Africa's Talking (production API)
+        const atUrl = 'https://api.africastalking.com/version1/messaging';
 
         const response = await fetch(atUrl, {
             method: 'POST',

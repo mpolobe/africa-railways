@@ -36,24 +36,48 @@ type NotificationService struct {
 }
 
 // NewAfricasTalkingProvider creates a new Africa's Talking SMS provider
+// Production: App=AfricaRailways_Zambia, Username=africarailways
 func NewAfricasTalkingProvider() *AfricasTalkingProvider {
+	username := os.Getenv("AT_USERNAME")
+	if username == "" {
+		username = os.Getenv("AFRICASTALKING_USERNAME")
+	}
+	if username == "" {
+		username = "africarailways" // Production default
+	}
+
+	apiKey := os.Getenv("AT_API_KEY")
+	if apiKey == "" {
+		apiKey = os.Getenv("AFRICASTALKING_API_KEY")
+	}
+
+	sender := os.Getenv("AT_SENDER_ID")
+	if sender == "" {
+		sender = "AFRICARAIL"
+	}
+
 	return &AfricasTalkingProvider{
-		username: os.Getenv("AT_USERNAME"),
-		apiKey:   os.Getenv("AT_API_KEY"),
-		sender:   os.Getenv("AT_SENDER_ID"),
+		username: username,
+		apiKey:   apiKey,
+		sender:   sender,
 	}
 }
 
 // NewTwilioProvider creates a new Twilio SMS provider
+// Credentials loaded from environment variables
 func NewTwilioProvider() *TwilioProvider {
 	accountSID := os.Getenv("TWILIO_ACCOUNT_SID")
 	authToken := os.Getenv("TWILIO_AUTH_TOKEN")
-	
+	fromNumber := os.Getenv("TWILIO_FROM_NUMBER")
+	if fromNumber == "" {
+		fromNumber = os.Getenv("TWILIO_PHONE_NUMBER")
+	}
+
 	return &TwilioProvider{
 		accountSID: accountSID,
 		authToken:  authToken,
-		fromNumber: os.Getenv("TWILIO_FROM_NUMBER"),
-		client:     twilio.NewRestClientWithParams(twilio.ClientParams{
+		fromNumber: fromNumber,
+		client: twilio.NewRestClientWithParams(twilio.ClientParams{
 			Username: accountSID,
 			Password: authToken,
 		}),
