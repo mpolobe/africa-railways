@@ -241,6 +241,16 @@ class OTPService {
   clearOTP(phoneNumber: string): void {
     this.otpStore.delete(phoneNumber);
   }
+
+  /**
+   * Check if SMS providers are configured
+   */
+  isConfigured(): boolean {
+    return !!(
+      (this.africasTalkingApiKey && this.africasTalkingUsername) ||
+      (this.twilioAccountSid && this.twilioAuthToken)
+    );
+  }
 }
 
 // Export singleton instance
