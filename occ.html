@@ -537,6 +537,10 @@
     <script src="js/websocket.js"></script>
     <script src="js/dashboard.js"></script>
     <script>
+        // API Base URLs
+        const USSD_API_BASE = 'https://africa-railways-production.up.railway.app';
+        const RELAYER_API_BASE = 'https://africa-railways-relayer.up.railway.app'; // Update with actual relayer URL
+        
         // Display user email on page load
         window.addEventListener('DOMContentLoaded', () => {
             const userEmail = sessionStorage.getItem('occ_user_email');
@@ -544,15 +548,52 @@
                 document.getElementById('user-email').textContent = userEmail;
             }
             
-            // Start fetching USSD stats
-            fetchUSSDStats();
-            setInterval(fetchUSSDStats, 10000); // Update every 10 seconds
+            // Start fetching all stats
+            fetchAllStats();
+            setInterval(fetchAllStats, 10000); // Update every 10 seconds
+            
+            // Update last update time
+            updateLastUpdateTime();
+            setInterval(updateLastUpdateTime, 1000);
         });
+        
+        // Fetch all statistics
+        async function fetchAllStats() {
+            await Promise.all([
+                fetchUSSDStats(),
+                fetchRevenueStats(),
+                fetchBlockchainStats()
+            ]);
+            
+            // Update connection status
+            updateConnectionStatus(true);
+        }
+        
+        // Update last update time display
+        function updateLastUpdateTime() {
+            const now = new Date();
+            document.getElementById('last-update-time').textContent = now.toLocaleTimeString();
+        }
+        
+        // Update connection status indicator
+        function updateConnectionStatus(connected) {
+            const statusEl = document.getElementById('connection-status');
+            const dot = statusEl.querySelector('.status-dot');
+            const text = statusEl.querySelector('.status-text');
+            
+            if (connected) {
+                dot.style.backgroundColor = '#10b981';
+                text.textContent = 'Connected';
+            } else {
+                dot.style.backgroundColor = '#ef4444';
+                text.textContent = 'Disconnected';
+            }
+        }
 
         // Fetch USSD gateway stats
         async function fetchUSSDStats() {
             try {
-                const response = await fetch('https://africa-railways-production.up.railway.app/api/ussd/stats');
+                const response = await fetch(`${USSD_API_BASE}/api/ussd/stats`);
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}`);
                 }
@@ -577,16 +618,112 @@
                     ussdStatusIcon.textContent = '●';
                 }
                 
-                // Update connection status in header if USSD is primary service
+                // Update Sui integration status
                 if (data.sui_integration) {
-                    console.log('✅ USSD Gateway operational with Sui integration');
+                    document.getElementById('sui-status').textContent = 'Connected';
+                    document.getElementById('sui-status').style.color = '#10b981';
                 }
+                
+                console.log('✅ USSD stats updated');
             } catch (error) {
                 console.error('Failed to fetch USSD stats:', error);
-                // Show error state
                 const ussdStatusIcon = document.getElementById('ussd-status');
                 ussdStatusIcon.style.color = 'var(--warning-color, #f59e0b)';
                 document.getElementById('ussd-last-command').textContent = 'Connection error';
+            }
+        }
+        
+        // Fetch revenue statistics
+        async function fetchRevenueStats() {
+            try {
+                const response = await fetch(`${USSD_API_BASE}/api/ussd/revenue`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Update revenue metrics
+                document.getElementById('revenue-confirmed').textContent = `R ${(data.confirmed_total || 0).toLocaleString('en-ZA', {minimumFractionDigits: 2})}`;
+                document.getElementById('revenue-pending').textContent = `R ${(data.pending_total || 0).toLocaleString('en-ZA', {minimumFractionDigits: 2})}`;
+                document.getElementById('revenue-today').textContent = `R ${(data.revenue_today || 0).toLocaleString('en-ZA', {minimumFractionDigits: 2})}`;
+                document.getElementById('avg-ticket-price').textContent = `R ${(data.avg_ticket_price || 0).toLocaleString('en-ZA', {minimumFractionDigits: 2})}`;
+                document.getElementById('tickets-sold-today').textContent = `${data.tickets_today || 0} tickets sold`;
+                document.getElementById('conversion-rate').textContent = `${data.conversion_rate || 0}% conversion`;
+                
+                // Update chart bars
+                const maxRevenue = Math.max(data.confirmed_total || 1, data.pending_total || 1, 1000);
+                const confirmedPercent = ((data.confirmed_total || 0) / maxRevenue) * 100;
+                const pendingPercent = ((data.pending_total || 0) / maxRevenue) * 100;
+                
+                document.getElementById('chart-confirmed').style.width = `${Math.min(confirmedPercent, 100)}%`;
+                document.getElementById('chart-pending').style.width = `${Math.min(pendingPercent, 100)}%`;
+                document.getElementById('chart-confirmed-value').textContent = `R ${(data.confirmed_total || 0).toFixed(0)}`;
+                document.getElementById('chart-pending-value').textContent = `R ${(data.pending_total || 0).toFixed(0)}`;
+                
+                console.log('✅ Revenue stats updated');
+            } catch (error) {
+                console.error('Failed to fetch revenue stats:', error);
+            }
+        }
+        
+        // Fetch blockchain/relayer statistics
+        async function fetchBlockchainStats() {
+            try {
+                // Try to fetch from relayer service
+                const response = await fetch(`${RELAYER_API_BASE}/status`, { 
+                    mode: 'cors',
+                    headers: { 'Accept': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Update blockchain metrics
+                    document.getElementById('polygon-status').textContent = data.using_validator ? 'Validator' : 'RPC';
+                    document.getElementById('polygon-status').style.color = '#10b981';
+                    document.getElementById('latest-block').textContent = (data.latest_block || 0).toLocaleString();
+                    document.getElementById('network-latency').textContent = `${data.latency_ms || 0}ms`;
+                    document.getElementById('total-minted').textContent = (data.events_processed || 0).toLocaleString();
+                    
+                    // Update wallet metrics
+                    document.getElementById('wallet-balance').textContent = `${(data.balance_pol || 0).toFixed(4)} POL`;
+                    document.getElementById('wallet-balance-usd').textContent = `$${((data.balance_pol || 0) * 0.50).toFixed(2)}`;
+                    document.getElementById('gas-price').textContent = `${(data.gas_price_gwei || 0).toFixed(2)} Gwei`;
+                    document.getElementById('tx-capacity').textContent = `${data.estimated_tx || 0} mints`;
+                    document.getElementById('wallet-address').textContent = data.relayer_address || '--';
+                    
+                    // Update status indicators
+                    document.getElementById('blockchain-status').style.color = '#10b981';
+                    document.getElementById('wallet-status').style.color = '#10b981';
+                    
+                    console.log('✅ Blockchain stats updated from relayer');
+                } else {
+                    throw new Error('Relayer not available');
+                }
+            } catch (error) {
+                console.log('⚠️ Relayer not available, using fallback data');
+                
+                // Set fallback/demo values
+                document.getElementById('polygon-status').textContent = 'Standby';
+                document.getElementById('polygon-status').style.color = '#f59e0b';
+                document.getElementById('sui-status').textContent = 'Testnet';
+                document.getElementById('sui-latency').textContent = '~2s';
+                document.getElementById('blockchain-status').style.color = '#f59e0b';
+                
+                // Try to get basic health from USSD gateway
+                try {
+                    const healthResponse = await fetch(`${USSD_API_BASE}/health`);
+                    if (healthResponse.ok) {
+                        const health = await healthResponse.json();
+                        if (health.sui_integration) {
+                            document.getElementById('sui-status').textContent = 'Connected';
+                            document.getElementById('sui-status').style.color = '#10b981';
+                        }
+                    }
+                } catch (e) {
+                    // Ignore health check errors
+                }
             }
         }
 
@@ -611,6 +748,20 @@
                 sessionStorage.removeItem('occ_user_email');
                 window.location.href = 'occ-login.html';
             }
+        }
+        
+        // Close alert banner
+        function closeAlert() {
+            document.getElementById('alert-banner').style.display = 'none';
+        }
+        
+        // Show alert banner
+        function showAlert(message, type = 'warning') {
+            const banner = document.getElementById('alert-banner');
+            const messageEl = document.getElementById('alert-message');
+            messageEl.textContent = message;
+            banner.style.display = 'block';
+            banner.className = `alert-banner alert-${type}`;
         }
     </script>
 </body>

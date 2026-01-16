@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, Smartphone, ArrowLeft, Shield, User, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { SocialLoginButtons } from '@/components/auth/SocialLoginButtons';
 
 const ZkSignup: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -214,6 +215,8 @@ const ZkSignup: React.FC = () => {
                     'Create Account'
                   )}
                 </Button>
+
+                <SocialLoginButtons onError={(err) => setError(err)} />
 
                 <div className="text-center text-sm text-gray-600">
                   <p>Already have an account?</p>

@@ -136,6 +136,29 @@ ALLOWED_IPS = [
 # This enables multi-server scaling across 54 African capitals
 SESSION_MAX_AGE = timedelta(minutes=5)  # Sessions expire after 5 minutes (USSD standard)
 
+# In-memory USSD session tracking for statistics
+# Keys: session_id, Values: dict with phone, state, last_updated, completed, error
+ussd_sessions = {}
+
+# Revenue tracking for OCC dashboard
+revenue_tracker = {
+    'confirmed_total': 0.0,
+    'pending_total': 0.0,
+    'revenue_today': 0.0,
+    'tickets_sold': 0,
+    'tickets_today': 0,
+    'last_reset': datetime.now().date().isoformat()
+}
+
+# Ticket pricing table (ZAR)
+TICKET_PRICES = {
+    'JHB-CPT': {'Economy': 150.00, 'Business': 300.00, 'FirstClass': 500.00},
+    'JHB-DBN': {'Economy': 120.00, 'Business': 240.00, 'FirstClass': 400.00},
+    'CPT-PE': {'Economy': 100.00, 'Business': 200.00, 'FirstClass': 350.00},
+    'DAR-MBY': {'Economy': 80.00, 'Business': 160.00, 'FirstClass': 280.00},
+    'NRB-MBS': {'Economy': 90.00, 'Business': 180.00, 'FirstClass': 320.00},
+}
+
 # Rate limiting storage (in production, use Redis)
 rate_limit_storage = defaultdict(list)
 RATE_LIMIT_WINDOW = timedelta(minutes=1)  # 1 minute window
@@ -143,6 +166,9 @@ RATE_LIMIT_MAX_REQUESTS = 10  # Max 10 requests per minute per phone number
 
 # Current SUI price (update via API in production)
 SUI_PRICE = 1.44
+
+# Server start time for uptime tracking
+SERVER_START_TIME = datetime.now()
 
 def validate_ip(ip_address):
     """
@@ -377,6 +403,15 @@ def ussd_callback():
     
     # Log request (sanitized, no sensitive data)
     logger.info(f"USSD Request - Session: {session_id[:10]}..., Phone: {phone_number[-4:]}, Text: '{text}'")
+    
+    # Track session for OCC dashboard statistics
+    ussd_sessions[session_id] = {
+        'phone': phone_number[-4:],  # Only store last 4 digits for privacy
+        'state': 'active',
+        'last_updated': datetime.now().isoformat(),
+        'completed': False,
+        'error': False
+    }
     
     # Get session data from Redis (using phone_number as key)
     session_data = get_session_data(phone_number)
@@ -791,6 +826,24 @@ def ussd_callback():
         response = "END An error occurred.\n\n"
         response += "Please try again or contact support."
         clear_session(phone_number)
+        # Track error in session
+        if session_id in ussd_sessions:
+            ussd_sessions[session_id]['error'] = True
+            ussd_sessions[session_id]['last_updated'] = datetime.now().isoformat()
+    
+    # Update session tracking based on response type
+    if session_id in ussd_sessions:
+        ussd_sessions[session_id]['last_updated'] = datetime.now().isoformat()
+        if response.startswith('END'):
+            ussd_sessions[session_id]['completed'] = True
+            # Check if it was a successful transaction
+            if '✅' in response:
+                ussd_sessions[session_id]['state'] = 'success'
+            elif '❌' in response:
+                ussd_sessions[session_id]['state'] = 'failed'
+                ussd_sessions[session_id]['error'] = True
+            else:
+                ussd_sessions[session_id]['state'] = 'ended'
     
     # Return response with correct content type
     resp = make_response(response, 200)
@@ -846,11 +899,18 @@ def get_ussd_stats():
         
         today_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         
-        for session_id, session_data in sessions.items():
+        # Clean up old sessions and count stats
+        sessions_to_remove = []
+        for session_id, session_data in ussd_sessions.items():
             last_updated_str = session_data.get('last_updated')
             if last_updated_str:
                 try:
                     last_updated = datetime.fromisoformat(last_updated_str)
+                    
+                    # Mark old sessions for removal (older than 30 minutes)
+                    if (datetime.now() - last_updated).total_seconds() > 1800:
+                        sessions_to_remove.append(session_id)
+                        continue
                     
                     # Count active sessions
                     if last_updated >= five_minutes_ago:
@@ -867,6 +927,10 @@ def get_ussd_stats():
                 except (ValueError, TypeError):
                     continue
         
+        # Clean up old sessions
+        for session_id in sessions_to_remove:
+            ussd_sessions.pop(session_id, None)
+        
         # Calculate success rate
         total_completed = successful_sessions + failed_sessions
         success_rate = (successful_sessions / total_completed * 100) if total_completed > 0 else 100.0
@@ -880,8 +944,8 @@ def get_ussd_stats():
         
         # Get last command timestamp
         last_activity = "No recent activity"
-        if sessions:
-            latest_session = max(sessions.items(), 
+        if ussd_sessions:
+            latest_session = max(ussd_sessions.items(), 
                                key=lambda x: x[1].get('last_updated', '1970-01-01'))
             last_updated_str = latest_session[1].get('last_updated', '')
             if last_updated_str:
@@ -897,9 +961,10 @@ def get_ussd_stats():
                 except (ValueError, TypeError):
                     pass
         
-        # Calculate uptime (from when server started, would be tracked in production)
-        uptime_hours = 24  # Mock value
-        uptime_minutes = 35
+        # Calculate uptime from server start time
+        uptime_delta = datetime.now() - SERVER_START_TIME
+        uptime_hours = int(uptime_delta.total_seconds() // 3600)
+        uptime_minutes = int((uptime_delta.total_seconds() % 3600) // 60)
         
         return jsonify({
             'status': 'operational',
@@ -910,7 +975,7 @@ def get_ussd_stats():
             'last_activity': last_activity,
             'uptime': f"{uptime_hours}h {uptime_minutes}m",
             'rate_limited_users': rate_limited_users,
-            'total_sessions': len(sessions),
+            'total_sessions': len(ussd_sessions),
             'sui_integration': SUI_AVAILABLE,
             'sms_integration': SMS_AVAILABLE,
             'service_code': '*384*26621#',
@@ -918,6 +983,63 @@ def get_ussd_stats():
         })
     except Exception as e:
         logger.error(f"Error getting USSD stats: {e}")
+        return jsonify({
+            'status': 'error',
+            'error': str(e),
+            'timestamp': datetime.now().isoformat()
+        }), 500
+
+
+@app.route('/api/ussd/revenue', methods=['GET'])
+def get_ussd_revenue():
+    """
+    Get revenue metrics for OCC dashboard
+    
+    Returns confirmed, pending, and today's revenue along with ticket counts.
+    """
+    try:
+        # Reset daily counters if it's a new day
+        today = datetime.now().date().isoformat()
+        if revenue_tracker['last_reset'] != today:
+            revenue_tracker['revenue_today'] = 0.0
+            revenue_tracker['tickets_today'] = 0
+            revenue_tracker['last_reset'] = today
+        
+        # Calculate pending revenue from active sessions
+        pending_total = 0.0
+        for session_id, session_data in ussd_sessions.items():
+            if session_data.get('state') in ['confirm_payment', 'payment_processing']:
+                price = session_data.get('price', 0)
+                if price:
+                    pending_total += float(price)
+        
+        revenue_tracker['pending_total'] = pending_total
+        
+        # Calculate average ticket price
+        avg_ticket_price = 0.0
+        if revenue_tracker['tickets_sold'] > 0:
+            avg_ticket_price = revenue_tracker['confirmed_total'] / revenue_tracker['tickets_sold']
+        
+        # Calculate conversion rate
+        total_sessions = len(ussd_sessions)
+        conversion_rate = 0.0
+        if total_sessions > 0:
+            conversion_rate = (revenue_tracker['tickets_sold'] / max(total_sessions, 1)) * 100
+        
+        return jsonify({
+            'confirmed_total': round(revenue_tracker['confirmed_total'], 2),
+            'pending_total': round(pending_total, 2),
+            'revenue_today': round(revenue_tracker['revenue_today'], 2),
+            'tickets_sold': revenue_tracker['tickets_sold'],
+            'tickets_today': revenue_tracker['tickets_today'],
+            'avg_ticket_price': round(avg_ticket_price, 2),
+            'conversion_rate': round(conversion_rate, 1),
+            'pricing': TICKET_PRICES,
+            'currency': 'ZAR',
+            'timestamp': datetime.now().isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Error getting revenue stats: {e}")
         return jsonify({
             'status': 'error',
             'error': str(e),

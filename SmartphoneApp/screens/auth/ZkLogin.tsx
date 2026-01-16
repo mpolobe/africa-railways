@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, Smartphone, ArrowLeft, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { SocialLoginButtons } from '@/components/auth/SocialLoginButtons';
 
 const ZkLogin: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -168,6 +169,8 @@ const ZkLogin: React.FC = () => {
                     'Send Verification Code'
                   )}
                 </Button>
+
+                <SocialLoginButtons onError={(err) => setError(err)} />
 
                 <div className="text-center text-sm text-gray-600">
                   <p>New to Africoin?</p>

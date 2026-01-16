@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Fingerprint, Settings } from 'lucide-react';
+import { Fingerprint, Eye, EyeOff } from 'lucide-react';
 
 interface Props {
   onLogin: (phone: string) => void;
@@ -9,6 +9,7 @@ interface Props {
 const LoginScreen: React.FC<Props> = ({ onLogin }) => {
   const [phone, setPhone] = useState('');
   const [pin, setPin] = useState('');
+  const [showPin, setShowPin] = useState(false);
 
   return (
     <div className="flex flex-col items-center h-full bg-gradient-to-b from-[#1e40af] via-[#3b82f6] to-[#60a5fa] p-8 pt-20">
@@ -36,17 +37,29 @@ const LoginScreen: React.FC<Props> = ({ onLogin }) => {
         </div>
         <div className="relative">
           <input
-            type="password"
+            type={showPin ? "text" : "password"}
             placeholder="PIN"
-            className="w-full bg-white rounded-lg py-4 px-4 text-slate-700 outline-none shadow-sm focus:ring-2 focus:ring-yellow-400"
+            className="w-full bg-white rounded-lg py-4 px-4 pr-12 text-slate-700 outline-none shadow-sm focus:ring-2 focus:ring-yellow-400"
             value={pin}
             onChange={(e) => setPin(e.target.value)}
           />
-          <Settings className="absolute right-4 top-4 text-slate-300 w-5 h-5" />
+          <button
+            type="button"
+            onClick={() => setShowPin(!showPin)}
+            className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 transition-colors"
+          >
+            {showPin ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+          </button>
         </div>
 
         <button
-          onClick={() => onLogin(phone || '2348000000000')}
+          onClick={() => {
+            if (!phone) {
+              alert('Please enter your phone number');
+              return;
+            }
+            onLogin(phone);
+          }}
           className="w-full bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-4 rounded-lg shadow-md transition-all active:scale-95 uppercase tracking-wide"
         >
           LOGIN SECURELY
