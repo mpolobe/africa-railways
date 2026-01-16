@@ -19,6 +19,7 @@ import socket
 from collections import defaultdict
 from functools import wraps
 import ipaddress
+import requests
 
 # Configure logging FIRST before any other imports that use it
 logging.basicConfig(
@@ -122,6 +123,22 @@ SUI_PRIVATE_KEY = os.environ.get('SUI_PRIVATE_KEY', '')
 PACKAGE_ID = os.environ.get('PACKAGE_ID', '0x_YOUR_PACKAGE_ID')
 TREASURY_ID = os.environ.get('TREASURY_ID', '0x_YOUR_TREASURY_ID')
 AFRICAS_TALKING_API_KEY = os.environ.get('AFRICAS_TALKING_API_KEY', '')
+
+# Pinata IPFS Configuration
+PINATA_API_KEY = os.environ.get('PINATA_API_KEY', '2ebb27ed5ab798e88297')
+PINATA_SECRET_KEY = os.environ.get('PINATA_SECRET_KEY', '2173db3fcbdb40a029b30155a1969bd34d44c1603cd46bb43dc90515104e9f12')
+PINATA_JWT = os.environ.get('PINATA_JWT', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkZWI1NWU1Yy1hMzRmLTQ3NGUtYWUzZS1iZTJiN2QyYTNkMzAiLCJlbWFpbCI6ImJlbi5tcG9sb2tvc29AZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJlYmIyN2VkNWFiNzk4ZTg4Mjk3Iiwic2NvcGVkS2V5U2VjcmV0IjoiMjE3M2RiM2ZjYmRiNDBhMDI5YjMwMTU1YTE5NjliZDM0ZDQ0YzE2MDNjZDQ2YmI0M2RjOTA1MTUxMDRlOWYxMiIsImV4cCI6MTgwMDE0MDE2NX0.CH0J8M2GZ3E64gjq32oMrpgDcQWqtWLSWnskNLp0Mls')
+PINATA_GATEWAY = 'https://gateway.pinata.cloud/ipfs/'
+
+# IPFS upload tracking for OCC dashboard
+ipfs_tracker = {
+    'total_uploads': 0,
+    'uploads_today': 0,
+    'successful_uploads': 0,
+    'failed_uploads': 0,
+    'total_response_time_ms': 0,
+    'last_reset': datetime.now().date().isoformat()
+}
 
 # IP whitelist for Africa's Talking
 ALLOWED_IPS = [
@@ -1045,6 +1062,240 @@ def get_ussd_revenue():
             'error': str(e),
             'timestamp': datetime.now().isoformat()
         }), 500
+
+
+# ============================================
+# PINATA/IPFS ENDPOINTS
+# ============================================
+
+def upload_to_pinata(data, filename="ticket_metadata.json"):
+    """
+    Upload JSON data to Pinata IPFS
+    
+    Returns: (success, ipfs_hash or error_message, response_time_ms)
+    """
+    start_time = datetime.now()
+    
+    try:
+        url = "https://api.pinata.cloud/pinning/pinJSONToIPFS"
+        
+        headers = {
+            "Authorization": f"Bearer {PINATA_JWT}",
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "pinataContent": data,
+            "pinataMetadata": {
+                "name": filename,
+                "keyvalues": {
+                    "app": "africa-railways",
+                    "type": "ticket-metadata"
+                }
+            }
+        }
+        
+        response = requests.post(url, json=payload, headers=headers, timeout=30)
+        response_time = int((datetime.now() - start_time).total_seconds() * 1000)
+        
+        if response.status_code == 200:
+            result = response.json()
+            ipfs_hash = result.get('IpfsHash')
+            
+            # Update tracker
+            ipfs_tracker['total_uploads'] += 1
+            ipfs_tracker['uploads_today'] += 1
+            ipfs_tracker['successful_uploads'] += 1
+            ipfs_tracker['total_response_time_ms'] += response_time
+            
+            logger.info(f"✅ Pinata upload success: {ipfs_hash} ({response_time}ms)")
+            return True, ipfs_hash, response_time
+        else:
+            ipfs_tracker['failed_uploads'] += 1
+            error_msg = response.text
+            logger.error(f"❌ Pinata upload failed: {error_msg}")
+            return False, error_msg, response_time
+            
+    except Exception as e:
+        response_time = int((datetime.now() - start_time).total_seconds() * 1000)
+        ipfs_tracker['failed_uploads'] += 1
+        logger.error(f"❌ Pinata upload error: {str(e)}")
+        return False, str(e), response_time
+
+
+def get_pinata_stats():
+    """
+    Get Pinata account statistics from API
+    """
+    try:
+        url = "https://api.pinata.cloud/data/userPinnedDataTotal"
+        
+        headers = {
+            "Authorization": f"Bearer {PINATA_JWT}"
+        }
+        
+        response = requests.get(url, headers=headers, timeout=10)
+        
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return None
+    except Exception as e:
+        logger.error(f"Error fetching Pinata stats: {e}")
+        return None
+
+
+@app.route('/api/ipfs/stats', methods=['GET'])
+def get_ipfs_stats():
+    """
+    Get IPFS/Pinata statistics for OCC dashboard
+    """
+    try:
+        # Reset daily counters if it's a new day
+        today = datetime.now().date().isoformat()
+        if ipfs_tracker['last_reset'] != today:
+            ipfs_tracker['uploads_today'] = 0
+            ipfs_tracker['last_reset'] = today
+        
+        # Calculate success rate
+        total_attempts = ipfs_tracker['successful_uploads'] + ipfs_tracker['failed_uploads']
+        success_rate = 100.0
+        if total_attempts > 0:
+            success_rate = (ipfs_tracker['successful_uploads'] / total_attempts) * 100
+        
+        # Calculate average upload time
+        avg_upload_time = 0
+        if ipfs_tracker['successful_uploads'] > 0:
+            avg_upload_time = ipfs_tracker['total_response_time_ms'] // ipfs_tracker['successful_uploads']
+        
+        # Try to get Pinata account stats
+        pinata_stats = get_pinata_stats()
+        pin_count = 0
+        pin_size_bytes = 0
+        
+        if pinata_stats:
+            pin_count = pinata_stats.get('pin_count', 0)
+            pin_size_bytes = pinata_stats.get('pin_size_total', 0)
+        
+        return jsonify({
+            'status': 'operational',
+            'total_uploads': ipfs_tracker['total_uploads'],
+            'uploads_today': ipfs_tracker['uploads_today'],
+            'successful_uploads': ipfs_tracker['successful_uploads'],
+            'failed_uploads': ipfs_tracker['failed_uploads'],
+            'success_rate': round(success_rate, 1),
+            'avg_upload_time_ms': avg_upload_time,
+            'pinata_pin_count': pin_count,
+            'pinata_size_bytes': pin_size_bytes,
+            'pinata_size_mb': round(pin_size_bytes / (1024 * 1024), 2) if pin_size_bytes else 0,
+            'gateway': PINATA_GATEWAY,
+            'timestamp': datetime.now().isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Error getting IPFS stats: {e}")
+        return jsonify({
+            'status': 'error',
+            'error': str(e),
+            'timestamp': datetime.now().isoformat()
+        }), 500
+
+
+@app.route('/api/ipfs/upload', methods=['POST'])
+def upload_ipfs():
+    """
+    Upload ticket metadata to IPFS via Pinata
+    
+    Expected JSON body:
+    {
+        "ticket_id": "TKT-123456",
+        "route": "JHB-CPT",
+        "class": "Economy",
+        "price": 150.00,
+        "passenger_phone": "+27...",
+        "departure_time": "2026-01-17T06:00:00",
+        "seat": "12A"
+    }
+    """
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+        
+        # Add metadata
+        data['minted_at'] = datetime.now().isoformat()
+        data['network'] = 'polygon'
+        data['app'] = 'africa-railways'
+        
+        # Generate filename
+        ticket_id = data.get('ticket_id', f'TKT-{datetime.now().strftime("%Y%m%d%H%M%S")}')
+        filename = f"{ticket_id}_metadata.json"
+        
+        # Upload to Pinata
+        success, result, response_time = upload_to_pinata(data, filename)
+        
+        if success:
+            ipfs_url = f"{PINATA_GATEWAY}{result}"
+            return jsonify({
+                'success': True,
+                'ipfs_hash': result,
+                'ipfs_url': ipfs_url,
+                'response_time_ms': response_time,
+                'timestamp': datetime.now().isoformat()
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': result,
+                'response_time_ms': response_time,
+                'timestamp': datetime.now().isoformat()
+            }), 500
+            
+    except Exception as e:
+        logger.error(f"IPFS upload error: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'timestamp': datetime.now().isoformat()
+        }), 500
+
+
+@app.route('/api/ipfs/test', methods=['GET'])
+def test_pinata():
+    """
+    Test Pinata connection and upload a test file
+    """
+    try:
+        test_data = {
+            "test": True,
+            "app": "africa-railways",
+            "timestamp": datetime.now().isoformat(),
+            "message": "OCC Dashboard connectivity test"
+        }
+        
+        success, result, response_time = upload_to_pinata(test_data, "occ_test.json")
+        
+        if success:
+            return jsonify({
+                'status': 'connected',
+                'test_hash': result,
+                'test_url': f"{PINATA_GATEWAY}{result}",
+                'response_time_ms': response_time,
+                'message': 'Pinata IPFS connection successful'
+            })
+        else:
+            return jsonify({
+                'status': 'error',
+                'error': result,
+                'response_time_ms': response_time
+            }), 500
+            
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'error': str(e)
+        }), 500
+
 
 if __name__ == "__main__":
     # Railway sets the PORT environment variable automatically

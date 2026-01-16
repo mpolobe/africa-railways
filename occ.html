@@ -562,7 +562,8 @@
             await Promise.all([
                 fetchUSSDStats(),
                 fetchRevenueStats(),
-                fetchBlockchainStats()
+                fetchBlockchainStats(),
+                fetchIPFSStats()
             ]);
             
             // Update connection status
@@ -724,6 +725,40 @@
                 } catch (e) {
                     // Ignore health check errors
                 }
+            }
+        }
+        
+        // Fetch IPFS/Pinata statistics
+        async function fetchIPFSStats() {
+            try {
+                const response = await fetch(`${USSD_API_BASE}/api/ipfs/stats`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Update IPFS metrics on dashboard
+                document.getElementById('total-uploads').textContent = (data.total_uploads || data.pinata_pin_count || 0).toLocaleString();
+                document.getElementById('uploads-today').textContent = data.uploads_today || 0;
+                document.getElementById('upload-success-rate').textContent = `${data.success_rate || 100}%`;
+                document.getElementById('avg-upload-time').textContent = `${data.avg_upload_time_ms || 0}ms`;
+                
+                // Update status indicator
+                const ipfsStatusIcon = document.getElementById('ipfs-status');
+                if (data.status === 'operational') {
+                    ipfsStatusIcon.style.color = 'var(--success-color, #10b981)';
+                    ipfsStatusIcon.textContent = '●';
+                } else {
+                    ipfsStatusIcon.style.color = 'var(--danger-color, #ef4444)';
+                    ipfsStatusIcon.textContent = '●';
+                }
+                
+                console.log('✅ IPFS stats updated');
+            } catch (error) {
+                console.error('Failed to fetch IPFS stats:', error);
+                const ipfsStatusIcon = document.getElementById('ipfs-status');
+                ipfsStatusIcon.style.color = 'var(--warning-color, #f59e0b)';
             }
         }
 
