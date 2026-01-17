@@ -1,9 +1,11 @@
 package main
 
 import (
+	"crypto/rand"
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/big"
 	"net/http"
 	"sync"
 	"time"
@@ -112,8 +114,13 @@ func randomString(n int) string {
 	const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	b := make([]byte, n)
 	for i := range b {
-		b[i] = letters[time.Now().UnixNano()%int64(len(letters))]
-		time.Sleep(time.Nanosecond)
+		num, err := rand.Int(rand.Reader, big.NewInt(int64(len(letters))))
+		if err != nil {
+			// Fallback to time-based if crypto/rand fails (should never happen)
+			b[i] = letters[time.Now().UnixNano()%int64(len(letters))]
+		} else {
+			b[i] = letters[num.Int64()]
+		}
 	}
 	return string(b)
 }
