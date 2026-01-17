@@ -1,13 +1,15 @@
 # $SENT Litepaper
 ## The Equity Token of Africa's Digital Railway Revolution
 
-**Version 1.0 | January 2026**
+**Version 2.0 | January 2026**
 
 ---
 
 ## Abstract
 
-$SENT (Sentinel) is the governance token of Africa Railways, providing exposure to blockchain-verified railway signaling infrastructure across SADC regional corridors. While AFC (Africoin) serves as the settlement layer for cross-border freight and passenger transactions, $SENT captures operational value through platform fees, governance rights, and performance-based incentive distribution. This litepaper outlines the economic model, utility, and institutional investment thesis for $SENT.
+$SENT (SENTINEL) is the governance token of Africa Railways, providing exposure to blockchain-verified railway signaling infrastructure across SADC regional corridors. While AFC (Africoin) serves as the settlement layer for cross-border freight and passenger transactions, $SENT captures operational value through platform fees, governance rights, and performance-based incentive distribution.
+
+This litepaper outlines the economic model, utility, and institutional investment thesis for $SENT.
 
 ---
 
@@ -50,8 +52,10 @@ Africa Railways has deployed a blockchain-verified data layer for railway signal
 ### 2.2 How $SENT Captures Operational Value
 
 ```
-Freight/Passenger Settlement via AFC → 2% platform fee → 50% to $SENT governance participants
-                                                        → 50% to treasury (protocol reserves at 1.91% APY)
+Freight/Passenger Settlement via AFC
+    → 2% platform fee
+    → 50% to $SENT governance participants
+    → 50% to treasury (protocol reserves at 1.91% APY)
 ```
 
 **Example:**
@@ -70,53 +74,51 @@ As the network expands across LAPSSET, Lobito, and SADC corridors, operational s
 ### 3.1 Token Details
 
 ```
-Token Name: Sentinel
-Ticker: $SENT
-Blockchain: Polygon (POL)
-Contract Address: 0xD267554628E954E2070D189859f13768B0424694
-Standard: ERC-20
-Total Supply: 5,000,000,000 SENT (fixed, no inflation)
-Decimals: 18
+Token Name:       SENTINEL
+Ticker:           $SENT
+Blockchain:       Polygon (POL)
+Token Address:    0xF379f21Af5967F26c358568Bb60408DB8B4F7fE5
+Pool Address:     0xf366e3aaCC54C99E50c90B7C57625776f88D8d08
+Standard:         ERC-20
+Total Supply:     10,000,000,000 SENT (fixed, no inflation)
+Decimals:         18
 ```
 
 ### 3.2 Distribution
 
-| Allocation | Percentage | Amount | Vesting | Purpose |
-|------------|-----------|---------|---------|---------|
-| **PinkSale IDO** | 20% | 1,000,000,000 | 10% TGE, 90% linear 12mo | Public fundraise |
-| **Community & Sentinels** | 30% | 1,500,000,000 | 36mo, 6mo cliff | Track worker rewards, staking |
-| **Team & Advisors** | 15% | 750,000,000 | 24mo, 6mo cliff | Long-term alignment |
-| **Treasury** | 20% | 1,000,000,000 | Unlocked | Operations, auto-staking |
-| **Ecosystem Fund** | 10% | 500,000,000 | 48mo linear | Partnerships, grants |
-| **Liquidity** | 5% | 250,000,000 | Unlocked | DEX liquidity |
+| Allocation | Percentage | Amount | Purpose |
+|------------|-----------|---------|---------|
+| **Presale (PinkSale)** | 30% | 3,000,000,000 | Public fairlaunch |
+| **Liquidity** | 14.5% | 1,453,500,000 | QuickSwap DEX liquidity |
+| **Community & Sentinels** | 25% | 2,500,000,000 | Track worker rewards, staking |
+| **Team & Advisors** | 10% | 1,000,000,000 | Long-term alignment |
+| **Treasury** | 15% | 1,500,000,000 | Operations, partnerships |
+| **Ecosystem Fund** | 5.5% | 546,500,000 | Grants, integrations |
 
-### 3.3 PinkSale Offering
+### 3.3 PinkSale Fairlaunch
 
 ```
-Sale Type: Fair Launch
-Hard Cap: $500,000 USD
-Soft Cap: $250,000 USD
-Price: $0.00005 per SENT
-Min Buy: $100 (2,000,000 SENT)
-Max Buy: $5,000 (100,000,000 SENT)
-Listing: Cetus DEX (Sui) within 24 hours
-Initial Liquidity: $50,000 (10% of raise)
+Sale Type:           Fairlaunch
+Access:              Whitelist Only
+Soft Cap:            255,000 POL (~$36,900 USD)
+Max Buy:             10,000 POL per wallet
+Tokens for Presale:  3,000,000,000 SENT
+Tokens for Liquidity: 1,453,500,000 SENT
+Initial Market Cap:  $123,009.56 USD
+Listing DEX:         QuickSwap
+Liquidity %:         51%
+Liquidity Lock:      720 days after pool ends
 ```
 
-**Valuation:**
-- FDV at IDO price: $250,000 (5B supply × $0.00005)
-- Post-money valuation: $1,250,000 (20% sold)
-- Comparable: Railway infrastructure projects trade at 5-15x revenue
+**Live PinkSale Link:**
+[https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08](https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08)
 
-### 3.4 Use of Funds
+### 3.4 Security Features
 
-| Category | Percentage | Amount | Details |
-|----------|-----------|---------|---------|
-| **Infrastructure Expansion** | 40% | $200,000 | Tanzania, Kenya, Mozambique railway integration |
-| **Technology Development** | 25% | $125,000 | Mobile apps, blockchain upgrades, security audits |
-| **Marketing & Growth** | 20% | $100,000 | Community building, partnerships, PR |
-| **Liquidity Provision** | 10% | $50,000 | Cetus DEX liquidity pool |
-| **Legal & Compliance** | 5% | $25,000 | Regulatory, KYC/AML, contracts |
+- **720-Day Liquidity Lock**: Nearly 2 years of locked liquidity
+- **51% to Liquidity**: Majority of raised funds secure the trading pool
+- **QuickSwap Listing**: Polygon's leading DEX with deep liquidity
+- **Whitelist Protection**: Prevents bot manipulation during launch
 
 ---
 
@@ -136,6 +138,7 @@ $SENT holders vote on:
 ### 4.2 Performance-Based Operational Incentives
 
 Acquire operational exposure through $SENT:
+
 - **Platform Fees**: 50% of all AFC settlement fees distributed to governance participants
 - **Treasury Yield**: 1.91% APY from protocol-managed reserves
 - **Infrastructure Expansion Rewards**: Additional allocation for long-term protocol supporters
@@ -146,7 +149,7 @@ Acquire operational exposure through $SENT:
 - 2% settlement fee = $400K monthly operational revenue
 - 50% to governance participants = $200K
 - Proportional allocation: 1% × $200K = $2,000/month
-- Annual operational exposure: $24,000 on $5,000 position = 480% yield
+- Annual operational exposure: $24,000
 
 *Note: Yield adjusts based on participation rate and network expansion*
 
@@ -173,10 +176,12 @@ Holding $SENT unlocks:
 ### 5.1 Fee Buyback Model
 
 ```
-Platform Revenue → 50% to Stakers (immediate)
-                 → 50% to Treasury → Auto-stake at 1.91% APY
-                                   → Quarterly buyback of $SENT from market
-                                   → Burn or redistribute to stakers
+Platform Revenue
+    → 50% to Stakers (immediate)
+    → 50% to Treasury
+        → Auto-stake at 1.91% APY
+        → Quarterly buyback of $SENT from market
+        → Burn or redistribute to stakers
 ```
 
 This creates constant buy pressure on $SENT as platform grows.
@@ -184,12 +189,10 @@ This creates constant buy pressure on $SENT as platform grows.
 ### 5.2 Deflationary Pressure
 
 While total supply is fixed at 10B, effective circulating supply decreases through:
-- Long-term vesting (70% locked for 12-48 months)
+- Long-term vesting (community and team allocations)
 - Staking lockups (estimated 40% of circulating supply)
-- Treasury holdings (25% never sold)
+- Treasury holdings (15% for operations)
 - Lost keys (estimated 2-5% over time)
-
-**Effective circulating supply at launch**: ~500M SENT (5%)
 
 ### 5.3 Network Effects
 
@@ -202,7 +205,9 @@ As more railways join the network:
 
 **Flywheel Effect:**
 ```
-More Railways → More Passengers → More Fees → Higher Staking APY → More $SENT Demand → Higher Price → More Capital for Expansion → More Railways
+More Railways → More Passengers → More Fees → Higher Staking APY
+    → More $SENT Demand → Higher Price → More Capital for Expansion
+    → More Railways
 ```
 
 ---
@@ -213,8 +218,9 @@ More Railways → More Passengers → More Fees → Higher Staking APY → More 
 - ✅ AFC live on TAZARA railway
 - ✅ 2,000+ track workers onboarded
 - ✅ zkLogin integration complete
-- 🔄 $SENT PinkSale launch
-- 🔄 Cetus DEX listing
+- ✅ $SENT token deployed on Polygon
+- 🔄 PinkSale Fairlaunch (Whitelist)
+- 🔄 QuickSwap listing
 
 ### Q2 2026
 - Tanzania Railways Corporation (TRC) integration
@@ -272,22 +278,24 @@ More Railways → More Passengers → More Fees → Higher Staking APY → More 
 ## 8. Competitive Analysis
 
 ### vs. Traditional Railway Stocks
+
 | Feature | $SENT | Railway Stocks |
 |---------|-------|----------------|
 | Liquidity | 24/7 trading | Limited hours |
-| Min Investment | $100 | $10,000+ |
+| Min Investment | ~$50 | $10,000+ |
 | Geographic Exposure | 54 countries | Single country |
 | Governance Rights | Direct voting | Shareholder meetings |
-| Yield | 480% APY potential | 2-4% dividends |
+| Yield | Performance-based | 2-4% dividends |
 
 ### vs. Other Crypto Infrastructure Projects
+
 | Feature | $SENT | Competitors |
 |---------|-------|-------------|
 | Working Product | ✅ Live on TAZARA | ❌ Most are vaporware |
 | Real Revenue | ✅ Transaction fees | ❌ Token speculation only |
 | Public Team | ✅ Verified founder | ❌ Often anonymous |
 | Real-World Impact | ✅ Solving actual problem | ❌ Speculative use cases |
-| Regulatory Clarity | ✅ Utility token | ⚠️ Many face SEC issues |
+| Liquidity Security | ✅ 720-day lock | ⚠️ Often unlocked |
 
 ---
 
@@ -297,7 +305,7 @@ More Railways → More Passengers → More Fees → Higher Staking APY → More 
 - Cryptocurrency market volatility
 - Regulatory changes in African countries
 - Competition from traditional payment systems
-- Sui blockchain technical issues
+- Polygon blockchain technical issues
 
 ### 9.2 Operational Risks
 - Railway partnership delays
@@ -311,99 +319,65 @@ More Railways → More Passengers → More Fees → Higher Staking APY → More 
 - Regular security audits
 - Strong legal and compliance framework
 - Transparent communication with community
+- 720-day liquidity lock prevents rug pulls
 
 **Disclaimer**: $SENT is a high-risk investment. Only invest what you can afford to lose. Past performance does not guarantee future results.
 
 ---
 
-## 10. Investment Thesis
+## 10. How to Participate
 
-### Why Invest in $SENT?
+### Step 1: Prepare Your Wallet
+1. Install MetaMask or compatible EVM wallet
+2. Add Polygon network to your wallet
+3. Fund with POL tokens (available on major exchanges)
+4. Ensure you have extra POL for gas fees
 
-#### 1. Proven Product-Market Fit
-- AFC already processing real transactions on TAZARA
-- 2,000+ users without any marketing
-- Railway operators actively requesting integration
+### Step 2: Get Whitelisted
+- Join Telegram: [@AfricoinCommunity](https://t.me/AfricoinCommunity)
+- Follow whitelist requirements announced in the community
+- Complete any required verification
 
-#### 2. Massive Addressable Market
-- 54 African countries
-- 200M+ annual railway passengers
-- $847B infrastructure investment pipeline
-- 78% cash-based economy (huge digitization opportunity)
+### Step 3: Participate in PinkSale Fairlaunch
+1. Visit: [PinkSale Fairlaunch Page](https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08)
+2. Connect your Polygon wallet
+3. Enter contribution amount (max 10,000 POL)
+4. Confirm transaction
+5. Wait for sale to finalize
 
-#### 3. Clear Value Capture
-- Direct revenue from transaction fees
-- Staking rewards tied to platform growth
-- Deflationary tokenomics
-- Governance rights over expanding network
-
-#### 4. Credible Team
-- Public founder with railway expertise
-- Active GitHub with real development
-- Partnership with TAZARA (government railway)
-- Transparent roadmap and communication
-
-#### 5. Early-Stage Entry
-- FDV of only $500K at IDO price
-- Comparable projects trade at $50M-$500M
-- 100x potential as network expands
-- First-mover advantage in African railway payments
-
-### Comparable Valuations
-
-| Project | Market Cap | Revenue | Valuation Multiple |
-|---------|-----------|---------|-------------------|
-| Helium (IoT Network) | $1.2B | $2M/year | 600x |
-| Render (GPU Network) | $3.5B | $5M/year | 700x |
-| Filecoin (Storage) | $8B | $10M/year | 800x |
-| **$SENT (Target Year 1)** | $5M | $2.4M/year | 2x |
-
-**Upside**: If $SENT reaches even 10% of comparable valuations, that's a 50x return from IDO price.
+### Step 4: Claim and Trade
+- After sale finalizes, claim your SENT tokens from PinkSale
+- Tokens will be tradeable on QuickSwap
+- Liquidity locked for 720 days
 
 ---
 
-## 11. How to Participate
+## 11. Contract Addresses
 
-### Step 1: Prepare Your Wallet
-1. Download Sui Wallet (Chrome extension or mobile app)
-2. Fund with SUI tokens (available on Binance, OKX, Bybit)
-3. Ensure you have extra SUI for gas fees (~1 SUI)
+⚠️ **IMPORTANT: Do NOT send POL directly to these addresses. Only participate through PinkSale.**
 
-### Step 2: Join Whitelist (Optional)
-- Visit: [africa-railways.vercel.app/whitelist.html](https://africa-railways.vercel.app/whitelist.html)
-- Connect wallet
-- Complete KYC (if required)
-- Receive whitelist confirmation
+| Contract | Address |
+|----------|---------|
+| **SENT Token** | `0xF379f21Af5967F26c358568Bb60408DB8B4F7fE5` |
+| **PinkSale Pool** | `0xf366e3aaCC54C99E50c90B7C57625776f88D8d08` |
 
-### Step 3: Participate in PinkSale
-- Go to PinkSale launch page (link announced on Twitter/Telegram)
-- Connect Sui Wallet
-- Enter amount to invest ($100-$5,000)
-- Confirm transaction
-- Receive $SENT tokens (10% immediately, 90% vested over 12 months)
-
-### Step 4: Claim and Stake
-- After TGE, claim your 10% unlocked tokens
-- Visit Africa Railways staking portal
-- Stake $SENT to earn platform fees
-- Monthly vested tokens automatically unlock
+**Verify on PolygonScan:**
+- [Token Contract](https://polygonscan.com/token/0xF379f21Af5967F26c358568Bb60408DB8B4F7fE5)
 
 ---
 
 ## 12. Community and Support
 
 ### Official Channels
-- **Website**: [africarailways.com](https://www.africarailways.com)
+- **Website**: [africa-railways.vercel.app](https://africa-railways.vercel.app)
 - **Twitter**: [@AfricaRailways](https://twitter.com/AfricaRailways)
-- **Telegram**: [@SentinelOfficial](https://t.me/AFRCsentinel)
-- **Medium**: [@africarailways](https://medium.com/@africarailways)
+- **Telegram**: [@AfricoinCommunity](https://t.me/AfricoinCommunity)
 - **GitHub**: [github.com/mpolobe/africa-railways](https://github.com/mpolobe/africa-railways)
 - **Email**: admin@africarailways.com
 
 ### Stay Updated
 - Join Telegram for daily updates
 - Follow Twitter for announcements
-- Read Medium for technical deep-dives
 - Watch GitHub for development progress
 
 ---
@@ -411,6 +385,7 @@ More Railways → More Passengers → More Fees → Higher Staking APY → More 
 ## 13. Legal and Compliance
 
 ### Token Classification
+
 $SENT is a utility token providing:
 - Governance rights over protocol
 - Access to platform services
@@ -420,29 +395,29 @@ $SENT is NOT:
 - A security or investment contract
 - A share in Africa Railways company
 - A guarantee of profits
-- Subject to securities regulations (to our knowledge)
 
 ### Regulatory Compliance
-- KYC/AML procedures implemented
+- KYC/AML procedures implemented where required
 - Restricted in prohibited jurisdictions
 - Terms of Service and Privacy Policy available
 - Regular legal reviews and updates
 
 ### Disclaimer
+
 This litepaper is for informational purposes only and does not constitute financial advice. Cryptocurrency investments are high-risk. Consult with a financial advisor before investing. Africa Railways makes no guarantees about future performance, token price, or platform success.
 
 ---
 
 ## 14. Conclusion
 
-$SENT represents a unique opportunity to invest in Africa's railway digital transformation. Unlike speculative meme coins or vaporware projects, Africa Railways has:
+$SENT represents a unique opportunity to participate in Africa's railway digital transformation. Unlike speculative projects, Africa Railways has:
 
-✅ **Working product** (AFC live on TAZARA)  
-✅ **Real traction** (2,000+ users)  
-✅ **Clear revenue model** (transaction fees)  
-✅ **Massive market** (54 countries, 200M passengers)  
-✅ **Public team** (verified founder)  
-✅ **Early-stage valuation** ($500K FDV)
+✅ **Working product** (AFC live on TAZARA)
+✅ **Real traction** (2,000+ users)
+✅ **Clear revenue model** (transaction fees)
+✅ **Massive market** (54 countries, 200M passengers)
+✅ **Public team** (verified founder)
+✅ **Security features** (720-day liquidity lock, 51% to liquidity)
 
 As the platform expands from 1 railway to 10, 20, and eventually 54 countries, $SENT holders will capture value from every ticket sold, every freight shipment, and every cross-border transaction.
 
@@ -452,70 +427,41 @@ As the platform expands from 1 railway to 10, 20, and eventually 54 countries, $
 
 ## Appendix A: Technical Architecture
 
-### Blockchain: Sui Network
+### Blockchain: Polygon Network
+- **Consensus**: Proof of Stake
+- **Finality**: ~2 seconds
+- **Smart Contract Language**: Solidity
+- **Wallet Integration**: MetaMask, WalletConnect
+
+### AFC Settlement Layer: Sui Network
 - **Consensus**: Narwhal-Bullshark (866 TPS)
 - **Finality**: Sub-second
 - **Smart Contract Language**: Move
 - **Wallet Integration**: zkLogin (Google/Apple ID)
 
-### Smart Contracts
-- `investment.move`: Fundraising and vesting
-- `africoin.move`: AFC stablecoin
-- `staking.move`: $SENT staking rewards
-- `governance.move`: DAO voting
-
 ### Security
-- Formal verification of Move contracts
 - Regular audits by third-party firms
 - Bug bounty program
 - Multi-sig treasury management
+- 720-day liquidity lock on QuickSwap
 
 ---
 
-## Appendix B: Financial Projections
+## Appendix B: Glossary
 
-### Conservative Scenario (Year 1)
-- Railways integrated: 3
-- Active users: 50,000
-- Monthly transaction volume: $1M
-- Monthly fees (2%): $20,000
-- Annual revenue: $240,000
-- Staking APY: 48%
-
-### Base Scenario (Year 1)
-- Railways integrated: 5
-- Active users: 200,000
-- Monthly transaction volume: $5M
-- Monthly fees (2%): $100,000
-- Annual revenue: $1.2M
-- Staking APY: 240%
-
-### Optimistic Scenario (Year 1)
-- Railways integrated: 10
-- Active users: 500,000
-- Monthly transaction volume: $20M
-- Monthly fees (2%): $400,000
-- Annual revenue: $4.8M
-- Staking APY: 960%
-
-*Projections are estimates and not guarantees*
-
----
-
-## Appendix C: Glossary
-
-- **AFC (Africoin)**: Stablecoin for railway ticket payments
+- **AFC (Africoin)**: Stablecoin for railway ticket payments (Sui network)
 - **APY**: Annual Percentage Yield
 - **DEX**: Decentralized Exchange
-- **FDV**: Fully Diluted Valuation
-- **IDO**: Initial DEX Offering
+- **Fairlaunch**: Token sale where price is determined by total contributions
+- **POL**: Polygon native token (formerly MATIC)
+- **QuickSwap**: Leading DEX on Polygon network
 - **TGE**: Token Generation Event
 - **zkLogin**: Zero-knowledge login (use Google/Apple ID without exposing private keys)
 
 ---
 
-**Document Version**: 1.0  
-**Last Updated**: January 17, 2026  
+**Document Version**: 2.0
+**Last Updated**: January 17, 2026
 **Contact**: admin@africarailways.com
 
 ---
