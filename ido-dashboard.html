@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IDO Dashboard - AFRC Token Sale</title>
+    <title>IDO Dashboard - SENT Token Sale | Polygon Network</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="/js/polygon-wallet.js"></script>
     <style>
         :root { --navy: #0a0e1a; --gold: #FFB800; --cyan: #00D4FF; --white: #ffffff; --surface: #16203a; --green: #10b981; }
         html { scroll-behavior: smooth; }
@@ -86,17 +87,41 @@
             <li><a href="/audits.html">Audits</a></li>
             <li><a href="/ido-dashboard.html">IDO Dashboard</a></li>
             <li><a href="/whitelist.html" class="cta-nav">Join Whitelist</a></li>
+            <li>
+                <div id="wallet-status" class="wallet-status">
+                    <button id="connect-wallet-btn" class="btn-wallet" onclick="connectPolygonWallet()">
+                        <i class="fas fa-wallet"></i> Connect Polygon Wallet
+                    </button>
+                </div>
+            </li>
         </ul>
     </nav>
+
+    <!-- Network Indicator Banner -->
+    <div id="network-banner" class="network-banner" style="display: none;">
+        <div class="network-banner__content">
+            <span id="network-icon">🟣</span>
+            <span id="network-text">Connected to Polygon</span>
+            <span id="wallet-address" class="wallet-address"></span>
+        </div>
+    </div>
 
     <div class="container">
         <div class="hero">
             <div class="live-badge">
                 <span style="width: 12px; height: 12px; background: var(--green); border-radius: 50%; animation: ping 1.5s infinite;"></span>
-                LIVE IDO IN PROGRESS
+                SENT IDO - POLYGON NETWORK
             </div>
-            <h1>AFRC IDO Dashboard</h1>
-            <p>Real-time progress of the Africoin Initial DEX Offering. Join now to secure your allocation!</p>
+            <h1>🛡️ SENT Token IDO Dashboard</h1>
+            <p>Sentinel governance token sale on Polygon. Connect your MetaMask wallet to participate!</p>
+            
+            <!-- Network Notice -->
+            <div class="network-notice" style="background: rgba(139,92,246,0.2); border: 2px solid #8b5cf6; padding: 15px 25px; border-radius: 12px; margin-top: 20px; display: inline-block;">
+                <span style="color: #8b5cf6; font-weight: 700;">
+                    <i class="fas fa-info-circle"></i> 
+                    Polygon wallet required (MetaMask or compatible). We do not create wallets for you.
+                </span>
+            </div>
         </div>
 
         <div class="countdown-section">
@@ -183,8 +208,8 @@
 
             <div class="metric-card">
                 <div class="metric-icon">🔥</div>
-                <span class="metric-value">$0.01</span>
-                <div class="metric-label">Token Price (USD)</div>
+                <span class="metric-value">$0.00005</span>
+                <div class="metric-label">SENT Price (USD)</div>
                 <div class="metric-change">Fixed IDO Price</div>
             </div>
 
@@ -257,7 +282,7 @@
                     <div class="info-icon"><i class="fas fa-coins"></i></div>
                     <div class="info-content">
                         <h4>Token Price</h4>
-                        <p>$0.01 per AFRC<br>Fixed price throughout IDO</p>
+                        <p>$0.00005 per SENT<br>Fixed price throughout IDO</p>
                     </div>
                 </div>
 
@@ -273,7 +298,7 @@
                     <div class="info-icon"><i class="fas fa-chart-bar"></i></div>
                     <div class="info-content">
                         <h4>Listing Date</h4>
-                        <p>February 20, 2026<br>Uniswap & PancakeSwap</p>
+                        <p>March 20, 2026<br>Cetus DEX (Sui)</p>
                     </div>
                 </div>
 
@@ -281,7 +306,7 @@
                     <div class="info-icon"><i class="fas fa-wallet"></i></div>
                     <div class="info-content">
                         <h4>Accepted Currencies</h4>
-                        <p>ETH, USDT, USDC, MATIC<br>On Ethereum & Polygon networks</p>
+                        <p>MATIC, USDT, USDC<br>On Polygon Mainnet only</p>
                     </div>
                 </div>
 
@@ -296,14 +321,21 @@
         </div>
 
         <div class="cta-section">
-            <h2>Ready to Participate?</h2>
-            <p style="color:#aaa; font-size: 1.2rem; margin-bottom: 40px;">Join the whitelist now to secure your allocation in the AFRC IDO</p>
+            <h2>Ready to Participate in SENT IDO?</h2>
+            <p style="color:#aaa; font-size: 1.2rem; margin-bottom: 20px;">Connect your Polygon wallet to participate in the Sentinel token sale</p>
+            <p style="color:#8b5cf6; font-size: 0.95rem; margin-bottom: 40px;">
+                <i class="fas fa-info-circle"></i> 
+                Min: $100 | Max: $5,000 | Network: Polygon Mainnet
+            </p>
             <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-                <a href="/whitelist.html" class="btn btn-primary" style="font-size: 1.3rem; padding: 20px 50px;">
-                    <i class="fas fa-rocket"></i> Join Whitelist Now
+                <button id="participate-btn" class="btn btn-primary" style="font-size: 1.3rem; padding: 20px 50px;" onclick="handleParticipate()">
+                    <i class="fas fa-wallet"></i> Connect Wallet & Participate
+                </button>
+                <a href="/whitelist.html" class="btn" style="background: transparent; border: 2px solid var(--gold); color: var(--gold);">
+                    <i class="fas fa-clipboard-list"></i> Join Whitelist
                 </a>
                 <a href="/tokenomics.html" class="btn" style="background: transparent; border: 2px solid var(--cyan); color: var(--cyan);">
-                    <i class="fas fa-book"></i> Learn More
+                    <i class="fas fa-book"></i> SENT Tokenomics
                 </a>
             </div>
         </div>
@@ -325,9 +357,195 @@
     </style>
 
     <script>
+        // Polygon Wallet State
+        let polygonConnected = false;
+        let connectedAddress = null;
+        const POLYGON_CHAIN_ID = '0x89';
+
+        // Connect Polygon Wallet
+        async function connectPolygonWallet() {
+            if (typeof window.ethereum === 'undefined') {
+                alert('Please install MetaMask or a compatible EVM wallet to participate in the SENT IDO.\n\nDownload: https://metamask.io/download/');
+                return { success: false };
+            }
+
+            try {
+                // Request accounts
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                if (!accounts || accounts.length === 0) {
+                    alert('No accounts found. Please unlock your wallet.');
+                    return { success: false };
+                }
+
+                // Switch to Polygon
+                const switchResult = await switchToPolygon();
+                if (!switchResult.success) {
+                    alert(switchResult.error);
+                    return { success: false };
+                }
+
+                connectedAddress = accounts[0];
+                polygonConnected = true;
+                updateWalletUI();
+
+                return { success: true, address: accounts[0] };
+            } catch (error) {
+                if (error.code === 4001) {
+                    alert('Connection rejected. Please approve the connection request.');
+                } else {
+                    alert('Failed to connect wallet: ' + (error.message || 'Unknown error'));
+                }
+                return { success: false };
+            }
+        }
+
+        // Switch to Polygon Network
+        async function switchToPolygon() {
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: POLYGON_CHAIN_ID }]
+                });
+                return { success: true };
+            } catch (error) {
+                if (error.code === 4902) {
+                    // Chain not added - add it
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [{
+                                chainId: POLYGON_CHAIN_ID,
+                                chainName: 'Polygon Mainnet',
+                                nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
+                                rpcUrls: ['https://polygon-rpc.com/'],
+                                blockExplorerUrls: ['https://polygonscan.com/']
+                            }]
+                        });
+                        return { success: true };
+                    } catch (addError) {
+                        return { success: false, error: 'Failed to add Polygon network. Please add it manually.' };
+                    }
+                }
+                if (error.code === 4001) {
+                    return { success: false, error: 'Please switch to Polygon network to participate in the SENT IDO.' };
+                }
+                return { success: false, error: error.message || 'Failed to switch network' };
+            }
+        }
+
+        // Update wallet UI
+        function updateWalletUI() {
+            const walletStatus = document.getElementById('wallet-status');
+            const networkBanner = document.getElementById('network-banner');
+            const walletAddressEl = document.getElementById('wallet-address');
+            const participateBtn = document.getElementById('participate-btn');
+
+            if (polygonConnected && connectedAddress) {
+                const shortAddress = connectedAddress.slice(0, 6) + '...' + connectedAddress.slice(-4);
+                
+                walletStatus.innerHTML = `
+                    <div class="wallet-connected">
+                        <span style="color: var(--green);">🟣 Polygon</span>
+                        <span style="font-family: monospace;">${shortAddress}</span>
+                        <button onclick="disconnectWallet()" style="background: none; border: none; color: #aaa; cursor: pointer; margin-left: 10px;">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </div>
+                `;
+                
+                networkBanner.style.display = 'block';
+                networkBanner.innerHTML = `
+                    <div style="background: linear-gradient(90deg, rgba(139,92,246,0.3), rgba(16,185,129,0.3)); padding: 10px 20px; text-align: center;">
+                        <span style="color: var(--green);">🟣 Connected to Polygon Mainnet</span>
+                        <span style="margin-left: 20px; font-family: monospace; color: #aaa;">${shortAddress}</span>
+                    </div>
+                `;
+
+                participateBtn.innerHTML = '<i class="fas fa-rocket"></i> Participate in SENT IDO';
+            } else {
+                walletStatus.innerHTML = `
+                    <button class="btn-wallet" onclick="connectPolygonWallet()" style="background: linear-gradient(135deg, #8b5cf6, #ec4899); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        <i class="fas fa-wallet"></i> Connect Polygon Wallet
+                    </button>
+                `;
+                networkBanner.style.display = 'none';
+                participateBtn.innerHTML = '<i class="fas fa-wallet"></i> Connect Wallet & Participate';
+            }
+        }
+
+        // Disconnect wallet
+        function disconnectWallet() {
+            polygonConnected = false;
+            connectedAddress = null;
+            updateWalletUI();
+        }
+
+        // Handle participate button
+        async function handleParticipate() {
+            if (!polygonConnected) {
+                const result = await connectPolygonWallet();
+                if (!result.success) return;
+            }
+
+            // Show participation modal
+            const amount = prompt('Enter contribution amount in USD ($100 - $5,000):');
+            if (!amount) return;
+
+            const amountNum = parseFloat(amount);
+            if (isNaN(amountNum) || amountNum < 100 || amountNum > 5000) {
+                alert('Please enter a valid amount between $100 and $5,000');
+                return;
+            }
+
+            // Calculate tokens
+            const tokenPrice = 0.00005;
+            const baseTokens = amountNum / tokenPrice;
+            let bonusPercent = 5;
+            if (amountNum >= 5000) bonusPercent = 20;
+            else if (amountNum >= 2000) bonusPercent = 15;
+            else if (amountNum >= 500) bonusPercent = 10;
+
+            const bonusTokens = baseTokens * (bonusPercent / 100);
+            const totalTokens = baseTokens + bonusTokens;
+
+            const confirmation = confirm(
+                `SENT IDO Participation Summary:\n\n` +
+                `Contribution: $${amountNum.toLocaleString()}\n` +
+                `Base Tokens: ${baseTokens.toLocaleString()} SENT\n` +
+                `Bonus (${bonusPercent}%): ${bonusTokens.toLocaleString()} SENT\n` +
+                `Total Tokens: ${totalTokens.toLocaleString()} SENT\n\n` +
+                `Wallet: ${connectedAddress}\n` +
+                `Network: Polygon Mainnet\n\n` +
+                `Proceed with participation?`
+            );
+
+            if (confirmation) {
+                alert('🎉 Participation recorded!\n\nYour SENT tokens will be available after TGE (March 20, 2026).\n\n20% unlocked at TGE, 80% vested over 6 months.');
+            }
+        }
+
+        // Listen for account/network changes
+        if (typeof window.ethereum !== 'undefined') {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length === 0) {
+                    disconnectWallet();
+                } else {
+                    connectedAddress = accounts[0];
+                    updateWalletUI();
+                }
+            });
+
+            window.ethereum.on('chainChanged', async (chainId) => {
+                if (chainId !== POLYGON_CHAIN_ID && polygonConnected) {
+                    alert('Please stay on Polygon network to participate in the SENT IDO.');
+                    await switchToPolygon();
+                }
+            });
+        }
+
         // Countdown Timer
         function updateCountdown() {
-            const targetDate = new Date('2026-02-15T23:59:59Z').getTime();
+            const targetDate = new Date('2026-03-15T23:59:59Z').getTime(); // Updated for SENT IDO
             const now = new Date().getTime();
             const distance = targetDate - now;
 
@@ -342,7 +560,7 @@
             document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
 
             if (distance < 0) {
-                document.querySelector('.countdown-title').textContent = '🎉 IDO Has Ended!';
+                document.querySelector('.countdown-title').textContent = '🎉 SENT IDO Has Ended!';
                 document.getElementById('days').textContent = '00';
                 document.getElementById('hours').textContent = '00';
                 document.getElementById('minutes').textContent = '00';
@@ -410,6 +628,26 @@
         updateCountdown();
         setInterval(updateCountdown, 1000);
         simulateUpdates();
+        updateWalletUI();
+
+        // Auto-connect if previously connected
+        (async function() {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                    if (accounts && accounts.length > 0) {
+                        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                        if (chainId === POLYGON_CHAIN_ID) {
+                            connectedAddress = accounts[0];
+                            polygonConnected = true;
+                            updateWalletUI();
+                        }
+                    }
+                } catch (e) {
+                    console.log('Auto-connect check failed:', e);
+                }
+            }
+        })();
     </script>
 </body>
 </html>
