@@ -393,12 +393,12 @@ More Railways → More Passengers → More Fees → Higher Staking APY → More 
 ## 12. Community and Support
 
 ### Official Channels
-- **Website**: [africa-railways.vercel.app](https://africa-railways.vercel.app)
+- **Website**: [africarailways.com](https://www.africarailways.com)
 - **Twitter**: [@AfricaRailways](https://twitter.com/AfricaRailways)
-- **Telegram**: [@AfricoinCommunity](https://t.me/AfricoinCommunity)
+- **Telegram**: [@SentinelOfficial](https://t.me/AFRCsentinel)
 - **Medium**: [@africarailways](https://medium.com/@africarailways)
 - **GitHub**: [github.com/mpolobe/africa-railways](https://github.com/mpolobe/africa-railways)
-- **Email**: contact@africarailways.com
+- **Email**: admin@africarailways.com
 
 ### Stay Updated
 - Join Telegram for daily updates
@@ -515,8 +515,8 @@ As the platform expands from 1 railway to 10, 20, and eventually 54 countries, $
 ---
 
 **Document Version**: 1.0  
-**Last Updated**: January 11, 2026  
-**Contact**: contact@africarailways.com
+**Last Updated**: January 17, 2026  
+**Contact**: admin@africarailways.com
 
 ---
 
