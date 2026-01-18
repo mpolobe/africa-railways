@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAZARA Cargo - Tanzania-Zambia Railway</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root { --navy: #0a0e1a; --gold: #FFB800; --cyan: #00D4FF; --green: #10b981; --surface: #16203a; --tazara-blue: #003366; --tazara-gold: #D4AF37; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--navy); color: #fff; min-height: 100vh; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: rgba(10,14,26,0.95); border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 1.3rem; font-weight: 800; color: var(--gold); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .nav-links { display: flex; list-style: none; gap: 25px; margin: 0; align-items: center; }
+        .nav-links a { color: #fff; text-decoration: none; font-size: 0.9rem; }
+        .nav-links a:hover { color: var(--gold); }
+        .hero-banner { background: linear-gradient(135deg, var(--tazara-blue) 0%, #001a33 100%); padding: 40px 5%; border-bottom: 4px solid var(--tazara-gold); }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-content h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 10px; }
+        .hero-content p { font-size: 1rem; opacity: 0.9; }
+        .tazara-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(212,175,55,0.2); padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; margin-top: 15px; color: var(--tazara-gold); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+        .booking-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; }
+        @media (max-width: 900px) { .booking-grid { grid-template-columns: 1fr; } }
+        .card { background: var(--surface); border: 1px solid #333; border-radius: 15px; overflow: hidden; }
+        .card-header { background: rgba(0, 51, 102, 0.3); border-bottom: 1px solid #333; padding: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .card-body { padding: 25px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #cbd5e1; font-size: 0.9rem; font-weight: 600; }
+        .form-control, .form-select { width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid #333; border-radius: 10px; color: #fff; font-size: 1rem; }
+        .form-control:focus, .form-select:focus { outline: none; border-color: var(--tazara-gold); box-shadow: 0 0 0 3px rgba(212,175,55,0.2); }
+        .form-select option { background: var(--navy); }
+        .cargo-types { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .cargo-type { background: rgba(255,255,255,0.05); border: 2px solid #333; padding: 15px; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.3s; }
+        .cargo-type:hover { border-color: var(--tazara-gold); }
+        .cargo-type.selected { border-color: var(--tazara-gold); background: rgba(212,175,55,0.1); }
+        .cargo-type .icon { font-size: 1.8rem; margin-bottom: 8px; }
+        .cargo-type .name { font-weight: 600; font-size: 0.9rem; }
+        .cargo-type .rate { color: var(--tazara-gold); font-size: 0.85rem; margin-top: 5px; }
+        .summary-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #333; }
+        .summary-item span:first-child { color: #cbd5e1; }
+        .summary-item span:last-child { color: #fff; font-weight: 600; }
+        .summary-item.total span:last-child { color: var(--tazara-gold); font-size: 1.2rem; }
+        .btn-book { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--tazara-blue) 0%, #001a33 100%); color: #fff; border: 2px solid var(--tazara-gold); border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 15px; }
+        .btn-book:hover { background: var(--tazara-gold); color: var(--tazara-blue); }
+        .btn-download { width: 100%; padding: 14px; background: var(--tazara-gold); color: var(--tazara-blue); border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .alert-success { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: var(--green); padding: 15px; border-radius: 10px; margin-top: 15px; }
+        .alert-error { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; padding: 15px; border-radius: 10px; margin-top: 15px; }
+        .manifest-preview { background: #fff; color: #000; border-radius: 10px; padding: 25px; margin-top: 20px; display: none; }
+        .manifest-preview.show { display: block; }
+        .manifest-header { border-bottom: 2px solid var(--tazara-blue); padding-bottom: 15px; margin-bottom: 15px; }
+        .manifest-header h3 { color: var(--tazara-blue); margin: 0; }
+        .manifest-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9rem; }
+        .manifest-table th, .manifest-table td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        .manifest-table th { background: #f0f0f0; }
+        .manifest-footer { border-top: 1px solid #ccc; padding-top: 15px; margin-top: 15px; font-size: 0.8rem; color: #666; }
+        footer { background: rgba(10,14,26,0.95); border-top: 1px solid #222; padding: 30px 5%; margin-top: 50px; text-align: center; color: #666; }
+        footer a { color: var(--gold); text-decoration: none; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo"><i class="bi bi-train-front"></i> Africa Railways</a>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/tazara-cargo.html" style="color: var(--tazara-gold);">TAZARA Cargo</a></li>
+            <li><a href="/zambia-railways-cargo.html">ZRL Cargo</a></li>
+            <li><a href="/operators.html">Operators</a></li>
+        </ul>
+    </nav>
+
+    <div class="hero-banner">
+        <div class="hero-content">
+            <h1>🇹🇿🇿🇲 TAZARA Cargo Services</h1>
+            <p>Cross-border freight - Dar es Salaam to Kapiri Mposhi (1,860 km)</p>
+            <div class="tazara-badge"><i class="bi bi-globe"></i> International Railway | Est. 1976</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="booking-grid">
+            <div class="card">
+                <div class="card-header"><i class="bi bi-box-seam"></i> Cargo Booking</div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Cargo Type</label>
+                        <div class="cargo-types">
+                            <div class="cargo-type selected" data-type="general" data-rate="35000" onclick="selectCargo(this)">
+                                <div class="icon">📦</div>
+                                <div class="name">General Cargo</div>
+                                <div class="rate">TSh 35,000/kg</div>
+                            </div>
+                            <div class="cargo-type" data-type="bulk" data-rate="28000" onclick="selectCargo(this)">
+                                <div class="icon">🌾</div>
+                                <div class="name">Bulk/Agricultural</div>
+                                <div class="rate">TSh 28,000/kg</div>
+                            </div>
+                            <div class="cargo-type" data-type="container" data-rate="12500000" onclick="selectCargo(this)">
+                                <div class="icon">🚢</div>
+                                <div class="name">Container (20ft)</div>
+                                <div class="rate">TSh 12.5M/unit</div>
+                            </div>
+                            <div class="cargo-type" data-type="copper" data-rate="42000" onclick="selectCargo(this)">
+                                <div class="icon">🥉</div>
+                                <div class="name">Copper/Minerals</div>
+                                <div class="rate">TSh 42,000/kg</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Origin Station</label>
+                                <select class="form-select" id="originStation" onchange="updateSummary()">
+                                    <option value="">Select origin</option>
+                                    <optgroup label="Tanzania">
+                                        <option value="dar">Dar es Salaam</option>
+                                        <option value="mbeya">Mbeya</option>
+                                        <option value="tunduma">Tunduma (Border)</option>
+                                    </optgroup>
+                                    <optgroup label="Zambia">
+                                        <option value="kasama">Kasama</option>
+                                        <option value="mpika">Mpika</option>
+                                        <option value="kapiri">Kapiri Mposhi</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Destination Station</label>
+                                <select class="form-select" id="destStation" onchange="updateSummary()">
+                                    <option value="">Select destination</option>
+                                    <optgroup label="Tanzania">
+                                        <option value="dar">Dar es Salaam</option>
+                                        <option value="mbeya">Mbeya</option>
+                                        <option value="tunduma">Tunduma (Border)</option>
+                                    </optgroup>
+                                    <optgroup label="Zambia">
+                                        <option value="kasama">Kasama</option>
+                                        <option value="mpika">Mpika</option>
+                                        <option value="kapiri">Kapiri Mposhi</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Weight (kg) / Units</label>
+                                <input type="number" class="form-control" id="weight" value="100" min="1" onchange="updateSummary()">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Shipment Date</label>
+                                <input type="date" class="form-control" id="shipDate">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Cargo Description</label>
+                        <textarea class="form-control" id="cargoDesc" rows="2" placeholder="Describe cargo contents..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Shipper Name / Company</label>
+                        <input type="text" class="form-control" id="shipperName" placeholder="Company or individual name">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Shipper Phone</label>
+                                <input type="tel" class="form-control" id="shipperPhone" placeholder="+255 or +260">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Receiver Phone</label>
+                                <input type="tel" class="form-control" id="receiverPhone" placeholder="+255 or +260">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <div class="card-header"><i class="bi bi-receipt"></i> Booking Summary</div>
+                    <div class="card-body">
+                        <div class="summary-item"><span>Cargo Type</span><span id="sumType">General Cargo</span></div>
+                        <div class="summary-item"><span>Route</span><span id="sumRoute">-</span></div>
+                        <div class="summary-item"><span>Weight/Units</span><span id="sumWeight">100 kg</span></div>
+                        <div class="summary-item"><span>Rate</span><span id="sumRate">TSh 35,000/kg</span></div>
+                        <div class="summary-item"><span>Freight Cost</span><span id="sumFreight">TSh 3,500,000</span></div>
+                        <div class="summary-item"><span>Customs/Handling</span><span id="sumHandling">TSh 250,000</span></div>
+                        <div class="summary-item total"><span>Total</span><span id="sumTotal">TSh 3,750,000</span></div>
+                        <button class="btn-book" onclick="bookCargo()"><i class="bi bi-check-circle me-2"></i>Confirm Booking</button>
+                        <div id="bookingAlert"></div>
+                    </div>
+                </div>
+
+                <div class="manifest-preview" id="manifestPreview">
+                    <div class="manifest-header">
+                        <h3>TAZARA - CARGO MANIFEST</h3>
+                        <div>Tanzania-Zambia Railway Authority</div>
+                    </div>
+                    <table class="manifest-table">
+                        <tr><th>Waybill No.</th><td id="mWaybill">-</td></tr>
+                        <tr><th>Date</th><td id="mDate">-</td></tr>
+                        <tr><th>Origin</th><td id="mOrigin">-</td></tr>
+                        <tr><th>Destination</th><td id="mDest">-</td></tr>
+                        <tr><th>Shipper</th><td id="mShipper">-</td></tr>
+                        <tr><th>Cargo Type</th><td id="mCargoType">-</td></tr>
+                        <tr><th>Description</th><td id="mDesc">-</td></tr>
+                        <tr><th>Weight/Units</th><td id="mWeight">-</td></tr>
+                        <tr><th>Total (TSh)</th><td id="mAmount">-</td></tr>
+                    </table>
+                    <div class="manifest-footer">
+                        <p>Present this manifest at origin station. Subject to customs clearance at Tunduma border.</p>
+                        <p>TAZARA HQ: Dar es Salaam | +255 22 286 0340 | cargo@tazara.co.tz</p>
+                    </div>
+                    <button class="btn-download" onclick="downloadManifest()"><i class="bi bi-download me-2"></i>Download Manifest (PDF)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer><p>Powered by <a href="/">Africa Railways</a> | TAZARA Cargo Services</p></footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        let selectedType = 'general', rate = 35000, isContainer = false;
+        const stations = { dar: 'Dar es Salaam (TZ)', mbeya: 'Mbeya (TZ)', tunduma: 'Tunduma Border', kasama: 'Kasama (ZM)', mpika: 'Mpika (ZM)', kapiri: 'Kapiri Mposhi (ZM)' };
+        
+        document.getElementById('shipDate').min = new Date().toISOString().split('T')[0];
+        document.getElementById('shipDate').value = new Date().toISOString().split('T')[0];
+
+        function selectCargo(el) {
+            document.querySelectorAll('.cargo-type').forEach(e => e.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedType = el.dataset.type;
+            rate = parseFloat(el.dataset.rate);
+            isContainer = selectedType === 'container';
+            updateSummary();
+        }
+
+        function formatTSh(n) { return 'TSh ' + n.toLocaleString(); }
+
+        function updateSummary() {
+            const origin = document.getElementById('originStation').value;
+            const dest = document.getElementById('destStation').value;
+            const weight = parseFloat(document.getElementById('weight').value) || 0;
+            
+            const typeNames = { general: 'General Cargo', bulk: 'Bulk/Agricultural', container: 'Container (20ft)', copper: 'Copper/Minerals' };
+            document.getElementById('sumType').textContent = typeNames[selectedType];
+            document.getElementById('sumRoute').textContent = origin && dest ? `${stations[origin]} → ${stations[dest]}` : '-';
+            document.getElementById('sumWeight').textContent = isContainer ? `${weight} unit(s)` : `${weight.toLocaleString()} kg`;
+            document.getElementById('sumRate').textContent = isContainer ? formatTSh(rate) + '/unit' : formatTSh(rate) + '/kg';
+            
+            const freight = rate * weight;
+            const handling = isContainer ? 750000 * weight : Math.max(250000, weight * 2500);
+            const total = freight + handling;
+            
+            document.getElementById('sumFreight').textContent = formatTSh(freight);
+            document.getElementById('sumHandling').textContent = formatTSh(handling);
+            document.getElementById('sumTotal').textContent = formatTSh(total);
+        }
+
+        function bookCargo() {
+            const origin = document.getElementById('originStation').value;
+            const dest = document.getElementById('destStation').value;
+            const shipper = document.getElementById('shipperName').value;
+            
+            if (!origin || !dest || !shipper) {
+                document.getElementById('bookingAlert').innerHTML = '<div class="alert-error">Please fill all required fields</div>';
+                return;
+            }
+            if (origin === dest) {
+                document.getElementById('bookingAlert').innerHTML = '<div class="alert-error">Origin and destination must differ</div>';
+                return;
+            }
+
+            const waybill = 'TAZ-' + Date.now().toString(36).toUpperCase();
+            
+            document.getElementById('mWaybill').textContent = waybill;
+            document.getElementById('mDate').textContent = document.getElementById('shipDate').value;
+            document.getElementById('mOrigin').textContent = stations[origin];
+            document.getElementById('mDest').textContent = stations[dest];
+            document.getElementById('mShipper').textContent = shipper;
+            document.getElementById('mCargoType').textContent = document.getElementById('sumType').textContent;
+            document.getElementById('mDesc').textContent = document.getElementById('cargoDesc').value || 'N/A';
+            document.getElementById('mWeight').textContent = document.getElementById('sumWeight').textContent;
+            document.getElementById('mAmount').textContent = document.getElementById('sumTotal').textContent;
+
+            document.getElementById('manifestPreview').classList.add('show');
+            document.getElementById('bookingAlert').innerHTML = `<div class="alert-success">Booking confirmed! Waybill: ${waybill}</div>`;
+            document.getElementById('manifestPreview').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function downloadManifest() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            doc.setFontSize(18);
+            doc.setTextColor(0, 51, 102);
+            doc.text('TAZARA - CARGO MANIFEST', 105, 20, { align: 'center' });
+            doc.setFontSize(11);
+            doc.setTextColor(100);
+            doc.text('Tanzania-Zambia Railway Authority', 105, 28, { align: 'center' });
+            
+            doc.setTextColor(0);
+            const data = [
+                ['Waybill No.', document.getElementById('mWaybill').textContent],
+                ['Date', document.getElementById('mDate').textContent],
+                ['Origin', document.getElementById('mOrigin').textContent],
+                ['Destination', document.getElementById('mDest').textContent],
+                ['Shipper', document.getElementById('mShipper').textContent],
+                ['Cargo Type', document.getElementById('mCargoType').textContent],
+                ['Description', document.getElementById('mDesc').textContent],
+                ['Weight/Units', document.getElementById('mWeight').textContent],
+                ['Total Amount', document.getElementById('mAmount').textContent]
+            ];
+            
+            let y = 45;
+            data.forEach(([label, value]) => {
+                doc.setFont(undefined, 'bold');
+                doc.text(label + ':', 20, y);
+                doc.setFont(undefined, 'normal');
+                doc.text(value, 70, y);
+                y += 10;
+            });
+            
+            doc.setFontSize(9);
+            doc.setTextColor(100);
+            doc.text('Present this manifest at origin station. Subject to customs clearance at Tunduma border.', 105, 145, { align: 'center' });
+            doc.text('TAZARA HQ: Dar es Salaam | +255 22 286 0340 | cargo@tazara.co.tz', 105, 153, { align: 'center' });
+            
+            doc.save(`TAZARA-Manifest-${document.getElementById('mWaybill').textContent}.pdf`);
+        }
+
+        updateSummary();
+    </script>
+</body>
+</html>

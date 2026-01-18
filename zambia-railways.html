@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zambia Railways - Book Tickets | Africa Railways</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #0a0e1a;
+            --gold: #FFB800;
+            --cyan: #00D4FF;
+            --green: #10b981;
+            --surface: #16203a;
+            --zrl-green: #006B3F;
+            --zrl-red: #CE1126;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--navy);
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: rgba(10,14,26,0.95);
+            border-bottom: 1px solid #222;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        
+        .logo {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--gold);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+            margin: 0;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+        
+        .nav-links a:hover { color: var(--gold); }
+        
+        .hero-banner {
+            background: linear-gradient(135deg, var(--zrl-green) 0%, #004d2e 100%);
+            padding: 40px 5%;
+            border-bottom: 4px solid var(--zrl-red);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="50" font-size="60" opacity="0.1">🚂</text></svg>') no-repeat center;
+            background-size: contain;
+        }
+        
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-content h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        
+        .hero-content p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .zrl-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.15);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-top: 15px;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+        
+        .booking-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .booking-grid { grid-template-columns: 1fr; }
+        }
+        
+        .card {
+            background: var(--surface);
+            border: 1px solid #333;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background: rgba(0, 107, 63, 0.2);
+            border-bottom: 1px solid #333;
+            padding: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-body { padding: 25px; }
+        
+        .form-group { margin-bottom: 20px; }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .form-control, .form-select {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #333;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--zrl-green);
+            box-shadow: 0 0 0 3px rgba(0, 107, 63, 0.2);
+        }
+        
+        .form-select option { background: var(--navy); }
+        
+        .swap-btn {
+            background: var(--zrl-green);
+            border: none;
+            color: #fff;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px auto;
+            transition: all 0.3s;
+        }
+        
+        .swap-btn:hover { transform: rotate(180deg); background: var(--zrl-red); }
+        
+        .class-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        
+        .class-option {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid #333;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .class-option:hover { border-color: var(--zrl-green); }
+        
+        .class-option.selected {
+            border-color: var(--zrl-green);
+            background: rgba(0, 107, 63, 0.15);
+        }
+        
+        .class-option .icon { font-size: 1.5rem; margin-bottom: 5px; }
+        .class-option .name { font-weight: 600; font-size: 0.9rem; }
+        .class-option .price { color: var(--gold); font-weight: 700; margin-top: 5px; }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #333;
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+        
+        .summary-item span:first-child { color: #cbd5e1; }
+        .summary-item span:last-child { color: #fff; font-weight: 600; }
+        .summary-item:last-child { border-bottom: none; }
+        .summary-item.total { font-size: 1.2rem; font-weight: 700; }
+        .summary-item.total span:first-child { color: #fff; }
+        .summary-item.total span:last-child { color: var(--gold); }
+        
+        .btn-book {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--zrl-green) 0%, #004d2e 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        
+        .btn-book:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 107, 63, 0.4);
+        }
+        
+        .btn-book:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        
+        .route-info {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .route-info h4 { color: var(--cyan); margin-bottom: 10px; font-size: 0.95rem; }
+        .route-info ul { list-style: none; padding: 0; margin: 0; }
+        .route-info li { padding: 5px 0; color: #94a3b8; font-size: 0.9rem; }
+        .route-info li i { color: var(--zrl-green); margin-right: 8px; }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        
+        .alert-success {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--green);
+        }
+        
+        .alert-error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+        
+        .ticket-preview {
+            background: linear-gradient(135deg, #1a2642 0%, var(--surface) 100%);
+            border: 2px dashed var(--zrl-green);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .ticket-preview.show { display: block; }
+        
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed #333;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .ticket-qr {
+            width: 80px;
+            height: 80px;
+            background: #fff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            color: #333;
+        }
+        
+        .ticket-route {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .ticket-station { text-align: center; flex: 1; }
+        .ticket-station .code { font-size: 1.5rem; font-weight: 800; color: var(--gold); }
+        .ticket-station .name { font-size: 0.85rem; color: #94a3b8; }
+        
+        .ticket-arrow { font-size: 1.5rem; color: var(--zrl-green); }
+        
+        footer {
+            background: rgba(10,14,26,0.95);
+            border-top: 1px solid #222;
+            padding: 30px 5%;
+            margin-top: 50px;
+            text-align: center;
+            color: #666;
+        }
+        
+        footer a { color: var(--gold); text-decoration: none; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo"><i class="bi bi-train-front"></i> Africa Railways</a>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/zambia-railways.html" style="color: var(--gold);">Passengers</a></li>
+            <li><a href="/zambia-railways-cargo.html">Cargo</a></li>
+            <li><a href="/operators.html">Operators</a></li>
+            <li><a href="/track-trains.html">Track Trains</a></li>
+        </ul>
+    </nav>
+
+    <div class="hero-banner">
+        <div class="hero-content">
+            <h1>🇿🇲 Zambia Railways Limited</h1>
+            <p>Book your journey across Zambia's scenic railway network</p>
+            <div class="zrl-badge">
+                <i class="bi bi-patch-check-fill"></i>
+                Official Partner | Est. 2003 | 1,273 km Network
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="booking-grid">
+            <!-- Booking Form -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-ticket-perforated"></i>
+                    Book Your Ticket
+                </div>
+                <div class="card-body">
+                    <div class="route-info">
+                        <h4><i class="bi bi-info-circle"></i> Popular ZRL Routes</h4>
+                        <ul>
+                            <li><i class="bi bi-arrow-right"></i> Lusaka - Livingstone (Victoria Falls)</li>
+                            <li><i class="bi bi-arrow-right"></i> Lusaka - Kitwe (Copperbelt)</li>
+                            <li><i class="bi bi-arrow-right"></i> Ndola - Livingstone</li>
+                            <li><i class="bi bi-arrow-right"></i> Kabwe - Lusaka</li>
+                        </ul>
+                    </div>
+
+                    <form id="bookingForm">
+                        <div class="form-group">
+                            <label><i class="bi bi-geo-alt"></i> From</label>
+                            <select class="form-select" id="fromStation" required>
+                                <option value="">Select departure station</option>
+                                <option value="lusaka">Lusaka Central</option>
+                                <option value="livingstone">Livingstone</option>
+                                <option value="kitwe">Kitwe</option>
+                                <option value="ndola">Ndola</option>
+                                <option value="kabwe">Kabwe</option>
+                                <option value="choma">Choma</option>
+                                <option value="mazabuka">Mazabuka</option>
+                                <option value="kafue">Kafue</option>
+                            </select>
+                        </div>
+
+                        <button type="button" class="swap-btn" onclick="swapStations()">
+                            <i class="bi bi-arrow-down-up"></i>
+                        </button>
+
+                        <div class="form-group">
+                            <label><i class="bi bi-geo-alt-fill"></i> To</label>
+                            <select class="form-select" id="toStation" required>
+                                <option value="">Select arrival station</option>
+                                <option value="lusaka">Lusaka Central</option>
+                                <option value="livingstone">Livingstone</option>
+                                <option value="kitwe">Kitwe</option>
+                                <option value="ndola">Ndola</option>
+                                <option value="kabwe">Kabwe</option>
+                                <option value="choma">Choma</option>
+                                <option value="mazabuka">Mazabuka</option>
+                                <option value="kafue">Kafue</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="bi bi-calendar3"></i> Travel Date</label>
+                            <input type="date" class="form-control" id="travelDate" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="bi bi-people"></i> Passengers</label>
+                            <select class="form-select" id="passengers">
+                                <option value="1">1 Passenger</option>
+                                <option value="2">2 Passengers</option>
+                                <option value="3">3 Passengers</option>
+                                <option value="4">4 Passengers</option>
+                                <option value="5">5 Passengers</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="bi bi-star"></i> Travel Class</label>
+                            <div class="class-options">
+                                <div class="class-option selected" data-class="economy" onclick="selectClass(this)">
+                                    <div class="icon">💺</div>
+                                    <div class="name">Economy</div>
+                                    <div class="price">K 150</div>
+                                </div>
+                                <div class="class-option" data-class="business" onclick="selectClass(this)">
+                                    <div class="icon">🛋️</div>
+                                    <div class="name">Business</div>
+                                    <div class="price">K 350</div>
+                                </div>
+                                <div class="class-option" data-class="sleeper" onclick="selectClass(this)">
+                                    <div class="icon">🛏️</div>
+                                    <div class="name">Sleeper</div>
+                                    <div class="price">K 550</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="bi bi-phone"></i> Phone Number (for ticket SMS)</label>
+                            <input type="tel" class="form-control" id="phoneNumber" placeholder="+260 9XX XXX XXX" required>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Booking Summary -->
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-receipt"></i>
+                        Booking Summary
+                    </div>
+                    <div class="card-body">
+                        <div class="summary-item">
+                            <span>Route</span>
+                            <span id="summaryRoute">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Date</span>
+                            <span id="summaryDate">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Class</span>
+                            <span id="summaryClass">Economy</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Passengers</span>
+                            <span id="summaryPassengers">1</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Base Fare</span>
+                            <span id="summaryBase">K 150</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Service Fee</span>
+                            <span>K 15</span>
+                        </div>
+                        <div class="summary-item total">
+                            <span>Total</span>
+                            <span id="summaryTotal">K 165</span>
+                        </div>
+
+                        <button type="button" class="btn-book" onclick="bookTicket()">
+                            <i class="bi bi-credit-card me-2"></i>Book Now
+                        </button>
+
+                        <div id="bookingAlert"></div>
+                    </div>
+                </div>
+
+                <!-- Ticket Preview (shown after booking) -->
+                <div class="ticket-preview" id="ticketPreview">
+                    <div class="ticket-header">
+                        <div>
+                            <strong style="color: var(--zrl-green);">ZAMBIA RAILWAYS</strong>
+                            <div style="font-size: 0.8rem; color: #94a3b8;">E-Ticket</div>
+                        </div>
+                        <div class="ticket-qr" id="ticketQR">
+                            QR CODE
+                        </div>
+                    </div>
+                    <div class="ticket-route">
+                        <div class="ticket-station">
+                            <div class="code" id="ticketFrom">LSK</div>
+                            <div class="name" id="ticketFromName">Lusaka</div>
+                        </div>
+                        <div class="ticket-arrow">→</div>
+                        <div class="ticket-station">
+                            <div class="code" id="ticketTo">LIV</div>
+                            <div class="name" id="ticketToName">Livingstone</div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 0.9rem;">
+                        <div>
+                            <div style="color: #94a3b8;">Date</div>
+                            <div id="ticketDate">-</div>
+                        </div>
+                        <div>
+                            <div style="color: #94a3b8;">Class</div>
+                            <div id="ticketClass">Economy</div>
+                        </div>
+                        <div>
+                            <div style="color: #94a3b8;">Passengers</div>
+                            <div id="ticketPassengers">1</div>
+                        </div>
+                        <div>
+                            <div style="color: #94a3b8;">Booking Ref</div>
+                            <div id="ticketRef">ZRL-XXXXXX</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Powered by <a href="/">Africa Railways</a> | Zambia Railways Limited Official Booking Partner</p>
+        <p style="margin-top: 10px; font-size: 0.85rem;">
+            <a href="/terms-of-service.html">Terms</a> · 
+            <a href="/privacy-policy.html">Privacy</a> · 
+            <a href="/support">Support</a>
+        </p>
+    </footer>
+
+    <script>
+        // Station codes for display
+        const stationCodes = {
+            lusaka: { code: 'LSK', name: 'Lusaka Central' },
+            livingstone: { code: 'LIV', name: 'Livingstone' },
+            kitwe: { code: 'KTW', name: 'Kitwe' },
+            ndola: { code: 'NDL', name: 'Ndola' },
+            kabwe: { code: 'KBW', name: 'Kabwe' },
+            choma: { code: 'CHM', name: 'Choma' },
+            mazabuka: { code: 'MZB', name: 'Mazabuka' },
+            kafue: { code: 'KFE', name: 'Kafue' }
+        };
+
+        // Prices in ZMW (Zambian Kwacha)
+        const prices = {
+            economy: 150,
+            business: 350,
+            sleeper: 550
+        };
+
+        let selectedClass = 'economy';
+
+        // Set minimum date to today
+        document.getElementById('travelDate').min = new Date().toISOString().split('T')[0];
+
+        // Update summary on form changes
+        document.getElementById('fromStation').addEventListener('change', updateSummary);
+        document.getElementById('toStation').addEventListener('change', updateSummary);
+        document.getElementById('travelDate').addEventListener('change', updateSummary);
+        document.getElementById('passengers').addEventListener('change', updateSummary);
+
+        function selectClass(element) {
+            document.querySelectorAll('.class-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedClass = element.dataset.class;
+            updateSummary();
+        }
+
+        function swapStations() {
+            const from = document.getElementById('fromStation');
+            const to = document.getElementById('toStation');
+            const temp = from.value;
+            from.value = to.value;
+            to.value = temp;
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const from = document.getElementById('fromStation').value;
+            const to = document.getElementById('toStation').value;
+            const date = document.getElementById('travelDate').value;
+            const passengers = parseInt(document.getElementById('passengers').value);
+
+            // Update route
+            if (from && to) {
+                document.getElementById('summaryRoute').textContent = 
+                    `${stationCodes[from]?.name || from} → ${stationCodes[to]?.name || to}`;
+            } else {
+                document.getElementById('summaryRoute').textContent = '-';
+            }
+
+            // Update date
+            if (date) {
+                const dateObj = new Date(date);
+                document.getElementById('summaryDate').textContent = dateObj.toLocaleDateString('en-ZM', {
+                    weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
+                });
+            } else {
+                document.getElementById('summaryDate').textContent = '-';
+            }
+
+            // Update class
+            document.getElementById('summaryClass').textContent = 
+                selectedClass.charAt(0).toUpperCase() + selectedClass.slice(1);
+
+            // Update passengers
+            document.getElementById('summaryPassengers').textContent = passengers;
+
+            // Calculate total
+            const basePrice = prices[selectedClass] * passengers;
+            const serviceFee = 15 * passengers;
+            const total = basePrice + serviceFee;
+
+            document.getElementById('summaryBase').textContent = `K ${basePrice.toLocaleString()}`;
+            document.getElementById('summaryTotal').textContent = `K ${total.toLocaleString()}`;
+        }
+
+        function bookTicket() {
+            const from = document.getElementById('fromStation').value;
+            const to = document.getElementById('toStation').value;
+            const date = document.getElementById('travelDate').value;
+            const passengers = document.getElementById('passengers').value;
+            const phone = document.getElementById('phoneNumber').value;
+
+            // Validation
+            if (!from || !to || !date || !phone) {
+                showAlert('Please fill in all required fields', 'error');
+                return;
+            }
+
+            if (from === to) {
+                showAlert('Departure and arrival stations cannot be the same', 'error');
+                return;
+            }
+
+            // Simulate booking
+            const bookingRef = 'ZRL-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            
+            // Update ticket preview
+            document.getElementById('ticketFrom').textContent = stationCodes[from]?.code || from.toUpperCase().substring(0, 3);
+            document.getElementById('ticketFromName').textContent = stationCodes[from]?.name || from;
+            document.getElementById('ticketTo').textContent = stationCodes[to]?.code || to.toUpperCase().substring(0, 3);
+            document.getElementById('ticketToName').textContent = stationCodes[to]?.name || to;
+            document.getElementById('ticketDate').textContent = new Date(date).toLocaleDateString('en-ZM', {
+                weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
+            });
+            document.getElementById('ticketClass').textContent = selectedClass.charAt(0).toUpperCase() + selectedClass.slice(1);
+            document.getElementById('ticketPassengers').textContent = passengers;
+            document.getElementById('ticketRef').textContent = bookingRef;
+
+            // Generate simple QR placeholder
+            document.getElementById('ticketQR').innerHTML = `<svg viewBox="0 0 100 100" width="60" height="60">
+                <rect fill="#fff" width="100" height="100"/>
+                <text x="50" y="55" text-anchor="middle" font-size="8" fill="#333">${bookingRef}</text>
+            </svg>`;
+
+            // Show ticket
+            document.getElementById('ticketPreview').classList.add('show');
+            
+            showAlert(`Booking confirmed! Reference: ${bookingRef}. SMS sent to ${phone}`, 'success');
+
+            // Scroll to ticket
+            document.getElementById('ticketPreview').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('bookingAlert');
+            alertDiv.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => {
+                if (type !== 'success') alertDiv.innerHTML = '';
+            }, 5000);
+        }
+
+        // Initialize
+        updateSummary();
+    </script>
+</body>
+</html>
