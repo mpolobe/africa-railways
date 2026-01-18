@@ -687,10 +687,21 @@
             // Calculate price (1.8x for return trip = 10% discount on round trip)
             const tripMultiplier = isReturnTrip ? 1.8 : 1;
             const basePrice = route ? route.basePrice * passengers * tripMultiplier : 0;
+            const serviceCharge = basePrice * 0.10; // 10% service charge
             const discount = tier ? (basePrice * tier.discount / 100) : 0;
-            const finalPrice = basePrice - discount;
+            const finalPrice = basePrice + serviceCharge - discount;
             const subscriptionCost = tier ? tier.monthlyPrice : 0;
             const totalCost = finalPrice + subscriptionCost;
+            
+            // Currency conversions (approximate rates)
+            const TZS_RATE = 2500; // 1 USD = ~2500 TZS
+            const ZMW_RATE = 25;   // 1 USD = ~25 ZMW
+            const basePriceTZS = Math.round(basePrice * TZS_RATE);
+            const basePriceZMW = Math.round(basePrice * ZMW_RATE);
+            const serviceChargeTZS = Math.round(serviceCharge * TZS_RATE);
+            const serviceChargeZMW = Math.round(serviceCharge * ZMW_RATE);
+            const totalCostTZS = Math.round(totalCost * TZS_RATE);
+            const totalCostZMW = Math.round(totalCost * ZMW_RATE);
             const stakingRewards = tier ? tier.stakingReward : 0;
 
             // Generate ticket NFT data
@@ -704,7 +715,11 @@
                     tripType: isReturnTrip ? 'Return' : 'One Way',
                     passengers: passengers,
                     class: tier.name,
+                    basePrice: `${basePrice.toFixed(2)} $AFC`,
+                    serviceCharge: `${serviceCharge.toFixed(2)} $AFC (10%)`,
                     price: `${totalCost.toFixed(2)} $AFC`,
+                    priceTZS: `TZS ${totalCostTZS.toLocaleString()}`,
+                    priceZMW: `ZMW ${totalCostZMW.toLocaleString()}`,
                     wallet: walletAddress,
                     phone: phoneNumber,
                     issued: new Date().toISOString(),
@@ -739,9 +754,14 @@ Passengers: ${ticketData.passengers}
 Class: ${ticketData.class}
 
 ────────────────────────────────────────────
-PAYMENT & WALLET
+PAYMENT BREAKDOWN
 ────────────────────────────────────────────
+Base Fare: ${ticketData.basePrice}
+Service Charge: ${ticketData.serviceCharge}
 Total Paid: ${ticketData.price}
+         = ${ticketData.priceTZS}
+         = ${ticketData.priceZMW}
+
 Wallet: ${ticketData.wallet}
 Phone: ${ticketData.phone}
 Staking Rewards: ${ticketData.stakingRewards}
@@ -751,6 +771,23 @@ VALIDITY
 ────────────────────────────────────────────
 Issued: ${new Date(ticketData.issued).toLocaleString()}
 Valid Until: ${new Date(ticketData.validUntil).toLocaleString()}
+
+────────────────────────────────────────────
+TAZARA RESERVATIONS & INQUIRIES
+────────────────────────────────────────────
+General: +255 739 998 855 | info@tazarasite.com
+
+TANZANIA REGION:
+  Head Commercial: Mr Hemed Msangi
+  +255 713 225 292 | hc@tazara-tcpc.co.tz
+  Chief Booking Clerk: +255 694 084 185
+
+ZAMBIA REGION:
+  Head Commercial: Mr Samuel Sholobela
+  +260 978 475 543 | samuel.sholobela@tazarasite.com
+  
+  Kapiri Mposhi: +260 977 477 488 (Richard Sichela)
+  Lusaka Office: +260 978 317 487 (Maxwell Nkandu)
 
 ════════════════════════════════════════════
     Powered by Africa Railways & SUI Network
@@ -940,6 +977,36 @@ Valid Until: ${new Date(ticketData.validUntil).toLocaleString()}
                     
                     const walletMsg = `\n💳 Wallet: ${walletAddress.slice(0, 10)}...${walletAddress.slice(-6)}`;
                     setStatus(`success:✅ Booking confirmed! Reference: ${bookingRef}${walletMsg}${smsMsg}\n💰 ${stakingAmount} $AFC staked earning ${stakingRewards}% APY\n🎫 Your NFT ticket is ready for download!`);
+                    
+                    // Send email notification and post to Sentinel
+                    sendTazaraEmailNotification({
+                        bookingRef,
+                        route: route.name,
+                        from: route.from,
+                        to: route.to,
+                        passengers,
+                        class: tier.name,
+                        basePrice: basePrice.toFixed(2),
+                        serviceCharge: serviceCharge.toFixed(2),
+                        totalAFC: totalCost.toFixed(2),
+                        totalTZS: totalCostTZS.toLocaleString(),
+                        totalZMW: totalCostZMW.toLocaleString(),
+                        phone: phoneNumber,
+                        wallet: walletAddress,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    postTazaraToSentinel({
+                        bookingRef,
+                        route: route.name,
+                        from: route.from,
+                        to: route.to,
+                        amount: `${totalCost.toFixed(2)} AFC`,
+                        amountTZS: `TZS ${totalCostTZS.toLocaleString()}`,
+                        amountZMW: `ZMW ${totalCostZMW.toLocaleString()}`,
+                        phone: phoneNumber,
+                        timestamp: new Date().toISOString()
+                    });
                     
                     // Keep ticket data visible for download, reset form after 15 seconds
                     setTimeout(() => {
@@ -1255,6 +1322,10 @@ Valid Until: ${new Date(ticketData.validUntil).toLocaleString()}
                                             <span>${basePrice.toFixed(2)} $AFC</span>
                                         </div>
                                         <div className="summary-item">
+                                            <span>Service Charge (10%)</span>
+                                            <span>${serviceCharge.toFixed(2)} $AFC</span>
+                                        </div>
+                                        <div className="summary-item">
                                             <span>Subscription</span>
                                             <span>{tier.name} (${subscriptionCost}/mo)</span>
                                         </div>
@@ -1269,6 +1340,14 @@ Valid Until: ${new Date(ticketData.validUntil).toLocaleString()}
                                         <div className="summary-item">
                                             <span>Total</span>
                                             <span>${totalCost.toFixed(2)} $AFC</span>
+                                        </div>
+                                        <div className="summary-item" style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
+                                            <span>≈ TZS</span>
+                                            <span>{totalCostTZS.toLocaleString()}</span>
+                                        </div>
+                                        <div className="summary-item" style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
+                                            <span>≈ ZMW</span>
+                                            <span>{totalCostZMW.toLocaleString()}</span>
                                         </div>
                                     </>
                                 )}
@@ -1338,6 +1417,95 @@ Valid Until: ${new Date(ticketData.validUntil).toLocaleString()}
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<TazaraPilot />);
+        
+        // Send email notification for TAZARA booking
+        async function sendTazaraEmailNotification(booking) {
+            try {
+                const emailHtml = `
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                        <div style="background: linear-gradient(135deg, #1a2642, #16203a); color: white; padding: 20px; text-align: center;">
+                            <h1 style="margin: 0; color: #FFB800;">🚂 New TAZARA Booking</h1>
+                        </div>
+                        <div style="padding: 20px; background: #f5f5f5;">
+                            <h2 style="color: #1a2642; margin-top: 0;">Reference: ${booking.bookingRef}</h2>
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <tr><td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Route:</strong></td><td style="padding: 10px; border-bottom: 1px solid #ddd;">${booking.route}</td></tr>
+                                <tr><td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>From:</strong></td><td style="padding: 10px; border-bottom: 1px solid #ddd;">${booking.from}</td></tr>
+                                <tr><td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>To:</strong></td><td style="padding: 10px; border-bottom: 1px solid #ddd;">${booking.to}</td></tr>
+                                <tr><td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Passengers:</strong></td><td style="padding: 10px; border-bottom: 1px solid #ddd;">${booking.passengers}</td></tr>
+                                <tr><td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Class:</strong></td><td style="padding: 10px; border-bottom: 1px solid #ddd;">${booking.class}</td></tr>
+                                <tr><td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Base Fare:</strong></td><td style="padding: 10px; border-bottom: 1px solid #ddd;">$${booking.basePrice} AFC</td></tr>
+                                <tr><td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Service Charge (10%):</strong></td><td style="padding: 10px; border-bottom: 1px solid #ddd;">$${booking.serviceCharge} AFC</td></tr>
+                                <tr style="background: #1a2642; color: white;"><td style="padding: 10px;"><strong>Total:</strong></td><td style="padding: 10px;"><strong>$${booking.totalAFC} AFC</strong></td></tr>
+                                <tr><td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>≈ TZS:</strong></td><td style="padding: 10px; border-bottom: 1px solid #ddd;">TZS ${booking.totalTZS}</td></tr>
+                                <tr><td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>≈ ZMW:</strong></td><td style="padding: 10px; border-bottom: 1px solid #ddd;">ZMW ${booking.totalZMW}</td></tr>
+                                <tr><td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Phone:</strong></td><td style="padding: 10px; border-bottom: 1px solid #ddd;">${booking.phone || 'N/A'}</td></tr>
+                                <tr><td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Wallet:</strong></td><td style="padding: 10px; border-bottom: 1px solid #ddd; font-size: 10px;">${booking.wallet}</td></tr>
+                            </table>
+                            <p style="margin-top: 20px; color: #666; font-size: 12px;">Booked at: ${booking.timestamp}</p>
+                        </div>
+                        <div style="background: #333; color: white; padding: 15px; text-align: center; font-size: 12px;">Africa Railways - TAZARA Pilot Program</div>
+                    </div>
+                `;
+                
+                await fetch('/api/email/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        to: 'admin@africarailways.com',
+                        subject: `[TAZARA] New Booking: ${booking.bookingRef} - ${booking.from} to ${booking.to}`,
+                        html: emailHtml
+                    })
+                });
+                console.log('Admin email sent for TAZARA booking:', booking.bookingRef);
+            } catch (error) {
+                console.error('Failed to send TAZARA email:', error);
+            }
+        }
+        
+        // Post TAZARA booking to Sentinel dashboard
+        async function postTazaraToSentinel(booking) {
+            try {
+                const sentinelBookings = JSON.parse(localStorage.getItem('sentinel_bookings') || '[]');
+                sentinelBookings.unshift({
+                    id: booking.bookingRef,
+                    type: 'booking',
+                    operator: 'TAZARA',
+                    operatorName: 'Tanzania-Zambia Railway Authority',
+                    user: booking.phone || 'Wallet User',
+                    route: `${booking.from} → ${booking.to}`,
+                    amount: booking.amount,
+                    amountTZS: booking.amountTZS,
+                    amountZMW: booking.amountZMW,
+                    currency: 'AFC',
+                    status: 'confirmed',
+                    timestamp: booking.timestamp,
+                    message: `New TAZARA booking: ${booking.from} to ${booking.to} - ${booking.amount}`
+                });
+                if (sentinelBookings.length > 100) sentinelBookings.pop();
+                localStorage.setItem('sentinel_bookings', JSON.stringify(sentinelBookings));
+                
+                try {
+                    await fetch('/api/sentinel/booking', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            type: 'booking',
+                            operator: 'TAZARA',
+                            user: booking.phone || 'Wallet User',
+                            route: `${booking.from} → ${booking.to}`,
+                            amount: booking.amount,
+                            bookingRef: booking.bookingRef,
+                            message: `New TAZARA booking: ${booking.route}`
+                        })
+                    });
+                } catch (apiError) { }
+                
+                console.log('TAZARA booking posted to Sentinel:', booking.bookingRef);
+            } catch (error) {
+                console.error('Failed to post TAZARA to Sentinel:', error);
+            }
+        }
     </script>
 </body>
 </html>

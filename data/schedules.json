@@ -1,11 +1,53 @@
 {
   "metadata": {
-    "lastUpdated": "2026-01-18T16:55:00.000Z",
+    "lastUpdated": "2026-01-18T17:11:00.000Z",
     "source": "Official operator websites",
-    "totalOperators": 1,
+    "totalOperators": 2,
     "totalSchedules": 2
   },
   "operators": [
+    {
+      "id": "tazara",
+      "name": "Tanzania-Zambia Railway Authority",
+      "shortName": "TAZARA",
+      "countries": ["Tanzania", "Zambia"],
+      "currencies": ["TZS", "ZMW"],
+      "website": "https://www.tazarasite.com",
+      "contacts": {
+        "general": {
+          "phone": "+255739998855",
+          "email": "info@tazarasite.com"
+        },
+        "tanzania": {
+          "headCommercial": {
+            "name": "Mr Hemed Msangi",
+            "phone": "+255713225292",
+            "email": "hc@tazara-tcpc.co.tz"
+          },
+          "chiefBookingClerk": {
+            "name": "Mr Abdallah Shaban",
+            "phone": "+255694084185"
+          }
+        },
+        "zambia": {
+          "headCommercial": {
+            "name": "Mr Samuel Sholobela",
+            "phone": "+260978475543",
+            "email": "samuel.sholobela@tazarasite.com"
+          },
+          "kapiriMposhi": {
+            "name": "Richard Sichela",
+            "phone": "+260977477488",
+            "email": "richardsichela2@gmail.com"
+          },
+          "lusaka": {
+            "name": "Maxwell Nkandu",
+            "phone": "+260978317487",
+            "email": "nkandumaxwell77@gmail.com"
+          }
+        }
+      }
+    },
     {
       "id": "zambia_zrl",
       "name": "Zambia Railways Limited",
