@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$SENT Token Utility - Litepaper Page 3</title>
+    <meta name="description" content="$SENT token utility, governance rights, staking rewards, and value accrual mechanisms.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --navy: #0a0e1a; --gold: #FFB800; --cyan: #00D4FF; --white: #ffffff; --surface: #16203a; --green: #10b981; }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(10,14,26,0.95); border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 1.4rem; font-weight: 800; color: var(--gold); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .nav-links { display: flex; list-style: none; gap: 20px; margin: 0; }
+        .nav-links a { color: var(--white); text-decoration: none; font-size: 0.85rem; transition: 0.3s; }
+        .nav-links a:hover { color: var(--gold); }
+        .container { max-width: 1000px; margin: 0 auto; padding: 80px 20px; }
+        .page-header { text-align: center; margin-bottom: 60px; }
+        .page-header h1 { font-size: 2.5rem; color: var(--gold); margin-bottom: 10px; }
+        .page-header p { color: var(--cyan); font-size: 1.1rem; }
+        h2 { color: var(--cyan); margin-top: 60px; margin-bottom: 20px; font-size: 2rem; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        h3 { color: var(--gold); margin-top: 40px; margin-bottom: 15px; font-size: 1.5rem; }
+        p { color: #ccc; margin-bottom: 20px; line-height: 1.9; font-size: 1.05rem; }
+        ul { color: #ccc; margin-bottom: 20px; line-height: 1.8; padding-left: 30px; }
+        li { margin-bottom: 12px; }
+        .formula { background: #0d1117; padding: 20px; border-radius: 8px; font-family: 'Courier New', monospace; color: var(--gold); margin: 20px 0; font-size: 0.95rem; border: 1px solid #333; white-space: pre-wrap; }
+        .highlight { background: var(--surface); padding: 25px; border-radius: 8px; border-left: 4px solid var(--cyan); margin: 30px 0; }
+        .highlight strong { color: var(--cyan); }
+        .utility-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 30px 0; }
+        .utility-card { background: var(--surface); padding: 25px; border-radius: 12px; border: 1px solid #333; transition: 0.3s; }
+        .utility-card:hover { border-color: var(--gold); transform: translateY(-3px); }
+        .utility-card h4 { color: var(--gold); margin: 0 0 15px; display: flex; align-items: center; gap: 10px; }
+        .utility-card h4 i { color: var(--cyan); }
+        .utility-card ul { margin: 0; padding-left: 20px; }
+        .utility-card li { margin-bottom: 8px; font-size: 0.95rem; }
+        .example-box { background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(255,184,0,0.1)); padding: 30px; border-radius: 12px; border: 1px solid #333; margin: 30px 0; }
+        .example-box h4 { color: var(--gold); margin-top: 0; }
+        .example-box ul { margin-bottom: 0; }
+        .flywheel { background: var(--surface); padding: 30px; border-radius: 12px; margin: 30px 0; text-align: center; }
+        .flywheel-title { color: var(--gold); font-weight: bold; margin-bottom: 20px; font-size: 1.2rem; }
+        .flywheel-diagram { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 15px; }
+        .flywheel-step { background: #0d1117; padding: 12px 20px; border-radius: 8px; border: 2px solid var(--cyan); color: var(--white); font-weight: 500; font-size: 0.9rem; }
+        .flywheel-arrow { color: var(--gold); font-size: 1.5rem; }
+        .page-nav { display: flex; justify-content: space-between; margin-top: 60px; padding-top: 30px; border-top: 1px solid #333; }
+        .page-nav a { display: inline-flex; align-items: center; gap: 10px; padding: 15px 30px; background: var(--surface); border-radius: 8px; color: var(--cyan); text-decoration: none; transition: 0.3s; }
+        .page-nav a:hover { background: rgba(0,212,255,0.1); }
+        footer { padding: 40px 8%; border-top: 1px solid #222; background: #0a0e1a; text-align: center; color: #888; margin-top: 80px; }
+        @media (max-width: 768px) {
+            nav { flex-direction: column; gap: 15px; padding: 15px 5%; }
+            .nav-links { flex-wrap: wrap; justify-content: center; gap: 15px; }
+            .container { padding: 60px 20px; }
+            .page-header h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            .page-nav { flex-direction: column; gap: 15px; }
+            .flywheel-diagram { flex-direction: column; }
+            .flywheel-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo"><i class="fas fa-train"></i> Africa <span style="color:var(--cyan)">Railways</span></a>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/tokenomics.html">Tokenomics</a></li>
+            <li><a href="/whitepaper.html">Whitepaper</a></li>
+            <li><a href="/sent-litepaper.html" style="color:var(--gold)">$SENT Litepaper</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>$SENT Token Utility</h1>
+            <p>Litepaper - Page 3 of 4</p>
+        </div>
+
+        <h2>4. Token Utility</h2>
+
+        <div class="utility-grid">
+            <div class="utility-card">
+                <h4><i class="fas fa-vote-yea"></i> Governance Rights</h4>
+                <p style="color: #aaa; margin-bottom: 15px;">$SENT holders vote on:</p>
+                <ul>
+                    <li>Railway corridor expansions</li>
+                    <li>Fee structure changes</li>
+                    <li>Treasury management</li>
+                    <li>Partnership approvals</li>
+                    <li>Protocol upgrades</li>
+                </ul>
+                <p style="color: var(--cyan); margin: 15px 0 0; font-size: 0.9rem;"><strong>Voting Power:</strong> 1 SENT = 1 vote (linear)</p>
+            </div>
+
+            <div class="utility-card">
+                <h4><i class="fas fa-coins"></i> Operational Incentives</h4>
+                <p style="color: #aaa; margin-bottom: 15px;">Acquire operational exposure through $SENT:</p>
+                <ul>
+                    <li><strong>Platform Fees:</strong> 50% of AFC settlement fees</li>
+                    <li><strong>Treasury Yield:</strong> 1.91% APY from reserves</li>
+                    <li><strong>Expansion Rewards:</strong> Additional allocation for long-term supporters</li>
+                </ul>
+            </div>
+
+            <div class="utility-card">
+                <h4><i class="fas fa-tags"></i> Payment Discounts</h4>
+                <p style="color: #aaa; margin-bottom: 15px;">$SENT holders receive:</p>
+                <ul>
+                    <li>10% discount on railway tickets (AFC payments)</li>
+                    <li>Priority boarding and seat selection</li>
+                    <li>Access to premium lounges</li>
+                    <li>Freight shipping discounts for businesses</li>
+                </ul>
+            </div>
+
+            <div class="utility-card">
+                <h4><i class="fas fa-key"></i> Access Rights</h4>
+                <p style="color: #aaa; margin-bottom: 15px;">Holding $SENT unlocks:</p>
+                <ul>
+                    <li>Early access to new railway routes</li>
+                    <li>Exclusive partnership opportunities</li>
+                    <li>Priority customer support</li>
+                    <li>Annual stakeholder summit invitation</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="example-box">
+            <h4>Example Calculation</h4>
+            <ul>
+                <li>Hold 100M SENT (1% of supply)</li>
+                <li>Platform processes $20M monthly freight/passenger volume</li>
+                <li>2% settlement fee = $400K monthly operational revenue</li>
+                <li>50% to governance participants = $200K</li>
+                <li>Proportional allocation: 1% × $200K = <strong style="color: var(--gold);">$2,000/month</strong></li>
+                <li>Annual operational exposure: <strong style="color: var(--gold);">$24,000</strong></li>
+            </ul>
+            <p style="color: #888; font-size: 0.9rem; margin: 15px 0 0;"><em>Note: Yield adjusts based on participation rate and network expansion</em></p>
+        </div>
+
+        <h2>5. Value Accrual Mechanisms</h2>
+
+        <h3>5.1 Fee Buyback Model</h3>
+        <div class="formula">Platform Revenue
+    → 50% to Stakers (immediate)
+    → 50% to Treasury
+        → Auto-stake at 1.91% APY
+        → Quarterly buyback of $SENT from market
+        → Burn or redistribute to stakers</div>
+        <p>This creates constant buy pressure on $SENT as platform grows.</p>
+
+        <h3>5.2 Deflationary Pressure</h3>
+        <p>While total supply is fixed at 10B, effective circulating supply decreases through:</p>
+        <ul>
+            <li><strong>Long-term vesting:</strong> Community and team allocations</li>
+            <li><strong>Staking lockups:</strong> Estimated 40% of circulating supply</li>
+            <li><strong>Treasury holdings:</strong> 15% for operations</li>
+            <li><strong>Lost keys:</strong> Estimated 2-5% over time</li>
+        </ul>
+
+        <h3>5.3 Network Effects</h3>
+        <p>As more railways join the network:</p>
+        <ul>
+            <li>More passengers use AFC</li>
+            <li>More transaction fees generated</li>
+            <li>Higher staking rewards</li>
+            <li>Increased $SENT demand</li>
+            <li>Price appreciation</li>
+        </ul>
+
+        <div class="flywheel">
+            <div class="flywheel-title">Flywheel Effect</div>
+            <div class="flywheel-diagram">
+                <div class="flywheel-step">More Railways</div>
+                <span class="flywheel-arrow">→</span>
+                <div class="flywheel-step">More Passengers</div>
+                <span class="flywheel-arrow">→</span>
+                <div class="flywheel-step">More Fees</div>
+                <span class="flywheel-arrow">→</span>
+                <div class="flywheel-step">Higher Staking APY</div>
+                <span class="flywheel-arrow">→</span>
+                <div class="flywheel-step">More $SENT Demand</div>
+                <span class="flywheel-arrow">→</span>
+                <div class="flywheel-step">Higher Price</div>
+                <span class="flywheel-arrow">→</span>
+                <div class="flywheel-step">More Capital</div>
+                <span class="flywheel-arrow">↺</span>
+            </div>
+        </div>
+
+        <div class="page-nav">
+            <a href="/sent-litepaper-tokenomics.html">
+                <i class="fas fa-arrow-left"></i> Previous: Token Economics
+            </a>
+            <a href="/sent-litepaper-roadmap.html">
+                Next: Roadmap & Team <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        <p style="color:#888; margin-bottom: 20px; font-size: 0.9rem;">
+            <a href="/" style="color:#aaa; text-decoration: none; margin: 0 15px;">Home</a> |
+            <a href="/terms-of-service.html" style="color:#aaa; text-decoration: none; margin: 0 15px;">Terms of Service</a> |
+            <a href="/privacy-policy.html" style="color:#aaa; text-decoration: none; margin: 0 15px;">Privacy Policy</a> |
+            <a href="/sent-litepaper.html" style="color:var(--gold); text-decoration: none; margin: 0 15px;">$SENT Litepaper</a>
+        </p>
+        <p style="color:#888; font-size: 0.75rem;">
+            © 2026 Africa Railways. All rights reserved.
+        </p>
+    </footer>
+</body>
+</html>

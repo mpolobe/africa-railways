@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$SENT Token Economics - Litepaper Page 2</title>
+    <meta name="description" content="$SENT token economics, distribution, and PinkSale fairlaunch details.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --navy: #0a0e1a; --gold: #FFB800; --cyan: #00D4FF; --white: #ffffff; --surface: #16203a; --green: #10b981; }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(10,14,26,0.95); border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 1.4rem; font-weight: 800; color: var(--gold); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .nav-links { display: flex; list-style: none; gap: 20px; margin: 0; }
+        .nav-links a { color: var(--white); text-decoration: none; font-size: 0.85rem; transition: 0.3s; }
+        .nav-links a:hover { color: var(--gold); }
+        .container { max-width: 1000px; margin: 0 auto; padding: 80px 20px; }
+        .page-header { text-align: center; margin-bottom: 60px; }
+        .page-header h1 { font-size: 2.5rem; color: var(--gold); margin-bottom: 10px; }
+        .page-header p { color: var(--cyan); font-size: 1.1rem; }
+        h2 { color: var(--cyan); margin-top: 60px; margin-bottom: 20px; font-size: 2rem; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        h3 { color: var(--gold); margin-top: 40px; margin-bottom: 15px; font-size: 1.5rem; }
+        p { color: #ccc; margin-bottom: 20px; line-height: 1.9; font-size: 1.05rem; }
+        ul { color: #ccc; margin-bottom: 20px; line-height: 1.8; padding-left: 30px; }
+        li { margin-bottom: 12px; }
+        .formula { background: #0d1117; padding: 20px; border-radius: 8px; font-family: 'Courier New', monospace; color: var(--gold); margin: 20px 0; font-size: 0.95rem; border: 1px solid #333; white-space: pre-wrap; }
+        table { width: 100%; border-collapse: collapse; margin: 30px 0; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #333; }
+        th { background: var(--surface); color: var(--gold); font-weight: bold; }
+        td { color: #ccc; }
+        .highlight { background: var(--surface); padding: 25px; border-radius: 8px; border-left: 4px solid var(--cyan); margin: 30px 0; }
+        .highlight strong { color: var(--cyan); }
+        .warning { background: rgba(239,68,68,0.1); padding: 25px; border-radius: 8px; border-left: 4px solid #ef4444; margin: 30px 0; }
+        .warning strong { color: #ef4444; }
+        .security-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 30px 0; }
+        .security-card { background: var(--surface); padding: 20px; border-radius: 12px; border: 1px solid #333; text-align: center; }
+        .security-card i { font-size: 2rem; color: var(--green); margin-bottom: 10px; }
+        .security-card h4 { color: var(--gold); margin: 10px 0 5px; }
+        .security-card p { color: #aaa; font-size: 0.9rem; margin: 0; }
+        .cta-box { background: linear-gradient(135deg, rgba(255,184,0,0.1), rgba(0,212,255,0.1)); padding: 30px; border-radius: 12px; border: 1px solid var(--gold); text-align: center; margin: 40px 0; }
+        .cta-box a { display: inline-block; padding: 15px 30px; background: linear-gradient(135deg, var(--gold), #ff9500); color: var(--navy); border-radius: 8px; text-decoration: none; font-weight: 700; transition: 0.3s; }
+        .cta-box a:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255,184,0,0.4); }
+        .page-nav { display: flex; justify-content: space-between; margin-top: 60px; padding-top: 30px; border-top: 1px solid #333; }
+        .page-nav a { display: inline-flex; align-items: center; gap: 10px; padding: 15px 30px; background: var(--surface); border-radius: 8px; color: var(--cyan); text-decoration: none; transition: 0.3s; }
+        .page-nav a:hover { background: rgba(0,212,255,0.1); }
+        footer { padding: 40px 8%; border-top: 1px solid #222; background: #0a0e1a; text-align: center; color: #888; margin-top: 80px; }
+        @media (max-width: 768px) {
+            nav { flex-direction: column; gap: 15px; padding: 15px 5%; }
+            .nav-links { flex-wrap: wrap; justify-content: center; gap: 15px; }
+            .container { padding: 60px 20px; }
+            .page-header h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            .page-nav { flex-direction: column; gap: 15px; }
+            table { font-size: 0.85rem; }
+            th, td { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo"><i class="fas fa-train"></i> Africa <span style="color:var(--cyan)">Railways</span></a>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/tokenomics.html">Tokenomics</a></li>
+            <li><a href="/whitepaper.html">Whitepaper</a></li>
+            <li><a href="/sent-litepaper.html" style="color:var(--gold)">$SENT Litepaper</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>$SENT Token Economics</h1>
+            <p>Litepaper - Page 2 of 4</p>
+        </div>
+
+        <h2>3. Token Economics</h2>
+
+        <h3>3.1 Token Details</h3>
+        <div class="formula">Token Name:       SENTINEL
+Ticker:           $SENT
+Blockchain:       Polygon (POL)
+Token Address:    0xF379f21Af5967F26c358568Bb60408DB8B4F7fE5
+Pool Address:     0xf366e3aaCC54C99E50c90B7C57625776f88D8d08
+Standard:         ERC-20
+Total Supply:     10,000,000,000 SENT (fixed, no inflation)
+Decimals:         18</div>
+
+        <h3>3.2 Distribution</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Allocation</th>
+                    <th>Percentage</th>
+                    <th>Amount</th>
+                    <th>Purpose</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Presale (PinkSale)</strong></td>
+                    <td>30%</td>
+                    <td>3,000,000,000</td>
+                    <td>Public fairlaunch</td>
+                </tr>
+                <tr>
+                    <td><strong>Liquidity</strong></td>
+                    <td>14.5%</td>
+                    <td>1,453,500,000</td>
+                    <td>QuickSwap DEX liquidity</td>
+                </tr>
+                <tr>
+                    <td><strong>Community & Sentinels</strong></td>
+                    <td>25%</td>
+                    <td>2,500,000,000</td>
+                    <td>Track worker rewards, staking</td>
+                </tr>
+                <tr>
+                    <td><strong>Team & Advisors</strong></td>
+                    <td>10%</td>
+                    <td>1,000,000,000</td>
+                    <td>Long-term alignment</td>
+                </tr>
+                <tr>
+                    <td><strong>Treasury</strong></td>
+                    <td>15%</td>
+                    <td>1,500,000,000</td>
+                    <td>Operations, partnerships</td>
+                </tr>
+                <tr>
+                    <td><strong>Ecosystem Fund</strong></td>
+                    <td>5.5%</td>
+                    <td>546,500,000</td>
+                    <td>Grants, integrations</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>3.3 PinkSale Fairlaunch</h3>
+        <div class="formula">Sale Type:           Fairlaunch
+Access:              Whitelist Only
+Soft Cap:            255,000 POL (~$36,900 USD)
+Max Buy:             10,000 POL per wallet
+Tokens for Presale:  3,000,000,000 SENT
+Tokens for Liquidity: 1,453,500,000 SENT
+Initial Market Cap:  $123,009.56 USD
+Listing DEX:         QuickSwap
+Liquidity %:         51%
+Liquidity Lock:      720 days after pool ends</div>
+
+        <div class="cta-box">
+            <p style="color: var(--white); margin-bottom: 20px; font-size: 1.1rem;">Live PinkSale Fairlaunch</p>
+            <a href="https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08" target="_blank">
+                <i class="fas fa-external-link-alt"></i> View on PinkSale
+            </a>
+        </div>
+
+        <h3>3.4 Security Features</h3>
+        <div class="security-grid">
+            <div class="security-card">
+                <i class="fas fa-lock"></i>
+                <h4>720-Day Lock</h4>
+                <p>Nearly 2 years of locked liquidity</p>
+            </div>
+            <div class="security-card">
+                <i class="fas fa-percentage"></i>
+                <h4>51% to Liquidity</h4>
+                <p>Majority of raised funds secure the trading pool</p>
+            </div>
+            <div class="security-card">
+                <i class="fas fa-exchange-alt"></i>
+                <h4>QuickSwap Listing</h4>
+                <p>Polygon's leading DEX with deep liquidity</p>
+            </div>
+            <div class="security-card">
+                <i class="fas fa-shield-alt"></i>
+                <h4>Whitelist Protection</h4>
+                <p>Prevents bot manipulation during launch</p>
+            </div>
+        </div>
+
+        <div class="warning">
+            <p><strong>⚠️ IMPORTANT:</strong> Do NOT send POL directly to contract addresses. Only participate through the official PinkSale launchpad.</p>
+        </div>
+
+        <h3>Contract Addresses</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Contract</th>
+                    <th>Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>SENT Token</strong></td>
+                    <td><code style="color: var(--cyan);">0xF379f21Af5967F26c358568Bb60408DB8B4F7fE5</code></td>
+                </tr>
+                <tr>
+                    <td><strong>PinkSale Pool</strong></td>
+                    <td><code style="color: var(--cyan);">0xf366e3aaCC54C99E50c90B7C57625776f88D8d08</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="highlight">
+            <p><strong>Verify on PolygonScan:</strong> <a href="https://polygonscan.com/token/0xF379f21Af5967F26c358568Bb60408DB8B4F7fE5" target="_blank" style="color: var(--cyan);">View Token Contract</a></p>
+        </div>
+
+        <div class="page-nav">
+            <a href="/sent-litepaper.html">
+                <i class="fas fa-arrow-left"></i> Previous: Overview
+            </a>
+            <a href="/sent-litepaper-utility.html">
+                Next: Token Utility <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        <p style="color:#888; margin-bottom: 20px; font-size: 0.9rem;">
+            <a href="/" style="color:#aaa; text-decoration: none; margin: 0 15px;">Home</a> |
+            <a href="/terms-of-service.html" style="color:#aaa; text-decoration: none; margin: 0 15px;">Terms of Service</a> |
+            <a href="/privacy-policy.html" style="color:#aaa; text-decoration: none; margin: 0 15px;">Privacy Policy</a> |
+            <a href="/sent-litepaper.html" style="color:var(--gold); text-decoration: none; margin: 0 15px;">$SENT Litepaper</a>
+        </p>
+        <p style="color:#888; font-size: 0.75rem;">
+            © 2026 Africa Railways. All rights reserved.
+        </p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$SENT Roadmap & Team - Litepaper Page 4</title>
+    <meta name="description" content="$SENT roadmap, team, competitive analysis, risk factors, and technical architecture.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --navy: #0a0e1a; --gold: #FFB800; --cyan: #00D4FF; --white: #ffffff; --surface: #16203a; --green: #10b981; }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(10,14,26,0.95); border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 1.4rem; font-weight: 800; color: var(--gold); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .nav-links { display: flex; list-style: none; gap: 20px; margin: 0; }
+        .nav-links a { color: var(--white); text-decoration: none; font-size: 0.85rem; transition: 0.3s; }
+        .nav-links a:hover { color: var(--gold); }
+        .container { max-width: 1000px; margin: 0 auto; padding: 80px 20px; }
+        .page-header { text-align: center; margin-bottom: 60px; }
+        .page-header h1 { font-size: 2.5rem; color: var(--gold); margin-bottom: 10px; }
+        .page-header p { color: var(--cyan); font-size: 1.1rem; }
+        h2 { color: var(--cyan); margin-top: 60px; margin-bottom: 20px; font-size: 2rem; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        h3 { color: var(--gold); margin-top: 40px; margin-bottom: 15px; font-size: 1.5rem; }
+        h4 { color: var(--cyan); margin-top: 25px; margin-bottom: 10px; font-size: 1.2rem; }
+        p { color: #ccc; margin-bottom: 20px; line-height: 1.9; font-size: 1.05rem; }
+        ul { color: #ccc; margin-bottom: 20px; line-height: 1.8; padding-left: 30px; }
+        li { margin-bottom: 12px; }
+        .formula { background: #0d1117; padding: 20px; border-radius: 8px; font-family: 'Courier New', monospace; color: var(--gold); margin: 20px 0; font-size: 0.95rem; border: 1px solid #333; white-space: pre-wrap; }
+        table { width: 100%; border-collapse: collapse; margin: 30px 0; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #333; }
+        th { background: var(--surface); color: var(--gold); font-weight: bold; }
+        td { color: #ccc; }
+        .highlight { background: var(--surface); padding: 25px; border-radius: 8px; border-left: 4px solid var(--cyan); margin: 30px 0; }
+        .highlight strong { color: var(--cyan); }
+        .warning { background: rgba(239,68,68,0.1); padding: 25px; border-radius: 8px; border-left: 4px solid #ef4444; margin: 30px 0; }
+        .warning strong { color: #ef4444; }
+        .roadmap-item { background: var(--surface); padding: 25px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid var(--gold); }
+        .roadmap-item.current { border-left-color: var(--green); }
+        .roadmap-item h4 { margin-top: 0; color: var(--gold); }
+        .roadmap-item.current h4 { color: var(--green); }
+        .roadmap-item ul { margin-bottom: 0; }
+        .team-card { background: var(--surface); padding: 25px; border-radius: 12px; margin-bottom: 20px; }
+        .team-card h4 { color: var(--gold); margin-top: 0; }
+        .team-card p { margin-bottom: 10px; }
+        .team-card a { color: var(--cyan); }
+        .conclusion-box { background: linear-gradient(135deg, rgba(255,184,0,0.1), rgba(0,212,255,0.1)); padding: 40px; border-radius: 12px; border: 1px solid var(--gold); margin: 40px 0; }
+        .conclusion-box h3 { margin-top: 0; }
+        .checkmark { color: var(--green); }
+        .community-links { display: flex; flex-wrap: wrap; gap: 15px; margin: 30px 0; }
+        .community-link { display: inline-flex; align-items: center; gap: 10px; padding: 12px 20px; background: var(--surface); border-radius: 8px; color: var(--cyan); text-decoration: none; transition: 0.3s; border: 1px solid #333; }
+        .community-link:hover { border-color: var(--cyan); background: rgba(0,212,255,0.1); }
+        .page-nav { display: flex; justify-content: space-between; margin-top: 60px; padding-top: 30px; border-top: 1px solid #333; }
+        .page-nav a { display: inline-flex; align-items: center; gap: 10px; padding: 15px 30px; background: var(--surface); border-radius: 8px; color: var(--cyan); text-decoration: none; transition: 0.3s; }
+        .page-nav a:hover { background: rgba(0,212,255,0.1); }
+        .download-btn { display: inline-flex; align-items: center; gap: 10px; padding: 15px 30px; background: linear-gradient(135deg, var(--gold), #ff9500); color: var(--navy); border-radius: 8px; text-decoration: none; font-weight: 700; transition: 0.3s; }
+        .download-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255,184,0,0.4); }
+        footer { padding: 40px 8%; border-top: 1px solid #222; background: #0a0e1a; text-align: center; color: #888; margin-top: 80px; }
+        @media (max-width: 768px) {
+            nav { flex-direction: column; gap: 15px; padding: 15px 5%; }
+            .nav-links { flex-wrap: wrap; justify-content: center; gap: 15px; }
+            .container { padding: 60px 20px; }
+            .page-header h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            .page-nav { flex-direction: column; gap: 15px; }
+            table { font-size: 0.85rem; }
+            th, td { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo"><i class="fas fa-train"></i> Africa <span style="color:var(--cyan)">Railways</span></a>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/tokenomics.html">Tokenomics</a></li>
+            <li><a href="/whitepaper.html">Whitepaper</a></li>
+            <li><a href="/sent-litepaper.html" style="color:var(--gold)">$SENT Litepaper</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Roadmap, Team & Technical Details</h1>
+            <p>Litepaper - Page 4 of 4</p>
+        </div>
+
+        <h2>6. Roadmap</h2>
+
+        <div class="roadmap-item current">
+            <h4>Q1 2026 (Current)</h4>
+            <ul>
+                <li><span class="checkmark">✅</span> AFC live on TAZARA railway</li>
+                <li><span class="checkmark">✅</span> 2,000+ track workers onboarded</li>
+                <li><span class="checkmark">✅</span> zkLogin integration complete</li>
+                <li><span class="checkmark">✅</span> $SENT token deployed on Polygon</li>
+                <li>🔄 PinkSale Fairlaunch (Whitelist)</li>
+                <li>🔄 QuickSwap listing</li>
+            </ul>
+        </div>
+
+        <div class="roadmap-item">
+            <h4>Q2 2026</h4>
+            <ul>
+                <li>Tanzania Railways Corporation (TRC) integration</li>
+                <li>Kenya Railways expansion</li>
+                <li>Mobile app launch (iOS/Android)</li>
+                <li>10,000+ active users</li>
+                <li>$1M monthly transaction volume</li>
+            </ul>
+        </div>
+
+        <div class="roadmap-item">
+            <h4>Q3 2026</h4>
+            <ul>
+                <li>Mozambique CFM railway integration</li>
+                <li>Freight payment system launch</li>
+                <li>DAO governance activation</li>
+                <li>50,000+ active users</li>
+                <li>$5M monthly transaction volume</li>
+            </ul>
+        </div>
+
+        <div class="roadmap-item">
+            <h4>Q4 2026</h4>
+            <ul>
+                <li>South Africa Transnet integration</li>
+                <li>Cross-border ticketing (5 countries)</li>
+                <li>Institutional partnerships</li>
+                <li>200,000+ active users</li>
+                <li>$20M monthly transaction volume</li>
+            </ul>
+        </div>
+
+        <div class="roadmap-item">
+            <h4>2027 and Beyond</h4>
+            <ul>
+                <li>10+ African countries integrated</li>
+                <li>1M+ active users</li>
+                <li>$100M+ monthly transaction volume</li>
+                <li>Continental railway pass system</li>
+                <li>Expansion to bus and ferry networks</li>
+            </ul>
+        </div>
+
+        <h2>7. Team</h2>
+
+        <div class="team-card">
+            <h4>Benjamin Mpolokoso - Founder & CEO</h4>
+            <ul>
+                <li>Dual-discipline expert: Electrical Engineering degree with postgraduate focus on IT systems for African infrastructure</li>
+                <li>25 years IT implementation experience across African railway operations</li>
+                <li>Blockchain protocol developer (Sui Move, Ethereum, Polygon)</li>
+                <li>Zambian native with institutional relationships across TAZARA, ZRL, and SADC transport authorities</li>
+                <li>Public figure with verified LinkedIn and Twitter</li>
+            </ul>
+            <p><a href="https://github.com/mpolobe" target="_blank"><i class="fab fa-github"></i> github.com/mpolobe</a></p>
+        </div>
+
+        <div class="team-card">
+            <h4>Advisory Board</h4>
+            <ul>
+                <li><strong>TAZARA Veterans:</strong> Railway operations and safety expertise</li>
+                <li><strong>Sui Foundation:</strong> Blockchain technical guidance</li>
+                <li><strong>African Infrastructure Experts:</strong> Regional expansion strategy</li>
+            </ul>
+        </div>
+
+        <div class="team-card">
+            <h4>Development Team</h4>
+            <ul>
+                <li>5 full-time blockchain developers</li>
+                <li>3 mobile app developers</li>
+                <li>2 railway operations specialists</li>
+                <li>4 community managers</li>
+            </ul>
+        </div>
+
+        <h2>8. Competitive Analysis</h2>
+
+        <h3>vs. Traditional Railway Stocks</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>$SENT</th>
+                    <th>Railway Stocks</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Liquidity</td><td>24/7 trading</td><td>Limited hours</td></tr>
+                <tr><td>Min Investment</td><td>~$50</td><td>$10,000+</td></tr>
+                <tr><td>Geographic Exposure</td><td>54 countries</td><td>Single country</td></tr>
+                <tr><td>Governance Rights</td><td>Direct voting</td><td>Shareholder meetings</td></tr>
+                <tr><td>Yield</td><td>Performance-based</td><td>2-4% dividends</td></tr>
+            </tbody>
+        </table>
+
+        <h3>vs. Other Crypto Infrastructure Projects</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>$SENT</th>
+                    <th>Competitors</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Working Product</td><td><span class="checkmark">✅</span> Live on TAZARA</td><td>❌ Most are vaporware</td></tr>
+                <tr><td>Real Revenue</td><td><span class="checkmark">✅</span> Transaction fees</td><td>❌ Token speculation only</td></tr>
+                <tr><td>Public Team</td><td><span class="checkmark">✅</span> Verified founder</td><td>❌ Often anonymous</td></tr>
+                <tr><td>Real-World Impact</td><td><span class="checkmark">✅</span> Solving actual problem</td><td>❌ Speculative use cases</td></tr>
+                <tr><td>Liquidity Security</td><td><span class="checkmark">✅</span> 720-day lock</td><td>⚠️ Often unlocked</td></tr>
+            </tbody>
+        </table>
+
+        <h2>9. Risk Factors</h2>
+
+        <h3>9.1 Market Risks</h3>
+        <ul>
+            <li>Cryptocurrency market volatility</li>
+            <li>Regulatory changes in African countries</li>
+            <li>Competition from traditional payment systems</li>
+            <li>Polygon blockchain technical issues</li>
+        </ul>
+
+        <h3>9.2 Operational Risks</h3>
+        <ul>
+            <li>Railway partnership delays</li>
+            <li>Slower-than-expected user adoption</li>
+            <li>Currency fluctuations affecting AFC peg</li>
+            <li>Technical bugs or security vulnerabilities</li>
+        </ul>
+
+        <h3>9.3 Mitigation Strategies</h3>
+        <ul>
+            <li>Diversified railway partnerships (not dependent on single operator)</li>
+            <li>Conservative financial projections</li>
+            <li>Regular security audits</li>
+            <li>Strong legal and compliance framework</li>
+            <li>Transparent communication with community</li>
+            <li>720-day liquidity lock prevents rug pulls</li>
+        </ul>
+
+        <div class="warning">
+            <p><strong>Disclaimer:</strong> $SENT is a high-risk investment. Only invest what you can afford to lose. Past performance does not guarantee future results.</p>
+        </div>
+
+        <h2>10. How to Participate</h2>
+
+        <h3>Step 1: Prepare Your Wallet</h3>
+        <ol>
+            <li>Install MetaMask or compatible EVM wallet</li>
+            <li>Add Polygon network to your wallet</li>
+            <li>Fund with POL tokens (available on major exchanges)</li>
+            <li>Ensure you have extra POL for gas fees</li>
+        </ol>
+
+        <h3>Step 2: Get Whitelisted</h3>
+        <ul>
+            <li>Join Telegram: <a href="https://t.me/AfricoinCommunity" target="_blank">@AfricoinCommunity</a></li>
+            <li>Follow whitelist requirements announced in the community</li>
+            <li>Complete any required verification</li>
+        </ul>
+
+        <h3>Step 3: Participate in PinkSale Fairlaunch</h3>
+        <ol>
+            <li>Visit: <a href="https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08" target="_blank">PinkSale Fairlaunch Page</a></li>
+            <li>Connect your Polygon wallet</li>
+            <li>Enter contribution amount (max 10,000 POL)</li>
+            <li>Confirm transaction</li>
+            <li>Wait for sale to finalize</li>
+        </ol>
+
+        <h3>Step 4: Claim and Trade</h3>
+        <ul>
+            <li>After sale finalizes, claim your SENT tokens from PinkSale</li>
+            <li>Tokens will be tradeable on QuickSwap</li>
+            <li>Liquidity locked for 720 days</li>
+        </ul>
+
+        <h2>11. Community and Support</h2>
+
+        <div class="community-links">
+            <a href="https://www.africarailways.com" target="_blank" class="community-link">
+                <i class="fas fa-globe"></i> Website
+            </a>
+            <a href="https://twitter.com/AfricaRailways" target="_blank" class="community-link">
+                <i class="fab fa-twitter"></i> Twitter
+            </a>
+            <a href="https://t.me/AfricoinCommunity" target="_blank" class="community-link">
+                <i class="fab fa-telegram"></i> Telegram
+            </a>
+            <a href="https://github.com/mpolobe/africa-railways" target="_blank" class="community-link">
+                <i class="fab fa-github"></i> GitHub
+            </a>
+            <a href="mailto:admin@africarailways.com" class="community-link">
+                <i class="fas fa-envelope"></i> Email
+            </a>
+        </div>
+
+        <h2>Appendix A: Technical Architecture</h2>
+
+        <h3>Blockchain: Polygon Network</h3>
+        <div class="formula">Consensus:              Proof of Stake
+Finality:               ~2 seconds
+Smart Contract Language: Solidity
+Wallet Integration:     MetaMask, WalletConnect</div>
+
+        <h3>AFC Settlement Layer: Sui Network</h3>
+        <div class="formula">Consensus:              Narwhal-Bullshark (866 TPS)
+Finality:               Sub-second
+Smart Contract Language: Move
+Wallet Integration:     zkLogin (Google/Apple ID)</div>
+
+        <h3>Security</h3>
+        <ul>
+            <li>Regular audits by third-party firms</li>
+            <li>Bug bounty program</li>
+            <li>Multi-sig treasury management</li>
+            <li>720-day liquidity lock on QuickSwap</li>
+        </ul>
+
+        <h2>Appendix B: Glossary</h2>
+        <table>
+            <tbody>
+                <tr><td><strong>AFC (Africoin)</strong></td><td>Stablecoin for railway ticket payments (Sui network)</td></tr>
+                <tr><td><strong>APY</strong></td><td>Annual Percentage Yield</td></tr>
+                <tr><td><strong>DEX</strong></td><td>Decentralized Exchange</td></tr>
+                <tr><td><strong>Fairlaunch</strong></td><td>Token sale where price is determined by total contributions</td></tr>
+                <tr><td><strong>POL</strong></td><td>Polygon native token (formerly MATIC)</td></tr>
+                <tr><td><strong>QuickSwap</strong></td><td>Leading DEX on Polygon network</td></tr>
+                <tr><td><strong>TGE</strong></td><td>Token Generation Event</td></tr>
+                <tr><td><strong>zkLogin</strong></td><td>Zero-knowledge login (use Google/Apple ID without exposing private keys)</td></tr>
+            </tbody>
+        </table>
+
+        <div class="conclusion-box">
+            <h3>Conclusion</h3>
+            <p>$SENT represents a unique opportunity to participate in Africa's railway digital transformation. Unlike speculative projects, Africa Railways has:</p>
+            <ul>
+                <li><span class="checkmark">✅</span> <strong>Working product</strong> (AFC live on TAZARA)</li>
+                <li><span class="checkmark">✅</span> <strong>Real traction</strong> (2,000+ users)</li>
+                <li><span class="checkmark">✅</span> <strong>Clear revenue model</strong> (transaction fees)</li>
+                <li><span class="checkmark">✅</span> <strong>Massive market</strong> (54 countries, 200M passengers)</li>
+                <li><span class="checkmark">✅</span> <strong>Public team</strong> (verified founder)</li>
+                <li><span class="checkmark">✅</span> <strong>Security features</strong> (720-day liquidity lock, 51% to liquidity)</li>
+            </ul>
+            <p style="margin-top: 20px;"><strong>This is not just a token launch. This is an investment in Africa's infrastructure future.</strong></p>
+        </div>
+
+        <div style="text-align: center; margin: 40px 0;">
+            <a href="/docs/SENT_Litepaper.pdf" class="download-btn" download>
+                <i class="fas fa-download"></i> Download Full PDF
+            </a>
+        </div>
+
+        <p style="text-align: center; color: #888; font-size: 0.9rem;">
+            <strong>Document Version:</strong> 2.0 | <strong>Last Updated:</strong> January 17, 2026 | <strong>Contact:</strong> admin@africarailways.com
+        </p>
+
+        <div class="page-nav">
+            <a href="/sent-litepaper-utility.html">
+                <i class="fas fa-arrow-left"></i> Previous: Token Utility
+            </a>
+            <a href="/sent-litepaper.html">
+                <i class="fas fa-home"></i> Back to Overview
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        <p style="color:#888; margin-bottom: 20px; font-size: 0.9rem;">
+            <a href="/" style="color:#aaa; text-decoration: none; margin: 0 15px;">Home</a> |
+            <a href="/terms-of-service.html" style="color:#aaa; text-decoration: none; margin: 0 15px;">Terms of Service</a> |
+            <a href="/privacy-policy.html" style="color:#aaa; text-decoration: none; margin: 0 15px;">Privacy Policy</a> |
+            <a href="/sent-litepaper.html" style="color:var(--gold); text-decoration: none; margin: 0 15px;">$SENT Litepaper</a>
+        </p>
+        <p style="color:#888; font-size: 0.75rem;">
+            © 2026 Africa Railways. All rights reserved.
+        </p>
+    </footer>
+</body>
+</html>
