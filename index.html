@@ -29,6 +29,41 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --navy: #0a0e1a; --gold: #FFB800; --cyan: #00D4FF; --white: #ffffff; --surface: #16203a; }
+        
+        /* IDO Launch Scroller */
+        .ido-scroller {
+            background: linear-gradient(90deg, #8b5cf6, #ec4899, var(--gold), #8b5cf6);
+            background-size: 300% 100%;
+            animation: gradientShift 8s ease infinite;
+            padding: 12px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .ido-scroller-content {
+            display: flex;
+            animation: scrollLeft 30s linear infinite;
+            white-space: nowrap;
+        }
+        @keyframes scrollLeft {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .ido-scroller-item {
+            display: inline-flex;
+            align-items: center;
+            padding: 0 40px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--navy);
+            text-shadow: 0 1px 2px rgba(255,255,255,0.3);
+        }
+        .ido-scroller:hover .ido-scroller-content {
+            animation-play-state: paused;
+        }
         html { scroll-behavior: smooth; }
         body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; }
         nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 2%; background: rgba(10,14,26,0.95); border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
@@ -551,6 +586,22 @@
             <p style="text-align: center; color: #64748b; font-size: 0.8rem; margin-top: 20px;">
                 🔒 Secured by SUI blockchain
             </p>
+        </div>
+    </div>
+
+    <!-- IDO Launch Announcement Scroller -->
+    <div class="ido-scroller">
+        <div class="ido-scroller-content">
+            <span class="ido-scroller-item">🚀 SENT IDO LIVE ON PINKSALE</span>
+            <span class="ido-scroller-item">📅 January 19 - February 2, 2026</span>
+            <span class="ido-scroller-item">⏰ <span id="ido-countdown-days">--</span>d <span id="ido-countdown-hours">--</span>h <span id="ido-countdown-mins">--</span>m <span id="ido-countdown-secs">--</span>s</span>
+            <span class="ido-scroller-item">💎 $0.00005 per SENT</span>
+            <span class="ido-scroller-item">🔗 <a href="https://www.pinksale.finance" target="_blank" style="color: var(--gold); text-decoration: underline;">Join on PinkSale</a></span>
+            <span class="ido-scroller-item">🚀 SENT IDO LIVE ON PINKSALE</span>
+            <span class="ido-scroller-item">📅 January 19 - February 2, 2026</span>
+            <span class="ido-scroller-item">⏰ <span id="ido-countdown-days2">--</span>d <span id="ido-countdown-hours2">--</span>h <span id="ido-countdown-mins2">--</span>m <span id="ido-countdown-secs2">--</span>s</span>
+            <span class="ido-scroller-item">💎 $0.00005 per SENT</span>
+            <span class="ido-scroller-item">🔗 <a href="https://www.pinksale.finance" target="_blank" style="color: var(--gold); text-decoration: underline;">Join on PinkSale</a></span>
         </div>
     </div>
 
@@ -1770,5 +1821,46 @@
             
             closeZkLoginModal();
         }
+    </script>
+    
+    <!-- IDO Countdown Timer Script -->
+    <script>
+        (function() {
+            const idoEndDate = new Date('2026-02-02T23:59:59Z').getTime();
+            
+            function updateIdoCountdown() {
+                const now = new Date().getTime();
+                const distance = idoEndDate - now;
+                
+                if (distance < 0) {
+                    document.querySelectorAll('[id^="ido-countdown"]').forEach(el => {
+                        el.textContent = '00';
+                    });
+                    return;
+                }
+                
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const secs = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                const pad = n => String(n).padStart(2, '0');
+                
+                ['', '2'].forEach(suffix => {
+                    const daysEl = document.getElementById('ido-countdown-days' + suffix);
+                    const hoursEl = document.getElementById('ido-countdown-hours' + suffix);
+                    const minsEl = document.getElementById('ido-countdown-mins' + suffix);
+                    const secsEl = document.getElementById('ido-countdown-secs' + suffix);
+                    
+                    if (daysEl) daysEl.textContent = pad(days);
+                    if (hoursEl) hoursEl.textContent = pad(hours);
+                    if (minsEl) minsEl.textContent = pad(mins);
+                    if (secsEl) secsEl.textContent = pad(secs);
+                });
+            }
+            
+            updateIdoCountdown();
+            setInterval(updateIdoCountdown, 1000);
+        })();
     </script>
 </body></html>
