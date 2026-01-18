@@ -1,0 +1,147 @@
+{
+  "metadata": {
+    "lastUpdated": "2026-01-18T16:55:00.000Z",
+    "source": "Official operator websites",
+    "totalOperators": 1,
+    "totalSchedules": 2
+  },
+  "operators": [
+    {
+      "id": "zambia_zrl",
+      "name": "Zambia Railways Limited",
+      "shortName": "ZRL",
+      "country": "Zambia",
+      "currency": "ZMW",
+      "website": "https://www.zrl.com.zm",
+      "contacts": {
+        "passenger": {
+          "centralReservations": ["0765237196", "0765410568"],
+          "lusaka": "0765418357",
+          "kabwe": "0765422105"
+        },
+        "freight": {
+          "businessDevelopment": {
+            "email": "business-dev@zrl.com.zm",
+            "phones": ["+260950000121", "+260977799778"]
+          },
+          "salesCommercial": {
+            "email": "sales-com@zrl.com.zm",
+            "phones": ["+260968195077", "+260765191869"]
+          }
+        }
+      }
+    }
+  ],
+  "schedules": [
+    {
+      "id": "zrl-kitwe-livingstone",
+      "operator": "zambia_zrl",
+      "operatorName": "Zambia Railways Limited",
+      "routeName": "Kitwe - Livingstone Express",
+      "direction": "southbound",
+      "departureDay": "Friday",
+      "arrivalDay": "Sunday",
+      "frequency": "weekly",
+      "source": "https://zrl.com.zm/passengers/",
+      "stops": [
+        {
+          "station": "Kitwe",
+          "stationCode": "KTW",
+          "arrival": null,
+          "departure": "16:00",
+          "dayOffset": 0
+        },
+        {
+          "station": "Ndola",
+          "stationCode": "NDL",
+          "arrival": "18:25",
+          "departure": "18:55",
+          "dayOffset": 0
+        },
+        {
+          "station": "Kabwe",
+          "stationCode": "KBW",
+          "arrival": "02:15",
+          "departure": "02:55",
+          "dayOffset": 1
+        },
+        {
+          "station": "Lusaka",
+          "stationCode": "LSK",
+          "arrival": "06:56",
+          "departure": "07:36",
+          "dayOffset": 1
+        },
+        {
+          "station": "Choma",
+          "stationCode": "CHM",
+          "arrival": "18:04",
+          "departure": "18:34",
+          "dayOffset": 1
+        },
+        {
+          "station": "Livingstone",
+          "stationCode": "LVS",
+          "arrival": "02:00",
+          "departure": null,
+          "dayOffset": 2
+        }
+      ]
+    },
+    {
+      "id": "zrl-livingstone-kitwe",
+      "operator": "zambia_zrl",
+      "operatorName": "Zambia Railways Limited",
+      "routeName": "Livingstone - Kitwe Express",
+      "direction": "northbound",
+      "departureDay": "Monday",
+      "arrivalDay": "Wednesday",
+      "frequency": "weekly",
+      "source": "https://zrl.com.zm/passengers/",
+      "stops": [
+        {
+          "station": "Livingstone",
+          "stationCode": "LVS",
+          "arrival": null,
+          "departure": "20:00",
+          "dayOffset": 0
+        },
+        {
+          "station": "Choma",
+          "stationCode": "CHM",
+          "arrival": "03:15",
+          "departure": "03:45",
+          "dayOffset": 1
+        },
+        {
+          "station": "Lusaka",
+          "stationCode": "LSK",
+          "arrival": "14:24",
+          "departure": "15:24",
+          "dayOffset": 1
+        },
+        {
+          "station": "Kabwe",
+          "stationCode": "KBW",
+          "arrival": "19:16",
+          "departure": "19:46",
+          "dayOffset": 1
+        },
+        {
+          "station": "Ndola",
+          "stationCode": "NDL",
+          "arrival": "02:56",
+          "departure": "03:36",
+          "dayOffset": 2
+        },
+        {
+          "station": "Kitwe",
+          "stationCode": "KTW",
+          "arrival": "06:00",
+          "departure": null,
+          "dayOffset": 2
+        }
+      ]
+    }
+  ]
+}

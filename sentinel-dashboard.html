@@ -2245,9 +2245,107 @@
             }, 350);
         }
 
+        // Load bookings from localStorage (from ZRL and other booking pages)
+        function loadStoredBookings() {
+            try {
+                const storedBookings = JSON.parse(localStorage.getItem('sentinel_bookings') || '[]');
+                let newBookingsCount = 0;
+                
+                storedBookings.slice(0, 10).forEach((booking, index) => {
+                    // Only show bookings from last 24 hours
+                    const bookingTime = new Date(booking.timestamp);
+                    const hoursSince = (Date.now() - bookingTime.getTime()) / (1000 * 60 * 60);
+                    
+                    if (hoursSince < 24) {
+                        setTimeout(() => {
+                            addActivity({
+                                type: 'booking',
+                                user: booking.user || 'Customer',
+                                content: booking.message || `New booking: ${booking.route}`,
+                                timestamp: bookingTime,
+                                stats: {
+                                    route: booking.route,
+                                    amount: booking.amount,
+                                    operator: booking.operator || 'ZRL'
+                                }
+                            });
+                        }, index * 200);
+                        newBookingsCount++;
+                    }
+                });
+                
+                // Update bookings count
+                if (newBookingsCount > 0) {
+                    stats.bookings = newBookingsCount;
+                    document.getElementById('total-bookings').textContent = stats.bookings;
+                }
+                
+                console.log(`Loaded ${newBookingsCount} recent bookings from storage`);
+            } catch (error) {
+                console.error('Error loading stored bookings:', error);
+            }
+        }
+        
+        // Listen for new bookings from other tabs/pages
+        window.addEventListener('storage', (event) => {
+            if (event.key === 'sentinel_bookings') {
+                try {
+                    const bookings = JSON.parse(event.newValue || '[]');
+                    if (bookings.length > 0) {
+                        const latestBooking = bookings[0];
+                        addActivity({
+                            type: 'booking',
+                            user: latestBooking.user || 'Customer',
+                            content: latestBooking.message || `New booking: ${latestBooking.route}`,
+                            timestamp: new Date(latestBooking.timestamp),
+                            stats: {
+                                route: latestBooking.route,
+                                amount: latestBooking.amount,
+                                operator: latestBooking.operator || 'ZRL'
+                            }
+                        });
+                        updateStats('bookings', 1);
+                        
+                        // Show notification
+                        showToast(`New ${latestBooking.operatorName || 'ZRL'} Booking: ${latestBooking.route}`, 'success');
+                    }
+                } catch (error) {
+                    console.error('Error processing new booking:', error);
+                }
+            }
+        });
+        
+        // Toast notification helper
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#00d084' : type === 'error' ? '#f02849' : '#1877f2'};
+                color: white;
+                padding: 15px 25px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+                font-weight: 500;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             initializeSentinels();
+            
+            // Load stored bookings first
+            loadStoredBookings();
             
             // Generate initial activities
             for (let i = 0; i < 5; i++) {
@@ -2271,6 +2369,9 @@
             
             // Update notification count
             updateNotificationCount();
+            
+            // Periodically check for new bookings
+            setInterval(loadStoredBookings, 60000);
             
             // Update sentinel statuses periodically (simulate status changes)
             setInterval(() => {

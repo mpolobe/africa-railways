@@ -494,8 +494,8 @@
                             <span id="summaryBase">K 150</span>
                         </div>
                         <div class="summary-item">
-                            <span>Service Fee</span>
-                            <span>K 15</span>
+                            <span>Service Charge (10%)</span>
+                            <span id="summaryService">K 15</span>
                         </div>
                         <div class="summary-item total">
                             <span>Total</span>
@@ -548,6 +548,44 @@
                         <div>
                             <div style="color: #94a3b8;">Booking Ref</div>
                             <div id="ticketRef">ZRL-XXXXXX</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pricing on Ticket -->
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #444; font-size: 0.9rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="color: #94a3b8;">Base Fare</span>
+                            <span id="ticketBaseFare">K 150</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="color: #94a3b8;">Service Charge (10%)</span>
+                            <span id="ticketServiceCharge">K 15</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-weight: 700; color: var(--zrl-green); font-size: 1.1rem; padding-top: 8px; border-top: 1px solid #444;">
+                            <span>Total Paid</span>
+                            <span id="ticketTotal">K 165</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Contact Numbers - Only shown after booking -->
+                    <div id="contactInfo" style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed #444;">
+                        <div style="color: var(--zrl-green); font-weight: 600; margin-bottom: 10px;">
+                            <i class="bi bi-telephone"></i> ZRL Reservations & Inquiries
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.85rem;">
+                            <div>
+                                <div style="color: #94a3b8;">Central Reservations</div>
+                                <div><a href="tel:+260765237196" style="color: var(--cyan);">0765 237 196</a></div>
+                                <div><a href="tel:+260765410568" style="color: var(--cyan);">0765 410 568</a></div>
+                            </div>
+                            <div>
+                                <div style="color: #94a3b8;">Lusaka Station</div>
+                                <div><a href="tel:+260765418357" style="color: var(--cyan);">0765 418 357</a></div>
+                            </div>
+                            <div>
+                                <div style="color: #94a3b8;">Kabwe Station</div>
+                                <div><a href="tel:+260765422105" style="color: var(--cyan);">0765 422 105</a></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -642,12 +680,13 @@
             // Update passengers
             document.getElementById('summaryPassengers').textContent = passengers;
 
-            // Calculate total
+            // Calculate total with 10% service charge
             const basePrice = prices[selectedClass] * passengers;
-            const serviceFee = 15 * passengers;
-            const total = basePrice + serviceFee;
+            const serviceCharge = Math.round(basePrice * 0.10);
+            const total = basePrice + serviceCharge;
 
             document.getElementById('summaryBase').textContent = `K ${basePrice.toLocaleString()}`;
+            document.getElementById('summaryService').textContent = `K ${serviceCharge.toLocaleString()}`;
             document.getElementById('summaryTotal').textContent = `K ${total.toLocaleString()}`;
         }
 
@@ -672,6 +711,12 @@
             // Simulate booking
             const bookingRef = 'ZRL-' + Math.random().toString(36).substring(2, 8).toUpperCase();
             
+            // Calculate pricing for ticket
+            const numPassengers = parseInt(passengers);
+            const basePrice = prices[selectedClass] * numPassengers;
+            const serviceCharge = Math.round(basePrice * 0.10);
+            const total = basePrice + serviceCharge;
+            
             // Update ticket preview
             document.getElementById('ticketFrom').textContent = stationCodes[from]?.code || from.toUpperCase().substring(0, 3);
             document.getElementById('ticketFromName').textContent = stationCodes[from]?.name || from;
@@ -682,6 +727,11 @@
             });
             document.getElementById('ticketClass').textContent = selectedClass.charAt(0).toUpperCase() + selectedClass.slice(1);
             document.getElementById('ticketPassengers').textContent = passengers;
+            
+            // Update pricing on ticket
+            document.getElementById('ticketBaseFare').textContent = `K ${basePrice.toLocaleString()}`;
+            document.getElementById('ticketServiceCharge').textContent = `K ${serviceCharge.toLocaleString()}`;
+            document.getElementById('ticketTotal').textContent = `K ${total.toLocaleString()}`;
             document.getElementById('ticketRef').textContent = bookingRef;
 
             // Generate simple QR placeholder
@@ -697,6 +747,152 @@
 
             // Scroll to ticket
             document.getElementById('ticketPreview').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Prepare booking data for notifications
+            const bookingData = {
+                bookingRef,
+                from: stationCodes[from]?.name || from,
+                to: stationCodes[to]?.name || to,
+                date: new Date(date).toLocaleDateString('en-ZM', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }),
+                passengers: numPassengers,
+                class: selectedClass.charAt(0).toUpperCase() + selectedClass.slice(1),
+                phone,
+                basePrice,
+                serviceCharge,
+                total,
+                currency: 'ZMW',
+                timestamp: new Date().toISOString()
+            };
+            
+            // Send email notification to admin
+            sendAdminEmailNotification(bookingData);
+            
+            // Post to Sentinel dashboard
+            postToSentinelDashboard(bookingData);
+        }
+        
+        // Send email notification to admin
+        async function sendAdminEmailNotification(booking) {
+            try {
+                const emailHtml = `
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                        <div style="background: #006B3F; color: white; padding: 20px; text-align: center;">
+                            <h1 style="margin: 0;">🚂 New ZRL Ticket Booking</h1>
+                        </div>
+                        <div style="padding: 20px; background: #f5f5f5;">
+                            <h2 style="color: #006B3F; margin-top: 0;">Booking Reference: ${booking.bookingRef}</h2>
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <tr>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Route:</strong></td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${booking.from} → ${booking.to}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Travel Date:</strong></td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${booking.date}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Passengers:</strong></td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${booking.passengers}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Class:</strong></td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${booking.class}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Customer Phone:</strong></td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${booking.phone}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Base Fare:</strong></td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">K ${booking.basePrice.toLocaleString()}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Service Charge (10%):</strong></td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">K ${booking.serviceCharge.toLocaleString()}</td>
+                                </tr>
+                                <tr style="background: #006B3F; color: white;">
+                                    <td style="padding: 10px;"><strong>Total Paid:</strong></td>
+                                    <td style="padding: 10px;"><strong>K ${booking.total.toLocaleString()}</strong></td>
+                                </tr>
+                            </table>
+                            <p style="margin-top: 20px; color: #666; font-size: 12px;">
+                                Booked at: ${booking.timestamp}
+                            </p>
+                        </div>
+                        <div style="background: #333; color: white; padding: 15px; text-align: center; font-size: 12px;">
+                            Africa Railways - Zambia Railways Limited Partner
+                        </div>
+                    </div>
+                `;
+                
+                await fetch('/api/email/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        to: 'admin@africarailways.com',
+                        subject: `[ZRL] New Booking: ${booking.bookingRef} - ${booking.from} to ${booking.to}`,
+                        html: emailHtml
+                    })
+                });
+                console.log('Admin email notification sent for booking:', booking.bookingRef);
+            } catch (error) {
+                console.error('Failed to send admin email:', error);
+            }
+        }
+        
+        // Post booking to Sentinel dashboard
+        async function postToSentinelDashboard(booking) {
+            try {
+                // Store in localStorage for Sentinel dashboard to pick up
+                const sentinelBookings = JSON.parse(localStorage.getItem('sentinel_bookings') || '[]');
+                sentinelBookings.unshift({
+                    id: booking.bookingRef,
+                    type: 'booking',
+                    operator: 'ZRL',
+                    operatorName: 'Zambia Railways Limited',
+                    user: booking.phone,
+                    route: `${booking.from} → ${booking.to}`,
+                    date: booking.date,
+                    passengers: booking.passengers,
+                    class: booking.class,
+                    amount: `K ${booking.total.toLocaleString()}`,
+                    amountRaw: booking.total,
+                    currency: 'ZMW',
+                    status: 'confirmed',
+                    timestamp: booking.timestamp,
+                    message: `New ZRL booking: ${booking.from} to ${booking.to} - K ${booking.total.toLocaleString()}`
+                });
+                // Keep only last 100 bookings
+                if (sentinelBookings.length > 100) sentinelBookings.pop();
+                localStorage.setItem('sentinel_bookings', JSON.stringify(sentinelBookings));
+                
+                // Also try to post to API if available
+                try {
+                    await fetch('/api/sentinel/booking', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            type: 'booking',
+                            operator: 'ZRL',
+                            user: booking.phone,
+                            route: `${booking.from} → ${booking.to}`,
+                            amount: booking.total,
+                            currency: 'ZMW',
+                            bookingRef: booking.bookingRef,
+                            message: `New ZRL booking: ${booking.from} to ${booking.to}`
+                        })
+                    });
+                } catch (apiError) {
+                    // API might not be available, localStorage backup is sufficient
+                }
+                
+                // Dispatch custom event for any open Sentinel dashboard tabs
+                window.dispatchEvent(new CustomEvent('newBooking', { detail: booking }));
+                
+                console.log('Booking posted to Sentinel dashboard:', booking.bookingRef);
+            } catch (error) {
+                console.error('Failed to post to Sentinel dashboard:', error);
+            }
         }
 
         function showAlert(message, type) {

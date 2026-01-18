@@ -225,8 +225,31 @@
                     </table>
                     <div class="manifest-footer">
                         <p>This is an official cargo manifest. Present at origin station for loading.</p>
-                        <p>ZRL Cargo Services | +260 211 123456 | cargo@zrl.com.zm</p>
                     </div>
+                    
+                    <!-- Freight Contact Info - Only shown after booking -->
+                    <div id="freightContactInfo" style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #006B3F;">
+                        <h4 style="color: #006B3F; margin: 0 0 15px 0;"><i class="bi bi-telephone"></i> ZRL Freight Inquiries</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div>
+                                <div style="font-weight: 600; color: #333; margin-bottom: 5px;">Business Development</div>
+                                <div style="color: #666; font-size: 0.9rem;">
+                                    <div><i class="bi bi-envelope"></i> <a href="mailto:business-dev@zrl.com.zm" style="color: #006B3F;">business-dev@zrl.com.zm</a></div>
+                                    <div><i class="bi bi-phone"></i> <a href="tel:+260950000121" style="color: #006B3F;">+260 950 000 121</a></div>
+                                    <div><i class="bi bi-phone"></i> <a href="tel:+260977799778" style="color: #006B3F;">+260 977 799 778</a></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; color: #333; margin-bottom: 5px;">Sales & Commercial</div>
+                                <div style="color: #666; font-size: 0.9rem;">
+                                    <div><i class="bi bi-envelope"></i> <a href="mailto:sales-com@zrl.com.zm" style="color: #006B3F;">sales-com@zrl.com.zm</a></div>
+                                    <div><i class="bi bi-phone"></i> <a href="tel:+260968195077" style="color: #006B3F;">+260 968 195 077</a></div>
+                                    <div><i class="bi bi-phone"></i> <a href="tel:+260765191869" style="color: #006B3F;">+260 765 191 869</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <button class="btn-download" onclick="downloadManifest()"><i class="bi bi-download me-2"></i>Download Manifest (PDF)</button>
                 </div>
             </div>
@@ -305,6 +328,110 @@
             document.getElementById('manifestPreview').classList.add('show');
             document.getElementById('bookingAlert').innerHTML = `<div class="alert alert-success">Booking confirmed! Waybill: ${waybill}</div>`;
             document.getElementById('manifestPreview').scrollIntoView({ behavior: 'smooth' });
+            
+            // Prepare booking data for notifications
+            const bookingData = {
+                waybill,
+                type: 'freight',
+                cargoType: document.getElementById('sumType').textContent,
+                from: stations[origin],
+                to: stations[dest],
+                shipper,
+                weight: document.getElementById('sumWeight').textContent,
+                total,
+                date: document.getElementById('shipDate').value,
+                phone: document.getElementById('shipperPhone')?.value || '',
+                timestamp: new Date().toISOString()
+            };
+            
+            // Send email notification to admin
+            sendFreightEmailNotification(bookingData);
+            
+            // Post to Sentinel dashboard
+            postFreightToSentinel(bookingData);
+        }
+        
+        // Send email notification for freight booking
+        async function sendFreightEmailNotification(booking) {
+            try {
+                const emailHtml = `
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                        <div style="background: #006B3F; color: white; padding: 20px; text-align: center;">
+                            <h1 style="margin: 0;">📦 New ZRL Freight Booking</h1>
+                        </div>
+                        <div style="padding: 20px; background: #f5f5f5;">
+                            <h2 style="color: #006B3F; margin-top: 0;">Waybill: ${booking.waybill}</h2>
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <tr><td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Cargo Type:</strong></td><td style="padding: 10px; border-bottom: 1px solid #ddd;">${booking.cargoType}</td></tr>
+                                <tr><td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Route:</strong></td><td style="padding: 10px; border-bottom: 1px solid #ddd;">${booking.from} → ${booking.to}</td></tr>
+                                <tr><td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Shipper:</strong></td><td style="padding: 10px; border-bottom: 1px solid #ddd;">${booking.shipper}</td></tr>
+                                <tr><td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Weight/Units:</strong></td><td style="padding: 10px; border-bottom: 1px solid #ddd;">${booking.weight}</td></tr>
+                                <tr><td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Ship Date:</strong></td><td style="padding: 10px; border-bottom: 1px solid #ddd;">${booking.date}</td></tr>
+                                <tr style="background: #006B3F; color: white;"><td style="padding: 10px;"><strong>Total:</strong></td><td style="padding: 10px;"><strong>${booking.total}</strong></td></tr>
+                            </table>
+                            <p style="margin-top: 20px; color: #666; font-size: 12px;">Booked at: ${booking.timestamp}</p>
+                        </div>
+                        <div style="background: #333; color: white; padding: 15px; text-align: center; font-size: 12px;">Africa Railways - ZRL Cargo Services</div>
+                    </div>
+                `;
+                
+                await fetch('/api/email/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        to: 'admin@africarailways.com',
+                        subject: `[ZRL Freight] New Booking: ${booking.waybill} - ${booking.from} to ${booking.to}`,
+                        html: emailHtml
+                    })
+                });
+                console.log('Admin email sent for freight booking:', booking.waybill);
+            } catch (error) {
+                console.error('Failed to send freight email:', error);
+            }
+        }
+        
+        // Post freight booking to Sentinel dashboard
+        async function postFreightToSentinel(booking) {
+            try {
+                const sentinelBookings = JSON.parse(localStorage.getItem('sentinel_bookings') || '[]');
+                sentinelBookings.unshift({
+                    id: booking.waybill,
+                    type: 'freight',
+                    operator: 'ZRL',
+                    operatorName: 'Zambia Railways Limited',
+                    user: booking.shipper,
+                    route: `${booking.from} → ${booking.to}`,
+                    cargoType: booking.cargoType,
+                    weight: booking.weight,
+                    amount: booking.total,
+                    currency: 'ZMW',
+                    status: 'confirmed',
+                    timestamp: booking.timestamp,
+                    message: `New ZRL freight: ${booking.cargoType} - ${booking.from} to ${booking.to} - ${booking.total}`
+                });
+                if (sentinelBookings.length > 100) sentinelBookings.pop();
+                localStorage.setItem('sentinel_bookings', JSON.stringify(sentinelBookings));
+                
+                try {
+                    await fetch('/api/sentinel/booking', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            type: 'freight',
+                            operator: 'ZRL',
+                            user: booking.shipper,
+                            route: `${booking.from} → ${booking.to}`,
+                            amount: booking.total,
+                            bookingRef: booking.waybill,
+                            message: `New ZRL freight booking: ${booking.cargoType}`
+                        })
+                    });
+                } catch (apiError) { }
+                
+                console.log('Freight booking posted to Sentinel:', booking.waybill);
+            } catch (error) {
+                console.error('Failed to post freight to Sentinel:', error);
+            }
         }
 
         function downloadManifest() {
