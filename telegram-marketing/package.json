@@ -8,9 +8,9 @@
     "login": "node index.js"
   },
   "dependencies": {
-    "telegram": "^2.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.22.1",
     "input": "^1.0.1",
-    "express": "^4.18.2",
-    "cors": "^2.8.5"
+    "telegram": "^2.19.0"
   }
 }

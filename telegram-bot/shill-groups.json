@@ -1,0 +1,24 @@
+{
+  "groups": [
+    {"name": "PinkSale Official", "username": "PinkSale", "type": "public"},
+    {"name": "Crypto Moonshots", "username": "cryptomoonshotss", "type": "public"},
+    {"name": "Polygon Official", "username": "polygonofficial", "type": "public"},
+    {"name": "DeFi Million", "username": "DeFiMillion", "type": "public"},
+    {"name": "Gem Hunters", "username": "GemHuntersTG", "type": "public"},
+    {"name": "BSC Gems", "username": "BSCGemss", "type": "public"},
+    {"name": "Crypto Calls", "username": "CryptoCallss", "type": "public"},
+    {"name": "100x Gems", "username": "The100xGems", "type": "public"},
+    {"name": "Wallstreet Bets Crypto", "username": "WallStreetBetsCrypto", "type": "public"},
+    {"name": "Uniswap Gems", "username": "UniswapGemss", "type": "public"},
+    {"name": "DeFi Degen", "username": "defidegenn", "type": "public"},
+    {"name": "Crypto Pump Club", "username": "CryptoPumpClubb", "type": "public"},
+    {"name": "Altcoin Buzz", "username": "altaboracle_io", "type": "public"},
+    {"name": "Crypto News", "username": "CryptoNewsss", "type": "public"},
+    {"name": "IDO Alerts", "username": "IDOAlerts", "type": "public"},
+    {"name": "Presale Gems", "username": "PresaleGemss", "type": "public"},
+    {"name": "Polygon Gems", "username": "PolygonGemss", "type": "public"},
+    {"name": "MATIC Traders", "username": "MATICTraders", "type": "public"},
+    {"name": "Crypto Signals", "username": "CryptoSignalss", "type": "public"},
+    {"name": "Token Launches", "username": "TokenLaunches", "type": "public"}
+  ]
+}

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Marketing</title>
+    <style>
+        :root { --bg: #0a0e1a; --surface: #141b2d; --gold: #f4b41a; --cyan: #00d4ff; --text: #e0e0e0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        h1 { color: var(--gold); margin-bottom: 20px; }
+        .card { background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 15px; border: 1px solid #333; }
+        h2 { color: var(--cyan); margin-bottom: 15px; font-size: 1rem; }
+        input, textarea { width: 100%; padding: 12px; background: #0a0e1a; border: 1px solid #333; border-radius: 8px; color: #fff; margin-bottom: 10px; }
+        textarea { height: 120px; }
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin: 5px 5px 5px 0; }
+        .btn-gold { background: var(--gold); color: #000; }
+        .btn-dark { background: #333; color: #fff; }
+        .status { padding: 10px; border-radius: 8px; margin-top: 10px; }
+        .success { background: rgba(0,255,0,0.1); border: 1px solid #0f0; }
+        .error { background: rgba(255,0,0,0.1); border: 1px solid #f00; }
+        .hidden { display: none; }
+        .list { max-height: 200px; overflow-y: auto; }
+        .item { padding: 8px; background: #0a0e1a; margin: 5px 0; border-radius: 5px; display: flex; align-items: center; gap: 10px; }
+        .item input { width: auto; margin: 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Telegram Marketing</h1>
+        
+        <div class="card" id="loginCard">
+            <h2>Step 1: Login</h2>
+            <input type="tel" id="phone" value="+18782069446" placeholder="Phone">
+            <button class="btn btn-gold" onclick="sendCode()">Send Code</button>
+            <div id="otpSection" class="hidden">
+                <input type="text" id="otp" placeholder="Enter OTP code">
+                <button class="btn btn-gold" onclick="verify()">Verify</button>
+            </div>
+            <div id="loginStatus" class="status hidden"></div>
+        </div>
+        
+        <div class="card hidden" id="postCard">
+            <h2>Step 2: Post Message</h2>
+            <button class="btn btn-dark" onclick="loadGroups()">Load Groups</button>
+            <button class="btn btn-dark" onclick="loadContacts()">Load Contacts</button>
+            <div class="list" id="list"></div>
+            <textarea id="msg">🚀 SENT IDO LIVE ON PINKSALE!
+
+Sentinel ($SENT) - Africa Railways
+💰 $0.00005 per SENT
+🔒 730-day liquidity lock
+
+👉 https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08</textarea>
+            <button class="btn btn-gold" onclick="sendAll()">Send to Selected</button>
+            <div id="results"></div>
+        </div>
+    </div>
+    <script>
+        const API = '';
+        let selected = [];
+        
+        async function sendCode() {
+            const phone = document.getElementById('phone').value;
+            const res = await fetch(API + '/api/send-code', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ phone })
+            });
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById('otpSection').classList.remove('hidden');
+                showStatus('loginStatus', 'Code sent!', 'success');
+            } else {
+                showStatus('loginStatus', data.error, 'error');
+            }
+        }
+        
+        async function verify() {
+            const code = document.getElementById('otp').value;
+            const res = await fetch(API + '/api/verify-code', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ code })
+            });
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById('loginCard').classList.add('hidden');
+                document.getElementById('postCard').classList.remove('hidden');
+            } else {
+                showStatus('loginStatus', data.error, 'error');
+            }
+        }
+        
+        async function loadGroups() {
+            const res = await fetch(API + '/api/groups');
+            const data = await res.json();
+            if (data.success) renderList(data.groups, 'title');
+        }
+        
+        async function loadContacts() {
+            const res = await fetch(API + '/api/contacts');
+            const data = await res.json();
+            if (data.success) renderList(data.contacts, 'firstName');
+        }
+        
+        function renderList(items, nameKey) {
+            const el = document.getElementById('list');
+            el.innerHTML = items.map(i => `
+                <div class="item">
+                    <input type="checkbox" value="${i.id}" onchange="toggle('${i.id}')">
+                    <span>${i[nameKey]}</span>
+                </div>
+            `).join('');
+        }
+        
+        function toggle(id) {
+            if (selected.includes(id)) selected = selected.filter(x => x !== id);
+            else selected.push(id);
+        }
+        
+        async function sendAll() {
+            const msg = document.getElementById('msg').value;
+            const res = await fetch(API + '/api/mass-send', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ chatIds: selected, message: msg })
+            });
+            const data = await res.json();
+            document.getElementById('results').innerHTML = data.results.map(r => 
+                `<div class="${r.success ? 'success' : 'error'}">${r.success ? '✅' : '❌'} ${r.chatId}</div>`
+            ).join('');
+        }
+        
+        function showStatus(id, msg, type) {
+            const el = document.getElementById(id);
+            el.textContent = msg;
+            el.className = 'status ' + type;
+            el.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

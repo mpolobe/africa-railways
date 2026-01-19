@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Marketing - Africa Railways</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --bg: #0a0e1a; --surface: #141b2d; --gold: #f4b41a; --cyan: #00d4ff; --text: #e0e0e0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        h1 { color: var(--gold); margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .subtitle { color: #888; margin-bottom: 30px; }
+        .card { background: var(--surface); border-radius: 15px; padding: 25px; margin-bottom: 20px; border: 1px solid #333; }
+        .card h2 { color: var(--cyan); margin-bottom: 15px; font-size: 1.1rem; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 8px; color: #aaa; font-size: 0.9rem; }
+        input, textarea { width: 100%; padding: 12px; background: #0a0e1a; border: 1px solid #333; border-radius: 8px; color: var(--text); font-size: 1rem; }
+        input:focus, textarea:focus { outline: none; border-color: var(--cyan); }
+        textarea { min-height: 150px; font-family: inherit; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin: 5px 5px 5px 0; transition: all 0.3s; }
+        .btn-gold { background: var(--gold); color: #000; }
+        .btn-gold:hover { background: #d4a017; }
+        .btn-cyan { background: var(--cyan); color: #000; }
+        .btn-dark { background: #333; color: #fff; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .status { padding: 12px; border-radius: 8px; margin-top: 15px; display: none; }
+        .status.show { display: block; }
+        .status.success { background: rgba(0,255,100,0.1); border: 1px solid #0f0; color: #0f0; }
+        .status.error { background: rgba(255,0,0,0.1); border: 1px solid #f00; color: #f00; }
+        .status.info { background: rgba(0,212,255,0.1); border: 1px solid var(--cyan); color: var(--cyan); }
+        .step { display: none; }
+        .step.active { display: block; }
+        .step-indicator { display: flex; gap: 10px; margin-bottom: 20px; }
+        .step-dot { width: 30px; height: 30px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .step-dot.active { background: var(--gold); color: #000; }
+        .step-dot.done { background: #0f0; color: #000; }
+        .groups-list { max-height: 300px; overflow-y: auto; margin: 15px 0; }
+        .group-item { display: flex; align-items: center; gap: 10px; padding: 10px; background: #0a0e1a; border-radius: 8px; margin-bottom: 8px; }
+        .group-item input { width: auto; }
+        .group-item label { margin: 0; flex: 1; cursor: pointer; }
+        .results { margin-top: 15px; }
+        .result-item { padding: 8px 12px; border-radius: 5px; margin: 5px 0; font-size: 0.9rem; }
+        .result-item.success { background: rgba(0,255,0,0.1); }
+        .result-item.error { background: rgba(255,0,0,0.1); }
+        .back-link { color: var(--cyan); text-decoration: none; display: inline-block; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="sentinel-dashboard.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        
+        <h1><i class="fab fa-telegram"></i> Telegram Marketing</h1>
+        <p class="subtitle">Post IDO announcements to multiple groups</p>
+
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <div class="step-dot active" id="dot1">1</div>
+            <div class="step-dot" id="dot2">2</div>
+            <div class="step-dot" id="dot3">3</div>
+        </div>
+
+        <!-- Step 1: Phone Number -->
+        <div class="card step active" id="step1">
+            <h2><i class="fas fa-phone"></i> Step 1: Enter Phone Number</h2>
+            <div class="form-group">
+                <label>Your Telegram Phone Number</label>
+                <input type="tel" id="phone" value="+18782069446" placeholder="+1234567890">
+            </div>
+            <button class="btn btn-gold" onclick="sendCode()">
+                <i class="fas fa-paper-plane"></i> Send Login Code
+            </button>
+            <div class="status" id="status1"></div>
+        </div>
+
+        <!-- Step 2: Enter OTP -->
+        <div class="card step" id="step2">
+            <h2><i class="fas fa-key"></i> Step 2: Enter OTP Code</h2>
+            <p style="color:#888; margin-bottom:15px;">Check your Telegram app for the login code</p>
+            <div class="form-group">
+                <label>Enter the 5-digit code</label>
+                <input type="text" id="otp" placeholder="12345" maxlength="5" style="font-size:1.5rem; text-align:center; letter-spacing:10px;">
+            </div>
+            <button class="btn btn-gold" onclick="verifyCode()">
+                <i class="fas fa-check"></i> Verify Code
+            </button>
+            <button class="btn btn-dark" onclick="goToStep(1)">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <div class="status" id="status2"></div>
+        </div>
+
+        <!-- Step 3: Post to Groups -->
+        <div class="card step" id="step3">
+            <h2><i class="fas fa-users"></i> Step 3: Select Groups & Post</h2>
+            <p style="color:#888; margin-bottom:15px;" id="welcomeMsg">Logged in!</p>
+            
+            <button class="btn btn-cyan" onclick="loadGroups()">
+                <i class="fas fa-sync"></i> Load My Groups
+            </button>
+            
+            <div class="groups-list" id="groupsList"></div>
+            
+            <div class="form-group">
+                <label>Message to Post</label>
+                <textarea id="message">🚀 SENT IDO IS LIVE ON PINKSALE!
+
+🛤️ Sentinel ($SENT) - Africa Railways Investment Token
+
+📊 Token Details:
+• Price: $0.00005 per SENT
+• Tokens for Presale: 3,000,000,000 SENT
+• SoftCap: 255,000 MATIC
+• Network: Polygon
+
+⏰ Sale Period: January 19 - January 26, 2026
+
+🔒 730-day liquidity lock
+
+👉 https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08
+
+#SENT #AfricaRailways #IDO #PinkSale #Polygon</textarea>
+            </div>
+            
+            <button class="btn btn-gold" onclick="massPost()" id="postBtn">
+                <i class="fas fa-bullhorn"></i> Post to Selected Groups
+            </button>
+            
+            <div class="results" id="results"></div>
+            <div class="status" id="status3"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_ID = 32685049;
+        const API_HASH = 'ecad5118160ed8989eba07da66faf0c1';
+        const BOT_TOKEN = '8524648377:AAFN2HGhkpkEWcuQGf7N1gpEPtItaLN2bJk';
+        
+        let selectedGroups = [];
+        
+        // For now, use the Bot API which is simpler
+        // The full MTProto API requires a backend server
+        
+        function goToStep(step) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.step-dot').forEach(d => d.classList.remove('active', 'done'));
+            
+            document.getElementById('step' + step).classList.add('active');
+            document.getElementById('dot' + step).classList.add('active');
+            
+            for (let i = 1; i < step; i++) {
+                document.getElementById('dot' + i).classList.add('done');
+            }
+        }
+        
+        function showStatus(stepNum, message, type) {
+            const el = document.getElementById('status' + stepNum);
+            el.textContent = message;
+            el.className = 'status show ' + type;
+        }
+        
+        async function sendCode() {
+            const phone = document.getElementById('phone').value;
+            showStatus(1, 'This feature requires a backend server. For now, use the bot directly.', 'info');
+            
+            // Skip to step 3 since we're using bot API
+            setTimeout(() => {
+                goToStep(3);
+                document.getElementById('welcomeMsg').textContent = 'Using Bot API - Ready to post!';
+            }, 1500);
+        }
+        
+        async function verifyCode() {
+            const otp = document.getElementById('otp').value;
+            showStatus(2, 'Verifying...', 'info');
+            
+            // This would verify with MTProto API
+            setTimeout(() => {
+                goToStep(3);
+            }, 1000);
+        }
+        
+        async function loadGroups() {
+            showStatus(3, 'Loading groups where bot is admin...', 'info');
+            
+            // Get bot's chats via getUpdates
+            try {
+                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates`);
+                const data = await res.json();
+                
+                // For now, show the known group
+                const groups = [
+                    { id: '@afrcsentinel', title: 'SentinelOfficial' }
+                ];
+                
+                const container = document.getElementById('groupsList');
+                container.innerHTML = groups.map(g => `
+                    <div class="group-item">
+                        <input type="checkbox" id="grp_${g.id}" value="${g.id}" onchange="toggleGroup('${g.id}')" checked>
+                        <label for="grp_${g.id}">${g.title}</label>
+                    </div>
+                `).join('');
+                
+                selectedGroups = groups.map(g => g.id);
+                showStatus(3, `Found ${groups.length} group(s). Add bot as admin to more groups to post there.`, 'success');
+            } catch (e) {
+                showStatus(3, 'Error: ' + e.message, 'error');
+            }
+        }
+        
+        function toggleGroup(id) {
+            if (selectedGroups.includes(id)) {
+                selectedGroups = selectedGroups.filter(g => g !== id);
+            } else {
+                selectedGroups.push(id);
+            }
+        }
+        
+        async function massPost() {
+            if (selectedGroups.length === 0) {
+                showStatus(3, 'Select at least one group', 'error');
+                return;
+            }
+            
+            const message = document.getElementById('message').value;
+            const btn = document.getElementById('postBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Posting...';
+            
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '';
+            
+            for (const groupId of selectedGroups) {
+                try {
+                    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            chat_id: groupId,
+                            text: message,
+                            parse_mode: 'HTML'
+                        })
+                    });
+                    const data = await res.json();
+                    
+                    if (data.ok) {
+                        resultsContainer.innerHTML += `<div class="result-item success">✅ Posted to ${groupId}</div>`;
+                    } else {
+                        resultsContainer.innerHTML += `<div class="result-item error">❌ ${groupId}: ${data.description}</div>`;
+                    }
+                } catch (e) {
+                    resultsContainer.innerHTML += `<div class="result-item error">❌ ${groupId}: ${e.message}</div>`;
+                }
+                
+                // Delay between posts
+                await new Promise(r => setTimeout(r, 2000));
+            }
+            
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-bullhorn"></i> Post to Selected Groups';
+            showStatus(3, 'Done!', 'success');
+        }
+        
+        // Auto-load groups on step 3
+        document.getElementById('step3').addEventListener('transitionend', loadGroups);
+    </script>
+</body>
+</html>
