@@ -43,6 +43,8 @@ The Go backend serves as the central data processing layer:
 | File | Purpose |
 |------|---------|
 | `main.go` | WebSocket server for real-time dashboard updates |
+| `telemetry/engine.go` | **GPS Ingest Engine** - Real-time locomotive telemetry processing |
+| `telemetry/api.go` | **Telemetry API** - HTTP/WebSocket endpoints for GPS data |
 | `sentinel_api.go` | Sentinel worker alert and report endpoints |
 | `bookings_api.go` | Ticket booking and validation |
 | `stations_api.go` | Station data and schedules |
@@ -51,6 +53,53 @@ The Go backend serves as the central data processing layer:
 | `wallet_keys.go` | Secure wallet key management |
 | `sms_service.go` | SMS/WhatsApp OTP delivery |
 | `whatsapp_otp.go` | WhatsApp Business API integration |
+
+### GPS Telemetry Ingest Engine (`/backend/telemetry`)
+
+The telemetry package provides real-time GPS processing for locomotives and track workers:
+
+```go
+// TelemetryMessage - Incoming GPS data from locomotives
+type TelemetryMessage struct {
+    DeviceID    string    `json:"device_id"`
+    DeviceType  string    `json:"device_type"` // "locomotive", "worker", "sensor"
+    TrainID     string    `json:"train_id"`
+    Latitude    float64   `json:"latitude"`
+    Longitude   float64   `json:"longitude"`
+    Speed       float64   `json:"speed"`       // km/h
+    Heading     float64   `json:"heading"`     // degrees from north
+    Status      string    `json:"status"`      // "moving", "stopped", "idle"
+    Timestamp   time.Time `json:"timestamp"`
+}
+
+// TrainPosition - Current train state with ETA calculation
+type TrainPosition struct {
+    TrainID      string    `json:"train_id"`
+    Latitude     float64   `json:"latitude"`
+    Longitude    float64   `json:"longitude"`
+    Speed        float64   `json:"speed"`
+    NextStation  string    `json:"next_station"`
+    ETA          time.Time `json:"eta"`
+    DelayMinutes int       `json:"delay_minutes"`
+}
+```
+
+**Telemetry API Endpoints:**
+```
+POST /api/v1/telemetry           - Ingest GPS data from locomotive
+GET  /api/v1/telemetry/positions - Get all current train positions
+GET  /api/v1/telemetry/positions/{trainID} - Get specific train position
+GET  /api/v1/telemetry/routes    - Get all railway routes
+GET  /api/v1/telemetry/stations  - Get all stations with coordinates
+WS   /api/v1/telemetry/ws        - Real-time position updates via WebSocket
+```
+
+**Features:**
+- Sub-second latency for GPS updates
+- Haversine distance calculation for ETA
+- WebSocket streaming to OCC dashboard
+- Pre-loaded TAZARA and ZRL route/station data
+- API key authentication for locomotive devices
 
 ### API Endpoints
 
