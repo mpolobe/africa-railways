@@ -1,0 +1,134 @@
+name: Hourly Telegram Posts
+
+on:
+  schedule:
+    # Run every hour
+    - cron: '0 * * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  post-to-telegram:
+    runs-on: ubuntu-latest
+    
+    # Only run until IDO ends (January 26, 2026 14:00 UTC)
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule') }}
+    
+    steps:
+      - name: Check if IDO has ended
+        id: check-ido
+        run: |
+          IDO_END="2026-01-26T14:00:00Z"
+          NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          if [[ "$NOW" > "$IDO_END" ]]; then
+            echo "IDO has ended, skipping post"
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "IDO is still active"
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Calculate which message to send
+        if: steps.check-ido.outputs.skip != 'true'
+        id: message
+        run: |
+          # Get current hour (0-23)
+          HOUR=$(date -u +"%H")
+          
+          # We have 8 different messages, rotate through them
+          MESSAGE_INDEX=$((HOUR % 8))
+          
+          echo "Hour: $HOUR, Message Index: $MESSAGE_INDEX"
+          echo "index=$MESSAGE_INDEX" >> $GITHUB_OUTPUT
+
+      - name: Send Message 0 - IDO Live
+        if: steps.check-ido.outputs.skip != 'true' && steps.message.outputs.index == '0'
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "chat_id": "@afrcsentinel",
+              "text": "🚀 *SENT IDO IS LIVE ON PINKSALE!*\n\n🛤️ Sentinel ($SENT) - Africa Railways Investment Token\n\n💰 Price: $0.00005 per SENT\n🔒 730-day liquidity lock\n⛓️ Network: Polygon\n\n⏰ Ends: January 26, 2026 14:00 UTC\n\n👉 https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08\n\n#SENT #PinkSale #IDO #Polygon",
+              "parse_mode": "Markdown"
+            }'
+
+      - name: Send Message 1 - Countdown
+        if: steps.check-ido.outputs.skip != 'true' && steps.message.outputs.index == '1'
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "chat_id": "@afrcsentinel",
+              "text": "⏰ *IDO COUNTDOWN REMINDER*\n\n🚀 SENT IDO is LIVE on PinkSale!\n\n📅 *Ends:* January 26, 2026 at 14:00 UTC\n\n💰 *Price:* $0.00005 per SENT\n🔒 *Security:* 730-day liquidity lock\n⛓️ *Network:* Polygon (MATIC)\n\nDont miss your chance to invest in Africas railway future!\n\n👉 https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08\n\n#SENT #IDO #PinkSale",
+              "parse_mode": "Markdown"
+            }'
+
+      - name: Send Message 2 - Token Difference
+        if: steps.check-ido.outputs.skip != 'true' && steps.message.outputs.index == '2'
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "chat_id": "@afrcsentinel",
+              "text": "🔄 *AFC vs AFRC vs SENT - Whats the Difference?*\n\n*AFC (Africoin)*\n🎫 The ticketing token\n• Used for buying train tickets\n• Runs on Sui blockchain\n\n*AFRC (Africa Railways Coin)*\n🏛️ The ecosystem token\n• Represents the Africa Railways brand\n\n*SENT (Sentinel)*\n💎 The investment token\n• Powers railway infrastructure\n• Runs 2,000+ signaling nodes\n• Currently in IDO on PinkSale\n\nThree tokens, one mission: Connecting Africa by rail! 🚂\n\n👉 https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08",
+              "parse_mode": "Markdown"
+            }'
+
+      - name: Send Message 3 - Why Invest
+        if: steps.check-ido.outputs.skip != 'true' && steps.message.outputs.index == '3'
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "chat_id": "@afrcsentinel",
+              "text": "💎 *WHY INVEST IN SENTINEL ($SENT)?*\n\n✅ *Real Infrastructure* - Backing African High Speed Railways\n✅ *Utility* - Powers 2,000+ signaling worker nodes\n✅ *Security* - 730-day liquidity lock\n✅ *Governance* - Network decision-making rights\n\nThis isnt just crypto - its infrastructure investment.\n\n👉 https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08\n\n#SENT #RWA #Infrastructure",
+              "parse_mode": "Markdown"
+            }'
+
+      - name: Send Message 4 - How to Buy
+        if: steps.check-ido.outputs.skip != 'true' && steps.message.outputs.index == '4'
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "chat_id": "@afrcsentinel",
+              "text": "📖 *HOW TO BUY SENT - Step by Step*\n\n1️⃣ Get MetaMask or Trust Wallet\n2️⃣ Add Polygon network\n3️⃣ Buy MATIC from an exchange\n4️⃣ Send MATIC to your wallet\n5️⃣ Go to PinkSale link below\n6️⃣ Connect wallet & contribute\n\n👉 https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08\n\n💬 Need help? Ask in this group!",
+              "parse_mode": "Markdown"
+            }'
+
+      - name: Send Message 5 - Tokenomics
+        if: steps.check-ido.outputs.skip != 'true' && steps.message.outputs.index == '5'
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "chat_id": "@afrcsentinel",
+              "text": "📊 *SENT TOKENOMICS*\n\n*Total Supply:* 10,000,000,000 SENT\n\n*Distribution:*\n🟡 45% - Community & Sentinels\n🟢 20% - Public Sale (IDO)\n🔵 20% - Ecosystem Fund\n🟣 8% - Core Tech Staff\n🟠 5% - Strategic Partners\n⚪ 2% - Reserve\n\n*IDO Details:*\n• Price: $0.00005\n• SoftCap: 255,000 MATIC\n• Liquidity Lock: 730 days\n\n👉 https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08",
+              "parse_mode": "Markdown"
+            }'
+
+      - name: Send Message 6 - Roadmap
+        if: steps.check-ido.outputs.skip != 'true' && steps.message.outputs.index == '6'
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "chat_id": "@afrcsentinel",
+              "text": "🗺️ *AFRICA RAILWAYS ROADMAP*\n\n*Q1 2026*\n✅ SENT Token IDO\n⬜ DEX listing\n⬜ CoinGecko listing\n\n*Q2 2026*\n⬜ Sentinel node network launch\n⬜ 500 signaling nodes deployed\n⬜ Staking platform\n\n*Q3 2026*\n⬜ African rail partnerships\n⬜ 2,000 nodes operational\n⬜ Governance DAO\n\n*Q4 2026*\n⬜ Pan-African integration\n⬜ Major exchange listings\n\n🚂 Building the future of African transportation!\n\n👉 https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08",
+              "parse_mode": "Markdown"
+            }'
+
+      - name: Send Message 7 - FAQ
+        if: steps.check-ido.outputs.skip != 'true' && steps.message.outputs.index == '7'
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "chat_id": "@afrcsentinel",
+              "text": "❓ *QUICK FAQ*\n\n*What is SENT?*\nThe investment token for Africa Railways infrastructure.\n\n*Price?*\n$0.00005 per SENT\n\n*Network?*\nPolygon (need MATIC to participate)\n\n*When does IDO end?*\nJanuary 26, 2026 at 14:00 UTC\n\n*Is liquidity locked?*\nYes! 730 days (2 years)\n\n*Contract:*\n`0xF379f21Af5967F26c358568Bb60408DB8B4F7fE5`\n\n👉 https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08",
+              "parse_mode": "Markdown"
+            }'
+
+      - name: Log completion
+        if: steps.check-ido.outputs.skip != 'true'
+        run: |
+          echo "✅ Posted message ${{ steps.message.outputs.index }} at $(date -u)"
