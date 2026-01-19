@@ -205,14 +205,15 @@ polygonAmoy: {
 - Ensure compiler settings match (Solidity 0.8.20, optimizer enabled, viaIR: true)
 - Check constructor arguments are correct
 
-## Contract Addresses (Update After Deployment)
+## Contract Addresses (Deployed January 19, 2026)
 
 | Contract | Address | PolygonScan |
 |----------|---------|-------------|
 | SENT Token | `0xF379f21Af5967F26c358568Bb60408DB8B4F7fE5` | [View](https://polygonscan.com/token/0xF379f21Af5967F26c358568Bb60408DB8B4F7fE5) |
-| SENTStaking | `TBD` | TBD |
-| SENTGovernance | `TBD` | TBD |
-| SENTVesting | `TBD` | TBD |
+| SENTStaking | `0x70A3Ebf1423EF6a9020EcC3e0A00c76cB1CF8883` | [View](https://polygonscan.com/address/0x70A3Ebf1423EF6a9020EcC3e0A00c76cB1CF8883) |
+| SENTGovernance | `0x2803C2b4F291F6288984720A6481f03C2018DC1F` | [View](https://polygonscan.com/address/0x2803C2b4F291F6288984720A6481f03C2018DC1F) |
+| SENTVesting | `0xA49cabC015C8Fe058bD0EB91DeBBA0A1F37532FD` | [View](https://polygonscan.com/address/0xA49cabC015C8Fe058bD0EB91DeBBA0A1F37532FD) |
+| PinkSale Pool | `0xf366e3aaCC54C99E50c90B7C57625776f88D8d08` | [View](https://polygonscan.com/address/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08) |
 | Treasury (Gnosis Safe) | `TBD` | TBD |
 
 ---

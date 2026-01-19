@@ -13,12 +13,13 @@
 
 ## Contract Addresses
 
-| Contract | Address | Verified |
-|----------|---------|----------|
-| SENT Token | `0xF379f21Af5967F26c358568Bb60408DB8B4F7fE5` | [PolygonScan](https://polygonscan.com/token/0xF379f21Af5967F26c358568Bb60408DB8B4F7fE5) |
-| Staking | TBD (deploy before launch) | - |
-| Governance | TBD (deploy before launch) | - |
-| Vesting | TBD (deploy before launch) | - |
+| Contract | Address | PolygonScan |
+|----------|---------|-------------|
+| SENT Token | `0xF379f21Af5967F26c358568Bb60408DB8B4F7fE5` | [View](https://polygonscan.com/token/0xF379f21Af5967F26c358568Bb60408DB8B4F7fE5) |
+| SENTStaking | `0x70A3Ebf1423EF6a9020EcC3e0A00c76cB1CF8883` | [View](https://polygonscan.com/address/0x70A3Ebf1423EF6a9020EcC3e0A00c76cB1CF8883) |
+| SENTGovernance | `0x2803C2b4F291F6288984720A6481f03C2018DC1F` | [View](https://polygonscan.com/address/0x2803C2b4F291F6288984720A6481f03C2018DC1F) |
+| SENTVesting | `0xA49cabC015C8Fe058bD0EB91DeBBA0A1F37532FD` | [View](https://polygonscan.com/address/0xA49cabC015C8Fe058bD0EB91DeBBA0A1F37532FD) |
+| PinkSale Pool | `0xf366e3aaCC54C99E50c90B7C57625776f88D8d08` | [View](https://polygonscan.com/address/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08) |
 
 ## Token Distribution
 
