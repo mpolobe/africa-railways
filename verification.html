@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification & Due Diligence - Africa Railways</title>
+    <meta name="description" content="Verify Africa Railways project claims, team credentials, smart contracts, and partnerships. Complete due diligence documentation.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --navy: #0a0e1a; --gold: #FFB800; --cyan: #00D4FF; --white: #ffffff; --surface: #16203a; --green: #10b981; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--navy); color: var(--white); line-height: 1.8; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: rgba(10,14,26,0.95); border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 1.2rem; font-weight: 800; color: var(--gold); text-decoration: none; }
+        .nav-links { display: flex; list-style: none; gap: 20px; }
+        .nav-links a { color: var(--white); text-decoration: none; font-size: 0.9rem; }
+        .nav-links a:hover { color: var(--gold); }
+        .hero { padding: 80px 5% 40px; text-align: center; background: linear-gradient(135deg, #0a0e1a 0%, #16203a 100%); }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 15px; }
+        .hero p { color: #aaa; max-width: 700px; margin: 0 auto; }
+        .section { padding: 60px 5%; max-width: 1200px; margin: 0 auto; }
+        .card { background: var(--surface); padding: 30px; border-radius: 15px; border: 1px solid #333; margin-bottom: 30px; }
+        .card:hover { border-color: var(--gold); }
+        .card h2 { color: var(--gold); margin-bottom: 20px; font-size: 1.5rem; }
+        .card h3 { color: var(--cyan); margin: 25px 0 15px; font-size: 1.2rem; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #333; }
+        th { background: rgba(255,184,0,0.1); color: var(--gold); font-weight: 600; }
+        tr:hover { background: rgba(255,255,255,0.02); }
+        a { color: var(--cyan); }
+        a:hover { color: var(--gold); }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-right: 8px; }
+        .badge-green { background: rgba(16,185,129,0.2); color: var(--green); }
+        .badge-gold { background: rgba(255,184,0,0.2); color: var(--gold); }
+        .badge-cyan { background: rgba(0,212,255,0.2); color: var(--cyan); }
+        .badge-red { background: rgba(239,68,68,0.2); color: #ef4444; }
+        .contract-box { background: #0d121f; padding: 20px; border-radius: 10px; font-family: monospace; margin: 15px 0; border: 1px solid #333; overflow-x: auto; }
+        .contract-box code { color: var(--cyan); font-size: 0.9rem; }
+        .verify-btn { display: inline-block; padding: 12px 25px; background: var(--gold); color: var(--navy); border-radius: 8px; text-decoration: none; font-weight: 700; margin: 10px 5px 10px 0; transition: all 0.3s; }
+        .verify-btn:hover { background: #FFC933; transform: translateY(-2px); color: var(--navy); }
+        .verify-btn.secondary { background: transparent; border: 2px solid var(--gold); color: var(--gold); }
+        .verify-btn.secondary:hover { background: rgba(255,184,0,0.1); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .stat-card { background: var(--surface); padding: 25px; border-radius: 12px; text-align: center; border: 1px solid #333; }
+        .stat-value { font-size: 2rem; font-weight: 800; color: var(--gold); }
+        .stat-label { color: #aaa; font-size: 0.9rem; margin-top: 5px; }
+        .warning-box { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .warning-box h4 { color: #ef4444; margin-bottom: 10px; }
+        .success-box { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .success-box h4 { color: var(--green); margin-bottom: 10px; }
+        ul { margin-left: 20px; }
+        li { margin-bottom: 8px; }
+        footer { padding: 40px 5%; border-top: 1px solid #222; text-align: center; color: #666; }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.8rem; }
+            .section { padding: 40px 5%; }
+            table { font-size: 0.85rem; }
+            th, td { padding: 8px 10px; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">Africa <span style="color:var(--cyan)">Railways</span></a>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/tokenomics.html">Tokenomics</a></li>
+            <li><a href="https://github.com/mpolobe/africa-railways" target="_blank">GitHub</a></li>
+        </ul>
+    </nav>
+
+    <div class="hero">
+        <h1>✅ Verification & Due Diligence</h1>
+        <p>Complete transparency for investors and partners. Verify our claims, contracts, and team credentials independently.</p>
+    </div>
+
+    <div class="section">
+        <!-- Quick Stats -->
+        <div class="grid" style="margin-bottom: 40px;">
+            <div class="stat-card">
+                <div class="stat-value">720</div>
+                <div class="stat-label">Days Liquidity Locked</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">51%</div>
+                <div class="stat-label">Funds to Liquidity</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">10B</div>
+                <div class="stat-label">Fixed Token Supply</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">2,000+</div>
+                <div class="stat-label">Track Workers</div>
+            </div>
+        </div>
+
+        <!-- Team Verification -->
+        <div class="card">
+            <h2>👤 Team Verification</h2>
+            <h3>Founder: Benjamin Mpolokoso</h3>
+            <table>
+                <tr>
+                    <th>Attribute</th>
+                    <th>Details</th>
+                    <th>Verification</th>
+                </tr>
+                <tr>
+                    <td>Name</td>
+                    <td>Benjamin Mpolokoso</td>
+                    <td><span class="badge badge-green">Public Identity</span></td>
+                </tr>
+                <tr>
+                    <td>Location</td>
+                    <td>Lusaka, Zambia</td>
+                    <td>2808/7417 Off Chuswe Rd</td>
+                </tr>
+                <tr>
+                    <td>Experience</td>
+                    <td>25+ years IT in African railways</td>
+                    <td>Employment history available</td>
+                </tr>
+                <tr>
+                    <td>GitHub</td>
+                    <td><a href="https://github.com/mpolobe" target="_blank">github.com/mpolobe</a></td>
+                    <td>Code commits since 2020</td>
+                </tr>
+                <tr>
+                    <td>Twitter/X</td>
+                    <td><a href="https://twitter.com/BenMpolokoso" target="_blank">@BenMpolokoso</a></td>
+                    <td>Public communications</td>
+                </tr>
+                <tr>
+                    <td>WhatsApp</td>
+                    <td><a href="https://wa.me/260966165444">+260 966 165 444</a></td>
+                    <td>Direct contact</td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td><a href="mailto:ben.mpolokoso@gmail.com">ben.mpolokoso@gmail.com</a></td>
+                    <td>Direct contact</td>
+                </tr>
+            </table>
+            <p style="color: #aaa; margin-top: 15px;"><strong>Note:</strong> Unlike many crypto projects, our founder is publicly identified with verifiable contact information.</p>
+        </div>
+
+        <!-- On-Chain Verification -->
+        <div class="card">
+            <h2>⛓️ On-Chain Verification</h2>
+            
+            <h3>SENT Token Contract</h3>
+            <div class="contract-box">
+                <code>0xF379f21Af5967F26c358568Bb60408DB8B4F7fE5</code>
+            </div>
+            <a href="https://polygonscan.com/token/0xF379f21Af5967F26c358568Bb60408DB8B4F7fE5" target="_blank" class="verify-btn">Verify on PolygonScan</a>
+            
+            <h3>PinkSale Liquidity Pool</h3>
+            <div class="contract-box">
+                <code>0xf366e3aaCC54C99E50c90B7C57625776f88D8d08</code>
+            </div>
+            <a href="https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08" target="_blank" class="verify-btn">Verify on PinkSale</a>
+            
+            <h3>Token Details</h3>
+            <table>
+                <tr><th>Property</th><th>Value</th></tr>
+                <tr><td>Token Name</td><td>SENTINEL</td></tr>
+                <tr><td>Ticker</td><td>$SENT</td></tr>
+                <tr><td>Total Supply</td><td>10,000,000,000 (fixed)</td></tr>
+                <tr><td>Decimals</td><td>18</td></tr>
+                <tr><td>Standard</td><td>ERC-20</td></tr>
+                <tr><td>Liquidity Lock</td><td>720 days</td></tr>
+                <tr><td>Liquidity %</td><td>51% of raised funds</td></tr>
+            </table>
+        </div>
+
+        <!-- Railway Partnerships -->
+        <div class="card">
+            <h2>🚂 Railway Partnerships</h2>
+            
+            <h3>TAZARA Railway</h3>
+            <table>
+                <tr><th>Attribute</th><th>Details</th></tr>
+                <tr><td>Railway</td><td>Tanzania-Zambia Railway Authority</td></tr>
+                <tr><td>Route</td><td>Dar es Salaam to Kapiri Mposhi (1,860 km)</td></tr>
+                <tr><td>Status</td><td><span class="badge badge-green">Pilot Operational</span></td></tr>
+                <tr><td>Integration</td><td>AFC payment system for Mukuba Service</td></tr>
+                <tr><td>Workers</td><td>2,000+ track workers using Sentinel app</td></tr>
+            </table>
+            <a href="https://en.wikipedia.org/wiki/TAZARA_Railway" target="_blank" class="verify-btn secondary">Wikipedia</a>
+            
+            <h3>Zambia Railways Limited (ZRL)</h3>
+            <table>
+                <tr><th>Attribute</th><th>Details</th></tr>
+                <tr><td>Railway</td><td>Zambia Railways Limited</td></tr>
+                <tr><td>Program</td><td>EU Railway Sector Support Programme</td></tr>
+                <tr><td>Status</td><td><span class="badge badge-gold">Pilot Integration</span></td></tr>
+                <tr><td>Integration</td><td>Signaling data integration pilot</td></tr>
+            </table>
+            
+            <div class="warning-box">
+                <h4>⚠️ Important Clarification</h4>
+                <p>We claim our technology is being piloted on these railway networks. We do <strong>not</strong> claim an official government partnership or exclusive contract. Contact the railways directly for confirmation.</p>
+            </div>
+        </div>
+
+        <!-- Code Verification -->
+        <div class="card">
+            <h2>💻 Code Verification</h2>
+            <p>All code is open source and publicly available:</p>
+            
+            <table>
+                <tr><th>Component</th><th>Location</th><th>Description</th></tr>
+                <tr><td>Smart Contracts</td><td><code>/contracts/</code></td><td>Solidity contracts for Polygon</td></tr>
+                <tr><td>Sui Move</td><td><code>/move/africoin/sources/</code></td><td>AFC token and ticket modules</td></tr>
+                <tr><td>Backend API</td><td><code>/backend/</code></td><td>Go ingest engine and REST API</td></tr>
+                <tr><td>Mobile Apps</td><td><code>/SmartphoneApp/</code></td><td>React Native source</td></tr>
+                <tr><td>Website</td><td>Root directory</td><td>HTML/CSS/JS source</td></tr>
+                <tr><td><strong>MVP Wallet App</strong></td><td><a href="https://github.com/mpolobe/scroll-waitlist-exchange-1" target="_blank">scroll-waitlist-exchange-1</a></td><td>Complete wallet + booking app</td></tr>
+            </table>
+            
+            <h3>MVP: Africoin Wallet Exchange</h3>
+            <p>The complete user-facing application demonstrating wallet, booking, and loyalty features:</p>
+            <ul>
+                <li><strong>Digital Wallet:</strong> Alchemy Account Kit integration</li>
+                <li><strong>Railway Booking:</strong> Train ticket booking across Africa</li>
+                <li><strong>Loyalty Program:</strong> Points and tiered benefits</li>
+                <li><strong>AI Assistant:</strong> Gemini AI chatbot support</li>
+                <li><strong>Mobile Apps:</strong> iOS and Android via Capacitor</li>
+            </ul>
+            
+            <a href="https://github.com/mpolobe/africa-railways" target="_blank" class="verify-btn">Main Repository</a>
+            <a href="https://github.com/mpolobe/scroll-waitlist-exchange-1" target="_blank" class="verify-btn">MVP Repository</a>
+            <a href="https://scroll-waitlist-exchange-1-nnjr.vercel.app/" target="_blank" class="verify-btn secondary">Live MVP Demo</a>
+            <a href="/docs/TECHNICAL_ARCHITECTURE.md" class="verify-btn secondary">Technical Architecture</a>
+            
+            <h3>Audit Status</h3>
+            <table>
+                <tr><th>Audit</th><th>Status</th><th>Notes</th></tr>
+                <tr><td>Smart Contracts</td><td><span class="badge badge-gold">Pending</span></td><td>Seeking CertiK/Hacken audit</td></tr>
+                <tr><td>Mobile App</td><td><span class="badge badge-gold">Pending</span></td><td>BrowserStack security scan</td></tr>
+                <tr><td>Backend API</td><td><span class="badge badge-cyan">Internal</span></td><td>Team review ongoing</td></tr>
+            </table>
+        </div>
+
+        <!-- Risk Acknowledgment -->
+        <div class="card">
+            <h2>⚠️ Risk Acknowledgment</h2>
+            
+            <div class="warning-box">
+                <h4>What We Do NOT Claim</h4>
+                <ul>
+                    <li>❌ Official government partnership or exclusive contract</li>
+                    <li>❌ Guaranteed returns or token price appreciation</li>
+                    <li>❌ Complete railway infrastructure ownership</li>
+                    <li>❌ Regulatory approval in all jurisdictions</li>
+                </ul>
+            </div>
+            
+            <div class="success-box">
+                <h4>What We DO Claim</h4>
+                <ul>
+                    <li>✅ Working technology deployed on real railway</li>
+                    <li>✅ Real users (track workers) using the system</li>
+                    <li>✅ Open source code for verification</li>
+                    <li>✅ Public founder identity (not anonymous)</li>
+                    <li>✅ 720-day liquidity lock (rug pull protection)</li>
+                </ul>
+            </div>
+            
+            <h3>Current Limitations</h3>
+            <ul>
+                <li><strong>Small Team:</strong> Founder-led with contractors. Building the team.</li>
+                <li><strong>Early Stage:</strong> Platform operational but not at scale.</li>
+                <li><strong>Partnership Documentation:</strong> No published signed agreements (common for early-stage).</li>
+                <li><strong>Audit Pending:</strong> Smart contracts not yet professionally audited.</li>
+                <li><strong>Regulatory Uncertainty:</strong> Cryptocurrency regulations evolving in Africa.</li>
+            </ul>
+        </div>
+
+        <!-- Contact -->
+        <div class="card">
+            <h2>📞 Contact for Verification</h2>
+            <p>For due diligence inquiries, contact us directly:</p>
+            <table>
+                <tr><th>Channel</th><th>Contact</th></tr>
+                <tr><td>Email</td><td><a href="mailto:ben.mpolokoso@gmail.com">ben.mpolokoso@gmail.com</a></td></tr>
+                <tr><td>WhatsApp</td><td><a href="https://wa.me/260966165444">+260 966 165 444</a></td></tr>
+                <tr><td>Telegram</td><td><a href="https://t.me/AFRCsentinel" target="_blank">@AFRCsentinel</a></td></tr>
+                <tr><td>GitHub</td><td><a href="https://github.com/mpolobe/africa-railways/issues" target="_blank">Open an issue</a></td></tr>
+            </table>
+            <p style="color: #aaa; margin-top: 15px;">We respond to all verification requests within 48 hours.</p>
+        </div>
+
+        <!-- Documentation Links -->
+        <div class="card">
+            <h2>📚 Documentation</h2>
+            <div class="grid">
+                <a href="/docs/PROJECT_VERIFICATION.md" style="text-decoration: none;">
+                    <div class="stat-card" style="text-align: left;">
+                        <h4 style="color: var(--gold);">✅ Due Diligence Guide</h4>
+                        <p style="color: #aaa; font-size: 0.9rem;">Complete verification documentation</p>
+                    </div>
+                </a>
+                <a href="/docs/TECHNICAL_ARCHITECTURE.md" style="text-decoration: none;">
+                    <div class="stat-card" style="text-align: left;">
+                        <h4 style="color: var(--gold);">🏗️ Technical Architecture</h4>
+                        <p style="color: #aaa; font-size: 0.9rem;">Backend, API, and blockchain details</p>
+                    </div>
+                </a>
+                <a href="/SENT_LITEPAPER.md" style="text-decoration: none;">
+                    <div class="stat-card" style="text-align: left;">
+                        <h4 style="color: var(--gold);">📄 SENT Litepaper</h4>
+                        <p style="color: #aaa; font-size: 0.9rem;">Token economics and utility</p>
+                    </div>
+                </a>
+                <a href="/VERIFICATION.md" style="text-decoration: none;">
+                    <div class="stat-card" style="text-align: left;">
+                        <h4 style="color: var(--gold);">🔍 Verification Guide</h4>
+                        <p style="color: #aaa; font-size: 0.9rem;">How to verify claims independently</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 Africa Railways. All rights reserved.</p>
+        <p style="margin-top: 10px; font-size: 0.85rem;">
+            <strong>Disclaimer:</strong> This document is for informational purposes only. Cryptocurrency investments are high-risk. Always do your own research.
+        </p>
+    </footer>
+</body>
+</html>
