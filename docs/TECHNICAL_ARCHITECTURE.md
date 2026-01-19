@@ -34,6 +34,183 @@ This document provides technical details on the Africa Railways platform archite
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
+## Continental Integration Roadmap
+
+A legitimate continental railway integration requires a phased, multi-year approach involving governments, rail corporations, and engineering firms.
+
+### Phase 1: Standardization & Diplomacy (Years 1-3+)
+
+**Objective:** Establish governance and technical standards
+
+**Actions:**
+- Form consortium with African Union, UNECA, and national rail operators
+- Define common data standard (e.g., RailML for Africa)
+- Negotiate data sharing agreements and liability frameworks
+
+**Deliverables:**
+- Signed multilateral agreement
+- Technical specification document (500+ pages)
+- Governance framework and dispute resolution process
+
+**Current Status:** Africa Railways is engaging with TAZARA and ZRL as pilot operators. Full continental standardization requires AU-level coordination.
+
+### Phase 2: Federated API Gateway
+
+The goal is not a single database but a secure gateway that translates requests between a central system and each operator's unique backend.
+
+```mermaid
+flowchart LR
+    C[Central Africa Rails API]
+    
+    subgraph SG1 [National Operator 1]
+        direction LR
+        A1[Legacy System A] <--> G1[Operator 1<br>Adapter]
+    end
+
+    subgraph SG2 [National Operator 2]
+        direction LR
+        B1[Modern System B] <--> G2[Operator 2<br>Adapter]
+    end
+
+    subgraph SG3 [National Operator N]
+        direction LR
+        C1[Legacy System C] <--> G3[Operator N<br>Adapter]
+    end
+
+    C -- Standardized API Request --> G1
+    C -- Standardized API Request --> G2
+    C -- Standardized API Request --> G3
+
+    G1 -- Translated Query --> A1
+    G2 -- Translated Query --> B1
+    G3 -- Translated Query --> C1
+
+    G1 -- Formatted Response --> C
+    G2 -- Formatted Response --> C
+    G3 -- Formatted Response --> C
+```
+
+### Phase 3: Building Operator Adapters
+
+Each adapter requires a dedicated team familiar with that operator's technology. A continental system would need 50+ adapters, each a significant software project.
+
+**Example: Legacy SOAP Adapter (Python)**
+
+```python
+# Adapter for a hypothetical operator's legacy SOAP API
+import zeep
+from africa_rails_standard import TrainPosition, StandardAlert
+
+class ZambiaRailwaysLegacyAdapter:
+    def __init__(self, wsdl_url, api_key):
+        # Connect to the operator's specific SOAP service
+        self.client = zeep.Client(wsdl=wsdl_url)
+        self.api_key = api_key
+
+    def get_live_positions(self) -> list[TrainPosition]:
+        """Fetches data and converts to continental standard."""
+        try:
+            # 1. CALL OPERATOR'S PROPRIETARY API
+            raw_data = self.client.service.getTrainLocations(authKey=self.api_key)
+
+            # 2. MAP to Continental Standard
+            standard_positions = []
+            for train in raw_data:
+                std_position = TrainPosition(
+                    train_id=f"ZM-{train.engineNumber}",
+                    gps_lat=train.latitude,
+                    gps_lon=train.longitude,
+                    speed_kmh=train.speed,
+                    timestamp=train.lastUpdated,
+                    # ... converting 20+ other fields ...
+                )
+                standard_positions.append(std_position)
+
+            return standard_positions
+
+        except Exception as e:
+            # Log and forward alert in standard format
+            raise StandardAlert(
+                code="ADAPTER_FAILURE_ZM",
+                severity="HIGH",
+                message=f"Zambia adapter failed: {str(e)}",
+                operator="Zambia Railways Ltd."
+            )
+```
+
+### Current Implementation Status
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| Central API Gateway | ✅ Implemented | `/backend/operators/` |
+| TAZARA Adapter | ✅ Pilot | Live on Mukuba Service |
+| ZRL Adapter | 🔄 In Progress | EU Programme integration |
+| TRC Adapter | 📋 Planned | Pending agreement |
+| Other Operators | 📋 Future | Requires AU coordination |
+
+**Honest Assessment:** Full continental integration requires:
+- 50+ operator adapters (each a major project)
+- Central gateway with security, monitoring, governance
+- Multi-year diplomatic and technical coordination
+- Significant funding ($10M+ for software alone)
+
+Africa Railways is currently focused on the SADC corridor (TAZARA, ZRL) as proof of concept before broader expansion.
+
+---
+
+## Multi-Operator Integration Architecture
+
+### Operator Adapters
+
+Each national railway operator has a dedicated adapter that:
+1. Translates standardized API requests to operator-specific formats
+2. Handles authentication with legacy systems (SOAP, mainframe, etc.)
+3. Normalizes responses to the common Africa Rails schema
+4. Manages connection pooling, retry logic, and circuit breakers
+
+| Operator | Country | System Type | Adapter | Status |
+|----------|---------|-------------|---------|--------|
+| TAZARA | Tanzania/Zambia | Legacy mainframe | `tazara_adapter.go` | ✅ Live |
+| ZRL | Zambia | Mixed legacy/SOAP | `zrl_adapter.py` | 🔄 Pilot |
+| TRC | Tanzania | Legacy | `trc_adapter.go` | 📋 Planned |
+| KRC | Kenya | Modern REST API | `krc_adapter.go` | 📋 Planned |
+| Transnet | South Africa | Enterprise SAP | `transnet_adapter.go` | 📋 Future |
+
+### Standardized API Schema
+
+All operators expose the same interface through the Central API:
+
+```go
+// OperatorAdapter interface - implemented by each national operator
+type OperatorAdapter interface {
+    // Metadata
+    GetOperatorInfo() OperatorInfo
+    
+    // Station and route information
+    GetStations(ctx context.Context) ([]Station, error)
+    GetRoutes(ctx context.Context) ([]Route, error)
+    GetSchedule(ctx context.Context, routeID string, date time.Time) ([]Schedule, error)
+    
+    // Real-time data
+    GetTrainPositions(ctx context.Context) ([]TrainPosition, error)
+    GetDelays(ctx context.Context) ([]DelayInfo, error)
+    
+    // Booking operations
+    CheckAvailability(ctx context.Context, route string, date time.Time) ([]Seat, error)
+    CreateBooking(ctx context.Context, booking *BookingRequest) (*Booking, error)
+    CancelBooking(ctx context.Context, bookingID string) error
+    
+    // Telemetry (optional)
+    SupportsTelemetry() bool
+    SubscribeTelemetry(ctx context.Context) (<-chan TelemetryMessage, error)
+    
+    // Health
+    HealthCheck(ctx context.Context) error
+}
+```
+
+---
+
 ## Backend Components
 
 ### Go Ingest Engine (`/backend`)
