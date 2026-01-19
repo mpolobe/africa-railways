@@ -1,0 +1,16 @@
+{
+  "name": "telegram-marketing",
+  "version": "1.0.0",
+  "description": "Telegram Marketing Tool for Africa Railways",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "login": "node index.js"
+  },
+  "dependencies": {
+    "telegram": "^2.19.0",
+    "input": "^1.0.1",
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  }
+}

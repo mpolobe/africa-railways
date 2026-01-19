@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media Admin | Africa Railways</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0a0e1a;
+            --surface: #141b2d;
+            --gold: #f4b41a;
+            --cyan: #00d4ff;
+            --text: #e0e0e0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: var(--gold);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .card {
+            background: var(--surface);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+        .card h2 {
+            color: var(--cyan);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+        .setup-steps {
+            background: rgba(0,212,255,0.1);
+            border: 1px solid var(--cyan);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .setup-steps h3 {
+            color: var(--cyan);
+            margin-bottom: 15px;
+        }
+        .setup-steps ol {
+            margin-left: 20px;
+        }
+        .setup-steps li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .setup-steps code {
+            background: #0a0e1a;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: var(--gold);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background: #0a0e1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 1rem;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--cyan);
+        }
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        .char-count {
+            text-align: right;
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold), #d4a017);
+            color: #000;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(244,180,26,0.3);
+        }
+        .btn-secondary {
+            background: #333;
+            color: var(--text);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .templates {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .template-btn {
+            background: #1a2540;
+            border: 1px solid #333;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .template-btn:hover {
+            border-color: var(--gold);
+            background: #1f2d4a;
+        }
+        .template-btn strong {
+            color: var(--gold);
+            display: block;
+            margin-bottom: 5px;
+        }
+        .template-btn span {
+            font-size: 0.85rem;
+            color: #888;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        .status.success {
+            background: rgba(0,255,100,0.1);
+            border: 1px solid #00ff64;
+            color: #00ff64;
+            display: block;
+        }
+        .status.error {
+            background: rgba(255,50,50,0.1);
+            border: 1px solid #ff3232;
+            color: #ff3232;
+            display: block;
+        }
+        .preview {
+            background: #0a0e1a;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .preview-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+        .preview-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        .preview-header strong {
+            color: var(--text);
+        }
+        .preview-content {
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+        .config-status {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .config-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: #1a2540;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        .config-item.active { border: 1px solid #00ff64; }
+        .config-item.inactive { border: 1px solid #ff3232; opacity: 0.6; }
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        .dot.green { background: #00ff64; }
+        .dot.red { background: #ff3232; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fab fa-telegram"></i> Telegram Post Manager</h1>
+        
+        <!-- Setup Instructions -->
+        <div class="card">
+            <div class="setup-steps">
+                <h3><i class="fas fa-cog"></i> One-Time Setup (5 minutes)</h3>
+                <ol>
+                    <li>Open Telegram and message <a href="https://t.me/BotFather" target="_blank" style="color: var(--cyan);">@BotFather</a></li>
+                    <li>Send <code>/newbot</code> and follow prompts to create your bot</li>
+                    <li>Copy the <strong>API Token</strong> (looks like <code>123456:ABC-DEF...</code>)</li>
+                    <li>Create a Telegram Channel for announcements</li>
+                    <li>Add your bot as an <strong>Administrator</strong> to the channel</li>
+                    <li>Get your channel ID: forward a message from your channel to <a href="https://t.me/userinfobot" target="_blank" style="color: var(--cyan);">@userinfobot</a></li>
+                    <li>Enter credentials below and click "Save Configuration"</li>
+                </ol>
+            </div>
+            
+            <h2><i class="fas fa-key"></i> Telegram Configuration</h2>
+            <div class="form-group">
+                <label>Bot Token (from @BotFather)</label>
+                <input type="password" id="botToken" placeholder="123456789:ABCdefGHIjklMNOpqrsTUVwxyz">
+            </div>
+            <div class="form-group">
+                <label>Channel ID (e.g., @yourchannel or -1001234567890)</label>
+                <input type="text" id="channelId" placeholder="@africarailways or -1001234567890">
+            </div>
+            <button class="btn btn-secondary" onclick="saveConfig()">
+                <i class="fas fa-save"></i> Save Configuration
+            </button>
+        </div>
+
+        <!-- Message Templates -->
+        <div class="card">
+            <h2><i class="fas fa-file-alt"></i> Quick Templates</h2>
+            <div class="templates">
+                <button class="template-btn" onclick="useTemplate('ido_live')">
+                    <strong>🚀 IDO Live Announcement</strong>
+                    <span>Announce that the SENT IDO is live on PinkSale</span>
+                </button>
+                <button class="template-btn" onclick="useTemplate('countdown')">
+                    <strong>⏰ Countdown Reminder</strong>
+                    <span>Remind followers about time remaining</span>
+                </button>
+                <button class="template-btn" onclick="useTemplate('milestone')">
+                    <strong>🎉 Milestone Update</strong>
+                    <span>Celebrate fundraising milestones</span>
+                </button>
+                <button class="template-btn" onclick="useTemplate('why_invest')">
+                    <strong>💎 Why Invest in SENT</strong>
+                    <span>Key value propositions</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Compose Message -->
+        <div class="card">
+            <h2><i class="fas fa-edit"></i> Compose Message</h2>
+            <div class="form-group">
+                <label>Message (supports HTML: &lt;b&gt;bold&lt;/b&gt;, &lt;i&gt;italic&lt;/i&gt;, &lt;a href=""&gt;links&lt;/a&gt;)</label>
+                <textarea id="message" placeholder="Write your announcement here..."></textarea>
+                <div class="char-count"><span id="charCount">0</span> characters</div>
+            </div>
+            <div class="form-group">
+                <label>Image URL (optional)</label>
+                <input type="url" id="imageUrl" placeholder="https://example.com/image.png">
+            </div>
+            
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="sendToTelegram()" id="sendBtn">
+                    <i class="fab fa-telegram"></i> Post to Telegram
+                </button>
+                <button class="btn btn-secondary" onclick="previewMessage()">
+                    <i class="fas fa-eye"></i> Preview
+                </button>
+            </div>
+            
+            <div class="status" id="status"></div>
+            
+            <div class="preview" id="preview" style="display: none;">
+                <div class="preview-header">
+                    <img src="https://via.placeholder.com/40/f4b41a/000?text=AR" alt="Bot">
+                    <strong>Africa Railways Bot</strong>
+                </div>
+                <div class="preview-content" id="previewContent"></div>
+            </div>
+        </div>
+
+        <!-- Recent Posts Log -->
+        <div class="card">
+            <h2><i class="fas fa-history"></i> Recent Posts</h2>
+            <div id="postLog" style="color: #666; font-style: italic;">No posts yet</div>
+        </div>
+    </div>
+
+    <script>
+        const templates = {
+            ido_live: `🚀 <b>SENT IDO IS LIVE ON PINKSALE!</b>
+
+🛤️ Sentinel ($SENT) - The Investment Engine of Africa Railways
+
+📊 <b>Token Details:</b>
+• Price: $0.00005 per SENT
+• Tokens for Presale: 3,000,000,000 SENT
+• SoftCap: 255,000 MATIC
+• Network: Polygon
+
+⏰ <b>Sale Period:</b> January 19 - January 26, 2026
+
+🔒 730-day liquidity lock for maximum security
+
+👉 <a href="https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08">Join the IDO on PinkSale</a>
+
+#SENT #AfricaRailways #IDO #PinkSale #Polygon #Crypto`,
+
+            countdown: `⏰ <b>TIME IS RUNNING OUT!</b>
+
+The SENT IDO ends on January 26, 2026 at 14:00 UTC
+
+Don't miss your chance to be part of Africa's railway revolution! 🚂
+
+💎 Current Price: $0.00005 per SENT
+🔒 730-day liquidity lock
+
+👉 <a href="https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08">Participate Now</a>
+
+#SENT #IDO #LastChance`,
+
+            milestone: `🎉 <b>MILESTONE REACHED!</b>
+
+Thank you to our amazing community!
+
+We're making incredible progress toward our goals. Your support is building the future of African rail infrastructure.
+
+🛤️ Every SENT token powers:
+• 2,000+ signaling worker nodes
+• Real railway infrastructure
+• Pan-African connectivity
+
+👉 <a href="https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08">Join the Movement</a>
+
+#SENT #AfricaRailways #Milestone`,
+
+            why_invest: `💎 <b>WHY INVEST IN SENTINEL ($SENT)?</b>
+
+🔹 <b>Real Infrastructure:</b> Backing African High Speed Railways
+🔹 <b>Utility:</b> Powers 2,000+ signaling worker nodes
+🔹 <b>Security:</b> 730-day liquidity lock
+🔹 <b>Governance:</b> Network decision-making rights
+
+📊 Tokenomics:
+• 45% Community & Sentinels
+• 20% Public Sale (IDO)
+• 20% Ecosystem Fund
+• 15% Team & Partners
+
+This isn't just crypto - it's infrastructure investment.
+
+👉 <a href="https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08">Invest in Africa's Future</a>
+
+#SENT #RWA #Infrastructure #Polygon`
+        };
+
+        // Load saved config
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedToken = localStorage.getItem('tg_bot_token');
+            const savedChannel = localStorage.getItem('tg_channel_id');
+            if (savedToken) document.getElementById('botToken').value = savedToken;
+            if (savedChannel) document.getElementById('channelId').value = savedChannel;
+            loadPostLog();
+        });
+
+        function saveConfig() {
+            const token = document.getElementById('botToken').value.trim();
+            const channel = document.getElementById('channelId').value.trim();
+            
+            if (!token || !channel) {
+                showStatus('Please enter both Bot Token and Channel ID', 'error');
+                return;
+            }
+            
+            localStorage.setItem('tg_bot_token', token);
+            localStorage.setItem('tg_channel_id', channel);
+            showStatus('Configuration saved! You can now post to Telegram.', 'success');
+        }
+
+        function useTemplate(name) {
+            document.getElementById('message').value = templates[name];
+            updateCharCount();
+            previewMessage();
+        }
+
+        function updateCharCount() {
+            const count = document.getElementById('message').value.length;
+            document.getElementById('charCount').textContent = count;
+        }
+
+        document.getElementById('message').addEventListener('input', updateCharCount);
+
+        function previewMessage() {
+            const message = document.getElementById('message').value;
+            const preview = document.getElementById('preview');
+            const content = document.getElementById('previewContent');
+            
+            // Convert HTML tags for preview
+            let formatted = message
+                .replace(/</g, '&lt;')
+                .replace(/&lt;b&gt;/g, '<b>')
+                .replace(/&lt;\/b&gt;/g, '</b>')
+                .replace(/&lt;i&gt;/g, '<i>')
+                .replace(/&lt;\/i&gt;/g, '</i>')
+                .replace(/&lt;a href="([^"]+)"&gt;/g, '<a href="$1" target="_blank" style="color: var(--cyan);">')
+                .replace(/&lt;\/a&gt;/g, '</a>');
+            
+            content.innerHTML = formatted;
+            preview.style.display = 'block';
+        }
+
+        async function sendToTelegram() {
+            const token = localStorage.getItem('tg_bot_token');
+            const chatId = localStorage.getItem('tg_channel_id');
+            const message = document.getElementById('message').value.trim();
+            const imageUrl = document.getElementById('imageUrl').value.trim();
+            
+            if (!token || !chatId) {
+                showStatus('Please configure your Telegram bot first (save token and channel ID)', 'error');
+                return;
+            }
+            
+            if (!message) {
+                showStatus('Please enter a message', 'error');
+                return;
+            }
+            
+            const btn = document.getElementById('sendBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            
+            try {
+                let url, body;
+                
+                if (imageUrl) {
+                    url = `https://api.telegram.org/bot${token}/sendPhoto`;
+                    body = {
+                        chat_id: chatId,
+                        photo: imageUrl,
+                        caption: message,
+                        parse_mode: 'HTML'
+                    };
+                } else {
+                    url = `https://api.telegram.org/bot${token}/sendMessage`;
+                    body = {
+                        chat_id: chatId,
+                        text: message,
+                        parse_mode: 'HTML',
+                        disable_web_page_preview: false
+                    };
+                }
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                
+                const data = await response.json();
+                
+                if (data.ok) {
+                    showStatus('Message posted successfully to Telegram!', 'success');
+                    logPost(message);
+                    document.getElementById('message').value = '';
+                    document.getElementById('imageUrl').value = '';
+                    document.getElementById('preview').style.display = 'none';
+                    updateCharCount();
+                } else {
+                    showStatus(`Error: ${data.description}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`Error: ${error.message}`, 'error');
+            }
+            
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fab fa-telegram"></i> Post to Telegram';
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + type;
+        }
+
+        function logPost(message) {
+            const logs = JSON.parse(localStorage.getItem('post_log') || '[]');
+            logs.unshift({
+                time: new Date().toLocaleString(),
+                message: message.substring(0, 100) + (message.length > 100 ? '...' : '')
+            });
+            // Keep only last 10
+            localStorage.setItem('post_log', JSON.stringify(logs.slice(0, 10)));
+            loadPostLog();
+        }
+
+        function loadPostLog() {
+            const logs = JSON.parse(localStorage.getItem('post_log') || '[]');
+            const container = document.getElementById('postLog');
+            
+            if (logs.length === 0) {
+                container.innerHTML = '<span style="color: #666; font-style: italic;">No posts yet</span>';
+                return;
+            }
+            
+            container.innerHTML = logs.map(log => `
+                <div style="padding: 10px; background: #0a0e1a; border-radius: 8px; margin-bottom: 10px;">
+                    <div style="font-size: 0.8rem; color: #666; margin-bottom: 5px;">${log.time}</div>
+                    <div style="font-size: 0.9rem;">${log.message}</div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
