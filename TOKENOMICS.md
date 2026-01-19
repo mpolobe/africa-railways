@@ -1,115 +1,145 @@
-# 🚆 $SENT Tokenomics - The Digital Spine
-Official tokenomics for the Africa Railways utility layer.
+# $SENT Tokenomics
 
-- **Total Supply:** 5,000,000,000 $SENT
-- **Network:** Polygon (POL)
-- **Contract:** `0xD267554628E954E2070D189859f13768B0424694`
-- **Transparency:** Verified in `mpolobe/africa-railways`
+## Token Overview
 
-## Distribution
-- **67% Presale:** Public liquidity.
-- **31% Locked Liquidity:** Secured for 2 years.
-- **2% Ecosystem:** Platform and security.
+| Property | Value |
+|----------|-------|
+| **Name** | SENTINEL |
+| **Symbol** | SENT |
+| **Network** | Polygon (POL) |
+| **Standard** | ERC-20 |
+| **Total Supply** | 10,000,000,000 SENT (fixed, no inflation) |
+| **Decimals** | 18 |
 
-*SENT captures value from AFC transactions and AFRC loyalty engagement.*
+## Contract Addresses
 
-## Token Utility
+| Contract | Address | Verified |
+|----------|---------|----------|
+| SENT Token | `0xF379f21Af5967F26c358568Bb60408DB8B4F7fE5` | [PolygonScan](https://polygonscan.com/token/0xF379f21Af5967F26c358568Bb60408DB8B4F7fE5) |
+| Staking | TBD (deploy before launch) | - |
+| Governance | TBD (deploy before launch) | - |
+| Vesting | TBD (deploy before launch) | - |
 
-### 1. Governance Rights
-- Vote on railway corridor expansions
-- Approve fee structure changes
-- Treasury management decisions
-- Partnership approvals
+## Token Distribution
 
-### 2. Staking Rewards
-- Earn from platform transaction fees
-- 1.91% APY from treasury auto-staking
-- Bonus rewards for long-term stakers
+| Allocation | Percentage | Amount | Vesting | On-Chain Verification |
+|------------|-----------|--------|---------|----------------------|
+| Presale (PinkSale) | 30% | 3,000,000,000 | 10% TGE, 12mo linear | PinkSale contract |
+| Liquidity | 14.5% | 1,453,500,000 | Locked 720 days | QuickSwap LP lock |
+| Community & Sentinels | 25% | 2,500,000,000 | 36mo, 6mo cliff | Vesting contract |
+| Team & Advisors | 10% | 1,000,000,000 | 24mo, 6mo cliff | Vesting contract |
+| Treasury | 15% | 1,500,000,000 | Multi-sig controlled | Gnosis Safe |
+| Ecosystem Fund | 5.5% | 546,500,000 | 48mo linear | Vesting contract |
 
-### 3. Platform Access
-- Discounted railway tickets
-- Priority boarding and seat selection
-- Access to freight services
-- Premium features
+**Total: 100% = 10,000,000,000 SENT**
 
-### 4. Value Capture
-- 50% of platform fees distributed to stakers
-- Quarterly buyback from revenue
-- Deflationary pressure from vesting
+## Investor Value Mechanisms
 
-## Network Details
+### 1. Revenue Share (Staking)
 
-**Blockchain:** Polygon (POL)  
-**Standard:** ERC-20  
-**Decimals:** 18  
-**Liquidity Lock:** 730 Days  
-**Audit Status:** Pending CertiK/Hacken
+SENT holders can stake tokens to receive 50% of platform transaction fees:
 
-## Vesting Schedule
+```
+Platform Fee Flow:
+AFC Transaction (ticket/freight) 
+  → 2% platform fee collected
+  → 50% converted to POL → distributed to stakers
+  → 50% to treasury (operations + buyback)
+```
 
-| Allocation | Percentage | Amount | Vesting |
-|------------|-----------|---------|---------|
-| PinkSale IDO | 20% | 1,000,000,000 | 10% TGE, 12mo linear |
-| Community & Sentinels | 30% | 1,500,000,000 | 36mo, 6mo cliff |
-| Team & Advisors | 15% | 750,000,000 | 24mo, 6mo cliff |
-| Treasury | 20% | 1,000,000,000 | Unlocked |
-| Ecosystem Fund | 10% | 500,000,000 | 48mo linear |
-| Liquidity | 5% | 250,000,000 | Unlocked |
+**Staking Tiers:**
+
+| Lock Period | Bonus Multiplier | Example APY* |
+|-------------|------------------|--------------|
+| 30 days | 1.0x | 5% |
+| 90 days | 1.1x | 5.5% |
+| 180 days | 1.25x | 6.25% |
+| 365 days | 1.5x | 7.5% |
+
+*APY varies based on total staked and platform volume
+
+**Contract:** `SENTStaking.sol` - Auditable on-chain revenue distribution
+
+### 2. Governance Rights
+
+SENT holders vote on protocol decisions:
+
+- Railway corridor expansions (which countries to add)
+- Fee structure changes (platform commission rates)
+- Treasury allocation (how to deploy reserves)
+- Partnership approvals (new railway operators)
+- Protocol upgrades
+
+**Voting Power:** 1 SENT = 1 vote (linear)
+
+**Proposal Threshold:** 0.1% of supply (10M SENT) to create proposals
+
+**Quorum:** 4% of supply must participate for vote to be valid
+
+**Contract:** `SENTGovernance.sol` - On-chain voting with transparent results
+
+### 3. Buyback Mechanism
+
+Treasury uses 25% of its fee allocation for quarterly SENT buybacks:
+
+```
+Treasury Fee Allocation:
+  → 50% operations (development, partnerships)
+  → 25% buyback (market purchases, then burn or redistribute)
+  → 25% reserve (emergency fund)
+```
+
+Buyback transactions are executed on-chain and publicly verifiable.
+
+### 4. Platform Discounts
+
+SENT holders receive:
+- 10% discount on AFC ticket purchases
+- Priority access to new railway routes
+- Reduced freight shipping rates
+
+## Security Features
+
+| Feature | Implementation |
+|---------|---------------|
+| Liquidity Lock | 720 days via PinkSale |
+| Multi-sig Treasury | 3-of-5 Gnosis Safe |
+| Vesting Contracts | On-chain, immutable schedules |
+| Audit Status | Pending (CertiK/Hacken) |
+
+## Risk Disclosure
+
+**This is a high-risk investment. Consider these factors:**
+
+1. **Early Stage:** Platform is operational on TAZARA but expanding to other railways is not guaranteed
+2. **Regulatory Risk:** African railway regulations may change
+3. **Market Risk:** Cryptocurrency prices are volatile
+4. **Execution Risk:** Team must deliver on roadmap
+5. **Liquidity Risk:** Trading volume may be limited initially
+
+**Only invest what you can afford to lose.**
+
+## Verification Checklist
+
+Before investing, verify:
+
+- [ ] Token contract on PolygonScan matches address above
+- [ ] Liquidity lock visible on PinkSale
+- [ ] Staking contract deployed and verified
+- [ ] Governance contract deployed and verified
+- [ ] Vesting contracts deployed with correct schedules
+- [ ] Treasury multi-sig address published
+- [ ] Audit report published (when complete)
 
 ## Links
 
-- **Website:** [africa-railways.vercel.app](https://africa-railways.vercel.app)
 - **Litepaper:** [SENT_LITEPAPER.md](./SENT_LITEPAPER.md)
-- **PinkSale Config:** [PINKSALE_CONFIGURATION.md](./PINKSALE_CONFIGURATION.md)
+- **Staking Contract:** [SENTStaking.sol](./blockchain/contracts/SENTStaking.sol)
+- **Governance Contract:** [SENTGovernance.sol](./blockchain/contracts/SENTGovernance.sol)
+- **Vesting Contract:** [SENTVesting.sol](./blockchain/contracts/SENTVesting.sol)
 - **GitHub:** [github.com/mpolobe/africa-railways](https://github.com/mpolobe/africa-railways)
-- **Contract:** [PolygonScan](https://polygonscan.com/token/0xD267554628E954E2070D189859f13768B0424694)
-
-## Investment Thesis
-
-### Why $SENT?
-
-1. **Working Product**: AFC payment system live on TAZARA railway
-2. **Real Traction**: 2,000+ track workers already using the system
-3. **Massive Market**: 54 African countries, 200M+ annual railway passengers
-4. **Clear Revenue**: 2% platform fees from every ticket sold
-5. **Public Team**: Verified founder with railway and blockchain expertise
-
-### Value Proposition
-
-```
-More Railways → More Passengers → More Fees → Higher Staking APY → More Demand → Higher Price
-```
-
-### Comparable Valuations
-
-| Project | Market Cap | Revenue | Multiple |
-|---------|-----------|---------|----------|
-| Helium | $1.2B | $2M/year | 600x |
-| Render | $3.5B | $5M/year | 700x |
-| **$SENT (Target)** | $5M | $2.4M/year | 2x |
-
-**Upside**: 50-100x potential as network expands to 54 countries.
-
-## Risk Factors
-
-- Cryptocurrency market volatility
-- Regulatory changes in African countries
-- Railway partnership delays
-- Competition from traditional payment systems
-
-**Disclaimer**: High-risk investment. Only invest what you can afford to lose.
-
-## Community
-
-- **Telegram:** [@AfricoinCommunity](https://t.me/AfricoinCommunity)
-- **Twitter:** [@AfricaRailways](https://twitter.com/AfricaRailways)
-- **Medium:** [@africarailways](https://medium.com/@africarailways)
-- **Email:** contact@africarailways.com
 
 ---
 
-**Last Updated:** January 11, 2026  
-**Version:** 1.0  
-**Status:** Pre-Launch (PinkSale Pending)
-
-© 2026 Africa Railways. All rights reserved.
+**Last Updated:** January 18, 2026  
+**Version:** 2.0

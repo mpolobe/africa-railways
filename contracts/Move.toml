@@ -1,11 +1,11 @@
 [package]
-name = "africoin"
+name = "railway_ticketing"
 version = "0.0.1"
-published-at = "0xc68c4cfb63d702227db09c28837e75abd23bbb3adc192e3bc45fecca4dd5b7e8"
 edition = "2024.beta"
 
 [dependencies]
 Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/mainnet" }
+africoin = { local = "../move/africoin" }
 
 [addresses]
 africoin = "0xc68c4cfb63d702227db09c28837e75abd23bbb3adc192e3bc45fecca4dd5b7e8"
