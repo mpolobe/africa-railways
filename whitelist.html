@@ -10,14 +10,14 @@
         :root { --navy: #0a0e1a; --gold: #FFB800; --cyan: #00D4FF; --white: #ffffff; --surface: #16203a; --green: #10b981; }
         html { scroll-behavior: smooth; }
         body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; }
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(10,14,26,0.95); border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(10,14,26,0.95); border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 1[...]
         .logo { font-size: 1.4rem; font-weight: 800; color: var(--gold); text-decoration: none; display: flex; align-items: center; gap: 10px; }
         .nav-links { display: flex; list-style: none; gap: 30px; margin: 0; align-items: center; }
         .nav-links a { color: var(--white); text-decoration: none; font-size: 0.9rem; transition: 0.3s; font-weight: 500; }
         .nav-links a:hover { color: var(--gold); }
         .cta-nav { background: linear-gradient(135deg, var(--gold), #ff9500); color: var(--navy); padding: 10px 20px; border-radius: 8px; font-weight: 700; }
         .container { max-width: 900px; margin: 0 auto; padding: 80px 20px; }
-        h1 { font-size: clamp(2.5rem, 5vw, 4rem); margin: 0 0 20px; font-weight: 900; text-align: center; background: linear-gradient(135deg, var(--gold), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h1 { font-size: clamp(2.5rem, 5vw, 4rem); margin: 0 0 20px; font-weight: 900; text-align: center; background: linear-gradient(135deg, var(--gold), var(--cyan)); -webkit-background-clip: text; [...]
         .hero { text-align: center; margin-bottom: 60px; }
         .hero p { color: #aaa; font-size: 1.2rem; max-width: 700px; margin: 0 auto 40px; }
         .benefits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 60px; }
@@ -29,13 +29,13 @@
         .form-section { background: var(--surface); padding: 50px; border-radius: 15px; border: 1px solid #333; margin-bottom: 40px; }
         .form-group { margin-bottom: 25px; }
         label { display: block; color: var(--cyan); font-weight: 600; margin-bottom: 10px; font-size: 0.95rem; }
-        input, select, textarea { width: 100%; padding: 15px; background: rgba(10,14,26,0.5); border: 1px solid #333; border-radius: 8px; color: var(--white); font-size: 1rem; font-family: inherit; transition: all 0.3s; box-sizing: border-box; }
+        input, select, textarea { width: 100%; padding: 15px; background: rgba(10,14,26,0.5); border: 1px solid #333; border-radius: 8px; color: var(--white); font-size: 1rem; font-family: inherit; tr[...]
         input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold); background: rgba(10,14,26,0.8); }
         textarea { resize: vertical; min-height: 100px; }
         .wallet-connect { background: linear-gradient(135deg, #8b5cf6, #ec4899); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 30px; }
         .wallet-status { display: flex; align-items: center; justify-content: center; gap: 15px; font-size: 1.1rem; }
-        .wallet-address { font-family: 'Courier New', monospace; color: var(--cyan); font-weight: 700; background: rgba(0,0,0,0.3); padding: 10px 20px; border-radius: 8px; margin-top: 15px; word-break: break-all; }
-        .btn { padding: 15px 40px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 10px; justify-content: center; text-decoration: none; }
+        .wallet-address { font-family: 'Courier New', monospace; color: var(--cyan); font-weight: 700; background: rgba(0,0,0,0.3); padding: 10px 20px; border-radius: 8px; margin-top: 15px; word-break[...]
+        .btn { padding: 15px 40px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 10px; jus[...]
         .btn-primary { background: linear-gradient(135deg, var(--gold), #ff9500); color: var(--navy); }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255,184,0,0.4); }
         .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
@@ -43,7 +43,7 @@
         .btn-secondary:hover { background: rgba(0,212,255,0.1); }
         .btn-wallet { background: linear-gradient(135deg, #8b5cf6, #ec4899); color: white; width: 100%; }
         .btn-wallet:hover { transform: scale(1.02); }
-        .success-message { background: rgba(16,185,129,0.2); border: 2px solid var(--green); color: var(--green); padding: 20px; border-radius: 12px; text-align: center; margin-top: 30px; display: none; }
+        .success-message { background: rgba(16,185,129,0.2); border: 2px solid var(--green); color: var(--green); padding: 20px; border-radius: 12px; text-align: center; margin-top: 30px; display: non[...]
         .success-message.show { display: block; }
         .error-message { background: rgba(239,68,68,0.2); border: 2px solid #ef4444; color: #ef4444; padding: 15px; border-radius: 8px; margin-top: 15px; display: none; }
         .error-message.show { display: block; }
@@ -105,7 +105,7 @@
 
         <div class="form-section">
             <div class="info-box">
-                <p><i class="fas fa-info-circle" style="color:var(--cyan);"></i> <strong>Important:</strong> You must connect your wallet to join the whitelist. This ensures only genuine participants with verified Web3 wallets can register.</p>
+                <p><i class="fas fa-info-circle" style="color:var(--cyan);"></i> <strong>Important:</strong> You must connect your wallet to join the whitelist. This ensures only genuine participants [...]</p>
             </div>
 
             <div class="wallet-connect">
@@ -188,7 +188,7 @@
                     <div class="checkbox-group">
                         <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
                         <label for="agreeTerms">
-                            I agree to the <a href="/terms-of-service.html" style="color:var(--cyan);">Terms of Service</a> and <a href="/privacy-policy.html" style="color:var(--cyan);">Privacy Policy</a> <span class="required">*</span>
+                            I agree to the <a href="/terms-of-service.html" style="color:var(--cyan);">Terms of Service</a> and <a href="/privacy-policy.html" style="color:var(--cyan);">Privacy Policy[...]
                         </label>
                     </div>
                 </div>
@@ -247,9 +247,6 @@
 
     <script>
         let walletAddress = null;
-        let web3Provider = null;
-
-        // Check if MetaMask is installed
         const connectWalletBtn = document.getElementById('connectWalletBtn');
         const walletStatus = document.getElementById('statusText');
         const walletAddressDiv = document.getElementById('walletAddress');
@@ -272,7 +269,6 @@
             }
         }
 
-        // Connect wallet
         connectWalletBtn.addEventListener('click', async () => {
             if (typeof window.ethereum !== 'undefined') {
                 try {
@@ -287,7 +283,6 @@
             }
         });
 
-        // Handle account changes
         function handleAccountsChanged(accounts) {
             if (accounts.length === 0) {
                 walletAddress = null;
@@ -306,67 +301,68 @@
             }
         }
 
-        // Listen for account changes
         if (typeof window.ethereum !== 'undefined') {
             window.ethereum.on('accountsChanged', handleAccountsChanged);
             window.ethereum.on('chainChanged', () => window.location.reload());
         }
 
-        // Form submission
         whitelistForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             if (!walletAddress) {
                 showError('Please connect your wallet before submitting.');
                 return;
             }
 
-            // Validate form
             const formData = new FormData(whitelistForm);
             const data = Object.fromEntries(formData.entries());
-            
-            // Add wallet address
-            data.walletAddress = walletAddress;
-            
-            // Show loading state
+            data.wallet_address = walletAddress;
+
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
-            
+
             try {
-                // Initialize Supabase client
-                const SUPABASE_URL = 'https://your-project.supabase.co'; // Replace with your Supabase URL
-                const SUPABASE_ANON_KEY = 'your-anon-key'; // Replace with your Supabase anon key
+                // Your Supabase project credentials
+                const SUPABASE_URL = 'https://llvprbmrnjvamjzavmhg.supabase.co';
+                const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxsdnByYm1ybmp2YW1qemF2bWhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU3NDQ1NTIsImV4cCI6MjA4MTMyMDU1Mn0.YvLr0yIuPvaBIjZ0_RZ10H6FzJ6eFbbaPOH6lM0RNtY';
+
                 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                
-                // Insert into whitelist table
+
+                // Prepare data for your whitelist table
+                const toInsert = {
+                    wallet_address: data.wallet_address,
+                    full_name: data.fullName,
+                    email: data.email,
+                    telegram_handle: data.telegram || null,
+                    country: data.country,
+                    investment_amount: data.investmentAmount,
+                    hear_about: data.hearAbout || null,
+                    comments: data.comments || null,
+                    agree_terms: !!data.agreeTerms,
+                    agree_risk: !!data.agreeRisk,
+                    agree_marketing: !!data.agreeMarketing,
+                    status: 'pending'
+                };
+
                 const { data: result, error } = await supabase
                     .from('whitelist')
-                    .insert([{
-                        wallet_address: data.walletAddress,
-                        email: data.email,
-                        telegram_handle: data.telegram || null,
-                        twitter_handle: data.twitter || null,
-                        investment_amount: data.investment,
-                        referral_code: data.referral || null,
-                        terms_accepted: true,
-                        status: 'pending'
-                    }]);
-                
+                    .insert([toInsert]);
+
                 if (error) {
-                    // Check if it's a duplicate wallet address
-                    if (error.code === '23505') {
-                        throw new Error('This wallet address is already registered.');
+                    console.error(error);
+                    if (error.code === '23505' || (error.message && error.message.toLowerCase().includes('duplicate'))) {
+                        throw new Error('This wallet address or email is already registered.');
                     }
-                    throw new Error(error.message);
+                    throw new Error(error.message || 'Submission failed');
                 }
-                
-                // Success
+
                 whitelistForm.style.display = 'none';
                 successMessage.classList.add('show');
-                
+
                 console.log('Whitelist registration successful:', result);
-                
+
             } catch (error) {
+                console.error(error);
                 showError(error.message || 'Failed to submit registration. Please try again.');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-rocket"></i> Join Whitelist';
@@ -381,7 +377,6 @@
             }, 5000);
         }
 
-        // Initialize
         checkWalletConnection();
     </script>
 </body>
