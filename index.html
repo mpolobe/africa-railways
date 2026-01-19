@@ -855,6 +855,20 @@
         </div>
     </section>
 
+    <!-- Partners Section -->
+    <section class="partners-section" style="text-align: center; padding: 60px 20px; background: linear-gradient(180deg, #0a0e1a 0%, #111827 100%); margin-top: 0;">
+        <h2 style="color: var(--gold); font-size: 1.8rem; margin-bottom: 10px;">Our Partners</h2>
+        <p style="color: #aaa; margin-bottom: 30px;">Trusted by leading platforms in the crypto ecosystem</p>
+        <div class="partner-logos" style="display: flex; justify-content: center; align-items: center; gap: 50px; flex-wrap: wrap;">
+            <a href="https://www.pinksale.finance" target="_blank" rel="noopener noreferrer" style="transition: opacity 0.3s ease; display: inline-block;">
+                <img src="assets/partners/pinksale-logo.png" alt="PinkSale" style="height: 60px; width: auto;">
+            </a>
+            <a href="https://www.dexview.com" target="_blank" rel="noopener noreferrer" style="transition: opacity 0.3s ease; display: inline-block;">
+                <img src="assets/partners/dexview-logo.svg" alt="DEXView" style="height: 60px; width: auto;">
+            </a>
+        </div>
+    </section>
+
     <footer style="padding: 80px 8% 40px; border-top: 1px solid #222; background: #0a0e1a;">
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px;">
             <!-- Company Info -->
@@ -1083,6 +1097,9 @@
     
     <style>
         footer a:hover { color: var(--gold) !important; }
+        .partner-logos a:hover { opacity: 0.8; }
+        .partner-logos img { filter: brightness(1); transition: filter 0.3s ease, transform 0.3s ease; }
+        .partner-logos a:hover img { filter: brightness(1.1); transform: scale(1.05); }
     </style>
     
     <script>
