@@ -364,9 +364,37 @@
         </div>
     </div>
 
+    <script src="/js/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // Supabase configuration for production OAuth
+        const SUPABASE_URL = window.SUPABASE_URL || 'https://llvprbmrnjvamjzavmhg.supabase.co';
+        const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '';
+        let supabaseClient = null;
+        
+        if (typeof supabase !== 'undefined' && SUPABASE_ANON_KEY) {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            localStorage.setItem('supabase_anon_key', SUPABASE_ANON_KEY);
+        }
+        
         // Check if already authenticated
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Check Supabase session first
+            if (supabaseClient) {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (session) {
+                    sessionStorage.setItem('dev_auth_token', session.access_token);
+                    sessionStorage.setItem('dev_auth_expiry', (Date.now() + 24 * 60 * 60 * 1000).toString());
+                    sessionStorage.setItem('dev_user_email', session.user.email);
+                    sessionStorage.setItem('dev_user_name', session.user.user_metadata?.full_name || session.user.email.split('@')[0]);
+                    showStatus('Already authenticated. Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'operators.html';
+                    }, 1000);
+                    return;
+                }
+            }
+            
             const authToken = sessionStorage.getItem('dev_auth_token');
             const authExpiry = sessionStorage.getItem('dev_auth_expiry');
             
@@ -437,43 +465,57 @@
         async function handleGoogleLogin() {
             showStatus('Connecting to Google...', 'info');
             
-            // Simulate OAuth flow
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            const mockToken = 'google_' + Math.random().toString(36).substring(2);
-            const expiryTime = Date.now() + (24 * 60 * 60 * 1000);
-            
-            sessionStorage.setItem('dev_auth_token', mockToken);
-            sessionStorage.setItem('dev_auth_expiry', expiryTime.toString());
-            sessionStorage.setItem('dev_user_email', 'developer@gmail.com');
-            sessionStorage.setItem('dev_user_name', 'Developer');
-            
-            showStatus('✅ Google login successful! Redirecting...', 'success');
-            
-            setTimeout(() => {
-                window.location.href = 'operators.html';
-            }, 1500);
+            try {
+                if (supabaseClient) {
+                    // Production: Use Supabase OAuth
+                    sessionStorage.setItem('auth_redirect', window.location.origin + '/operators.html');
+                    
+                    const { data, error } = await supabaseClient.auth.signInWithOAuth({
+                        provider: 'google',
+                        options: {
+                            redirectTo: window.location.origin + '/auth-callback.html'
+                        }
+                    });
+                    
+                    if (error) {
+                        throw error;
+                    }
+                    // User will be redirected to Google
+                } else {
+                    showStatus('⚠️ OAuth not configured. Please set SUPABASE_ANON_KEY.', 'error');
+                }
+            } catch (error) {
+                console.error('Google login error:', error);
+                showStatus('❌ Failed to connect to Google. Please try again.', 'error');
+            }
         }
 
         async function handleGithubLogin() {
             showStatus('Connecting to GitHub...', 'info');
             
-            // Simulate OAuth flow
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            const mockToken = 'github_' + Math.random().toString(36).substring(2);
-            const expiryTime = Date.now() + (24 * 60 * 60 * 1000);
-            
-            sessionStorage.setItem('dev_auth_token', mockToken);
-            sessionStorage.setItem('dev_auth_expiry', expiryTime.toString());
-            sessionStorage.setItem('dev_user_email', 'developer@github.com');
-            sessionStorage.setItem('dev_user_name', 'GitHubDev');
-            
-            showStatus('✅ GitHub login successful! Redirecting...', 'success');
-            
-            setTimeout(() => {
-                window.location.href = 'operators.html';
-            }, 1500);
+            try {
+                if (supabaseClient) {
+                    // Production: Use Supabase OAuth
+                    sessionStorage.setItem('auth_redirect', window.location.origin + '/operators.html');
+                    
+                    const { data, error } = await supabaseClient.auth.signInWithOAuth({
+                        provider: 'github',
+                        options: {
+                            redirectTo: window.location.origin + '/auth-callback.html'
+                        }
+                    });
+                    
+                    if (error) {
+                        throw error;
+                    }
+                    // User will be redirected to GitHub
+                } else {
+                    showStatus('⚠️ OAuth not configured. Please set SUPABASE_ANON_KEY.', 'error');
+                }
+            } catch (error) {
+                console.error('GitHub login error:', error);
+                showStatus('❌ Failed to connect to GitHub. Please try again.', 'error');
+            }
         }
 
         function showRegisterInfo() {

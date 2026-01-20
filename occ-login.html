@@ -248,16 +248,43 @@
         </div>
     </div>
 
+    <script src="/js/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // Supabase configuration for production OAuth
+        const SUPABASE_URL = window.SUPABASE_URL || 'https://llvprbmrnjvamjzavmhg.supabase.co';
+        const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '';
+        let supabaseClient = null;
+        
+        if (typeof supabase !== 'undefined' && SUPABASE_ANON_KEY) {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            localStorage.setItem('supabase_anon_key', SUPABASE_ANON_KEY);
+        }
+        
         // Check if already authenticated
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Check Supabase session first
+            if (supabaseClient) {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (session) {
+                    sessionStorage.setItem('occ_auth_token', session.access_token);
+                    sessionStorage.setItem('occ_auth_expiry', (Date.now() + 24 * 60 * 60 * 1000).toString());
+                    sessionStorage.setItem('occ_user_email', session.user.email);
+                    showStatus('Already authenticated. Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'occ.html';
+                    }, 1000);
+                    return;
+                }
+            }
+            
+            // Check legacy session
             const authToken = sessionStorage.getItem('occ_auth_token');
             const authExpiry = sessionStorage.getItem('occ_auth_expiry');
             
             if (authToken && authExpiry) {
                 const expiryTime = parseInt(authExpiry);
                 if (Date.now() < expiryTime) {
-                    // Already authenticated, redirect to OCC
                     showStatus('Already authenticated. Redirecting...', 'success');
                     setTimeout(() => {
                         window.location.href = 'occ.html';
@@ -287,58 +314,31 @@
             hideStatus();
             
             try {
-                // Check if Sui zkLogin is available
-                if (typeof window.suiZkLogin === 'undefined') {
-                    // Simulate zkLogin for demo purposes
-                    showStatus('Initializing zkLogin...', 'info');
-                    
-                    await new Promise(resolve => setTimeout(resolve, 1500));
-                    
-                    // In production, this would redirect to Google OAuth
-                    // For now, simulate successful authentication
+                if (supabaseClient) {
+                    // Production: Use Supabase OAuth
                     showStatus('Redirecting to Google authentication...', 'info');
                     
-                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    sessionStorage.setItem('auth_redirect', window.location.origin + '/occ.html');
                     
-                    // Simulate successful authentication
-                    const mockToken = 'zklogin_' + Math.random().toString(36).substring(2);
-                    const expiryTime = Date.now() + (24 * 60 * 60 * 1000); // 24 hours
-                    
-                    sessionStorage.setItem('occ_auth_token', mockToken);
-                    sessionStorage.setItem('occ_auth_expiry', expiryTime.toString());
-                    sessionStorage.setItem('occ_user_email', 'demo@africarailways.com');
-                    
-                    showStatus('✅ Authentication successful! Redirecting to OCC...', 'success');
-                    
-                    setTimeout(() => {
-                        window.location.href = 'occ.html';
-                    }, 1500);
-                } else {
-                    // Real zkLogin implementation
-                    showStatus('Connecting to Sui zkLogin...', 'info');
-                    
-                    // Initialize zkLogin
-                    const result = await window.suiZkLogin.authenticate({
+                    const { data, error } = await supabaseClient.auth.signInWithOAuth({
                         provider: 'google',
-                        redirectUrl: window.location.origin + '/occ.html'
+                        options: {
+                            redirectTo: window.location.origin + '/auth-callback.html'
+                        }
                     });
                     
-                    if (result.success) {
-                        sessionStorage.setItem('occ_auth_token', result.token);
-                        sessionStorage.setItem('occ_auth_expiry', result.expiry);
-                        sessionStorage.setItem('occ_user_email', result.email);
-                        
-                        showStatus('✅ Authentication successful! Redirecting...', 'success');
-                        
-                        setTimeout(() => {
-                            window.location.href = 'occ.html';
-                        }, 1000);
-                    } else {
-                        throw new Error('Authentication failed');
+                    if (error) {
+                        throw error;
                     }
+                    // User will be redirected to Google
+                } else {
+                    // Fallback: Show configuration message
+                    showStatus('⚠️ OAuth not configured. Please set SUPABASE_ANON_KEY.', 'error');
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<span>🔐</span><span>Login with zkLogin</span>';
                 }
             } catch (error) {
-                console.error('zkLogin error:', error);
+                console.error('Login error:', error);
                 showStatus('❌ Authentication failed. Please try again.', 'error');
                 loginBtn.disabled = false;
                 loginBtn.innerHTML = '<span>🔐</span><span>Login with zkLogin</span>';

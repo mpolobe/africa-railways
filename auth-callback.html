@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authenticating... - Africa Railways</title>
+    <style>
+        :root {
+            --navy: #0a0e1a;
+            --gold: #FFB800;
+            --cyan: #00D4FF;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--navy) 0%, #1a2642 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 400px;
+        }
+        
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .status {
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 184, 0, 0.2);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, var(--gold) 0%, #ff9500 100%);
+            color: var(--navy);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🚂</div>
+        <h1>Completing Sign In</h1>
+        <p class="status" id="status">Verifying your authentication...</p>
+        <div class="spinner" id="spinner"></div>
+        
+        <div class="success" id="success">
+            <p>✅ Successfully signed in!</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">Redirecting you now...</p>
+        </div>
+        
+        <div class="error" id="error">
+            <p>❌ Authentication failed</p>
+            <p id="errorMessage" style="margin-top: 10px; font-size: 0.9rem;"></p>
+            <a href="/" class="btn">Return Home</a>
+        </div>
+    </div>
+
+    <script src="/js/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Supabase configuration - same as scroll-waitlist-exchange-1
+        const SUPABASE_URL = window.SUPABASE_URL || 'https://llvprbmrnjvamjzavmhg.supabase.co';
+        // The anon key should be set via config.js or localStorage
+        const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 
+            localStorage.getItem('supabase_anon_key') || '';
+        
+        async function handleCallback() {
+            const statusEl = document.getElementById('status');
+            const spinnerEl = document.getElementById('spinner');
+            const successEl = document.getElementById('success');
+            const errorEl = document.getElementById('error');
+            const errorMsgEl = document.getElementById('errorMessage');
+            
+            try {
+                statusEl.textContent = 'Processing authentication...';
+                
+                // Initialize Supabase - anon key is required for OAuth callback
+                if (!SUPABASE_ANON_KEY) {
+                    throw new Error('Supabase configuration missing. Please contact support.');
+                }
+                
+                const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                
+                // Get session - Supabase handles the OAuth callback automatically
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
+                
+                if (error) {
+                    throw error;
+                }
+                
+                if (session) {
+                    // Success! Create wallet and store session
+                    const wallet = {
+                        address: generateWalletAddress(session.user),
+                        provider: session.user.app_metadata?.provider || 'oauth',
+                        email: session.user.email,
+                        userId: session.user.id,
+                        name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email.split('@')[0]
+                    };
+                    
+                    // Store wallet for main app
+                    localStorage.setItem('africa_railways_wallet', JSON.stringify(wallet));
+                    localStorage.setItem('africa_railways_session', JSON.stringify({
+                        access_token: session.access_token,
+                        refresh_token: session.refresh_token,
+                        user: session.user
+                    }));
+                    
+                    // Also set session tokens for OCC and developer portals
+                    const expiryTime = Date.now() + (24 * 60 * 60 * 1000);
+                    sessionStorage.setItem('occ_auth_token', session.access_token);
+                    sessionStorage.setItem('occ_auth_expiry', expiryTime.toString());
+                    sessionStorage.setItem('occ_user_email', session.user.email);
+                    sessionStorage.setItem('dev_auth_token', session.access_token);
+                    sessionStorage.setItem('dev_auth_expiry', expiryTime.toString());
+                    sessionStorage.setItem('dev_user_email', session.user.email);
+                    sessionStorage.setItem('dev_user_name', wallet.name);
+                    
+                    // Show success
+                    spinnerEl.style.display = 'none';
+                    successEl.style.display = 'block';
+                    statusEl.textContent = 'Welcome, ' + wallet.name + '!';
+                    
+                    // Redirect to intended destination or home
+                    const redirectTo = sessionStorage.getItem('auth_redirect') || '/';
+                    sessionStorage.removeItem('auth_redirect');
+                    
+                    setTimeout(() => {
+                        window.location.href = redirectTo;
+                    }, 1500);
+                } else {
+                    // No session - check if there's an error in URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+                    const errorDesc = urlParams.get('error_description') || hashParams.get('error_description');
+                    
+                    if (errorDesc) {
+                        throw new Error(errorDesc);
+                    }
+                    
+                    throw new Error('Authentication was cancelled or failed. Please try again.');
+                }
+            } catch (err) {
+                console.error('Auth callback error:', err);
+                
+                spinnerEl.style.display = 'none';
+                errorEl.style.display = 'block';
+                errorMsgEl.textContent = err.message || 'An unexpected error occurred';
+                statusEl.textContent = 'Authentication failed';
+            }
+        }
+        
+        function generateWalletAddress(user) {
+            // Create deterministic SUI-style address from user ID
+            const input = `sui:${user.id}:africa-railways-v1`;
+            let hash = 0;
+            for (let i = 0; i < input.length; i++) {
+                const char = input.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            
+            // Generate 64-character hex address (SUI format)
+            const hexChars = '0123456789abcdef';
+            let address = '0x';
+            const seed = Math.abs(hash);
+            for (let i = 0; i < 64; i++) {
+                // Use a more varied distribution
+                const idx = (seed * (i + 1) * 7 + i * 13) % 16;
+                address += hexChars[idx];
+            }
+            
+            return address;
+        }
+        
+        // Run on page load
+        handleCallback();
+    </script>
+</body>
+</html>

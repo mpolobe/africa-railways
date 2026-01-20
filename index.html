@@ -454,6 +454,21 @@
             #sentinel img { max-width: 300px; margin: 20px auto; display: block; }
         }
     </style>
+    <!-- Configuration and Supabase Client for Production OAuth -->
+    <script src="/js/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Initialize Supabase client for production OAuth
+        const SUPABASE_URL = window.SUPABASE_URL || 'https://llvprbmrnjvamjzavmhg.supabase.co';
+        const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '';
+        let supabaseClient = null;
+        
+        if (typeof supabase !== 'undefined' && SUPABASE_ANON_KEY) {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            // Store for auth-callback page
+            localStorage.setItem('supabase_anon_key', SUPABASE_ANON_KEY);
+        }
+    </script>
 </head>
 <body>
     <nav>
@@ -1833,75 +1848,33 @@
                 <div style="text-align: center; padding: 40px 0;">
                     <div style="font-size: 48px; margin-bottom: 20px;">🔄</div>
                     <h3 style="color: var(--gold);">Connecting to Google...</h3>
-                    <p style="color: #94a3b8;">A popup window will open for authentication</p>
-                    <p style="color: #64748b; font-size: 0.85rem; margin-top: 15px;">If popup is blocked, please allow popups for this site</p>
+                    <p style="color: #94a3b8;">You will be redirected to Google for authentication</p>
                 </div>
             `;
             
-            // Open popup for Google OAuth (simulated for demo)
-            const width = 500, height = 600;
-            const left = (screen.width - width) / 2;
-            const top = (screen.height - height) / 2;
-            
-            // In production, this would be the actual Google OAuth URL
-            // For demo, we simulate the flow
-            const popup = window.open('about:blank', 'GoogleLogin', 
-                `width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no`);
-            
-            if (popup) {
-                popup.document.write(`
-                    <html>
-                    <head><title>Google Sign In</title></head>
-                    <body style="font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #f5f5f5;">
-                        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" width="200" style="margin-bottom: 30px;">
-                        <h2 style="color: #333; margin-bottom: 20px;">Sign in with Google</h2>
-                        <p style="color: #666; margin-bottom: 30px;">Demo: Click below to simulate Google login</p>
-                        <button onclick="window.opener.postMessage({type:'google_auth',success:true,email:'user@gmail.com'},'*');window.close();" 
-                            style="padding: 15px 40px; background: #4285f4; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
-                            Continue as user@gmail.com
-                        </button>
-                        <button onclick="window.close();" style="margin-top: 15px; padding: 10px 30px; background: #ddd; border: none; border-radius: 5px; cursor: pointer;">
-                            Cancel
-                        </button>
-                    </body>
-                    </html>
-                `);
-            }
-            
-            // Listen for message from popup
-            window.addEventListener('message', function googleHandler(event) {
-                if (event.data && event.data.type === 'google_auth') {
-                    window.removeEventListener('message', googleHandler);
-                    
-                    if (event.data.success) {
-                        const wallet = {
-                            address: '0x' + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join(''),
-                            provider: 'google',
-                            email: event.data.email
-                        };
-                        
-                        localStorage.setItem('africa_railways_wallet', JSON.stringify(wallet));
-                        
-                        // Restore step1 and show success
-                        restoreStep1();
-                        document.getElementById('loginStep1').style.display = 'none';
-                        document.getElementById('loginStep4').style.display = 'block';
-                        document.getElementById('newWalletAddress').textContent = wallet.address.slice(0, 8) + '...' + wallet.address.slice(-6);
-                        
-                        updateWalletUI(wallet);
-                    } else {
-                        restoreStep1();
+            try {
+                // Store current page for redirect back
+                sessionStorage.setItem('auth_redirect', window.location.href);
+                
+                // Use Supabase OAuth for production Google sign-in
+                const { data, error } = await supabaseClient.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: window.location.origin + '/auth-callback.html'
                     }
-                }
-            });
-            
-            // Handle popup closed without completing
-            const checkPopup = setInterval(() => {
-                if (popup && popup.closed) {
-                    clearInterval(checkPopup);
+                });
+                
+                if (error) {
+                    console.error('Google OAuth error:', error);
                     restoreStep1();
+                    alert('Failed to connect to Google. Please try again.');
                 }
-            }, 500);
+                // User will be redirected to Google
+            } catch (err) {
+                console.error('Google login error:', err);
+                restoreStep1();
+                alert('Failed to connect to Google. Please try again.');
+            }
         }
         
         async function loginWithFacebook() {
@@ -1911,72 +1884,33 @@
                 <div style="text-align: center; padding: 40px 0;">
                     <div style="font-size: 48px; margin-bottom: 20px;">🔄</div>
                     <h3 style="color: var(--gold);">Connecting to Facebook...</h3>
-                    <p style="color: #94a3b8;">A popup window will open for authentication</p>
-                    <p style="color: #64748b; font-size: 0.85rem; margin-top: 15px;">If popup is blocked, please allow popups for this site</p>
+                    <p style="color: #94a3b8;">You will be redirected to Facebook for authentication</p>
                 </div>
             `;
             
-            // Open popup for Facebook OAuth (simulated for demo)
-            const width = 500, height = 600;
-            const left = (screen.width - width) / 2;
-            const top = (screen.height - height) / 2;
-            
-            const popup = window.open('about:blank', 'FacebookLogin', 
-                `width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no`);
-            
-            if (popup) {
-                popup.document.write(`
-                    <html>
-                    <head><title>Facebook Login</title></head>
-                    <body style="font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #f0f2f5;">
-                        <div style="background: #1877f2; color: white; padding: 15px 30px; border-radius: 8px; font-size: 24px; font-weight: bold; margin-bottom: 30px;">facebook</div>
-                        <h2 style="color: #1c1e21; margin-bottom: 20px;">Log in to Facebook</h2>
-                        <p style="color: #65676b; margin-bottom: 30px;">Demo: Click below to simulate Facebook login</p>
-                        <button onclick="window.opener.postMessage({type:'facebook_auth',success:true},'*');window.close();" 
-                            style="padding: 15px 40px; background: #1877f2; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; font-weight: bold;">
-                            Continue as Facebook User
-                        </button>
-                        <button onclick="window.close();" style="margin-top: 15px; padding: 10px 30px; background: #e4e6eb; border: none; border-radius: 5px; cursor: pointer; color: #1c1e21;">
-                            Cancel
-                        </button>
-                    </body>
-                    </html>
-                `);
-            }
-            
-            // Listen for message from popup
-            window.addEventListener('message', function fbHandler(event) {
-                if (event.data && event.data.type === 'facebook_auth') {
-                    window.removeEventListener('message', fbHandler);
-                    
-                    if (event.data.success) {
-                        const wallet = {
-                            address: '0x' + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join(''),
-                            provider: 'facebook'
-                        };
-                        
-                        localStorage.setItem('africa_railways_wallet', JSON.stringify(wallet));
-                        
-                        // Restore step1 and show success
-                        restoreStep1();
-                        document.getElementById('loginStep1').style.display = 'none';
-                        document.getElementById('loginStep4').style.display = 'block';
-                        document.getElementById('newWalletAddress').textContent = wallet.address.slice(0, 8) + '...' + wallet.address.slice(-6);
-                        
-                        updateWalletUI(wallet);
-                    } else {
-                        restoreStep1();
+            try {
+                // Store current page for redirect back
+                sessionStorage.setItem('auth_redirect', window.location.href);
+                
+                // Use Supabase OAuth for production Facebook sign-in
+                const { data, error } = await supabaseClient.auth.signInWithOAuth({
+                    provider: 'facebook',
+                    options: {
+                        redirectTo: window.location.origin + '/auth-callback.html'
                     }
-                }
-            });
-            
-            // Handle popup closed without completing
-            const checkPopup = setInterval(() => {
-                if (popup && popup.closed) {
-                    clearInterval(checkPopup);
+                });
+                
+                if (error) {
+                    console.error('Facebook OAuth error:', error);
                     restoreStep1();
+                    alert('Failed to connect to Facebook. Please try again.');
                 }
-            }, 500);
+                // User will be redirected to Facebook
+            } catch (err) {
+                console.error('Facebook login error:', err);
+                restoreStep1();
+                alert('Failed to connect to Facebook. Please try again.');
+            }
         }
         
         function restoreStep1() {
