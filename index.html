@@ -342,9 +342,18 @@
         }
         @media (max-width: 768px) {
             .hamburger { display: flex; }
-            nav { flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 15px 5%; }
+            nav { 
+                flex-direction: row; 
+                flex-wrap: nowrap; 
+                justify-content: space-between; 
+                align-items: center; 
+                padding: 10px 5%; 
+                position: relative;
+            }
+            nav .logo img { height: 50px; }
+            nav .logo span { font-size: 0.9rem; }
             .nav-links {
-                display: none;
+                display: none !important;
                 flex-direction: column;
                 gap: 0;
                 width: 100%;
@@ -360,8 +369,9 @@
                 overflow-y: auto;
                 border-bottom: 1px solid #333;
                 box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                z-index: 1000;
             }
-            .nav-links.active { display: flex; }
+            .nav-links.active { display: flex !important; }
             .nav-links .nav-item { width: 100%; border-bottom: 1px solid #222; }
             .nav-links .nav-item > a,
             .nav-links .nav-item > .dropdown-toggle {
