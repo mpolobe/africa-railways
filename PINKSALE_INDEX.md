@@ -2,7 +2,7 @@
 
 **Token**: Sentinel ($SENT)  
 **Network**: Polygon (POL)  
-**Contract**: `0xD267554628E954E2070D189859f13768B0424694`  
+**Contract**: `0xC9c7A437D2F2992d88E3137A473c2e0bAd696477`  
 **Total Supply**: 5,000,000,000 SENT  
 **Status**: ✅ Documentation Complete - Ready for Social Media Phase
 
@@ -118,7 +118,7 @@ All documentation for the $SENT PinkSale launch has been created and is ready fo
   "name": "Sentinel",
   "symbol": "$SENT",
   "network": "Polygon (POL)",
-  "contract": "0xD267554628E954E2070D189859f13768B0424694",
+  "contract": "0xC9c7A437D2F2992d88E3137A473c2e0bAd696477",
   "standard": "ERC-20",
   "totalSupply": "5,000,000,000",
   "decimals": 18
@@ -170,7 +170,7 @@ Lockup: 365 days
 - [x] Risk disclosures included
 
 ### Technical ✅
-- [x] Token contract deployed: 0xD267554628E954E2070D189859f13768B0424694
+- [x] Token contract deployed: 0xC9c7A437D2F2992d88E3137A473c2e0bAd696477
 - [x] Network: Polygon (POL)
 - [x] Standard: ERC-20
 - [x] Decimals: 18
@@ -280,7 +280,7 @@ Lockup: 365 days
 ### External Resources
 - Website: [africa-railways.vercel.app](https://africa-railways.vercel.app)
 - GitHub: [github.com/mpolobe/africa-railways](https://github.com/mpolobe/africa-railways)
-- Contract: [PolygonScan](https://polygonscan.com/token/0xD267554628E954E2070D189859f13768B0424694)
+- Contract: [PolygonScan](https://polygonscan.com/token/0xC9c7A437D2F2992d88E3137A473c2e0bAd696477)
 - PinkSale: [pinksale.finance](https://www.pinksale.finance)
 
 ---

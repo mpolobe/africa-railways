@@ -3,7 +3,7 @@
 
 **Last Updated**: February 11, 2026  
 **Status**: Live Production | TAZARA Active | ZRL Partnership Active  
-**Token**: $SENT (Polygon: 0xD267554628E954E2070D189859f13768B0424694)
+**Token**: $SENT (Polygon: 0xC9c7A437D2F2992d88E3137A473c2e0bAd696477)
 
 ---
 
@@ -214,7 +214,7 @@ Year 5 (2030): 25 railways, $1B volume → $20M fees
 
 ### Layer 1: Blockchain Infrastructure
 - **Network**: Polygon (POL)
-- **Contract**: 0xD267554628E954E2070D189859f13768B0424694
+- **Contract**: 0xC9c7A437D2F2992d88E3137A473c2e0bAd696477
 - **Standard**: ERC-20 (maximum compatibility)
 - **Total Supply**: 5,000,000,000 SENT (fixed)
 
@@ -437,7 +437,7 @@ Liquidity: 60% locked 365 days
 ### Official Channels
 - **Website**: [africa-railways.vercel.app](https://africa-railways.vercel.app)
 - **GitHub**: [github.com/mpolobe/africa-railways](https://github.com/mpolobe/africa-railways)
-- **Contract**: [PolygonScan](https://polygonscan.com/token/0xD267554628E954E2070D189859f13768B0424694)
+- **Contract**: [PolygonScan](https://polygonscan.com/token/0xC9c7A437D2F2992d88E3137A473c2e0bAd696477)
 - **Email**: contact@africarailways.com
 - **Telegram**: @AfricoinCommunity
 - **Twitter**: @AfricaRailways

@@ -485,7 +485,7 @@ Files: 1 file changed, 6 insertions(+)
 Token Name: Sentinel
 Ticker: $SENT
 Network: Polygon (POL)
-Contract: 0xD267554628E954E2070D189859f13768B0424694
+Contract: 0xC9c7A437D2F2992d88E3137A473c2e0bAd696477
 Total Supply: 5,000,000,000 SENT
 Standard: ERC-20
 Decimals: 18

@@ -74,7 +74,7 @@ Africa Railways operates a **dual-token economy** following the industry-standar
 - **Deflationary**: 1% burn on freight transactions
 - **Governance rights**: Vote on protocol decisions
 - **Staking rewards**: Earn passive income
-- **Limited supply**: 10 billion total (fixed)
+- **Limited supply**: 1 billion total (fixed)
 
 ---
 
@@ -352,7 +352,7 @@ Wallet Screen:
 
 ### Official Contract Addresses:
 - **AFC (Sui)**: [View on Sui Explorer]
-- **AFRC (Polygon)**: 0xD267554628E954E2070D189859f13768B0424694
+- **AFRC (Polygon)**: 0xC9c7A437D2F2992d88E3137A473c2e0bAd696477
 
 ---
 

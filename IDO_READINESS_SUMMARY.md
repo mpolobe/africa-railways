@@ -7,7 +7,7 @@ The Africoin repository has been successfully enhanced with comprehensive IDO (I
 ## ✅ Requirements Fulfilled
 
 ### 1. Transparency Enhancements ✓
-- **Tokenomics Page** (`/tokenomics.html`): Complete breakdown of 10B AFRC supply distribution
+- **Tokenomics Page** (`/tokenomics.html`): Complete breakdown of SENT (10B) and AFRC (1B) supply distribution
 - **Interactive Visualization**: Chart.js doughnut chart showing allocation percentages
 - **Vesting Schedules**: Detailed timeline from TGE through month 48
 - **Token Utility**: 8 comprehensive use cases documented

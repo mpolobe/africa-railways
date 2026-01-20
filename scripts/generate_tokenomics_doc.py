@@ -7,7 +7,7 @@ TOKEN_DATA = {
     "symbol": "SENT",
     "total_supply": 5000000000,
     "blockchain": "Polygon (POL)",
-    "contract": "0xD267554628E954E2070D189859f13768B0424694",
+    "contract": "0xC9c7A437D2F2992d88E3137A473c2e0bAd696477",
     "lock_period": "730 Days",
     "vibe": "Infrastructure Equity"
 }

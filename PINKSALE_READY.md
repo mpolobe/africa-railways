@@ -2,7 +2,7 @@
 
 **Status**: ✅ Documentation Complete  
 **Network**: Polygon (POL)  
-**Contract**: 0xD267554628E954E2070D189859f13768B0424694  
+**Contract**: 0xC9c7A437D2F2992d88E3137A473c2e0bAd696477  
 **Total Supply**: 5,000,000,000 SENT
 
 ---
@@ -42,7 +42,7 @@
   "name": "Sentinel",
   "symbol": "$SENT",
   "network": "Polygon",
-  "contract": "0xD267554628E954E2070D189859f13768B0424694",
+  "contract": "0xC9c7A437D2F2992d88E3137A473c2e0bAd696477",
   "totalSupply": "5,000,000,000",
   "decimals": 18,
   "standard": "ERC-20"
@@ -68,7 +68,7 @@
 
 ```
 Network: Polygon
-Token: 0xD267554628E954E2070D189859f13768B0424694
+Token: 0xC9c7A437D2F2992d88E3137A473c2e0bAd696477
 Currency: POL
 Presale Rate: 20,000 SENT per POL
 Listing Rate: 18,000 SENT per POL
@@ -315,7 +315,7 @@ Lockup: 365 days
 ### External Links
 - Website: https://africa-railways.vercel.app
 - GitHub: https://github.com/mpolobe/africa-railways
-- Contract: https://polygonscan.com/token/0xD267554628E954E2070D189859f13768B0424694
+- Contract: https://polygonscan.com/token/0xC9c7A437D2F2992d88E3137A473c2e0bAd696477
 - PinkSale: https://www.pinksale.finance
 
 ### Tools

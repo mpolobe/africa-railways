@@ -7,7 +7,7 @@ I am proud to announce the launch of the **Africa Railways** ecosystem. We aren'
 
 🔹 **The Tech:** A high-throughput Sui Move ledger for real-time revenue sharing.
 🔹 **The Safety:** Our "Sentinel" Mobile Suite empowers track workers to secure the line via blockchain-signed safety reports.
-🔹 **The Economics:** Dual-token model - $AFC (Africoin) for payments, $AFRC (Africa Rail Credits) for rewards. 10B AFRC supply with a 1% burn mechanism tied to physical freight movement.
+🔹 **The Economics:** Dual-token model - $AFC (Africoin) for payments, $AFRC (Africa Rail Credits) for rewards. 1B AFRC supply with a 1% burn mechanism tied to physical freight movement.
 
 From Lusaka to the world, we are laying the tracks for the 2026 Continental Rollout.
 

@@ -253,7 +253,7 @@ Year 5 (2030): 25 railways, $1B volume → $20M fees
 
 ### Layer 1: Blockchain Infrastructure
 - **Network**: Polygon (low fees, high throughput)
-- **Contract**: 0xD267554628E954E2070D189859f13768B0424694
+- **Contract**: 0xC9c7A437D2F2992d88E3137A473c2e0bAd696477
 - **Standard**: ERC-20 (maximum compatibility)
 
 ### Layer 2: Data Integration
@@ -384,7 +384,7 @@ $SENT provides the digital backbone for:
 ### Official Channels
 - **Website**: [africa-railways.vercel.app](https://africa-railways.vercel.app)
 - **GitHub**: [github.com/mpolobe/africa-railways](https://github.com/mpolobe/africa-railways)
-- **Contract**: [PolygonScan](https://polygonscan.com/token/0xD267554628E954E2070D189859f13768B0424694)
+- **Contract**: [PolygonScan](https://polygonscan.com/token/0xC9c7A437D2F2992d88E3137A473c2e0bAd696477)
 - **Email**: contact@africarailways.com
 
 ### Documentation
