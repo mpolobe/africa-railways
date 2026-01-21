@@ -1,213 +1,253 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  
+  <!-- Homepage -->
   <url>
     <loc>https://africarailways.com/</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-01-21</lastmod>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://africarailways.com/images/og-image.png</image:loc>
+      <image:title>Africa Railways - Pan-African High-Speed Rail Network</image:title>
+    </image:image>
   </url>
+  
+  <!-- About -->
   <url>
     <loc>https://africarailways.com/about.html</loc>
-    <lastmod>2026-01-20</lastmod>
+    <lastmod>2026-01-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  
+  <!-- Token & Investment Pages -->
   <url>
     <loc>https://africarailways.com/tokenomics.html</loc>
-    <lastmod>2026-01-20</lastmod>
+    <lastmod>2026-01-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
-  <url>
-    <loc>https://africarailways.com/whitepaper.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://africarailways.com/sent-litepaper.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://africarailways.com/sent-litepaper-tokenomics.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://africarailways.com/sent-litepaper-utility.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://africarailways.com/sent-litepaper-roadmap.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
+  
   <url>
     <loc>https://africarailways.com/ido-dashboard.html</loc>
-    <lastmod>2026-01-20</lastmod>
+    <lastmod>2026-01-21</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.9</priority>
+    <priority>0.95</priority>
   </url>
+  
   <url>
     <loc>https://africarailways.com/whitelist.html</loc>
-    <lastmod>2026-01-20</lastmod>
+    <lastmod>2026-01-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+  
   <url>
     <loc>https://africarailways.com/invest.html</loc>
-    <lastmod>2026-01-20</lastmod>
+    <lastmod>2026-01-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+  
   <url>
     <loc>https://africarailways.com/investor.html</loc>
-    <lastmod>2026-01-20</lastmod>
+    <lastmod>2026-01-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+  
   <url>
     <loc>https://africarailways.com/investor-vesting-dashboard.html</loc>
-    <lastmod>2026-01-20</lastmod>
+    <lastmod>2026-01-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
+  
+  <!-- Litepaper & Whitepaper -->
   <url>
-    <loc>https://africarailways.com/audits.html</loc>
-    <lastmod>2026-01-20</lastmod>
+    <loc>https://africarailways.com/whitepaper.html</loc>
+    <lastmod>2026-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <url>
+    <loc>https://africarailways.com/sent-litepaper.html</loc>
+    <lastmod>2026-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <url>
+    <loc>https://africarailways.com/sent-litepaper-tokenomics.html</loc>
+    <lastmod>2026-01-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  
+  <url>
+    <loc>https://africarailways.com/sent-litepaper-utility.html</loc>
+    <lastmod>2026-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://africarailways.com/sent-litepaper-roadmap.html</loc>
+    <lastmod>2026-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Railway Operations -->
   <url>
     <loc>https://africarailways.com/book-tickets.html</loc>
-    <lastmod>2026-01-20</lastmod>
+    <lastmod>2026-01-21</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.85</priority>
   </url>
+  
   <url>
     <loc>https://africarailways.com/track-trains.html</loc>
-    <lastmod>2026-01-20</lastmod>
+    <lastmod>2026-01-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+  
   <url>
     <loc>https://africarailways.com/live-feed.html</loc>
-    <lastmod>2026-01-20</lastmod>
+    <lastmod>2026-01-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
-  <url>
-    <loc>https://africarailways.com/sentinel.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://africarailways.com/sentinel-dashboard.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://africarailways.com/occ.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://africarailways.com/operators.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
+  
+  <!-- TAZARA & Zambia Railways -->
   <url>
     <loc>https://africarailways.com/tazara-pilot.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <lastmod>2026-01-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
+  
   <url>
     <loc>https://africarailways.com/tazara-cargo.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-01-21</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
+  
   <url>
     <loc>https://africarailways.com/zambia-railways.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://africarailways.com/zambia-railways-cargo.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://africarailways.com/pitch-deck.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://africarailways.com/mobile.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://africarailways.com/onboarding.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://africarailways.com/verification.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://africarailways.com/privacy-policy.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://africarailways.com/terms-of-service.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://africarailways.com/blog/</loc>
-    <lastmod>2026-01-20</lastmod>
+    <lastmod>2026-01-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+  
   <url>
-    <loc>https://africarailways.com/blog/posts/blockchain-railway-interoperability.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://africarailways.com/blog/posts/pinksale-ecosystem-announcement.html</loc>
-    <lastmod>2026-01-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://africarailways.com/blog/posts/tazara-50-years.html</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>yearly</changefreq>
+    <loc>https://africarailways.com/zambia-railways-cargo.html</loc>
+    <lastmod>2026-01-21</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
+  
+  <!-- Sentinel Network -->
+  <url>
+    <loc>https://africarailways.com/sentinel.html</loc>
+    <lastmod>2026-01-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  
+  <url>
+    <loc>https://africarailways.com/sentinel-dashboard.html</loc>
+    <lastmod>2026-01-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Operations Control Center -->
+  <url>
+    <loc>https://africarailways.com/occ.html</loc>
+    <lastmod>2026-01-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://africarailways.com/operators.html</loc>
+    <lastmod>2026-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Dashboard & User Pages -->
+  <url>
+    <loc>https://africarailways.com/dashboard.html</loc>
+    <lastmod>2026-01-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://africarailways.com/onboarding.html</loc>
+    <lastmod>2026-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://africarailways.com/verification.html</loc>
+    <lastmod>2026-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <!-- Marketing & Pitch -->
+  <url>
+    <loc>https://africarailways.com/pitch-deck.html</loc>
+    <lastmod>2026-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://africarailways.com/telegram-marketing.html</loc>
+    <lastmod>2026-01-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Mobile -->
+  <url>
+    <loc>https://africarailways.com/mobile.html</loc>
+    <lastmod>2026-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Audits -->
+  <url>
+    <loc>https://africarailways.com/audits.html</loc>
+    <lastmod>2026-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Legal Pages -->
+  <url>
+    <loc>https://africarailways.com/privacy-policy.html</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  
+  <url>
+    <loc>https://africarailways.com/terms-of-service.html</loc>
+    <lastmod>2026-01-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  
 </urlset>
