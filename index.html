@@ -247,6 +247,38 @@
         .ido-scroller:hover .ido-scroller-content {
             animation-play-state: paused;
         }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.9; transform: scale(1.02); }
+        }
+        .airdrop-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+            animation: pulse 2s infinite;
+        }
+        .airdrop-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.5);
+        }
+        .airdrop-btn .pulse-dot {
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
         html { scroll-behavior: smooth; }
         body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; }
         nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 2%; background: rgba(10,14,26,0.95); border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
@@ -892,11 +924,13 @@
             <span class="ido-scroller-item">📅 January 19 - January 26, 2026</span>
             <span class="ido-scroller-item">⏰ <span id="ido-countdown-days">--</span>d <span id="ido-countdown-hours">--</span>h <span id="ido-countdown-mins">--</span>m <span id="ido-countdown-secs">--</span>s</span>
             <span class="ido-scroller-item">💎 $0.00005 per SENT</span>
+            <span class="ido-scroller-item" style="background: #10b981; color: white; padding: 8px 20px; border-radius: 20px; animation: pulse 2s infinite;">🎁 SENT AIRDROP - <span id="airdrop-countdown-1">--d --h --m --s</span></span>
             <span class="ido-scroller-item">🔗 <a href="https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08" target="_blank" style="color: var(--gold); text-decoration: underline;">Join on PinkSale</a></span>
             <span class="ido-scroller-item">🚀 SENT IDO LIVE ON PINKSALE</span>
             <span class="ido-scroller-item">📅 January 19 - January 26, 2026</span>
             <span class="ido-scroller-item">⏰ <span id="ido-countdown-days2">--</span>d <span id="ido-countdown-hours2">--</span>h <span id="ido-countdown-mins2">--</span>m <span id="ido-countdown-secs2">--</span>s</span>
             <span class="ido-scroller-item">💎 $0.00005 per SENT</span>
+            <span class="ido-scroller-item" style="background: #10b981; color: white; padding: 8px 20px; border-radius: 20px; animation: pulse 2s infinite;">🎁 SENT AIRDROP - <span id="airdrop-countdown-2">--d --h --m --s</span></span>
             <span class="ido-scroller-item">🔗 <a href="https://www.pinksale.finance/launchpad/polygon/0xf366e3aaCC54C99E50c90B7C57625776f88D8d08" target="_blank" style="color: var(--gold); text-decoration: underline;">Join on PinkSale</a></span>
         </div>
     </div>
@@ -914,6 +948,15 @@
         <a href="/ido-dashboard.html" class="cta-button secondary">📊 View IDO Progress</a>
         <a href="/operators.html" class="cta-button secondary">🚂 Railway Operators</a>
         <a href="/book-tickets.html" class="cta-button secondary">🎫 Tickets</a>
+        
+        <!-- SENT Airdrop Button -->
+        <div style="margin-top: 30px;">
+            <a href="https://scroll-waitlist-exchange-1-nnjr-mpolobes-projects.vercel.app/airdrop" class="airdrop-btn" target="_blank">
+                <span class="pulse-dot"></span>
+                🎁 SENT AIRDROP
+                <span id="airdrop-countdown-hero" style="font-size: 0.85rem; background: rgba(0,0,0,0.2); padding: 4px 12px; border-radius: 12px;">--d --h --m --s</span>
+            </a>
+        </div>
         
         <!-- PinkSale Featured Badge -->
         <div style="margin-top: 40px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; align-items: center;">
@@ -2158,6 +2201,33 @@
             
             updateIdoCountdown();
             setInterval(updateIdoCountdown, 1000);
+            
+            // Airdrop Countdown - January 23rd, 2026 8:00 AM UTC
+            const airdropStartDate = new Date('2026-01-23T08:00:00Z').getTime();
+            
+            function updateAirdropCountdown() {
+                const now = new Date().getTime();
+                const distance = airdropStartDate - now;
+                
+                let countdownText;
+                if (distance < 0) {
+                    countdownText = 'LIVE NOW!';
+                } else {
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const secs = Math.floor((distance % (1000 * 60)) / 1000);
+                    countdownText = `${days}d ${hours}h ${mins}m ${secs}s`;
+                }
+                
+                ['airdrop-countdown-1', 'airdrop-countdown-2', 'airdrop-countdown-hero'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = countdownText;
+                });
+            }
+            
+            updateAirdropCountdown();
+            setInterval(updateAirdropCountdown, 1000);
         })();
     </script>
 </body></html>
