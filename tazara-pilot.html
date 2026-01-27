@@ -46,6 +46,7 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -717,6 +718,12 @@
             const [connectedAddress, setConnectedAddress] = useState('');
             const [showWalletModal, setShowWalletModal] = useState(false);
             const [walletType, setWalletType] = useState(''); // 'sui', 'zklogin', 'phone'
+            const [paymentMethod, setPaymentMethod] = useState('card'); // 'card', 'crypto', 'mobile'
+            const [stripeLoading, setStripeLoading] = useState(false);
+            
+            // Stripe configuration
+            const STRIPE_PUBLISHABLE_KEY = window.STRIPE_PUBLISHABLE_KEY || 'pk_live_wYCZyHVYBwWlZR5ga2bIfCmL';
+            const stripePromise = window.Stripe ? window.Stripe(STRIPE_PUBLISHABLE_KEY) : null;
 
             // Get routes based on active tab
             const currentRoutes = activeTab === 'tanzania' ? ROUTES_FROM_TANZANIA : ROUTES_FROM_ZAMBIA;
@@ -926,9 +933,54 @@ ZAMBIA REGION:
                 }
             }, [walletConnected, connectedAddress, walletType]);
 
+            // Stripe payment handler
+            const handleStripePayment = async () => {
+                if (!stripePromise) {
+                    setStatus('error:Stripe is not available. Please try another payment method.');
+                    return null;
+                }
+
+                setStripeLoading(true);
+                setStatus('info:💳 Initializing secure payment...');
+
+                try {
+                    const response = await fetch('/api/stripe/create-payment-intent', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            amount: Math.round(totalCost * 100),
+                            currency: 'usd',
+                            metadata: {
+                                from: route?.from || 'TAZARA',
+                                to: route?.to || 'Destination',
+                                date: new Date().toISOString().split('T')[0],
+                                passengers: passengers,
+                                ticketClass: selectedTier
+                            }
+                        })
+                    });
+
+                    if (!response.ok) throw new Error('Failed to create payment');
+                    const { url } = await response.json();
+                    if (url) window.location.href = url;
+                    return { success: true };
+                } catch (error) {
+                    setStatus(`error:Payment failed: ${error.message}`);
+                    return null;
+                } finally {
+                    setStripeLoading(false);
+                }
+            };
+
             const handleBooking = async () => {
                 if (!selectedRoute) {
                     setStatus('error:Please select a route');
+                    return;
+                }
+
+                // Handle Stripe card payment
+                if (paymentMethod === 'card') {
+                    await handleStripePayment();
                     return;
                 }
 
@@ -1426,12 +1478,41 @@ ZAMBIA REGION:
                                     </p>
                                 )}
 
+                                {/* Payment Method Selector */}
+                                {route && (
+                                    <div style={{ marginBottom: '15px' }}>
+                                        <label style={{ display: 'block', marginBottom: '10px', color: '#94a3b8', fontSize: '0.9rem' }}>
+                                            Payment Method:
+                                        </label>
+                                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                            <button type="button" onClick={() => setPaymentMethod('card')}
+                                                style={{
+                                                    flex: '1', padding: '10px', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600',
+                                                    background: paymentMethod === 'card' ? 'linear-gradient(135deg, #6366f1, #4f46e5)' : 'rgba(255,255,255,0.1)',
+                                                    border: paymentMethod === 'card' ? '2px solid #818cf8' : '1px solid #333', color: 'white'
+                                                }}>💳 Card</button>
+                                            <button type="button" onClick={() => setPaymentMethod('crypto')}
+                                                style={{
+                                                    flex: '1', padding: '10px', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600',
+                                                    background: paymentMethod === 'crypto' ? 'linear-gradient(135deg, var(--gold), #f59e0b)' : 'rgba(255,255,255,0.1)',
+                                                    border: paymentMethod === 'crypto' ? '2px solid var(--gold)' : '1px solid #333', color: paymentMethod === 'crypto' ? 'var(--navy)' : 'white'
+                                                }}>🪙 AFC</button>
+                                            <button type="button" onClick={() => setPaymentMethod('mobile')}
+                                                style={{
+                                                    flex: '1', padding: '10px', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600',
+                                                    background: paymentMethod === 'mobile' ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(255,255,255,0.1)',
+                                                    border: paymentMethod === 'mobile' ? '2px solid #34d399' : '1px solid #333', color: 'white'
+                                                }}>📱 Mobile</button>
+                                        </div>
+                                    </div>
+                                )}
+
                                 <button 
                                     className="book-button"
                                     onClick={handleBooking}
-                                    disabled={!route || isBooking || (!isLoggedIn && !phoneNumber)}
+                                    disabled={!route || isBooking || stripeLoading || (paymentMethod !== 'card' && !isLoggedIn && !phoneNumber)}
                                 >
-                                    {isBooking ? '⏳ Processing...' : `Book & Stake - $${totalCost.toFixed(2)} $AFC`}
+                                    {isBooking || stripeLoading ? '⏳ Processing...' : paymentMethod === 'card' ? `💳 Pay $${totalCost.toFixed(2)}` : `Book & Stake - $${totalCost.toFixed(2)} $AFC`}
                                 </button>
 
                                 {!isLoggedIn && !phoneNumber && route && (

@@ -30,6 +30,7 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -1017,6 +1018,12 @@
             const [showWalletModal, setShowWalletModal] = useState(false);
             const [walletType, setWalletType] = useState(''); // 'sui', 'zklogin', 'phone'
             const [ticketData, setTicketData] = useState(null); // For download
+            const [paymentMethod, setPaymentMethod] = useState('card'); // 'card', 'crypto', 'mobile'
+            const [stripeLoading, setStripeLoading] = useState(false);
+            
+            // Stripe configuration
+            const STRIPE_PUBLISHABLE_KEY = window.STRIPE_PUBLISHABLE_KEY || 'pk_live_wYCZyHVYBwWlZR5ga2bIfCmL';
+            const stripePromise = window.Stripe ? window.Stripe(STRIPE_PUBLISHABLE_KEY) : null;
 
             // Country to currency mapping
             const COUNTRY_CURRENCY_MAP = {
@@ -1318,6 +1325,60 @@ TX: ${ticketData.txDigest}
                 URL.revokeObjectURL(url);
             };
 
+            // Stripe payment handler
+            const handleStripePayment = async () => {
+                if (!stripePromise) {
+                    setStatus('error:Stripe is not available. Please try another payment method.');
+                    return null;
+                }
+
+                setStripeLoading(true);
+                setStatus('info:💳 Initializing secure payment...');
+
+                try {
+                    // Create payment intent
+                    const response = await fetch('/api/stripe/create-payment-intent', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            amount: Math.round(totalPriceUSD * 100), // Stripe expects cents
+                            currency: 'usd',
+                            metadata: {
+                                from: fromStation?.city || from,
+                                to: toStation?.city || to,
+                                date: date,
+                                passengers: passengers,
+                                ticketClass: selectedClass
+                            }
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to create payment');
+                    }
+
+                    const { clientSecret } = await response.json();
+
+                    // Redirect to Stripe Checkout
+                    const stripe = await stripePromise;
+                    const { error } = await stripe.redirectToCheckout({
+                        sessionId: clientSecret
+                    });
+
+                    if (error) {
+                        throw new Error(error.message);
+                    }
+
+                    return { success: true };
+                } catch (error) {
+                    console.error('Stripe error:', error);
+                    setStatus(`error:Payment failed: ${error.message}`);
+                    return null;
+                } finally {
+                    setStripeLoading(false);
+                }
+            };
+
             const handleBooking = async () => {
                 if (!from || !to || !date) {
                     setStatus('error:Please fill in all fields');
@@ -1329,15 +1390,23 @@ TX: ${ticketData.txDigest}
                     return;
                 }
 
-                // Require phone number for non-logged-in users
-                if (!isLoggedIn && !phoneNumber) {
+                // Require phone number for non-logged-in users (except for card payments)
+                if (!isLoggedIn && !phoneNumber && paymentMethod !== 'card') {
                     setStatus('error:Please enter your phone number to receive booking confirmation');
                     return;
                 }
 
-                // Basic phone validation (at least 9 digits)
-                if (!isLoggedIn && phoneNumber.replace(/\D/g, '').length < 9) {
+                // Basic phone validation (at least 9 digits) - skip for card payments
+                if (!isLoggedIn && phoneNumber && phoneNumber.replace(/\D/g, '').length < 9) {
                     setStatus('error:Please enter a valid phone number');
+                    return;
+                }
+
+                // Handle Stripe card payment
+                if (paymentMethod === 'card') {
+                    const stripeResult = await handleStripePayment();
+                    if (!stripeResult) return;
+                    // Stripe will redirect, so we don't continue here
                     return;
                 }
 
@@ -1910,12 +1979,99 @@ TX: ${ticketData.txDigest}
                                     </p>
                                 )}
 
+                                {/* Payment Method Selector */}
+                                {from && to && date && (
+                                    <div style={{ marginBottom: '15px' }}>
+                                        <label style={{ display: 'block', marginBottom: '10px', color: '#94a3b8', fontSize: '0.9rem' }}>
+                                            Select Payment Method:
+                                        </label>
+                                        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                                            <button
+                                                type="button"
+                                                onClick={() => setPaymentMethod('card')}
+                                                style={{
+                                                    flex: '1',
+                                                    minWidth: '120px',
+                                                    padding: '12px 16px',
+                                                    background: paymentMethod === 'card' ? 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)' : 'rgba(255,255,255,0.1)',
+                                                    border: paymentMethod === 'card' ? '2px solid #818cf8' : '1px solid #333',
+                                                    borderRadius: '10px',
+                                                    color: 'white',
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.9rem',
+                                                    fontWeight: '600',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    gap: '8px'
+                                                }}
+                                            >
+                                                💳 Card
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setPaymentMethod('crypto')}
+                                                style={{
+                                                    flex: '1',
+                                                    minWidth: '120px',
+                                                    padding: '12px 16px',
+                                                    background: paymentMethod === 'crypto' ? 'linear-gradient(135deg, var(--gold) 0%, #f59e0b 100%)' : 'rgba(255,255,255,0.1)',
+                                                    border: paymentMethod === 'crypto' ? '2px solid var(--gold)' : '1px solid #333',
+                                                    borderRadius: '10px',
+                                                    color: paymentMethod === 'crypto' ? 'var(--navy)' : 'white',
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.9rem',
+                                                    fontWeight: '600',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    gap: '8px'
+                                                }}
+                                            >
+                                                🪙 AFC/Crypto
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setPaymentMethod('mobile')}
+                                                style={{
+                                                    flex: '1',
+                                                    minWidth: '120px',
+                                                    padding: '12px 16px',
+                                                    background: paymentMethod === 'mobile' ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'rgba(255,255,255,0.1)',
+                                                    border: paymentMethod === 'mobile' ? '2px solid #34d399' : '1px solid #333',
+                                                    borderRadius: '10px',
+                                                    color: 'white',
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.9rem',
+                                                    fontWeight: '600',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    gap: '8px'
+                                                }}
+                                            >
+                                                📱 Mobile Money
+                                            </button>
+                                        </div>
+                                        {paymentMethod === 'card' && (
+                                            <div style={{ marginTop: '10px', padding: '10px', background: 'rgba(99, 102, 241, 0.1)', borderRadius: '8px', fontSize: '0.85rem', color: '#a5b4fc' }}>
+                                                🔒 Secure payment via Stripe. Visa, Mastercard, Amex accepted.
+                                            </div>
+                                        )}
+                                        {paymentMethod === 'mobile' && (
+                                            <div style={{ marginTop: '10px', padding: '10px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '8px', fontSize: '0.85rem', color: '#6ee7b7' }}>
+                                                📱 M-Pesa, MTN MoMo, Airtel Money supported.
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
                                 <button 
                                     className="book-button"
                                     onClick={handleBooking}
-                                    disabled={!from || !to || !date || isBooking || (!isLoggedIn && !phoneNumber)}
+                                    disabled={!from || !to || !date || isBooking || stripeLoading || (!isLoggedIn && !phoneNumber)}
                                 >
-                                    {isBooking ? 'Processing...' : isReturnTrip ? '⇄ Book Return Trip' : '→ Book Now'}
+                                    {isBooking || stripeLoading ? 'Processing...' : paymentMethod === 'card' ? '💳 Pay with Card' : isReturnTrip ? '⇄ Book Return Trip' : '→ Book Now'}
                                 </button>
 
                                 {!isLoggedIn && !phoneNumber && from && to && date && (

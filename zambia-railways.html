@@ -6,6 +6,7 @@
     <title>Zambia Railways - Book Tickets | Africa Railways</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://js.stripe.com/v3/"></script>
     <style>
         :root {
             --navy: #0a0e1a;
@@ -502,8 +503,24 @@
                             <span id="summaryTotal">K 165</span>
                         </div>
 
-                        <button type="button" class="btn-book" onclick="bookTicket()">
-                            <i class="bi bi-credit-card me-2"></i>Book Now
+                        <!-- Payment Method Selector -->
+                        <div style="margin: 15px 0;">
+                            <label style="display: block; margin-bottom: 8px; color: #94a3b8; font-size: 0.9rem;">Payment Method:</label>
+                            <div style="display: flex; gap: 8px;">
+                                <button type="button" id="payCard" onclick="setPaymentMethod('card')" class="payment-method-btn active" style="flex: 1; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; background: linear-gradient(135deg, #6366f1, #4f46e5); border: 2px solid #818cf8; color: white;">
+                                    💳 Card
+                                </button>
+                                <button type="button" id="payMobile" onclick="setPaymentMethod('mobile')" class="payment-method-btn" style="flex: 1; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; background: rgba(255,255,255,0.1); border: 1px solid #333; color: white;">
+                                    📱 Mobile
+                                </button>
+                                <button type="button" id="payCrypto" onclick="setPaymentMethod('crypto')" class="payment-method-btn" style="flex: 1; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; background: rgba(255,255,255,0.1); border: 1px solid #333; color: white;">
+                                    🪙 AFC
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn-book" id="bookBtn" onclick="bookTicket()">
+                            <i class="bi bi-credit-card me-2"></i><span id="bookBtnText">Pay with Card</span>
                         </button>
 
                         <div id="bookingAlert"></div>
@@ -690,7 +707,65 @@
             document.getElementById('summaryTotal').textContent = `K ${total.toLocaleString()}`;
         }
 
-        function bookTicket() {
+        // Payment method handling
+        let currentPaymentMethod = 'card';
+        const STRIPE_PUBLISHABLE_KEY = window.STRIPE_PUBLISHABLE_KEY || 'pk_live_wYCZyHVYBwWlZR5ga2bIfCmL';
+        const stripe = window.Stripe ? window.Stripe(STRIPE_PUBLISHABLE_KEY) : null;
+
+        function setPaymentMethod(method) {
+            currentPaymentMethod = method;
+            
+            // Update button styles
+            document.querySelectorAll('.payment-method-btn').forEach(btn => {
+                btn.style.background = 'rgba(255,255,255,0.1)';
+                btn.style.border = '1px solid #333';
+            });
+            
+            const activeBtn = document.getElementById('pay' + method.charAt(0).toUpperCase() + method.slice(1));
+            if (method === 'card') {
+                activeBtn.style.background = 'linear-gradient(135deg, #6366f1, #4f46e5)';
+                activeBtn.style.border = '2px solid #818cf8';
+                document.getElementById('bookBtnText').textContent = 'Pay with Card';
+            } else if (method === 'mobile') {
+                activeBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                activeBtn.style.border = '2px solid #34d399';
+                document.getElementById('bookBtnText').textContent = 'Pay with Mobile Money';
+            } else {
+                activeBtn.style.background = 'linear-gradient(135deg, #FFB800, #f59e0b)';
+                activeBtn.style.border = '2px solid #FFB800';
+                activeBtn.style.color = '#0a0e1a';
+                document.getElementById('bookBtnText').textContent = 'Pay with AFC';
+            }
+        }
+
+        async function handleStripePayment(total, from, to, date, passengers) {
+            if (!stripe) {
+                showAlert('Card payments are currently unavailable', 'error');
+                return false;
+            }
+
+            try {
+                const response = await fetch('/api/stripe/create-payment-intent', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount: Math.round(total * 100 / 25), // Convert ZMW to USD cents (approx rate)
+                        currency: 'usd',
+                        metadata: { from, to, date, passengers, railway: 'ZRL' }
+                    })
+                });
+
+                if (!response.ok) throw new Error('Payment initialization failed');
+                const { url } = await response.json();
+                if (url) window.location.href = url;
+                return true;
+            } catch (error) {
+                showAlert('Payment failed: ' + error.message, 'error');
+                return false;
+            }
+        }
+
+        async function bookTicket() {
             const from = document.getElementById('fromStation').value;
             const to = document.getElementById('toStation').value;
             const date = document.getElementById('travelDate').value;
@@ -698,8 +773,14 @@
             const phone = document.getElementById('phoneNumber').value;
 
             // Validation
-            if (!from || !to || !date || !phone) {
+            if (!from || !to || !date) {
                 showAlert('Please fill in all required fields', 'error');
+                return;
+            }
+
+            // Phone required for non-card payments
+            if (currentPaymentMethod !== 'card' && !phone) {
+                showAlert('Please enter your phone number', 'error');
                 return;
             }
 
@@ -708,14 +789,26 @@
                 return;
             }
 
-            // Simulate booking
-            const bookingRef = 'ZRL-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-            
             // Calculate pricing for ticket
             const numPassengers = parseInt(passengers);
             const basePrice = prices[selectedClass] * numPassengers;
             const serviceCharge = Math.round(basePrice * 0.10);
             const total = basePrice + serviceCharge;
+
+            // Handle card payment via Stripe
+            if (currentPaymentMethod === 'card') {
+                document.getElementById('bookBtn').disabled = true;
+                document.getElementById('bookBtnText').textContent = 'Processing...';
+                const success = await handleStripePayment(total, from, to, date, passengers);
+                if (!success) {
+                    document.getElementById('bookBtn').disabled = false;
+                    document.getElementById('bookBtnText').textContent = 'Pay with Card';
+                }
+                return;
+            }
+
+            // Simulate booking for other payment methods
+            const bookingRef = 'ZRL-' + Math.random().toString(36).substring(2, 8).toUpperCase();
             
             // Update ticket preview
             document.getElementById('ticketFrom').textContent = stationCodes[from]?.code || from.toUpperCase().substring(0, 3);
