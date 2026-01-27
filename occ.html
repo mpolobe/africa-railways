@@ -285,6 +285,71 @@
                 </div>
             </div>
 
+            <!-- Stripe Card Payments -->
+            <div class="card card-wide" style="border-left: 5px solid #6366f1;">
+                <div class="card-header">
+                    <h2>💳 Stripe Card Payments</h2>
+                    <span class="card-status" id="stripe-status" style="color: #6366f1;">●</span>
+                </div>
+                <div class="card-body">
+                    <div class="revenue-grid">
+                        <div class="revenue-section">
+                            <div class="revenue-icon">💵</div>
+                            <div class="revenue-label">Total Revenue</div>
+                            <div class="revenue-value" id="stripe-total-revenue">$0.00</div>
+                            <div class="revenue-subtext" id="stripe-total-transactions">0 transactions</div>
+                        </div>
+                        <div class="revenue-section">
+                            <div class="revenue-icon">📅</div>
+                            <div class="revenue-label">Today's Revenue</div>
+                            <div class="revenue-value" id="stripe-today-revenue">$0.00</div>
+                            <div class="revenue-subtext" id="stripe-today-transactions">0 transactions</div>
+                        </div>
+                        <div class="revenue-section">
+                            <div class="revenue-icon">🏦</div>
+                            <div class="revenue-label">Available Balance</div>
+                            <div class="revenue-value" id="stripe-available-balance">$0.00</div>
+                            <div class="revenue-subtext">Ready for payout</div>
+                        </div>
+                        <div class="revenue-section">
+                            <div class="revenue-icon">⏳</div>
+                            <div class="revenue-label">Pending Balance</div>
+                            <div class="revenue-value pending" id="stripe-pending-balance">$0.00</div>
+                            <div class="revenue-subtext">Processing</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Stripe Transactions -->
+                    <div style="margin-top: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 style="margin: 0; font-size: 1rem; color: #94a3b8;">Recent Card Transactions</h3>
+                            <select id="stripe-period" onchange="fetchStripeTransactions()" style="background: rgba(255,255,255,0.1); border: 1px solid #333; color: white; padding: 5px 10px; border-radius: 6px; font-size: 0.85rem;">
+                                <option value="24h">Last 24 Hours</option>
+                                <option value="7d" selected>Last 7 Days</option>
+                                <option value="30d">Last 30 Days</option>
+                            </select>
+                        </div>
+                        <div id="stripe-transactions-table" style="max-height: 250px; overflow-y: auto;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                                <thead style="position: sticky; top: 0; background: #16203a;">
+                                    <tr style="border-bottom: 1px solid #333;">
+                                        <th style="text-align: left; padding: 8px; color: #94a3b8;">Time</th>
+                                        <th style="text-align: left; padding: 8px; color: #94a3b8;">Route</th>
+                                        <th style="text-align: right; padding: 8px; color: #94a3b8;">Amount</th>
+                                        <th style="text-align: center; padding: 8px; color: #94a3b8;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="stripe-transactions-body">
+                                    <tr>
+                                        <td colspan="4" style="text-align: center; padding: 20px; color: #64748b;">Loading transactions...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Ticket Lifecycle -->
             <div class="card card-wide">
                 <div class="card-header">
@@ -540,6 +605,7 @@
         // API Base URLs
         const USSD_API_BASE = 'https://africa-railways-production.up.railway.app';
         const RELAYER_API_BASE = 'https://africa-railways-relayer.up.railway.app'; // Update with actual relayer URL
+        const STRIPE_API_BASE = window.location.origin; // Same origin for Stripe API
         
         // Display user email on page load
         window.addEventListener('DOMContentLoaded', () => {
@@ -551,6 +617,10 @@
             // Start fetching all stats
             fetchAllStats();
             setInterval(fetchAllStats, 10000); // Update every 10 seconds
+            
+            // Fetch Stripe transactions separately (less frequent)
+            fetchStripeTransactions();
+            setInterval(fetchStripeTransactions, 30000); // Update every 30 seconds
             
             // Update last update time
             updateLastUpdateTime();
@@ -568,6 +638,63 @@
             
             // Update connection status
             updateConnectionStatus(true);
+        }
+        
+        // Fetch Stripe transactions and revenue
+        async function fetchStripeTransactions() {
+            try {
+                const period = document.getElementById('stripe-period')?.value || '7d';
+                const response = await fetch(`${STRIPE_API_BASE}/api/stripe/transactions?period=${period}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update summary metrics
+                    document.getElementById('stripe-total-revenue').textContent = `$${(data.summary.total_revenue || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+                    document.getElementById('stripe-total-transactions').textContent = `${data.summary.total_transactions || 0} transactions`;
+                    document.getElementById('stripe-today-revenue').textContent = `$${(data.summary.today_revenue || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+                    document.getElementById('stripe-today-transactions').textContent = `${data.summary.today_transactions || 0} transactions`;
+                    document.getElementById('stripe-available-balance').textContent = `$${(data.summary.available_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+                    document.getElementById('stripe-pending-balance').textContent = `$${(data.summary.pending_balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+                    
+                    // Update status indicator
+                    document.getElementById('stripe-status').style.color = '#10b981';
+                    
+                    // Update transactions table
+                    const tbody = document.getElementById('stripe-transactions-body');
+                    if (data.transactions && data.transactions.length > 0) {
+                        tbody.innerHTML = data.transactions.map(tx => {
+                            const date = new Date(tx.created);
+                            const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                            const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                            const route = tx.metadata?.from && tx.metadata?.to ? `${tx.metadata.from} → ${tx.metadata.to}` : tx.description || 'Ticket';
+                            const statusColor = tx.status === 'succeeded' ? '#10b981' : tx.status === 'processing' ? '#f59e0b' : '#ef4444';
+                            const statusIcon = tx.status === 'succeeded' ? '✅' : tx.status === 'processing' ? '⏳' : '❌';
+                            
+                            return `
+                                <tr style="border-bottom: 1px solid #222;">
+                                    <td style="padding: 8px; color: #94a3b8;">${dateStr} ${timeStr}</td>
+                                    <td style="padding: 8px; color: white;">${route}</td>
+                                    <td style="padding: 8px; text-align: right; color: #10b981; font-weight: 600;">$${tx.amount.toFixed(2)}</td>
+                                    <td style="padding: 8px; text-align: center;"><span style="color: ${statusColor};">${statusIcon}</span></td>
+                                </tr>
+                            `;
+                        }).join('');
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 20px; color: #64748b;">No transactions in this period</td></tr>';
+                    }
+                    
+                    console.log('✅ Stripe transactions updated');
+                }
+            } catch (error) {
+                console.error('Failed to fetch Stripe transactions:', error);
+                document.getElementById('stripe-status').style.color = '#f59e0b';
+                document.getElementById('stripe-transactions-body').innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 20px; color: #f59e0b;">⚠️ Unable to fetch Stripe data</td></tr>';
+            }
         }
         
         // Update last update time display
