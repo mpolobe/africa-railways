@@ -1,11 +1,33 @@
 // Stripe Transactions API for OCC Dashboard
 // Fetches payment data from Stripe for revenue tracking
 
-const Stripe = require('stripe');
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
 module.exports = async (req, res) => {
+  const Stripe = require('stripe');
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+  
+  if (!stripeSecretKey) {
+    return res.status(200).json({
+      success: true,
+      summary: {
+        total_revenue: 0,
+        pending_revenue: 0,
+        today_revenue: 0,
+        today_transactions: 0,
+        total_transactions: 0,
+        failed_transactions: 0,
+        avg_transaction: 0,
+        available_balance: 0,
+        pending_balance: 0,
+        currency: 'USD',
+      },
+      transactions: [],
+      period: req.query?.period || '7d',
+      fetched_at: new Date().toISOString(),
+      note: 'Stripe not configured',
+    });
+  }
+  
+  const stripe = new Stripe(stripeSecretKey);
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
