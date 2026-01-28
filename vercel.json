@@ -3,22 +3,6 @@
   "buildCommand": "node scripts/generate-config.js",
   "cleanUrls": true,
   "outputDirectory": ".",
-  "functions": {
-    "api/**/*.js": {
-      "memory": 256,
-      "maxDuration": 10
-    },
-    "api/backup/database.js": {
-      "memory": 512,
-      "maxDuration": 60
-    }
-  },
-  "crons": [
-    {
-      "path": "/api/backup/database",
-      "schedule": "0 2 * * *"
-    }
-  ],
   "rewrites": [
     {
       "source": "/auth/callback",
