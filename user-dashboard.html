@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard - Africa Railways</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --navy: #0a0e1a;
+            --gold: #FFB800;
+            --cyan: #00D4FF;
+            --green: #10b981;
+            --surface: #16203a;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--navy);
+            color: #fff;
+            min-height: 100vh;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: rgba(10,14,26,0.95);
+            border-bottom: 1px solid #222;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--gold);
+            text-decoration: none;
+        }
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .user-info {
+            text-align: right;
+        }
+        .user-name {
+            font-weight: 600;
+            color: #fff;
+        }
+        .user-email {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+        .btn-logout {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        .dashboard-header {
+            margin-bottom: 30px;
+        }
+        .dashboard-header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--gold), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: var(--surface);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #1e293b;
+        }
+        .stat-label {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 10px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        .tab.active {
+            background: var(--surface);
+            color: var(--gold);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #1e293b;
+            margin-bottom: 15px;
+        }
+        .ticket-card {
+            position: relative;
+            overflow: hidden;
+        }
+        .ticket-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--green);
+        }
+        .ticket-card.used::before { background: #64748b; }
+        .ticket-card.cancelled::before { background: #ef4444; }
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .ticket-route {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .ticket-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .ticket-status.confirmed { background: rgba(16,185,129,0.2); color: var(--green); }
+        .ticket-status.used { background: rgba(100,116,139,0.2); color: #64748b; }
+        .ticket-status.cancelled { background: rgba(239,68,68,0.2); color: #ef4444; }
+        .ticket-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #1e293b;
+        }
+        .detail-item { text-align: center; }
+        .detail-label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; }
+        .detail-value { font-weight: 600; color: #fff; }
+        .nft-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .nft-card {
+            background: var(--surface);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #1e293b;
+        }
+        .nft-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+        .nft-info { padding: 15px; }
+        .nft-name { font-weight: 700; margin-bottom: 5px; }
+        .nft-route { color: #64748b; font-size: 0.85rem; }
+        .wallet-section {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #1e293b;
+        }
+        .wallet-address {
+            font-family: monospace;
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 8px;
+            word-break: break-all;
+            margin: 15px 0;
+        }
+        .btn-connect {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--gold), #ff9500);
+            border: none;
+            border-radius: 8px;
+            color: var(--navy);
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+        .empty-state i { font-size: 4rem; margin-bottom: 20px; opacity: 0.5; }
+        .login-prompt {
+            text-align: center;
+            padding: 100px 20px;
+        }
+        .login-prompt h2 { color: var(--gold); margin-bottom: 20px; }
+        .btn-login {
+            padding: 14px 30px;
+            background: linear-gradient(135deg, var(--gold), #ff9500);
+            border: none;
+            border-radius: 10px;
+            color: var(--navy);
+            font-weight: 700;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #64748b;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #1e293b;
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">🚂 Africa Railways</a>
+        <div class="nav-user" id="navUser" style="display: none;">
+            <div class="user-info">
+                <div class="user-name" id="userName">User</div>
+                <div class="user-email" id="userEmail"></div>
+            </div>
+            <button class="btn-logout" onclick="signOut()">Sign Out</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id="loginPrompt" class="login-prompt" style="display: none;">
+            <h2>Sign in to view your dashboard</h2>
+            <p style="color: #64748b; margin-bottom: 30px;">Access your tickets, NFT souvenirs, and wallet</p>
+            <button class="btn-login" onclick="signInWithGoogle()"><i class="bi bi-google"></i> Sign in with Google</button>
+            <button class="btn-login" onclick="window.location.href='/'"><i class="bi bi-phone"></i> Sign in with Phone</button>
+        </div>
+
+        <div id="dashboardContent" style="display: none;">
+            <div class="dashboard-header">
+                <h1><i class="bi bi-speedometer2"></i> My Dashboard</h1>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Tickets</div>
+                    <div class="stat-value" id="totalTickets">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">NFT Souvenirs</div>
+                    <div class="stat-value" id="totalNFTs">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">AFRC Balance</div>
+                    <div class="stat-value" id="afrcBalance">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Journeys Completed</div>
+                    <div class="stat-value" id="journeysCompleted">0</div>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('tickets')"><i class="bi bi-ticket-perforated"></i> Tickets</button>
+                <button class="tab" onclick="showTab('nfts')"><i class="bi bi-image"></i> NFT Souvenirs</button>
+                <button class="tab" onclick="showTab('wallet')"><i class="bi bi-wallet2"></i> Wallet</button>
+            </div>
+
+            <div id="ticketsTab" class="tab-content active">
+                <div id="ticketsList"></div>
+            </div>
+
+            <div id="nftsTab" class="tab-content">
+                <div id="nftsList" class="nft-grid"></div>
+            </div>
+
+            <div id="walletTab" class="tab-content">
+                <div class="wallet-section">
+                    <h3><i class="bi bi-wallet2"></i> Your Wallet</h3>
+                    <div id="walletContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="loadingState" class="loading">
+            <div class="spinner"></div>
+            <p>Loading your dashboard...</p>
+        </div>
+    </div>
+
+    <script src="/js/config.js"></script>
+    <script>
+        const SUPABASE_URL = window.SUPABASE_URL || 'https://llvprbmrnjvamjzavmhg.supabase.co';
+        const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '';
+        let supabaseClient = null;
+        let currentUser = null;
+
+        async function init() {
+            if (!SUPABASE_ANON_KEY) {
+                showLogin();
+                return;
+            }
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session?.user) {
+                currentUser = session.user;
+                showDashboard();
+            } else {
+                showLogin();
+            }
+        }
+
+        function showLogin() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('loginPrompt').style.display = 'block';
+            document.getElementById('dashboardContent').style.display = 'none';
+        }
+
+        async function showDashboard() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('loginPrompt').style.display = 'none';
+            document.getElementById('dashboardContent').style.display = 'block';
+            document.getElementById('navUser').style.display = 'flex';
+            
+            const name = currentUser.user_metadata?.full_name || currentUser.email?.split('@')[0] || 'User';
+            document.getElementById('userName').textContent = name;
+            document.getElementById('userEmail').textContent = currentUser.email || currentUser.phone || '';
+            
+            await loadUserData();
+        }
+
+        async function loadUserData() {
+            const userId = currentUser.id;
+            const email = currentUser.email;
+            const phone = currentUser.phone;
+            
+            // Load tickets - match by user_id, email, or phone
+            let ticketsQuery = supabaseClient.from('bookings').select('*');
+            const conditions = [`user_id.eq.${userId}`];
+            if (email) conditions.push(`passenger_email.eq.${email}`);
+            if (phone) conditions.push(`passenger_phone.eq.${phone}`);
+            
+            const { data: tickets } = await ticketsQuery.or(conditions.join(',')).order('created_at', { ascending: false });
+            
+            // Load NFT souvenirs
+            const { data: nfts } = await supabaseClient.from('nft_souvenirs').select('*')
+                .or(`booking_id.in.(${(tickets || []).map(t => t.id).join(',') || 'null'})`);
+            
+            // Load wallet info from users table
+            const { data: userData } = await supabaseClient.from('users').select('wallet_address').eq('id', userId).single();
+            
+            // Update stats
+            document.getElementById('totalTickets').textContent = tickets?.length || 0;
+            document.getElementById('totalNFTs').textContent = nfts?.length || 0;
+            document.getElementById('journeysCompleted').textContent = tickets?.filter(t => t.booking_status === 'used').length || 0;
+            
+            renderTickets(tickets || []);
+            renderNFTs(nfts || []);
+            renderWallet(userData?.wallet_address);
+        }
+
+        function renderTickets(tickets) {
+            const container = document.getElementById('ticketsList');
+            if (!tickets.length) {
+                container.innerHTML = `<div class="empty-state"><i class="bi bi-ticket-perforated"></i><h3>No tickets yet</h3><p>Book your first journey to see tickets here</p><a href="/zambia-railways.html" style="color: var(--gold);">Book Now →</a></div>`;
+                return;
+            }
+            container.innerHTML = tickets.map(t => `
+                <div class="card ticket-card ${t.booking_status}">
+                    <div class="ticket-header">
+                        <div>
+                            <div class="ticket-route">${t.from_station || ''} → ${t.to_station || ''}</div>
+                            <div style="color: #64748b; font-size: 0.85rem;">${t.ticket_id || t.booking_ref}</div>
+                        </div>
+                        <span class="ticket-status ${t.booking_status}">${t.booking_status}</span>
+                    </div>
+                    <div class="ticket-details">
+                        <div class="detail-item"><div class="detail-label">Date</div><div class="detail-value">${new Date(t.travel_date).toLocaleDateString()}</div></div>
+                        <div class="detail-item"><div class="detail-label">Class</div><div class="detail-value">${t.class || 'Economy'}</div></div>
+                        <div class="detail-item"><div class="detail-label">Seat</div><div class="detail-value">${t.seat || '-'}</div></div>
+                        <div class="detail-item"><div class="detail-label">Price</div><div class="detail-value">$${t.total_price_usd || 0}</div></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderNFTs(nfts) {
+            const container = document.getElementById('nftsList');
+            if (!nfts || !nfts.length) {
+                container.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"><i class="bi bi-image"></i><h3>No NFT souvenirs yet</h3><p>Complete a journey to receive your NFT souvenir</p></div>`;
+                return;
+            }
+            container.innerHTML = nfts.map(n => `
+                <div class="nft-card">
+                    <div class="nft-image">${n.image_url ? `<img src="${n.image_url}" style="width:100%;height:100%;object-fit:cover;">` : '🎫'}</div>
+                    <div class="nft-info">
+                        <div class="nft-name">${n.name || 'Journey Souvenir'}</div>
+                        <div class="nft-route">${n.route || ''}</div>
+                        <div style="margin-top: 10px; font-size: 0.8rem; color: var(--gold);">${n.rarity || 'Unique'}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderWallet(walletAddress) {
+            const container = document.getElementById('walletContent');
+            if (walletAddress) {
+                container.innerHTML = `
+                    <p style="color: #64748b; margin-top: 10px;">Your SUI wallet address:</p>
+                    <div class="wallet-address">${walletAddress}</div>
+                    <p style="color: #64748b; font-size: 0.85rem;">Use this address to receive AFRC tokens and NFTs</p>
+                `;
+            } else {
+                container.innerHTML = `
+                    <p style="color: #64748b; margin: 20px 0;">No wallet connected yet. Connect a wallet to receive NFTs and AFRC tokens.</p>
+                    <button class="btn-connect" onclick="connectWallet()"><i class="bi bi-wallet2"></i> Connect Wallet</button>
+                `;
+            }
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        async function signInWithGoogle() {
+            if (!supabaseClient) {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+            sessionStorage.setItem('auth_redirect', window.location.href);
+            await supabaseClient.auth.signInWithOAuth({
+                provider: 'google',
+                options: { redirectTo: window.location.origin + '/auth/callback' }
+            });
+        }
+
+        async function signOut() {
+            await supabaseClient.auth.signOut();
+            localStorage.removeItem('africa_railways_wallet');
+            window.location.reload();
+        }
+
+        async function connectWallet() {
+            alert('Wallet connection coming soon! For now, your wallet is auto-generated when you sign in with phone OTP.');
+        }
+
+        init();
+    </script>
+</body>
+</html>
