@@ -41,11 +41,12 @@
   },
   "type": "module",
   "dependencies": {
-    "@supabase/supabase-js": "^2.45.0",
-    "@vercel/blob": "^0.23.0",
+    "@supabase/supabase-js": "^2.47.0",
+    "@vercel/blob": "^0.25.0",
     "express": "^5.2.1",
     "leaflet": "^1.9.4",
     "react-leaflet": "^5.0.0",
-    "stripe": "^20.2.0"
+    "stripe": "^20.4.0",
+    "helmet": "^7.1.0"
   }
 }
