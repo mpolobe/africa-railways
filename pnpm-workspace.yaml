@@ -1,6 +1,5 @@
 packages:
   - '.'
-  - 'functions'
   - 'investor-portal-react'
   - 'mobile'
   - 'production-stack'
