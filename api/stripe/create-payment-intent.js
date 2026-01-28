@@ -18,9 +18,18 @@ module.exports = async (req, res) => {
   const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
   
   if (!stripeSecretKey) {
-    console.error('STRIPE_SECRET_KEY not configured');
-    return res.status(500).json({ error: 'Payment service not configured' });
+    return res.status(500).json({ 
+      error: 'Payment service not configured',
+      debug: {
+        hasKey: false,
+        env: Object.keys(process.env).filter(k => k.includes('STRIPE')).join(', ') || 'none'
+      }
+    });
   }
+
+  // Log key type for debugging (safe - only shows prefix)
+  const keyType = stripeSecretKey.startsWith('sk_live_') ? 'live' : 
+                  stripeSecretKey.startsWith('sk_test_') ? 'test' : 'unknown';
 
   try {
     const Stripe = require('stripe');
@@ -64,9 +73,18 @@ module.exports = async (req, res) => {
       clientSecret: session.id,
       sessionId: session.id,
       url: session.url,
+      debug: { keyType, mode: keyType }
     });
   } catch (error) {
     console.error('Stripe error:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ 
+      error: error.message,
+      debug: {
+        keyType,
+        errorType: error.type || 'unknown',
+        errorCode: error.code || 'none',
+        stripeError: error.raw?.message || null
+      }
+    });
   }
 };
