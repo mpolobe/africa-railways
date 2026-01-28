@@ -473,7 +473,7 @@
                     const { data, error } = await supabaseClient.auth.signInWithOAuth({
                         provider: 'google',
                         options: {
-                            redirectTo: window.location.origin + '/auth-callback.html'
+                            redirectTo: window.location.origin + '/auth/callback'
                         }
                     });
                     
@@ -501,7 +501,7 @@
                     const { data, error } = await supabaseClient.auth.signInWithOAuth({
                         provider: 'github',
                         options: {
-                            redirectTo: window.location.origin + '/auth-callback.html'
+                            redirectTo: window.location.origin + '/auth/callback'
                         }
                     });
                     

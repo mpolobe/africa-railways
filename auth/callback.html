@@ -123,15 +123,13 @@
         </div>
     </div>
 
+    <!-- Load config first to get SUPABASE_ANON_KEY -->
+    <script src="/js/config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Supabase configuration - same project as scroll-waitlist-exchange-1
-        const SUPABASE_URL = 'https://llvprbmrnjvamjzavmhg.supabase.co';
-        // Get anon key from environment or localStorage
-        const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 
-            localStorage.getItem('supabase_anon_key') || 
-            // Fallback: try to get from parent config
-            (window.parent && window.parent.SUPABASE_ANON_KEY) || '';
+        // Supabase configuration - loaded from config.js
+        const SUPABASE_URL = window.SUPABASE_URL || 'https://llvprbmrnjvamjzavmhg.supabase.co';
+        const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '';
         
         async function handleCallback() {
             const statusEl = document.getElementById('status');

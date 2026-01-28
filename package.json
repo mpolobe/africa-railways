@@ -41,6 +41,8 @@
   },
   "type": "module",
   "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "@vercel/blob": "^0.23.0",
     "express": "^5.2.1",
     "leaflet": "^1.9.4",
     "react-leaflet": "^5.0.0",

@@ -11,12 +11,20 @@
     "api/backup/database.js": {
       "memory": 512,
       "maxDuration": 60
+    },
+    "api/backup/route.js": {
+      "memory": 1024,
+      "maxDuration": 60
     }
   },
   "crons": [
     {
       "path": "/api/backup/database",
       "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/backup/route",
+      "schedule": "0 3 * * *"
     }
   ],
   "rewrites": [
