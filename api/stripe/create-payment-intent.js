@@ -1,7 +1,7 @@
 // Stripe Payment Intent API for Africa Railways
 // Handles card payments for train ticket bookings
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -32,7 +32,7 @@ module.exports = async (req, res) => {
                   stripeSecretKey.startsWith('sk_test_') ? 'test' : 'unknown';
 
   try {
-    const Stripe = require('stripe');
+    const Stripe = (await import('stripe')).default;
     const stripe = new Stripe(stripeSecretKey);
     
     const { amount, currency = 'usd', metadata = {} } = req.body;
