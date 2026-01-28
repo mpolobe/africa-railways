@@ -287,6 +287,132 @@
             color: #ef4444;
         }
 
+        .custom-calendar {
+            background: var(--surface);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 8px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .cal-nav {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .cal-nav:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+
+        .cal-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+            color: #666;
+        }
+
+        .cal-day.current-month {
+            color: white;
+        }
+
+        .cal-day.past {
+            color: #444;
+            cursor: not-allowed;
+        }
+
+        .cal-day.available {
+            background: rgba(16, 185, 129, 0.2);
+            border: 2px solid var(--green);
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        .cal-day.available:hover {
+            background: var(--green);
+            color: white;
+        }
+
+        .cal-day.selected {
+            background: var(--green) !important;
+            color: white !important;
+            font-weight: 700;
+        }
+
+        .cal-day.today {
+            border: 2px solid var(--gold);
+        }
+
+        .cal-day:not(.past):not(.available).current-month:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .cal-legend {
+            display: flex;
+            gap: 15px;
+            margin-top: 12px;
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        .cal-legend span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.available {
+            background: rgba(16, 185, 129, 0.3);
+            border: 2px solid var(--green);
+        }
+
+        .legend-dot.today {
+            background: transparent;
+            border: 2px solid var(--gold);
+        }
+
         .schedule-hint {
             margin-top: 8px;
             padding: 8px 12px;
@@ -448,7 +574,22 @@
 
                         <div class="form-group">
                             <label><i class="bi bi-calendar3"></i> Travel Date</label>
-                            <input type="date" class="form-control" id="travelDate" required>
+                            <input type="hidden" id="travelDate" required>
+                            <div class="custom-calendar" id="customCalendar">
+                                <div class="calendar-header">
+                                    <button type="button" class="cal-nav" onclick="changeMonth(-1)"><i class="bi bi-chevron-left"></i></button>
+                                    <span id="calendarMonth">January 2026</span>
+                                    <button type="button" class="cal-nav" onclick="changeMonth(1)"><i class="bi bi-chevron-right"></i></button>
+                                </div>
+                                <div class="calendar-weekdays">
+                                    <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                                </div>
+                                <div class="calendar-days" id="calendarDays"></div>
+                                <div class="cal-legend">
+                                    <span><div class="legend-dot available"></div> Train Available</span>
+                                    <span><div class="legend-dot today"></div> Today</span>
+                                </div>
+                            </div>
                             <div id="scheduleHint" class="schedule-hint" style="display: none;"></div>
                         </div>
 
@@ -759,9 +900,86 @@
         };
 
         let selectedClass = 'economy';
+        let currentCalendarDate = new Date();
+        let selectedDate = null;
 
-        // Set minimum date to today
-        document.getElementById('travelDate').min = new Date().toISOString().split('T')[0];
+        // Custom Calendar Functions
+        function renderCalendar() {
+            const year = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth();
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const from = document.getElementById('fromStation').value;
+            const to = document.getElementById('toStation').value;
+            const direction = getRouteDirection(from, to);
+            
+            // Update month display
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                               'July', 'August', 'September', 'October', 'November', 'December'];
+            document.getElementById('calendarMonth').textContent = `${monthNames[month]} ${year}`;
+            
+            // Get first day of month and total days
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+            
+            let html = '';
+            
+            // Previous month days
+            for (let i = firstDay - 1; i >= 0; i--) {
+                const day = daysInPrevMonth - i;
+                html += `<div class="cal-day">${day}</div>`;
+            }
+            
+            // Current month days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                date.setHours(0, 0, 0, 0);
+                const isPast = date < today;
+                const isToday = date.getTime() === today.getTime();
+                const isAvailable = direction && !isPast && isValidDepartureDay(date, direction);
+                const isSelected = selectedDate && date.getTime() === selectedDate.getTime();
+                
+                let classes = ['cal-day', 'current-month'];
+                if (isPast) classes.push('past');
+                if (isToday) classes.push('today');
+                if (isAvailable) classes.push('available');
+                if (isSelected) classes.push('selected');
+                
+                const dateStr = date.toISOString().split('T')[0];
+                const clickHandler = isPast ? '' : `onclick="selectDate('${dateStr}')"`;
+                
+                html += `<div class="${classes.join(' ')}" ${clickHandler}>${day}</div>`;
+            }
+            
+            // Next month days to fill grid
+            const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+            const nextMonthDays = totalCells - (firstDay + daysInMonth);
+            for (let day = 1; day <= nextMonthDays; day++) {
+                html += `<div class="cal-day">${day}</div>`;
+            }
+            
+            document.getElementById('calendarDays').innerHTML = html;
+        }
+
+        function changeMonth(delta) {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
+            renderCalendar();
+        }
+
+        function selectDate(dateStr) {
+            selectedDate = new Date(dateStr + 'T00:00:00');
+            document.getElementById('travelDate').value = dateStr;
+            renderCalendar();
+            updateSummary();
+            updateScheduleHint();
+        }
+
+        // Initialize calendar
+        setTimeout(() => {
+            renderCalendar();
+        }, 0);
 
         // Determine route direction based on stations
         function getRouteDirection(from, to) {
@@ -838,8 +1056,8 @@
         }
 
         // Update summary on form changes
-        document.getElementById('fromStation').addEventListener('change', () => { updateSummary(); updateScheduleHint(); });
-        document.getElementById('toStation').addEventListener('change', () => { updateSummary(); updateScheduleHint(); });
+        document.getElementById('fromStation').addEventListener('change', () => { updateSummary(); updateScheduleHint(); renderCalendar(); });
+        document.getElementById('toStation').addEventListener('change', () => { updateSummary(); updateScheduleHint(); renderCalendar(); });
         document.getElementById('travelDate').addEventListener('change', () => { updateSummary(); updateScheduleHint(); });
         document.getElementById('passengers').addEventListener('change', updateSummary);
 
@@ -858,6 +1076,7 @@
             to.value = temp;
             updateSummary();
             updateScheduleHint();
+            renderCalendar();
         }
 
         function updateSummary() {
