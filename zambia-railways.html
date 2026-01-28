@@ -1004,8 +1004,19 @@
                 arrivalDay: 'Wednesday',
                 departureCity: 'Livingstone',
                 arrivalCity: 'Kitwe',
-                arrivalTime: '14:00',
-                daysToArrival: 2
+                arrivalTime: '06:00',
+                daysToArrival: 2,
+                // Station-specific departure times (based on schedule table)
+                stationTimes: {
+                    livingstone: { departure: '20:00', arrival: null, dayOffset: 0 },
+                    choma: { departure: '03:45', arrival: '03:15', dayOffset: 1 },
+                    mazabuka: { departure: '06:30', arrival: '06:00', dayOffset: 1 },
+                    kafue: { departure: '12:00', arrival: '11:30', dayOffset: 1 },
+                    lusaka: { departure: '15:24', arrival: '14:24', dayOffset: 1 },
+                    kabwe: { departure: '19:46', arrival: '19:16', dayOffset: 1 },
+                    ndola: { departure: '03:36', arrival: '02:56', dayOffset: 2 },
+                    kitwe: { departure: null, arrival: '06:00', dayOffset: 2 }
+                }
             },
             southbound: {
                 stations: ['kitwe', 'ndola', 'kabwe', 'lusaka', 'kafue', 'mazabuka', 'choma', 'livingstone'],
@@ -1015,10 +1026,30 @@
                 arrivalDay: 'Sunday',
                 departureCity: 'Kitwe',
                 arrivalCity: 'Livingstone',
-                arrivalTime: '10:00',
-                daysToArrival: 2
+                arrivalTime: '02:00',
+                daysToArrival: 2,
+                // Station-specific departure times (based on schedule table)
+                stationTimes: {
+                    kitwe: { departure: '16:00', arrival: null, dayOffset: 0 },
+                    ndola: { departure: '18:55', arrival: '18:25', dayOffset: 0 },
+                    kabwe: { departure: '02:55', arrival: '02:15', dayOffset: 1 },
+                    lusaka: { departure: '07:36', arrival: '06:56', dayOffset: 1 },
+                    kafue: { departure: '10:00', arrival: '09:30', dayOffset: 1 },
+                    mazabuka: { departure: '14:00', arrival: '13:30', dayOffset: 1 },
+                    choma: { departure: '18:34', arrival: '18:04', dayOffset: 1 },
+                    livingstone: { departure: null, arrival: '02:00', dayOffset: 2 }
+                }
             }
         };
+        
+        // Get departure time for a specific station on a route
+        function getStationDepartureTime(from, direction) {
+            const schedule = trainSchedule[direction];
+            if (schedule && schedule.stationTimes && schedule.stationTimes[from]) {
+                return schedule.stationTimes[from].departure || schedule.departureTime;
+            }
+            return schedule ? schedule.departureTime : '—';
+        }
 
         // Prices in ZMW (Zambian Kwacha)
         const prices = {
@@ -1333,11 +1364,16 @@
                 const basePrice = prices[selectedClass] * numPassengers;
                 const serviceCharge = Math.round(basePrice * 0.10);
                 
+                // Get the departure time for the user's station
+                const stripeDirection = getRouteDirection(from, to);
+                const stripeDepartureTime = getStationDepartureTime(from, stripeDirection);
+                
                 // Store booking data for after redirect (including data for database)
                 sessionStorage.setItem('pendingBooking', JSON.stringify({
                     from: stationCodes[from]?.name || from,
                     to: stationCodes[to]?.name || to,
                     date: new Date(date).toLocaleDateString('en-ZM', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }),
+                    departureTime: stripeDepartureTime, // Departure time from user's station
                     travelDateRaw: date, // ISO format for database
                     passengers: numPassengers,
                     class: selectedClass.charAt(0).toUpperCase() + selectedClass.slice(1),
@@ -1483,10 +1519,11 @@
                 weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
             });
             
-            // Get departure time based on route direction
+            // Get departure time based on route direction and user's departure station
             const direction = getRouteDirection(from, to);
             const schedule = trainSchedule[direction];
-            document.getElementById('ticketDepartureTime').textContent = schedule.departureTime;
+            const stationDepartureTime = getStationDepartureTime(from, direction);
+            document.getElementById('ticketDepartureTime').textContent = stationDepartureTime;
             
             document.getElementById('ticketClass').textContent = selectedClass.charAt(0).toUpperCase() + selectedClass.slice(1);
             document.getElementById('ticketPassengers').textContent = passengers;
@@ -1522,7 +1559,7 @@
                 serviceCharge,
                 total,
                 paymentMethod,
-                departureTime: schedule.departureTime,
+                departureTime: stationDepartureTime, // Departure time from user's station
                 arrivalTime: schedule.arrivalTime,
                 arrivalDay: arrivalDateStr
             };
@@ -1612,10 +1649,11 @@
                 weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
             });
             
-            // Get departure time based on route direction
+            // Get departure time based on route direction and user's departure station
             const cryptoDirection = getRouteDirection(from, to);
             const cryptoSchedule = trainSchedule[cryptoDirection];
-            document.getElementById('ticketDepartureTime').textContent = cryptoSchedule.departureTime;
+            const cryptoStationDepartureTime = getStationDepartureTime(from, cryptoDirection);
+            document.getElementById('ticketDepartureTime').textContent = cryptoStationDepartureTime;
             
             document.getElementById('ticketClass').textContent = selectedClass.charAt(0).toUpperCase() + selectedClass.slice(1);
             document.getElementById('ticketPassengers').textContent = passengers;
@@ -1646,6 +1684,7 @@
                 from: stationCodes[from]?.name || from,
                 to: stationCodes[to]?.name || to,
                 date: new Date(date).toLocaleDateString('en-ZM', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }),
+                departureTime: cryptoStationDepartureTime, // Departure time from user's station
                 passengers: numPassengers,
                 class: selectedClass.charAt(0).toUpperCase() + selectedClass.slice(1),
                 phone,
@@ -1699,6 +1738,10 @@
                                 <tr>
                                     <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Travel Date:</strong></td>
                                     <td style="padding: 10px; border-bottom: 1px solid #ddd;">${booking.date}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Departure Time:</strong></td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${booking.departureTime || '—'}</td>
                                 </tr>
                                 <tr>
                                     <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Passengers:</strong></td>
@@ -1914,6 +1957,7 @@
                     from: pendingBooking.from || 'Station',
                     to: pendingBooking.to || 'Station',
                     date: pendingBooking.date || new Date().toLocaleDateString(),
+                    departureTime: pendingBooking.departureTime || null, // Departure time from user's station
                     travelDate: pendingBooking.travelDateRaw || new Date().toISOString().split('T')[0],
                     passengers: pendingBooking.passengers || 1,
                     class: pendingBooking.class || 'Economy',
@@ -1956,7 +2000,8 @@
         
         // Send SMS confirmation via Africa's Talking or Twilio
         async function sendSMSConfirmation(booking) {
-            const message = `Africa Railways - ZRL Booking Confirmed!\n\nRef: ${booking.bookingRef}\nRoute: ${booking.from} → ${booking.to}\nDate: ${booking.date}\nPassengers: ${booking.passengers}\nClass: ${booking.class}\nTotal: K ${booking.total.toLocaleString()}\n\nThank you for traveling with Zambia Railways!`;
+            const departureInfo = booking.departureTime ? `\nDeparture: ${booking.departureTime}` : '';
+            const message = `Africa Railways - ZRL Booking Confirmed!\n\nRef: ${booking.bookingRef}\nRoute: ${booking.from} → ${booking.to}\nDate: ${booking.date}${departureInfo}\nPassengers: ${booking.passengers}\nClass: ${booking.class}\nTotal: K ${booking.total.toLocaleString()}\n\nThank you for traveling with Zambia Railways!`;
             
             try {
                 const response = await fetch('/api/sms/send', {
