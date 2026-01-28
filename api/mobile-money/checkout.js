@@ -110,8 +110,23 @@ export default async function handler(req, res) {
             body: JSON.stringify(requestBody)
         });
 
-        const result = await response.json();
-        console.log('Africa\'s Talking response:', JSON.stringify(result));
+        // Check if response is OK and parse safely
+        const responseText = await response.text();
+        console.log('Africa\'s Talking raw response:', responseText);
+        
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('Failed to parse Africa\'s Talking response:', responseText);
+            return res.status(502).json({
+                success: false,
+                error: 'Payment gateway returned invalid response. Please try again.',
+                details: responseText.substring(0, 100)
+            });
+        }
+        
+        console.log('Africa\'s Talking parsed response:', JSON.stringify(result));
 
         // Check response status
         if (result.status === 'PendingConfirmation') {

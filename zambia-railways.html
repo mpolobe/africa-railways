@@ -1404,7 +1404,14 @@
                     })
                 });
 
-                const result = await response.json();
+                // Safely parse response
+                let result;
+                try {
+                    const text = await response.text();
+                    result = JSON.parse(text);
+                } catch (parseError) {
+                    throw new Error('Payment service unavailable. Please try again later.');
+                }
 
                 if (!result.success) {
                     throw new Error(result.error || 'Payment request failed');
