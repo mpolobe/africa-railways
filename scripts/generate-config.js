@@ -13,9 +13,14 @@ const path = require('path');
 
 // Try to load .env file for local development
 try {
-    require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+    try {
+        require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+    } catch (e) {
+        // dotenv not available or .env doesn't exist - use process.env only
+        console.log('   ℹ️ dotenv not available, using process.env only');
+    }
 } catch (e) {
-    // dotenv not available or .env doesn't exist - use process.env
+    // Ignore errors
 }
 
 const config = `/**
@@ -43,11 +48,23 @@ window.AFRICA_RAILWAYS_CONFIG = {
 window.STRIPE_PUBLISHABLE_KEY = '${process.env.STRIPE_PUBLISHABLE_KEY || process.env.VITE_STRIPE_PUBLISHABLE_KEY || ''}';
 `;
 
-const outputPath = path.join(__dirname, '..', 'js', 'config.js');
+const outputDir = path.join(__dirname, '..', 'js');
+const outputPath = path.join(outputDir, 'config.js');
 
-fs.writeFileSync(outputPath, config);
-console.log('✅ Generated js/config.js with environment variables');
+try {
+    // Ensure js directory exists
+    if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir, { recursive: true });
+    }
+    
+    fs.writeFileSync(outputPath, config);
+    console.log('✅ Generated js/config.js with environment variables');
+    
+    // Log which variables were set (without exposing values)
+    console.log('   SUPABASE_URL:', process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL ? 'SET' : 'using default');
+    console.log('   SUPABASE_ANON_KEY:', process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY ? 'SET' : 'MISSING');
+} catch (error) {
+    console.error('⚠️ Failed to generate config.js:', error.message);
+    process.exit(1);
+}
 
-// Log which variables were set (without exposing values)
-console.log('   SUPABASE_URL:', process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL ? 'SET' : 'using default');
-console.log('   SUPABASE_ANON_KEY:', process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY ? 'SET' : 'MISSING');
