@@ -1,6 +1,5 @@
 packages:
   - '.'
-  - 'SmartphoneApp'
   - 'functions'
   - 'investor-portal-react'
   - 'mobile'
