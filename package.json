@@ -52,11 +52,5 @@
     "react-leaflet": "^5.0.0",
     "stripe": "^20.2.0",
     "helmet": "^7.1.0"
-  },
-  "resolutions": {
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "react-native": "0.73.11",
-    "react-test-renderer": "18.3.1"
   }
 }
