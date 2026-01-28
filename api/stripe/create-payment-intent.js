@@ -1,10 +1,6 @@
 // Stripe Payment Intent API for Africa Railways
 // Handles card payments for train ticket bookings
 
-const Stripe = require('stripe');
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
 module.exports = async (req, res) => {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -19,12 +15,25 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+  
+  if (!stripeSecretKey) {
+    console.error('STRIPE_SECRET_KEY not configured');
+    return res.status(500).json({ error: 'Payment service not configured' });
+  }
+
   try {
+    const Stripe = require('stripe');
+    const stripe = new Stripe(stripeSecretKey);
+    
     const { amount, currency = 'usd', metadata = {} } = req.body;
 
     if (!amount || amount < 50) {
       return res.status(400).json({ error: 'Amount must be at least 50 cents' });
     }
+
+    const origin = req.headers.origin || req.headers.referer?.replace(/\/[^/]*$/, '') || 'https://africarailways.com';
+    const returnPage = metadata.railway === 'ZRL' ? 'zambia-railways.html' : 'book-tickets.html';
 
     // Create Stripe Checkout Session for better UX
     const session = await stripe.checkout.sessions.create({
@@ -43,8 +52,8 @@ module.exports = async (req, res) => {
         },
       ],
       mode: 'payment',
-      success_url: `${req.headers.origin || 'https://africarailways.com'}/book-tickets.html?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.origin || 'https://africarailways.com'}/book-tickets.html?payment=cancelled`,
+      success_url: `${origin}/${returnPage}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/${returnPage}?payment=cancelled`,
       metadata: {
         ...metadata,
         source: 'africa-railways',
