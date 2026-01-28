@@ -592,6 +592,8 @@
         
         footer a { color: var(--gold); text-decoration: none; }
     </style>
+    <!-- Supabase SDK for database storage -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <nav>
@@ -836,6 +838,10 @@
                             <div id="ticketDate">-</div>
                         </div>
                         <div>
+                            <div style="color: #94a3b8;">Departure Time</div>
+                            <div id="ticketDepartureTime">-</div>
+                        </div>
+                        <div>
                             <div style="color: #94a3b8;">Class</div>
                             <div id="ticketClass">Economy</div>
                         </div>
@@ -995,14 +1001,22 @@
                 departureDay: 1, // Monday
                 departureDayName: 'Monday',
                 departureTime: '20:00',
-                arrivalDay: 'Wednesday'
+                arrivalDay: 'Wednesday',
+                departureCity: 'Livingstone',
+                arrivalCity: 'Kitwe',
+                arrivalTime: '14:00',
+                daysToArrival: 2
             },
             southbound: {
                 stations: ['kitwe', 'ndola', 'kabwe', 'lusaka', 'kafue', 'mazabuka', 'choma', 'livingstone'],
                 departureDay: 5, // Friday
                 departureDayName: 'Friday',
                 departureTime: '16:00',
-                arrivalDay: 'Sunday'
+                arrivalDay: 'Sunday',
+                departureCity: 'Kitwe',
+                arrivalCity: 'Livingstone',
+                arrivalTime: '10:00',
+                daysToArrival: 2
             }
         };
 
@@ -1180,24 +1194,34 @@
             }
             
             const schedule = trainSchedule[direction];
+            const toStationName = stationCodes[to]?.name || to;
+            
+            // Calculate arrival date based on departure date
+            function getArrivalDateStr(departureDate) {
+                const arrivalDate = new Date(departureDate);
+                arrivalDate.setDate(arrivalDate.getDate() + schedule.daysToArrival);
+                return arrivalDate.toLocaleDateString('en-ZM', { weekday: 'long', day: 'numeric', month: 'short' });
+            }
             
             if (!date) {
                 hint.style.display = 'block';
                 hint.className = 'schedule-hint info';
-                hint.innerHTML = `<i class="bi bi-calendar-check"></i> This route departs on <strong>${schedule.departureDayName}s</strong> at ${schedule.departureTime}`;
+                hint.innerHTML = `<i class="bi bi-calendar-check"></i> Departs from <strong>${schedule.departureCity}</strong> on ${schedule.departureDayName}s at ${schedule.departureTime}, arrives at <strong>${toStationName}</strong> on ${schedule.arrivalDay} at ${schedule.arrivalTime}`;
                 return;
             }
             
             if (isValidDepartureDay(date, direction)) {
+                const arrivalDateStr = getArrivalDateStr(new Date(date));
                 hint.style.display = 'block';
                 hint.className = 'schedule-hint valid';
-                hint.innerHTML = `<i class="bi bi-check-circle"></i> Train departs ${schedule.departureDayName} at ${schedule.departureTime}, arrives ${schedule.arrivalDay}`;
+                hint.innerHTML = `<i class="bi bi-check-circle"></i> Departs from <strong>${schedule.departureCity}</strong> on ${schedule.departureDayName} at ${schedule.departureTime}, arrives at <strong>${toStationName}</strong> on ${arrivalDateStr} at ${schedule.arrivalTime}`;
             } else {
                 const nextValid = getNextValidDeparture(direction);
                 const nextDateStr = nextValid.toLocaleDateString('en-ZM', { weekday: 'long', day: 'numeric', month: 'short' });
+                const arrivalDateStr = getArrivalDateStr(nextValid);
                 hint.style.display = 'block';
                 hint.className = 'schedule-hint warning';
-                hint.innerHTML = `<i class="bi bi-exclamation-triangle"></i> No service on this day. Trains depart <strong>${schedule.departureDayName}s</strong> only. Next departure: ${nextDateStr}`;
+                hint.innerHTML = `<i class="bi bi-exclamation-triangle"></i> No service on this day. Next departure from <strong>${schedule.departureCity}</strong>: ${nextDateStr} at ${schedule.departureTime}, arrives at <strong>${toStationName}</strong> on ${arrivalDateStr} at ${schedule.arrivalTime}`;
             }
         }
 
@@ -1458,6 +1482,12 @@
             document.getElementById('ticketDate').textContent = new Date(date).toLocaleDateString('en-ZM', {
                 weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
             });
+            
+            // Get departure time based on route direction
+            const direction = getRouteDirection(from, to);
+            const schedule = trainSchedule[direction];
+            document.getElementById('ticketDepartureTime').textContent = schedule.departureTime;
+            
             document.getElementById('ticketClass').textContent = selectedClass.charAt(0).toUpperCase() + selectedClass.slice(1);
             document.getElementById('ticketPassengers').textContent = passengers;
             
@@ -1474,6 +1504,11 @@
             // Show ticket
             document.getElementById('ticketPreview').classList.add('show');
             
+            // Calculate arrival date
+            const arrivalDate = new Date(date);
+            arrivalDate.setDate(arrivalDate.getDate() + schedule.daysToArrival);
+            const arrivalDateStr = arrivalDate.toLocaleDateString('en-ZM', { weekday: 'short', day: 'numeric', month: 'short' });
+            
             // Save to database
             const bookingDataForDb = {
                 bookingRef,
@@ -1486,7 +1521,10 @@
                 basePrice,
                 serviceCharge,
                 total,
-                paymentMethod
+                paymentMethod,
+                departureTime: schedule.departureTime,
+                arrivalTime: schedule.arrivalTime,
+                arrivalDay: arrivalDateStr
             };
             
             await saveBookingToDatabase(bookingDataForDb);
@@ -1573,6 +1611,12 @@
             document.getElementById('ticketDate').textContent = new Date(date).toLocaleDateString('en-ZM', {
                 weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
             });
+            
+            // Get departure time based on route direction
+            const cryptoDirection = getRouteDirection(from, to);
+            const cryptoSchedule = trainSchedule[cryptoDirection];
+            document.getElementById('ticketDepartureTime').textContent = cryptoSchedule.departureTime;
+            
             document.getElementById('ticketClass').textContent = selectedClass.charAt(0).toUpperCase() + selectedClass.slice(1);
             document.getElementById('ticketPassengers').textContent = passengers;
             
@@ -1783,6 +1827,8 @@
                         from_station: bookingData.from,
                         to_station: bookingData.to,
                         travel_date: bookingData.travelDate,
+                        departure_time: bookingData.departureTime,
+                        arrival_time: bookingData.arrivalTime,
                         class: bookingData.class,
                         passengers: bookingData.passengers,
                         base_price_usd: bookingData.basePrice / 25, // Convert ZMW to USD approx
@@ -1796,7 +1842,10 @@
                         metadata: {
                             stripeSessionId: bookingData.stripeSessionId,
                             railway: 'ZRL',
-                            serviceCharge: bookingData.serviceCharge
+                            serviceCharge: bookingData.serviceCharge,
+                            departureTime: bookingData.departureTime,
+                            arrivalDay: bookingData.arrivalDay,
+                            arrivalTime: bookingData.arrivalTime
                         }
                     })
                     .select()
