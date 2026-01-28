@@ -43,7 +43,13 @@ window.AFRICA_RAILWAYS_CONFIG = {
 window.STRIPE_PUBLISHABLE_KEY = '${process.env.STRIPE_PUBLISHABLE_KEY || process.env.VITE_STRIPE_PUBLISHABLE_KEY || ''}';
 `;
 
-const outputPath = path.join(__dirname, '..', 'js', 'config.js');
+const outputDir = path.join(__dirname, '..', 'js');
+const outputPath = path.join(outputDir, 'config.js');
+
+// Ensure the js directory exists
+if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+}
 
 fs.writeFileSync(outputPath, config);
 console.log('✅ Generated js/config.js with environment variables');
