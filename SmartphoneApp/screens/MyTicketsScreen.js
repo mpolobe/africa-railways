@@ -113,6 +113,14 @@ const MyTicketsScreen = ({ navigation }) => {
         {/* Route */}
         <Text style={styles.routeText}>{ticket.route}</Text>
 
+        {/* Route Info Message */}
+        <View style={styles.routeInfoContainer}>
+          <Ionicons name="information-circle-outline" size={16} color="#38bdf8" />
+          <Text style={styles.routeInfoText}>
+            Departs from {ticket.from_station || ticket.route?.split(' → ')[0]} on {ticket.travel_date} at {ticket.departure_time}. Arrives at {ticket.to_station || ticket.route?.split(' → ')[1]} at {ticket.arrival_time || '18:00'}.
+          </Text>
+        </View>
+
         {/* Details Grid */}
         <View style={styles.detailsGrid}>
           <View style={styles.detailItem}>
@@ -120,7 +128,7 @@ const MyTicketsScreen = ({ navigation }) => {
             <Text style={styles.detailValue}>{ticket.travel_date}</Text>
           </View>
           <View style={styles.detailItem}>
-            <Text style={styles.detailLabel}>Time</Text>
+            <Text style={styles.detailLabel}>Departure</Text>
             <Text style={styles.detailValue}>{ticket.departure_time}</Text>
           </View>
           <View style={styles.detailItem}>
@@ -184,6 +192,14 @@ const MyTicketsScreen = ({ navigation }) => {
               <Text style={styles.modalTitle}>Your Ticket</Text>
               <Text style={styles.modalRoute}>{selectedTicket.route}</Text>
 
+              {/* Route Info Message */}
+              <View style={styles.modalRouteInfo}>
+                <Ionicons name="information-circle" size={18} color="#38bdf8" />
+                <Text style={styles.modalRouteInfoText}>
+                  Departs from {selectedTicket.from_station || selectedTicket.route?.split(' → ')[0]} on {selectedTicket.travel_date} at {selectedTicket.departure_time}. Arrives at {selectedTicket.to_station || selectedTicket.route?.split(' → ')[1]} at {selectedTicket.arrival_time || '18:00'}.
+                </Text>
+              </View>
+
               {/* QR Code */}
               <View style={styles.qrContainer}>
                 <View style={styles.qrWrapper}>
@@ -212,6 +228,10 @@ const MyTicketsScreen = ({ navigation }) => {
                 <View style={styles.modalDetailRow}>
                   <Text style={styles.modalDetailLabel}>Departure</Text>
                   <Text style={styles.modalDetailValue}>{selectedTicket.departure_time}</Text>
+                </View>
+                <View style={styles.modalDetailRow}>
+                  <Text style={styles.modalDetailLabel}>Arrival</Text>
+                  <Text style={styles.modalDetailValue}>{selectedTicket.arrival_time || '18:00'}</Text>
                 </View>
                 <View style={styles.modalDetailRow}>
                   <Text style={styles.modalDetailLabel}>Class</Text>
@@ -444,7 +464,22 @@ const styles = StyleSheet.create({
     color: '#F1F5F9',
     fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  routeInfoContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: '#1e293b',
+    borderRadius: 8,
+    padding: 10,
     marginBottom: 15,
+    gap: 8,
+  },
+  routeInfoText: {
+    flex: 1,
+    color: '#94A3B8',
+    fontSize: 12,
+    lineHeight: 18,
   },
   detailsGrid: {
     flexDirection: 'row',
@@ -569,7 +604,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginTop: 5,
+    marginBottom: 10,
+  },
+  modalRouteInfo: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: '#1e293b',
+    borderRadius: 10,
+    padding: 12,
     marginBottom: 20,
+    gap: 10,
+  },
+  modalRouteInfoText: {
+    flex: 1,
+    color: '#94A3B8',
+    fontSize: 13,
+    lineHeight: 20,
   },
   qrContainer: {
     alignItems: 'center',
