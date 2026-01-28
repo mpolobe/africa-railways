@@ -1666,13 +1666,31 @@
         // Send email notification to admin
         async function sendAdminEmailNotification(booking) {
             try {
+                // Generate QR code URL using a public API
+                const qrData = encodeURIComponent(JSON.stringify({
+                    ref: booking.bookingRef,
+                    route: `${booking.from} → ${booking.to}`,
+                    date: booking.date,
+                    passengers: booking.passengers,
+                    class: booking.class
+                }));
+                const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${qrData}`;
+                
                 const emailHtml = `
                     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                         <div style="background: #006B3F; color: white; padding: 20px; text-align: center;">
                             <h1 style="margin: 0;">🚂 New ZRL Ticket Booking</h1>
                         </div>
+                        
+                        <!-- QR Code Section at Top -->
+                        <div style="background: #fff; padding: 25px; text-align: center; border-bottom: 2px dashed #ddd;">
+                            <img src="${qrCodeUrl}" alt="Ticket QR Code" style="width: 150px; height: 150px; border: 3px solid #006B3F; border-radius: 10px;" />
+                            <p style="margin: 15px 0 5px; font-size: 18px; font-weight: bold; color: #006B3F;">${booking.bookingRef}</p>
+                            <p style="margin: 0; color: #666; font-size: 12px;">Scan this QR code at the station</p>
+                        </div>
+                        
                         <div style="padding: 20px; background: #f5f5f5;">
-                            <h2 style="color: #006B3F; margin-top: 0;">Booking Reference: ${booking.bookingRef}</h2>
+                            <h2 style="color: #006B3F; margin-top: 0;">Booking Details</h2>
                             <table style="width: 100%; border-collapse: collapse;">
                                 <tr>
                                     <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Route:</strong></td>

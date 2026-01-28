@@ -492,12 +492,86 @@
             }
         }
     </style>
+    <!-- Supabase SDK for database storage -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/config.js"></script>
 </head>
 <body>
     <div id="root"></div>
 
     <script type="text/babel">
         const { useState } = React;
+        
+        // Supabase configuration
+        const SUPABASE_URL = window.SUPABASE_URL || 'https://llvprbmrnjvamjzavmhg.supabase.co';
+        const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '';
+        let supabaseClient = null;
+        
+        const getSupabase = () => {
+            if (supabaseClient) return supabaseClient;
+            if (typeof supabase !== 'undefined' && SUPABASE_ANON_KEY) {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+            return supabaseClient;
+        };
+        
+        // Save TAZARA booking to Supabase
+        const saveTazaraBookingToSupabase = async (bookingData) => {
+            try {
+                const client = getSupabase();
+                if (!client) {
+                    console.log('Supabase not configured, skipping database storage');
+                    return null;
+                }
+                
+                const { data, error } = await client
+                    .from('bookings')
+                    .insert({
+                        booking_ref: bookingData.bookingRef,
+                        passenger_name: 'Guest',
+                        passenger_phone: bookingData.phone,
+                        wallet_address: bookingData.wallet,
+                        route: `${bookingData.from} → ${bookingData.to}`,
+                        from_station: bookingData.from,
+                        to_station: bookingData.to,
+                        travel_date: new Date().toISOString().split('T')[0],
+                        departure_time: '14:00',
+                        class: bookingData.class,
+                        passengers: bookingData.passengers,
+                        base_price_usd: parseFloat(bookingData.basePrice),
+                        total_price_usd: parseFloat(bookingData.totalAFC),
+                        local_currency: 'TZS',
+                        total_price_local: parseFloat(bookingData.totalTZS?.replace(/,/g, '') || 0),
+                        payment_method: 'crypto',
+                        payment_status: 'completed',
+                        booking_status: 'confirmed',
+                        booking_source: 'web',
+                        metadata: {
+                            railway: 'TAZARA',
+                            totalAFC: bookingData.totalAFC,
+                            totalTZS: bookingData.totalTZS,
+                            totalZMW: bookingData.totalZMW,
+                            wallet: bookingData.wallet,
+                            nftId: bookingData.nftId,
+                            ipfsHash: bookingData.ipfsHash,
+                            blockchain: 'SUI'
+                        }
+                    })
+                    .select()
+                    .single();
+                
+                if (error) {
+                    console.error('Supabase insert error:', error);
+                    return null;
+                }
+                
+                console.log('TAZARA booking saved to Supabase:', data);
+                return data;
+            } catch (error) {
+                console.error('Failed to save TAZARA booking:', error);
+                return null;
+            }
+        };
 
         // Routes organized by origin country
         const ROUTES_FROM_TANZANIA = [
@@ -1099,6 +1173,23 @@ ZAMBIA REGION:
                         timestamp: new Date().toISOString()
                     });
                     
+                    // Save to Supabase database
+                    saveTazaraBookingToSupabase({
+                        bookingRef,
+                        from: route.from,
+                        to: route.to,
+                        passengers,
+                        class: tier.name,
+                        basePrice: basePrice.toFixed(2),
+                        totalAFC: totalCost.toFixed(2),
+                        totalTZS: totalCostTZS.toLocaleString(),
+                        totalZMW: totalCostZMW.toLocaleString(),
+                        phone: phoneNumber,
+                        wallet: walletAddress,
+                        nftId,
+                        ipfsHash
+                    });
+                    
                     // Keep ticket data visible for download, reset form after 15 seconds
                     setTimeout(() => {
                         setSelectedRoute(null);
@@ -1570,13 +1661,32 @@ ZAMBIA REGION:
         // Send email notification for TAZARA booking
         async function sendTazaraEmailNotification(booking) {
             try {
+                // Generate QR code URL using a public API
+                const qrData = encodeURIComponent(JSON.stringify({
+                    ref: booking.bookingRef,
+                    route: booking.route,
+                    from: booking.from,
+                    to: booking.to,
+                    passengers: booking.passengers,
+                    class: booking.class
+                }));
+                const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${qrData}`;
+                
                 const emailHtml = `
                     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                         <div style="background: linear-gradient(135deg, #1a2642, #16203a); color: white; padding: 20px; text-align: center;">
                             <h1 style="margin: 0; color: #FFB800;">🚂 New TAZARA Booking</h1>
                         </div>
+                        
+                        <!-- QR Code Section at Top -->
+                        <div style="background: #fff; padding: 25px; text-align: center; border-bottom: 2px dashed #ddd;">
+                            <img src="${qrCodeUrl}" alt="Ticket QR Code" style="width: 150px; height: 150px; border: 3px solid #1a2642; border-radius: 10px;" />
+                            <p style="margin: 15px 0 5px; font-size: 18px; font-weight: bold; color: #1a2642;">${booking.bookingRef}</p>
+                            <p style="margin: 0; color: #666; font-size: 12px;">Scan this QR code at the station</p>
+                        </div>
+                        
                         <div style="padding: 20px; background: #f5f5f5;">
-                            <h2 style="color: #1a2642; margin-top: 0;">Reference: ${booking.bookingRef}</h2>
+                            <h2 style="color: #1a2642; margin-top: 0;">Booking Details</h2>
                             <table style="width: 100%; border-collapse: collapse;">
                                 <tr><td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Route:</strong></td><td style="padding: 10px; border-bottom: 1px solid #ddd;">${booking.route}</td></tr>
                                 <tr><td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>From:</strong></td><td style="padding: 10px; border-bottom: 1px solid #ddd;">${booking.from}</td></tr>

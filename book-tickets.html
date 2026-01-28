@@ -484,12 +484,83 @@
             background: rgba(239, 68, 68, 0.1);
         }
     </style>
+    <!-- Supabase SDK for database storage -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/config.js"></script>
 </head>
 <body>
     <div id="root"></div>
 
     <script type="text/babel">
         const { useState, useEffect, useMemo } = React;
+        
+        // Supabase configuration
+        const SUPABASE_URL = window.SUPABASE_URL || 'https://llvprbmrnjvamjzavmhg.supabase.co';
+        const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '';
+        let supabaseClient = null;
+        
+        const getSupabase = () => {
+            if (supabaseClient) return supabaseClient;
+            if (typeof supabase !== 'undefined' && SUPABASE_ANON_KEY) {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+            return supabaseClient;
+        };
+        
+        // Save booking to Supabase
+        const saveBookingToSupabase = async (bookingData) => {
+            try {
+                const client = getSupabase();
+                if (!client) {
+                    console.log('Supabase not configured, skipping database storage');
+                    return null;
+                }
+                
+                const { data, error } = await client
+                    .from('bookings')
+                    .insert({
+                        booking_ref: bookingData.bookingRef,
+                        passenger_name: 'Guest',
+                        passenger_phone: bookingData.phone,
+                        wallet_address: bookingData.wallet,
+                        route: `${bookingData.from} → ${bookingData.to}`,
+                        from_station: bookingData.from,
+                        to_station: bookingData.to,
+                        travel_date: bookingData.travelDate || new Date().toISOString().split('T')[0],
+                        departure_time: bookingData.departureTime || '08:00',
+                        class: bookingData.class,
+                        passengers: bookingData.passengers,
+                        is_return_trip: bookingData.isReturn || false,
+                        base_price_usd: bookingData.basePriceUSD,
+                        total_price_usd: bookingData.totalUSD,
+                        local_currency: bookingData.localCurrency,
+                        total_price_local: bookingData.totalLocal,
+                        payment_method: bookingData.paymentMethod,
+                        payment_status: 'completed',
+                        booking_status: 'confirmed',
+                        booking_source: 'web',
+                        metadata: {
+                            railway: bookingData.railway,
+                            nftId: bookingData.nftId,
+                            ipfsHash: bookingData.ipfsHash,
+                            blockchain: 'SUI'
+                        }
+                    })
+                    .select()
+                    .single();
+                
+                if (error) {
+                    console.error('Supabase insert error:', error);
+                    return null;
+                }
+                
+                console.log('Booking saved to Supabase:', data);
+                return data;
+            } catch (error) {
+                console.error('Failed to save booking:', error);
+                return null;
+            }
+        };
 
         // Exchange rates (USD to local currency) - fallback values
         const FALLBACK_RATES = {
@@ -1531,6 +1602,28 @@ TX: ${ticketData.txDigest}
                     
                     const walletMsg = `\n💳 Wallet: ${walletAddress.slice(0, 10)}...${walletAddress.slice(-6)}`;
                     setStatus(`success:✅ Booking confirmed! Reference: ${bookingRef}${walletMsg}${smsMsg}\n🎫 Your NFT ticket is ready for download!`);
+                    
+                    // Save to Supabase database
+                    saveBookingToSupabase({
+                        bookingRef,
+                        from: fromStation?.city || from,
+                        to: toStation?.city || to,
+                        travelDate: date,
+                        departureTime: '08:00',
+                        passengers,
+                        class: selectedClass.charAt(0).toUpperCase() + selectedClass.slice(1),
+                        isReturn: isReturnTrip,
+                        basePriceUSD: basePriceUSD,
+                        totalUSD: totalPriceUSD,
+                        localCurrency: localCurrency,
+                        totalLocal: totalLocalPrice,
+                        paymentMethod: paymentMethod,
+                        phone: phoneNumber,
+                        wallet: walletAddress,
+                        railway: fromStation?.railway || 'TAZARA',
+                        nftId,
+                        ipfsHash
+                    });
                     
                     // Keep ticket visible for download, reset form after 15 seconds
                     setTimeout(() => {

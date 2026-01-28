@@ -6,12 +6,21 @@
  */
 
 // Supabase Configuration (Production OAuth)
-// Get these from: https://supabase.com/dashboard/project/YOUR_PROJECT/settings/api
+// Project: llvprbmrnjvamjzavmhg (same as scroll-waitlist-exchange-1)
+// Get these from: https://supabase.com/dashboard/project/llvprbmrnjvamjzavmhg/settings/api
 window.SUPABASE_URL = 'https://llvprbmrnjvamjzavmhg.supabase.co';
 
 // IMPORTANT: Set your Supabase anon key here for production
 // This key is safe to expose in client-side code as it only allows authenticated operations
 // Get it from: Supabase Dashboard > Project Settings > API > anon public
+// Same project as scroll-waitlist-exchange-1 - use the same VITE_SUPABASE_ANON_KEY
+// Required for: Google/Facebook OAuth, ticket retrieval, booking storage
+// 
+// TO FIX GOOGLE LOGIN:
+// 1. Go to https://supabase.com/dashboard/project/llvprbmrnjvamjzavmhg/settings/api
+// 2. Copy the "anon public" key
+// 3. Paste it below (replace empty string)
+// 4. Also ensure Google OAuth is configured in Authentication > Providers > Google
 window.SUPABASE_ANON_KEY = '';
 
 // OAuth Redirect URLs (configured in Supabase Dashboard)
