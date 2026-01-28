@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "node scripts/generate-config.js",
+  "buildCommand": "node scripts/generate-config.cjs",
   "cleanUrls": true,
   "outputDirectory": ".",
   "functions": {
