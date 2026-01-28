@@ -154,6 +154,68 @@ app.post('/api/verify-otp', (req, res) => {
   });
 });
 
+// API: Stripe Payment Intent
+app.post('/api/stripe/create-payment-intent', async (req, res) => {
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+  
+  if (!stripeSecretKey) {
+    console.log('[DEMO] Stripe not configured - using demo mode');
+    // Return a demo checkout URL for testing
+    const origin = req.headers.origin || req.headers.referer?.replace(/\/[^/]*$/, '') || 'http://localhost:3000';
+    const successUrl = `${origin}/zambia-railways.html?payment=success&demo=true`;
+    return res.json({
+      url: successUrl,
+      demo: true,
+      message: 'Demo mode - Stripe not configured'
+    });
+  }
+
+  try {
+    const Stripe = (await import('stripe')).default;
+    const stripe = new Stripe(stripeSecretKey);
+    
+    const { amount, currency = 'usd', metadata = {} } = req.body;
+
+    if (!amount || amount < 50) {
+      return res.status(400).json({ error: 'Amount must be at least 50 cents' });
+    }
+
+    const origin = req.headers.origin || req.headers.referer?.replace(/\/[^/]*$/, '') || 'https://africarailways.com';
+    
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price_data: {
+            currency: currency.toLowerCase(),
+            product_data: {
+              name: `Train Ticket: ${metadata.from || 'Origin'} → ${metadata.to || 'Destination'}`,
+              description: `${metadata.date || 'Travel Date'} | ${metadata.passengers || 1} passenger(s) | ${metadata.railway || 'ZRL'}`,
+            },
+            unit_amount: Math.round(amount),
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${origin}/zambia-railways.html?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/zambia-railways.html?payment=cancelled`,
+      metadata: {
+        ...metadata,
+        source: 'africa-railways',
+      },
+    });
+
+    res.json({
+      sessionId: session.id,
+      url: session.url,
+    });
+  } catch (error) {
+    console.error('Stripe error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Helper: Generate wallet from phone
 function generateWalletFromPhone(phone) {
   const digits = phone.replace(/\D/g, '').slice(-10).padStart(10, '0');
@@ -246,7 +308,7 @@ async function sendTwilioSMS(phone, otp) {
 app.use(express.static(__dirname));
 
 // Fallback to index.html for SPA routes
-app.get('*', (req, res) => {
+app.get('/{*path}', (req, res) => {
   // Check if it's an HTML file request
   if (req.path.endsWith('.html') || !req.path.includes('.')) {
     const htmlPath = req.path.endsWith('.html') 
