@@ -25,7 +25,7 @@ window.SUPABASE_URL = 'https://llvprbmrnjvamjzavmhg.supabase.co';
 //    - https://africarailways.com/auth/callback
 //    - https://www.africarailways.com/auth/callback
 //    - http://localhost:3000/auth/callback (for development)
-window.SUPABASE_ANON_KEY = '';
+window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxsdnByYm1ybmp2YW1qemF2bWhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU3NDQ1NTIsImV4cCI6MjA4MTMyMDU1Mn0.YvLr0yIuPvaBIjZ0_RZ10H6FzJ6eFbbaPOH6lM0RNtY';
 
 // OAuth Redirect URLs (configured in Supabase Dashboard)
 // Add these to: Authentication > URL Configuration > Redirect URLs
