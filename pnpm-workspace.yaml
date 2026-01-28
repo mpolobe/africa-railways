@@ -1,0 +1,12 @@
+packages:
+  - '.'
+  - 'SmartphoneApp'
+  - 'functions'
+  - 'investor-portal-react'
+  - 'mobile'
+  - 'production-stack'
+  - 'scripts/airtable-sync'
+  - 'scripts/data-integration'
+  - 'server'
+  - 'telegram-bot'
+  - 'telegram-marketing'
