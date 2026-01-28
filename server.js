@@ -400,13 +400,15 @@ async function sendTwilioSMS(phone, otp) {
 app.use(express.static(__dirname));
 
 // Fallback to index.html for SPA routes
-app.get('/{*path}', (req, res) => {
+app.get('*', (req, res) => {
   // Check if it's an HTML file request
   if (req.path.endsWith('.html') || !req.path.includes('.')) {
     const htmlPath = req.path.endsWith('.html') 
       ? path.join(__dirname, req.path)
       : path.join(__dirname, 'index.html');
-    res.sendFile(htmlPath);
+    res.sendFile(htmlPath, (err) => {
+      if (err) res.status(404).send('Not found');
+    });
   } else {
     res.status(404).send('Not found');
   }

@@ -4,6 +4,10 @@
   "scripts": {
     "generate-config": "node -r dotenv/config scripts/generate-config.js",
     "build": "npm run generate-config",
+    "security:validate": "node tests/quick-validation.js",
+    "security:audit": "npm audit --all",
+    "security:fix": "npm audit fix",
+    "test:security": "npm run security:validate && npm run security:audit",
     "mobile:start": "npx expo start --project SmartphoneApp",
     "mobile:install": "npm install --prefix SmartphoneApp",
     "mobile:audit": "npm audit fix --prefix SmartphoneApp",
