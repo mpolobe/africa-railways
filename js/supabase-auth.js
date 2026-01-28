@@ -61,7 +61,7 @@ async function signInWithGoogle() {
     const { data, error } = await client.auth.signInWithOAuth({
         provider: 'google',
         options: {
-            redirectTo: window.location.origin + '/auth-callback.html'
+            redirectTo: window.location.origin + '/auth/callback'
         }
     });
     
@@ -81,7 +81,7 @@ async function signInWithFacebook() {
     const { data, error } = await client.auth.signInWithOAuth({
         provider: 'facebook',
         options: {
-            redirectTo: window.location.origin + '/auth-callback.html'
+            redirectTo: window.location.origin + '/auth/callback'
         }
     });
     
@@ -101,7 +101,7 @@ async function signInWithApple() {
     const { data, error } = await client.auth.signInWithOAuth({
         provider: 'apple',
         options: {
-            redirectTo: window.location.origin + '/auth-callback.html'
+            redirectTo: window.location.origin + '/auth/callback'
         }
     });
     

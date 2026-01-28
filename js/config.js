@@ -18,16 +18,21 @@ window.SUPABASE_URL = 'https://llvprbmrnjvamjzavmhg.supabase.co';
 // 
 // TO FIX GOOGLE LOGIN:
 // 1. Go to https://supabase.com/dashboard/project/llvprbmrnjvamjzavmhg/settings/api
-// 2. Copy the "anon public" key
+// 2. Copy the "anon public" key  
 // 3. Paste it below (replace empty string)
-// 4. Also ensure Google OAuth is configured in Authentication > Providers > Google
+// 4. Ensure Google OAuth is configured in Authentication > Providers > Google
+// 5. Add redirect URLs in Authentication > URL Configuration > Redirect URLs:
+//    - https://africarailways.com/auth/callback
+//    - https://www.africarailways.com/auth/callback
+//    - http://localhost:3000/auth/callback (for development)
 window.SUPABASE_ANON_KEY = '';
 
 // OAuth Redirect URLs (configured in Supabase Dashboard)
 // Add these to: Authentication > URL Configuration > Redirect URLs
-// - https://africarailways.com/auth-callback.html
-// - https://www.africarailways.com/auth-callback.html
-// - http://localhost:3000/auth-callback.html (for development)
+// - https://africarailways.com/auth/callback
+// - https://www.africarailways.com/auth/callback
+// - http://localhost:3000/auth/callback (for development)
+// - exp://YOUR_EXPO_URL/auth/callback (for Expo development)
 
 // API Configuration
 window.AFRICA_RAILWAYS_CONFIG = {

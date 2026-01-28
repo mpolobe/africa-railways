@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase, getRedirectUrl } from '@/lib/supabase';
 import type { User, AuthResponse } from '@supabase/supabase-js';
 
 interface UserProfile {
@@ -196,27 +196,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signInWithGoogle = async () => {
+    const redirectTo = getRedirectUrl();
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { 
-        redirectTo: `${window.location.origin}/`
+        redirectTo
       },
     });
     return { data, error };
   };
 
   const signInWithApple = async () => {
+    const redirectTo = getRedirectUrl();
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'apple',
-      options: { redirectTo: `${window.location.origin}/` },
+      options: { redirectTo },
     });
     return { data, error };
   };
 
   const signInWithFacebook = async () => {
+    const redirectTo = getRedirectUrl();
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'facebook',
-      options: { redirectTo: `${window.location.origin}/` },
+      options: { redirectTo },
     });
     return { data, error };
   };
