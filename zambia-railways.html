@@ -286,6 +286,31 @@
             border: 1px solid rgba(239, 68, 68, 0.3);
             color: #ef4444;
         }
+
+        .schedule-hint {
+            margin-top: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        .schedule-hint.valid {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--green);
+        }
+
+        .schedule-hint.warning {
+            background: rgba(255, 184, 0, 0.15);
+            border: 1px solid rgba(255, 184, 0, 0.3);
+            color: var(--gold);
+        }
+
+        .schedule-hint.info {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: var(--cyan);
+        }
         
         .ticket-preview {
             background: linear-gradient(135deg, #1a2642 0%, var(--surface) 100%);
@@ -424,6 +449,7 @@
                         <div class="form-group">
                             <label><i class="bi bi-calendar3"></i> Travel Date</label>
                             <input type="date" class="form-control" id="travelDate" required>
+                            <div id="scheduleHint" class="schedule-hint" style="display: none;"></div>
                         </div>
 
                         <div class="form-group">
@@ -610,6 +636,79 @@
         </div>
     </div>
 
+    <!-- Train Schedule Section -->
+    <div class="schedule-section" style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
+        <h2 style="color: var(--gold); margin-bottom: 20px; font-size: 1.5rem;">
+            <i class="bi bi-clock-history"></i> Train Schedule
+        </h2>
+        
+        <!-- Northbound: Livingstone to Kitwe -->
+        <div class="schedule-card" style="background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 4px solid var(--zrl-green);">
+            <h3 style="color: white; margin-bottom: 15px; font-size: 1.1rem;">
+                🚂 Livingstone → Kitwe <span style="color: var(--cyan); font-weight: normal; font-size: 0.9rem;">(Departs Monday, Arrives Wednesday)</span>
+            </h3>
+            <div style="overflow-x: auto;">
+                <table class="schedule-table" style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                    <thead>
+                        <tr style="background: rgba(255,255,255,0.05);">
+                            <th style="padding: 10px; text-align: left; color: #94a3b8; border-bottom: 1px solid #333;">Station</th>
+                            <th style="padding: 10px; text-align: center; color: #94a3b8; border-bottom: 1px solid #333;">Arrival</th>
+                            <th style="padding: 10px; text-align: center; color: #94a3b8; border-bottom: 1px solid #333;">Departure</th>
+                            <th style="padding: 10px; text-align: center; color: #94a3b8; border-bottom: 1px solid #333;">Day</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td style="padding: 10px; color: white; border-bottom: 1px solid #222;"><strong>Livingstone</strong></td><td style="padding: 10px; text-align: center; color: #666; border-bottom: 1px solid #222;">—</td><td style="padding: 10px; text-align: center; color: var(--green); border-bottom: 1px solid #222;">20:00</td><td style="padding: 10px; text-align: center; color: var(--cyan); border-bottom: 1px solid #222;">Mon</td></tr>
+                        <tr><td style="padding: 10px; color: white; border-bottom: 1px solid #222;">Choma</td><td style="padding: 10px; text-align: center; color: white; border-bottom: 1px solid #222;">03:15</td><td style="padding: 10px; text-align: center; color: var(--green); border-bottom: 1px solid #222;">03:45</td><td style="padding: 10px; text-align: center; color: var(--cyan); border-bottom: 1px solid #222;">Tue</td></tr>
+                        <tr><td style="padding: 10px; color: white; border-bottom: 1px solid #222;">Lusaka</td><td style="padding: 10px; text-align: center; color: white; border-bottom: 1px solid #222;">14:24</td><td style="padding: 10px; text-align: center; color: var(--green); border-bottom: 1px solid #222;">15:24</td><td style="padding: 10px; text-align: center; color: var(--cyan); border-bottom: 1px solid #222;">Tue</td></tr>
+                        <tr><td style="padding: 10px; color: white; border-bottom: 1px solid #222;">Kabwe</td><td style="padding: 10px; text-align: center; color: white; border-bottom: 1px solid #222;">19:16</td><td style="padding: 10px; text-align: center; color: var(--green); border-bottom: 1px solid #222;">19:46</td><td style="padding: 10px; text-align: center; color: var(--cyan); border-bottom: 1px solid #222;">Tue</td></tr>
+                        <tr><td style="padding: 10px; color: white; border-bottom: 1px solid #222;">Ndola</td><td style="padding: 10px; text-align: center; color: white; border-bottom: 1px solid #222;">02:56</td><td style="padding: 10px; text-align: center; color: var(--green); border-bottom: 1px solid #222;">03:36</td><td style="padding: 10px; text-align: center; color: var(--cyan); border-bottom: 1px solid #222;">Wed</td></tr>
+                        <tr><td style="padding: 10px; color: white;"><strong>Kitwe</strong></td><td style="padding: 10px; text-align: center; color: var(--gold);">06:00</td><td style="padding: 10px; text-align: center; color: #666;">—</td><td style="padding: 10px; text-align: center; color: var(--cyan);">Wed</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Southbound: Kitwe to Livingstone -->
+        <div class="schedule-card" style="background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 4px solid var(--zrl-red);">
+            <h3 style="color: white; margin-bottom: 15px; font-size: 1.1rem;">
+                🚂 Kitwe → Livingstone <span style="color: var(--cyan); font-weight: normal; font-size: 0.9rem;">(Departs Friday, Arrives Sunday)</span>
+            </h3>
+            <div style="overflow-x: auto;">
+                <table class="schedule-table" style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                    <thead>
+                        <tr style="background: rgba(255,255,255,0.05);">
+                            <th style="padding: 10px; text-align: left; color: #94a3b8; border-bottom: 1px solid #333;">Station</th>
+                            <th style="padding: 10px; text-align: center; color: #94a3b8; border-bottom: 1px solid #333;">Arrival</th>
+                            <th style="padding: 10px; text-align: center; color: #94a3b8; border-bottom: 1px solid #333;">Departure</th>
+                            <th style="padding: 10px; text-align: center; color: #94a3b8; border-bottom: 1px solid #333;">Day</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td style="padding: 10px; color: white; border-bottom: 1px solid #222;"><strong>Kitwe</strong></td><td style="padding: 10px; text-align: center; color: #666; border-bottom: 1px solid #222;">—</td><td style="padding: 10px; text-align: center; color: var(--green); border-bottom: 1px solid #222;">16:00</td><td style="padding: 10px; text-align: center; color: var(--cyan); border-bottom: 1px solid #222;">Fri</td></tr>
+                        <tr><td style="padding: 10px; color: white; border-bottom: 1px solid #222;">Ndola</td><td style="padding: 10px; text-align: center; color: white; border-bottom: 1px solid #222;">18:25</td><td style="padding: 10px; text-align: center; color: var(--green); border-bottom: 1px solid #222;">18:55</td><td style="padding: 10px; text-align: center; color: var(--cyan); border-bottom: 1px solid #222;">Fri</td></tr>
+                        <tr><td style="padding: 10px; color: white; border-bottom: 1px solid #222;">Kabwe</td><td style="padding: 10px; text-align: center; color: white; border-bottom: 1px solid #222;">02:15</td><td style="padding: 10px; text-align: center; color: var(--green); border-bottom: 1px solid #222;">02:55</td><td style="padding: 10px; text-align: center; color: var(--cyan); border-bottom: 1px solid #222;">Sat</td></tr>
+                        <tr><td style="padding: 10px; color: white; border-bottom: 1px solid #222;">Lusaka</td><td style="padding: 10px; text-align: center; color: white; border-bottom: 1px solid #222;">06:56</td><td style="padding: 10px; text-align: center; color: var(--green); border-bottom: 1px solid #222;">07:36</td><td style="padding: 10px; text-align: center; color: var(--cyan); border-bottom: 1px solid #222;">Sat</td></tr>
+                        <tr><td style="padding: 10px; color: white; border-bottom: 1px solid #222;">Choma</td><td style="padding: 10px; text-align: center; color: white; border-bottom: 1px solid #222;">18:04</td><td style="padding: 10px; text-align: center; color: var(--green); border-bottom: 1px solid #222;">18:34</td><td style="padding: 10px; text-align: center; color: var(--cyan); border-bottom: 1px solid #222;">Sat</td></tr>
+                        <tr><td style="padding: 10px; color: white;"><strong>Livingstone</strong></td><td style="padding: 10px; text-align: center; color: var(--gold);">02:00</td><td style="padding: 10px; text-align: center; color: #666;">—</td><td style="padding: 10px; text-align: center; color: var(--cyan);">Sun</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Contact Info -->
+        <div style="background: rgba(255,184,0,0.1); border: 1px solid var(--gold); border-radius: 12px; padding: 20px; text-align: center;">
+            <p style="color: var(--gold); margin-bottom: 10px; font-weight: 600;">
+                <i class="bi bi-telephone"></i> For Reservations & Inquiries
+            </p>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; color: white;">
+                <span><a href="tel:+260765237196" style="color: var(--cyan);">0765 237 196</a></span>
+                <span><a href="tel:+260765410568" style="color: var(--cyan);">0765 410 568</a></span>
+                <span><a href="tel:+260765418357" style="color: var(--cyan);">0765 418 357</a></span>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <p>Powered by <a href="/">Africa Railways</a> | Zambia Railways Limited Official Booking Partner</p>
         <p style="margin-top: 10px; font-size: 0.85rem;">
@@ -632,6 +731,26 @@
             kafue: { code: 'KFE', name: 'Kafue' }
         };
 
+        // Train schedule - departure days based on direction
+        // Northbound (Livingstone → Kitwe): Departs Monday
+        // Southbound (Kitwe → Livingstone): Departs Friday
+        const trainSchedule = {
+            northbound: {
+                stations: ['livingstone', 'choma', 'mazabuka', 'kafue', 'lusaka', 'kabwe', 'ndola', 'kitwe'],
+                departureDay: 1, // Monday
+                departureDayName: 'Monday',
+                departureTime: '20:00',
+                arrivalDay: 'Wednesday'
+            },
+            southbound: {
+                stations: ['kitwe', 'ndola', 'kabwe', 'lusaka', 'kafue', 'mazabuka', 'choma', 'livingstone'],
+                departureDay: 5, // Friday
+                departureDayName: 'Friday',
+                departureTime: '16:00',
+                arrivalDay: 'Sunday'
+            }
+        };
+
         // Prices in ZMW (Zambian Kwacha)
         const prices = {
             economy: 200,
@@ -644,10 +763,84 @@
         // Set minimum date to today
         document.getElementById('travelDate').min = new Date().toISOString().split('T')[0];
 
+        // Determine route direction based on stations
+        function getRouteDirection(from, to) {
+            if (!from || !to) return null;
+            
+            const northIdx = trainSchedule.northbound.stations;
+            const fromNorthIdx = northIdx.indexOf(from);
+            const toNorthIdx = northIdx.indexOf(to);
+            
+            if (fromNorthIdx === -1 || toNorthIdx === -1) return null;
+            
+            // If destination is further north (higher index), it's northbound
+            return toNorthIdx > fromNorthIdx ? 'northbound' : 'southbound';
+        }
+
+        // Check if a date is a valid departure day for the route
+        function isValidDepartureDay(date, direction) {
+            if (!direction) return true;
+            const dayOfWeek = new Date(date).getDay();
+            return dayOfWeek === trainSchedule[direction].departureDay;
+        }
+
+        // Get next valid departure date
+        function getNextValidDeparture(direction) {
+            if (!direction) return null;
+            const today = new Date();
+            const targetDay = trainSchedule[direction].departureDay;
+            const daysUntil = (targetDay - today.getDay() + 7) % 7;
+            const nextDate = new Date(today);
+            nextDate.setDate(today.getDate() + (daysUntil === 0 ? 7 : daysUntil));
+            return nextDate;
+        }
+
+        // Update schedule hint based on selected route and date
+        function updateScheduleHint() {
+            const from = document.getElementById('fromStation').value;
+            const to = document.getElementById('toStation').value;
+            const date = document.getElementById('travelDate').value;
+            const hint = document.getElementById('scheduleHint');
+            
+            if (!from || !to) {
+                hint.style.display = 'none';
+                return;
+            }
+            
+            const direction = getRouteDirection(from, to);
+            if (!direction) {
+                hint.style.display = 'block';
+                hint.className = 'schedule-hint info';
+                hint.innerHTML = '<i class="bi bi-info-circle"></i> Select stations on the main line for schedule info';
+                return;
+            }
+            
+            const schedule = trainSchedule[direction];
+            
+            if (!date) {
+                hint.style.display = 'block';
+                hint.className = 'schedule-hint info';
+                hint.innerHTML = `<i class="bi bi-calendar-check"></i> This route departs on <strong>${schedule.departureDayName}s</strong> at ${schedule.departureTime}`;
+                return;
+            }
+            
+            if (isValidDepartureDay(date, direction)) {
+                hint.style.display = 'block';
+                hint.className = 'schedule-hint valid';
+                hint.innerHTML = `<i class="bi bi-check-circle"></i> Train departs ${schedule.departureDayName} at ${schedule.departureTime}, arrives ${schedule.arrivalDay}`;
+            } else {
+                const nextValid = getNextValidDeparture(direction);
+                const nextDateStr = nextValid.toLocaleDateString('en-ZM', { weekday: 'long', day: 'numeric', month: 'short' });
+                hint.style.display = 'block';
+                hint.className = 'schedule-hint warning';
+                hint.innerHTML = `<i class="bi bi-exclamation-triangle"></i> No service on this day. Trains depart <strong>${schedule.departureDayName}s</strong> only. Next departure: ${nextDateStr}`;
+            }
+        }
+
         // Update summary on form changes
-        document.getElementById('fromStation').addEventListener('change', updateSummary);
-        document.getElementById('toStation').addEventListener('change', updateSummary);
-        document.getElementById('travelDate').addEventListener('change', updateSummary);
+        document.getElementById('fromStation').addEventListener('change', () => { updateSummary(); updateScheduleHint(); });
+        document.getElementById('toStation').addEventListener('change', () => { updateSummary(); updateScheduleHint(); });
+        document.getElementById('travelDate').addEventListener('change', () => { updateSummary(); updateScheduleHint(); });
         document.getElementById('passengers').addEventListener('change', updateSummary);
 
         function selectClass(element) {
@@ -664,6 +857,7 @@
             from.value = to.value;
             to.value = temp;
             updateSummary();
+            updateScheduleHint();
         }
 
         function updateSummary() {
