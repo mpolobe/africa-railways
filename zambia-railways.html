@@ -413,6 +413,104 @@
             border: 2px solid var(--gold);
         }
 
+        /* Date Picker Modal Styles */
+        .date-picker-trigger {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #333;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s;
+        }
+
+        .date-picker-trigger:hover {
+            border-color: var(--zrl-green);
+        }
+
+        .date-picker-trigger i {
+            color: var(--zrl-green);
+        }
+
+        .calendar-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .calendar-modal-overlay.show {
+            display: flex;
+        }
+
+        .calendar-modal {
+            background: var(--surface);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 380px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .calendar-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        .calendar-modal-header h3 {
+            color: white;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .calendar-modal-close {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .calendar-modal-close:hover {
+            background: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
         .schedule-hint {
             margin-top: 8px;
             padding: 8px 12px;
@@ -575,23 +673,39 @@
                         <div class="form-group">
                             <label><i class="bi bi-calendar3"></i> Travel Date</label>
                             <input type="hidden" id="travelDate" required>
-                            <div class="custom-calendar" id="customCalendar">
-                                <div class="calendar-header">
-                                    <button type="button" class="cal-nav" onclick="changeMonth(-1)"><i class="bi bi-chevron-left"></i></button>
-                                    <span id="calendarMonth">January 2026</span>
-                                    <button type="button" class="cal-nav" onclick="changeMonth(1)"><i class="bi bi-chevron-right"></i></button>
-                                </div>
-                                <div class="calendar-weekdays">
-                                    <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
-                                </div>
-                                <div class="calendar-days" id="calendarDays"></div>
-                                <div class="cal-legend">
-                                    <span><div class="legend-dot available"></div> Train Available</span>
-                                    <span><div class="legend-dot today"></div> Today</span>
-                                </div>
+                            <div class="date-picker-trigger" onclick="openCalendarModal()">
+                                <span id="datePickerDisplay">Select travel date</span>
+                                <i class="bi bi-calendar3"></i>
                             </div>
                             <div id="scheduleHint" class="schedule-hint" style="display: none;"></div>
                         </div>
+
+    <!-- Calendar Modal -->
+    <div class="calendar-modal-overlay" id="calendarModalOverlay" onclick="closeCalendarModal(event)">
+        <div class="calendar-modal" onclick="event.stopPropagation()">
+            <div class="calendar-modal-header">
+                <h3><i class="bi bi-calendar3"></i> Select Travel Date</h3>
+                <button type="button" class="calendar-modal-close" onclick="closeCalendarModal()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="custom-calendar" id="customCalendar">
+                <div class="calendar-header">
+                    <button type="button" class="cal-nav" onclick="changeMonth(-1)"><i class="bi bi-chevron-left"></i></button>
+                    <span id="calendarMonth">January 2026</span>
+                    <button type="button" class="cal-nav" onclick="changeMonth(1)"><i class="bi bi-chevron-right"></i></button>
+                </div>
+                <div class="calendar-weekdays">
+                    <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                </div>
+                <div class="calendar-days" id="calendarDays"></div>
+                <div class="cal-legend">
+                    <span><div class="legend-dot available"></div> Train Available</span>
+                    <span><div class="legend-dot today"></div> Today</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
                         <div class="form-group">
                             <label><i class="bi bi-people"></i> Passengers</label>
@@ -935,11 +1049,11 @@
             // Current month days
             for (let day = 1; day <= daysInMonth; day++) {
                 const date = new Date(year, month, day);
-                date.setHours(0, 0, 0, 0);
+                date.setHours(12, 0, 0, 0); // Set to noon to avoid timezone edge cases
                 const isPast = date < today;
                 const isToday = date.getTime() === today.getTime();
                 const isAvailable = direction && !isPast && isValidDepartureDay(date, direction);
-                const isSelected = selectedDate && date.getTime() === selectedDate.getTime();
+                const isSelected = selectedDate && date.toDateString() === selectedDate.toDateString();
                 
                 let classes = ['cal-day', 'current-month'];
                 if (isPast) classes.push('past');
@@ -947,7 +1061,8 @@
                 if (isAvailable) classes.push('available');
                 if (isSelected) classes.push('selected');
                 
-                const dateStr = date.toISOString().split('T')[0];
+                // Use local date formatting to avoid timezone issues
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const clickHandler = isPast ? '' : `onclick="selectDate('${dateStr}')"`;
                 
                 html += `<div class="${classes.join(' ')}" ${clickHandler}>${day}</div>`;
@@ -971,10 +1086,40 @@
         function selectDate(dateStr) {
             selectedDate = new Date(dateStr + 'T00:00:00');
             document.getElementById('travelDate').value = dateStr;
+            
+            // Update the display trigger
+            const dateObj = new Date(dateStr + 'T00:00:00');
+            document.getElementById('datePickerDisplay').textContent = dateObj.toLocaleDateString('en-ZM', {
+                weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
+            });
+            
             renderCalendar();
             updateSummary();
             updateScheduleHint();
+            
+            // Close the modal after selection
+            closeCalendarModal();
         }
+
+        // Calendar Modal Functions
+        function openCalendarModal() {
+            document.getElementById('calendarModalOverlay').classList.add('show');
+            document.body.style.overflow = 'hidden';
+            renderCalendar();
+        }
+
+        function closeCalendarModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('calendarModalOverlay').classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeCalendarModal();
+            }
+        });
 
         // Initialize calendar
         setTimeout(() => {
@@ -998,7 +1143,8 @@
         // Check if a date is a valid departure day for the route
         function isValidDepartureDay(date, direction) {
             if (!direction) return true;
-            const dayOfWeek = new Date(date).getDay();
+            // Use the date object directly - it's already a Date instance
+            const dayOfWeek = date.getDay();
             return dayOfWeek === trainSchedule[direction].departureDay;
         }
 
@@ -1158,13 +1304,41 @@
             }
 
             try {
+                const phone = document.getElementById('phoneNumber').value;
+                const numPassengers = parseInt(passengers);
+                const basePrice = prices[selectedClass] * numPassengers;
+                const serviceCharge = Math.round(basePrice * 0.10);
+                
+                // Store booking data for after redirect (including data for database)
+                sessionStorage.setItem('pendingBooking', JSON.stringify({
+                    from: stationCodes[from]?.name || from,
+                    to: stationCodes[to]?.name || to,
+                    date: new Date(date).toLocaleDateString('en-ZM', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }),
+                    travelDateRaw: date, // ISO format for database
+                    passengers: numPassengers,
+                    class: selectedClass.charAt(0).toUpperCase() + selectedClass.slice(1),
+                    phone: phone,
+                    basePrice: basePrice,
+                    serviceCharge: serviceCharge,
+                    total: total
+                }));
+                
                 const response = await fetch('/api/stripe/create-payment-intent', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        amount: Math.round(total * 100 / 25), // Convert ZMW to USD cents (approx rate)
-                        currency: 'usd',
-                        metadata: { from, to, date, passengers, railway: 'ZRL' }
+                        amount: Math.round(total * 100), // Amount in ngwee (ZMW cents) - K220 = 22000 ngwee
+                        currency: 'zmw', // Use Zambian Kwacha directly
+                        metadata: { 
+                            from: stationCodes[from]?.name || from, 
+                            to: stationCodes[to]?.name || to, 
+                            date, 
+                            passengers, 
+                            ticketClass: selectedClass,
+                            phone: phone,
+                            railway: 'ZRL',
+                            displayAmount: `K ${total.toLocaleString()}`
+                        }
                     })
                 });
 
@@ -1176,6 +1350,162 @@
                 showAlert('Payment failed: ' + error.message, 'error');
                 return false;
             }
+        }
+
+        // Handle Mobile Money Payment via Africa's Talking
+        async function handleMobileMoneyPayment(total, from, to, date, passengers, phone) {
+            try {
+                const numPassengers = parseInt(passengers);
+                const basePrice = prices[selectedClass] * numPassengers;
+                const serviceCharge = Math.round(basePrice * 0.10);
+                const bookingRef = 'ZRL-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+                // Initiate mobile money checkout
+                const response = await fetch('/api/mobile-money/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        phoneNumber: phone,
+                        amount: total,
+                        currency: 'ZMW',
+                        metadata: {
+                            bookingRef,
+                            from: stationCodes[from]?.name || from,
+                            to: stationCodes[to]?.name || to,
+                            date,
+                            passengers: numPassengers,
+                            ticketClass: selectedClass,
+                            amount: total
+                        }
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.error || 'Payment request failed');
+                }
+
+                // Show pending payment message
+                showAlert(`📱 Payment request sent to ${phone}. Please check your phone and enter your PIN to confirm payment of K ${total.toLocaleString()}.`, 'success');
+                
+                document.getElementById('bookBtnText').textContent = 'Waiting for confirmation...';
+
+                // Start polling for payment status
+                const paymentConfirmed = await pollPaymentStatus(result.transactionId, bookingRef, {
+                    from: stationCodes[from]?.name || from,
+                    to: stationCodes[to]?.name || to,
+                    date: new Date(date).toLocaleDateString('en-ZM', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }),
+                    travelDateRaw: date,
+                    passengers: numPassengers,
+                    class: selectedClass.charAt(0).toUpperCase() + selectedClass.slice(1),
+                    phone,
+                    basePrice,
+                    serviceCharge,
+                    total
+                });
+
+                if (paymentConfirmed) {
+                    // Payment successful - show ticket
+                    await completeBooking(bookingRef, from, to, date, passengers, phone, basePrice, serviceCharge, total, 'mobile');
+                    return true;
+                } else {
+                    showAlert('Payment was not confirmed. Please try again or use a different payment method.', 'error');
+                    return false;
+                }
+
+            } catch (error) {
+                console.error('Mobile money payment error:', error);
+                showAlert('Payment failed: ' + error.message, 'error');
+                return false;
+            }
+        }
+
+        // Poll for mobile money payment status
+        async function pollPaymentStatus(transactionId, bookingRef, bookingData, maxAttempts = 60) {
+            for (let attempt = 0; attempt < maxAttempts; attempt++) {
+                try {
+                    const response = await fetch(`/api/mobile-money/status?transactionId=${transactionId}`);
+                    const result = await response.json();
+
+                    if (result.status === 'Success') {
+                        return true;
+                    }
+
+                    if (result.status === 'Failed' || result.status === 'Rejected') {
+                        return false;
+                    }
+
+                    // Still pending - wait and retry
+                    await new Promise(resolve => setTimeout(resolve, 3000)); // Wait 3 seconds
+
+                } catch (error) {
+                    console.error('Status check error:', error);
+                }
+            }
+
+            // Timeout - assume payment not completed
+            return false;
+        }
+
+        // Complete booking after successful payment
+        async function completeBooking(bookingRef, from, to, date, passengers, phone, basePrice, serviceCharge, total, paymentMethod) {
+            // Update ticket preview
+            document.getElementById('ticketFrom').textContent = stationCodes[from]?.code || from.toUpperCase().substring(0, 3);
+            document.getElementById('ticketFromName').textContent = stationCodes[from]?.name || from;
+            document.getElementById('ticketTo').textContent = stationCodes[to]?.code || to.toUpperCase().substring(0, 3);
+            document.getElementById('ticketToName').textContent = stationCodes[to]?.name || to;
+            document.getElementById('ticketDate').textContent = new Date(date).toLocaleDateString('en-ZM', {
+                weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
+            });
+            document.getElementById('ticketClass').textContent = selectedClass.charAt(0).toUpperCase() + selectedClass.slice(1);
+            document.getElementById('ticketPassengers').textContent = passengers;
+            
+            document.getElementById('ticketBaseFare').textContent = `K ${basePrice.toLocaleString()}`;
+            document.getElementById('ticketServiceCharge').textContent = `K ${serviceCharge.toLocaleString()}`;
+            document.getElementById('ticketTotal').textContent = `K ${total.toLocaleString()}`;
+            document.getElementById('ticketRef').textContent = bookingRef;
+
+            document.getElementById('ticketQR').innerHTML = `<svg viewBox="0 0 100 100" width="60" height="60">
+                <rect fill="#fff" width="100" height="100"/>
+                <text x="50" y="55" text-anchor="middle" font-size="8" fill="#333">${bookingRef}</text>
+            </svg>`;
+
+            // Show ticket
+            document.getElementById('ticketPreview').classList.add('show');
+            
+            // Save to database
+            const bookingDataForDb = {
+                bookingRef,
+                from: stationCodes[from]?.name || from,
+                to: stationCodes[to]?.name || to,
+                travelDate: date,
+                passengers: parseInt(passengers),
+                class: selectedClass.charAt(0).toUpperCase() + selectedClass.slice(1),
+                phone,
+                basePrice,
+                serviceCharge,
+                total,
+                paymentMethod
+            };
+            
+            await saveBookingToDatabase(bookingDataForDb);
+            
+            // Post to Sentinel dashboard
+            postToSentinelDashboard({
+                ...bookingDataForDb,
+                date: new Date(date).toLocaleDateString('en-ZM', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }),
+                timestamp: new Date().toISOString()
+            });
+
+            showAlert(`Booking confirmed! Reference: ${bookingRef}. SMS confirmation sent to ${phone}`, 'success');
+            
+            // Reset button
+            document.getElementById('bookBtn').disabled = false;
+            document.getElementById('bookBtnText').textContent = 'Pay with Mobile Money';
+
+            // Scroll to ticket
+            document.getElementById('ticketPreview').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
         async function bookTicket() {
@@ -1220,7 +1550,19 @@
                 return;
             }
 
-            // Simulate booking for other payment methods
+            // Handle mobile money payment via Africa's Talking
+            if (currentPaymentMethod === 'mobile') {
+                document.getElementById('bookBtn').disabled = true;
+                document.getElementById('bookBtnText').textContent = 'Sending payment request...';
+                const success = await handleMobileMoneyPayment(total, from, to, date, passengers, phone);
+                if (!success) {
+                    document.getElementById('bookBtn').disabled = false;
+                    document.getElementById('bookBtnText').textContent = 'Pay with Mobile Money';
+                }
+                return;
+            }
+
+            // AFC/Crypto payment - simulate for now
             const bookingRef = 'ZRL-' + Math.random().toString(36).substring(2, 8).toUpperCase();
             
             // Update ticket preview
@@ -1409,8 +1751,167 @@
             }, 5000);
         }
 
+        // Supabase client for database storage
+        const SUPABASE_URL = window.SUPABASE_URL || 'https://llvprbmrnjvamjzavmhg.supabase.co';
+        const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '';
+        let supabaseClient = null;
+        
+        async function getSupabase() {
+            if (supabaseClient) return supabaseClient;
+            if (typeof supabase !== 'undefined' && SUPABASE_ANON_KEY) {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+            return supabaseClient;
+        }
+        
+        // Save booking to Supabase database
+        async function saveBookingToDatabase(bookingData) {
+            try {
+                const client = await getSupabase();
+                if (!client) {
+                    console.log('Supabase not configured, skipping database storage');
+                    return null;
+                }
+                
+                const { data, error } = await client
+                    .from('bookings')
+                    .insert({
+                        booking_ref: bookingData.bookingRef,
+                        passenger_name: bookingData.passengerName || 'Guest',
+                        passenger_phone: bookingData.phone,
+                        route: `${bookingData.from} → ${bookingData.to}`,
+                        from_station: bookingData.from,
+                        to_station: bookingData.to,
+                        travel_date: bookingData.travelDate,
+                        class: bookingData.class,
+                        passengers: bookingData.passengers,
+                        base_price_usd: bookingData.basePrice / 25, // Convert ZMW to USD approx
+                        total_price_usd: bookingData.total / 25,
+                        local_currency: 'ZMW',
+                        total_price_local: bookingData.total,
+                        payment_method: bookingData.paymentMethod,
+                        payment_status: 'completed',
+                        booking_status: 'confirmed',
+                        booking_source: 'web',
+                        metadata: {
+                            stripeSessionId: bookingData.stripeSessionId,
+                            railway: 'ZRL',
+                            serviceCharge: bookingData.serviceCharge
+                        }
+                    })
+                    .select()
+                    .single();
+                
+                if (error) {
+                    console.error('Supabase insert error:', error);
+                    return null;
+                }
+                
+                console.log('Booking saved to Supabase:', data);
+                return data;
+            } catch (error) {
+                console.error('Failed to save booking to database:', error);
+                return null;
+            }
+        }
+        
         // Initialize
         updateSummary();
+        
+        // Handle Stripe payment redirect
+        function handlePaymentRedirect() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const paymentStatus = urlParams.get('payment');
+            const sessionId = urlParams.get('session_id');
+            
+            if (paymentStatus === 'success' && sessionId) {
+                // Payment was successful - show confirmation and send SMS
+                handleSuccessfulPayment(sessionId);
+            } else if (paymentStatus === 'cancelled') {
+                showAlert('Payment was cancelled. Please try again.', 'error');
+                // Clean up URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
+        
+        async function handleSuccessfulPayment(sessionId) {
+            try {
+                // Generate booking reference
+                const bookingRef = 'ZRL-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+                
+                // Get stored booking data from sessionStorage (set before redirect)
+                const pendingBooking = JSON.parse(sessionStorage.getItem('pendingBooking') || '{}');
+                
+                const bookingData = {
+                    bookingRef,
+                    from: pendingBooking.from || 'Station',
+                    to: pendingBooking.to || 'Station',
+                    date: pendingBooking.date || new Date().toLocaleDateString(),
+                    travelDate: pendingBooking.travelDateRaw || new Date().toISOString().split('T')[0],
+                    passengers: pendingBooking.passengers || 1,
+                    class: pendingBooking.class || 'Economy',
+                    phone: pendingBooking.phone || '',
+                    basePrice: pendingBooking.basePrice || 0,
+                    serviceCharge: pendingBooking.serviceCharge || 0,
+                    total: pendingBooking.total || 0,
+                    currency: 'ZMW',
+                    paymentMethod: 'card',
+                    stripeSessionId: sessionId,
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Save to Supabase database
+                const dbRecord = await saveBookingToDatabase(bookingData);
+                if (dbRecord) {
+                    console.log('Booking saved to database with ID:', dbRecord.id);
+                }
+                
+                // Send SMS confirmation if phone number available
+                if (bookingData.phone) {
+                    await sendSMSConfirmation(bookingData);
+                }
+                
+                // Post to Sentinel dashboard
+                postToSentinelDashboard(bookingData);
+                
+                // Show success message
+                showAlert(`Payment successful! Booking Reference: ${bookingRef}. ${bookingData.phone ? 'SMS confirmation sent to ' + bookingData.phone : 'Stripe will send email confirmation.'}`, 'success');
+                
+                // Clean up
+                sessionStorage.removeItem('pendingBooking');
+                window.history.replaceState({}, document.title, window.location.pathname);
+                
+            } catch (error) {
+                console.error('Error handling payment success:', error);
+                showAlert('Payment received! Your booking confirmation will be sent shortly.', 'success');
+            }
+        }
+        
+        // Send SMS confirmation via Africa's Talking or Twilio
+        async function sendSMSConfirmation(booking) {
+            const message = `Africa Railways - ZRL Booking Confirmed!\n\nRef: ${booking.bookingRef}\nRoute: ${booking.from} → ${booking.to}\nDate: ${booking.date}\nPassengers: ${booking.passengers}\nClass: ${booking.class}\nTotal: K ${booking.total.toLocaleString()}\n\nThank you for traveling with Zambia Railways!`;
+            
+            try {
+                const response = await fetch('/api/sms/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        to: booking.phone,
+                        message: message
+                    })
+                });
+                
+                const result = await response.json();
+                console.log('SMS sent:', result);
+                return result.success;
+            } catch (error) {
+                console.error('Failed to send SMS:', error);
+                return false;
+            }
+        }
+        
+        // Check for payment redirect on page load
+        handlePaymentRedirect();
     </script>
 </body>
 </html>

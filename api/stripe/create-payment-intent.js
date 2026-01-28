@@ -37,8 +37,11 @@ export default async function handler(req, res) {
     
     const { amount, currency = 'usd', metadata = {} } = req.body;
 
-    if (!amount || amount < 50) {
-      return res.status(400).json({ error: 'Amount must be at least 50 cents' });
+    // Minimum amounts vary by currency
+    // USD: 50 cents, ZMW: 100 ngwee (K1)
+    const minAmount = currency.toLowerCase() === 'zmw' ? 100 : 50;
+    if (!amount || amount < minAmount) {
+      return res.status(400).json({ error: `Amount must be at least ${minAmount} ${currency.toUpperCase()} cents` });
     }
 
     const origin = req.headers.origin || req.headers.referer?.replace(/\/[^/]*$/, '') || 'https://africarailways.com';
