@@ -1974,6 +1974,41 @@ ZAMBIA REGION:
                                         <div style={{ fontSize: '0.8rem', color: '#94a3b8', textAlign: 'center', marginTop: '8px' }}>
                                             NFT ID: {ticketData.nftId} • IPFS: {ticketData.ipfsHash?.slice(0, 12)}...
                                         </div>
+                                        
+                                        {/* Login prompt for non-logged-in users */}
+                                        {!isLoggedIn && (
+                                            <div style={{ 
+                                                marginTop: '15px', 
+                                                padding: '15px', 
+                                                background: 'rgba(255, 184, 0, 0.1)', 
+                                                border: '1px solid var(--gold)', 
+                                                borderRadius: '10px',
+                                                textAlign: 'center'
+                                            }}>
+                                                <p style={{ color: '#94a3b8', fontSize: '0.9rem', margin: '0 0 10px 0' }}>
+                                                    <i className="fas fa-info-circle" style={{ color: 'var(--gold)', marginRight: '8px' }}></i>
+                                                    Login with your phone number to make changes to your booking or download your ticket later.
+                                                </p>
+                                                <a 
+                                                    href="/auth/login.html" 
+                                                    style={{ 
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: '8px',
+                                                        padding: '10px 20px',
+                                                        background: 'var(--gold)',
+                                                        color: '#0a0e1a',
+                                                        borderRadius: '8px',
+                                                        textDecoration: 'none',
+                                                        fontWeight: '600',
+                                                        fontSize: '0.9rem'
+                                                    }}
+                                                >
+                                                    <i className="fas fa-sign-in-alt"></i>
+                                                    Login to Your Account
+                                                </a>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>
