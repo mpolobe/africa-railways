@@ -634,8 +634,8 @@
                         route: `${bookingData.from} → ${bookingData.to}`,
                         from_station: bookingData.from,
                         to_station: bookingData.to,
-                        travel_date: new Date().toISOString().split('T')[0],
-                        departure_time: '14:00',
+                        travel_date: bookingData.travelDate || new Date().toISOString().split('T')[0],
+                        departure_time: bookingData.departureTime || '14:00',
                         class: bookingData.class,
                         passengers: bookingData.passengers,
                         base_price_usd: parseFloat(bookingData.basePrice),
@@ -894,6 +894,104 @@
             const [walletType, setWalletType] = useState(''); // 'sui', 'zklogin', 'phone'
             const [paymentMethod, setPaymentMethod] = useState('card'); // 'card', 'crypto', 'mobile'
             const [stripeLoading, setStripeLoading] = useState(false);
+            const [travelDate, setTravelDate] = useState('');
+            
+            // TAZARA Schedule - for date validation
+            // Eastbound (Dar → Kapiri): Departs Friday
+            // Westbound (Kapiri → Dar): Departs Tuesday
+            const tazaraSchedule = {
+                eastbound: {
+                    departureDay: 5, // Friday
+                    departureDayName: 'Friday',
+                    departureTime: '15:50',
+                    arrivalDay: 'Sunday',
+                    daysToArrival: 2,
+                    stations: ['dar', 'mbeya', 'tunduma', 'nakonde', 'kapiri'],
+                    stationTimes: {
+                        dar: { departure: '15:50', arrival: null, dayOffset: 0 },
+                        mbeya: { departure: '13:23', arrival: '13:08', dayOffset: 1 },
+                        tunduma: { departure: '17:17', arrival: '17:02', dayOffset: 1 },
+                        nakonde: { departure: '16:46', arrival: '16:22', dayOffset: 1 },
+                        kapiri: { departure: null, arrival: '09:26', dayOffset: 2 }
+                    }
+                },
+                westbound: {
+                    departureDay: 2, // Tuesday
+                    departureDayName: 'Tuesday',
+                    departureTime: '14:00',
+                    arrivalDay: 'Thursday',
+                    daysToArrival: 2,
+                    stations: ['kapiri', 'nakonde', 'tunduma', 'mbeya', 'dar'],
+                    stationTimes: {
+                        kapiri: { departure: '14:00', arrival: null, dayOffset: 0 },
+                        nakonde: { departure: '09:09', arrival: '08:39', dayOffset: 1 },
+                        tunduma: { departure: '10:29', arrival: '10:14', dayOffset: 1 },
+                        mbeya: { departure: '14:28', arrival: '14:13', dayOffset: 1 },
+                        dar: { departure: null, arrival: '12:10', dayOffset: 2 }
+                    }
+                }
+            };
+            
+            // Get route direction based on selected route
+            const getRouteDirection = (routeId) => {
+                if (!routeId) return null;
+                // Routes starting from Tanzania go eastbound (towards Zambia)
+                // Routes starting from Zambia go westbound (towards Tanzania)
+                const eastboundRoutes = ['dar-kapiri', 'dar-mbeya', 'dar-kasama', 'dar-mpika', 'dar-tunduma', 'mbeya-kasama', 'mbeya-kapiri'];
+                return eastboundRoutes.includes(routeId) ? 'eastbound' : 'westbound';
+            };
+            
+            // Check if a date is valid for the selected route
+            const isValidTravelDate = (dateStr, routeId) => {
+                if (!dateStr || !routeId) return true;
+                const direction = getRouteDirection(routeId);
+                if (!direction) return true;
+                
+                const date = new Date(dateStr + 'T00:00:00');
+                const dayOfWeek = date.getDay();
+                return dayOfWeek === tazaraSchedule[direction].departureDay;
+            };
+            
+            // Get schedule hint for selected route and date
+            const getScheduleHint = () => {
+                if (!selectedRoute) return null;
+                const direction = getRouteDirection(selectedRoute.id);
+                if (!direction) return null;
+                
+                const schedule = tazaraSchedule[direction];
+                
+                if (!travelDate) {
+                    return {
+                        type: 'info',
+                        message: `Train departs on ${schedule.departureDayName}s at ${schedule.departureTime}, arrives ${schedule.arrivalDay}`
+                    };
+                }
+                
+                if (isValidTravelDate(travelDate, selectedRoute.id)) {
+                    const departDate = new Date(travelDate + 'T00:00:00');
+                    const arrivalDate = new Date(departDate);
+                    arrivalDate.setDate(arrivalDate.getDate() + schedule.daysToArrival);
+                    const arrivalStr = arrivalDate.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+                    return {
+                        type: 'valid',
+                        message: `✓ Departs ${schedule.departureDayName} at ${schedule.departureTime}, arrives ${arrivalStr}`
+                    };
+                } else {
+                    // Find next valid date
+                    const today = new Date();
+                    const targetDay = schedule.departureDay;
+                    const daysUntil = (targetDay - today.getDay() + 7) % 7;
+                    const nextValid = new Date(today);
+                    nextValid.setDate(today.getDate() + (daysUntil === 0 ? 7 : daysUntil));
+                    const nextValidStr = nextValid.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+                    return {
+                        type: 'warning',
+                        message: `⚠ No service on this day. Next departure: ${nextValidStr} (${schedule.departureDayName})`
+                    };
+                }
+            };
+            
+            const scheduleHint = getScheduleHint();
             
             // Stripe configuration
             const STRIPE_PUBLISHABLE_KEY = window.STRIPE_PUBLISHABLE_KEY || 'pk_live_wYCZyHVYBwWlZR5ga2bIfCmL';
@@ -1151,6 +1249,20 @@ ZAMBIA REGION:
                     setStatus('error:Please select a route');
                     return;
                 }
+                
+                // Validate travel date
+                if (!travelDate) {
+                    setStatus('error:Please select a travel date');
+                    return;
+                }
+                
+                // Warn about invalid travel date (train doesn't run on that day)
+                if (!isValidTravelDate(travelDate, selectedRoute.id)) {
+                    const direction = getRouteDirection(selectedRoute.id);
+                    const schedule = tazaraSchedule[direction];
+                    setStatus(`error:Train only departs on ${schedule.departureDayName}s. Please select a valid date.`);
+                    return;
+                }
 
                 // Handle Stripe card payment
                 if (paymentMethod === 'card') {
@@ -1274,6 +1386,8 @@ ZAMBIA REGION:
                     });
                     
                     // Save to Supabase database
+                    const direction = getRouteDirection(route.id);
+                    const schedule = direction ? tazaraSchedule[direction] : null;
                     saveTazaraBookingToSupabase({
                         bookingRef,
                         from: route.from,
@@ -1287,7 +1401,9 @@ ZAMBIA REGION:
                         phone: phoneNumber,
                         wallet: walletAddress,
                         nftId,
-                        ipfsHash
+                        ipfsHash,
+                        travelDate: travelDate || new Date().toISOString().split('T')[0],
+                        departureTime: schedule?.departureTime || '14:00'
                     });
                     
                     // Keep ticket data visible for download, reset form after 15 seconds
@@ -1296,6 +1412,7 @@ ZAMBIA REGION:
                         setSelectedTier('basic');
                         setPassengers(1);
                         setPhoneNumber('');
+                        setTravelDate('');
                         setStatus('');
                         setTicketData(null);
                     }, 15000);
@@ -1563,6 +1680,57 @@ ZAMBIA REGION:
                             <div className="card">
                                 <h2>Booking Summary</h2>
                                 
+                                {/* Travel Date Picker */}
+                                <div style={{ marginBottom: '20px' }}>
+                                    <label style={{ display: 'block', marginBottom: '8px', color: '#94a3b8' }}>
+                                        <i className="fas fa-calendar-alt" style={{ marginRight: '8px' }}></i>
+                                        Travel Date
+                                    </label>
+                                    <input 
+                                        type="date" 
+                                        value={travelDate} 
+                                        onChange={(e) => setTravelDate(e.target.value)}
+                                        min={new Date().toISOString().split('T')[0]}
+                                        style={{
+                                            width: '100%',
+                                            padding: '12px',
+                                            background: travelDate && !isValidTravelDate(travelDate, selectedRoute?.id) 
+                                                ? 'rgba(239, 68, 68, 0.1)' 
+                                                : travelDate 
+                                                    ? 'rgba(16, 185, 129, 0.1)' 
+                                                    : 'rgba(255, 255, 255, 0.05)',
+                                            border: travelDate && !isValidTravelDate(travelDate, selectedRoute?.id)
+                                                ? '1px solid #ef4444'
+                                                : travelDate 
+                                                    ? '1px solid var(--green)' 
+                                                    : '1px solid #333',
+                                            borderRadius: '8px',
+                                            color: 'white',
+                                            fontSize: '1rem'
+                                        }}
+                                    />
+                                    {scheduleHint && (
+                                        <div style={{ 
+                                            fontSize: '0.85rem', 
+                                            marginTop: '8px',
+                                            padding: '8px 12px',
+                                            borderRadius: '6px',
+                                            background: scheduleHint.type === 'valid' 
+                                                ? 'rgba(16, 185, 129, 0.1)' 
+                                                : scheduleHint.type === 'warning'
+                                                    ? 'rgba(239, 68, 68, 0.1)'
+                                                    : 'rgba(0, 212, 255, 0.1)',
+                                            color: scheduleHint.type === 'valid' 
+                                                ? 'var(--green)' 
+                                                : scheduleHint.type === 'warning'
+                                                    ? '#ef4444'
+                                                    : 'var(--cyan)'
+                                        }}>
+                                            {scheduleHint.message}
+                                        </div>
+                                    )}
+                                </div>
+                                
                                 <div style={{ marginBottom: '20px' }}>
                                     <label style={{ display: 'block', marginBottom: '8px', color: '#94a3b8' }}>
                                         Number of Passengers
@@ -1618,6 +1786,14 @@ ZAMBIA REGION:
                                             <span>Route</span>
                                             <span style={{ textAlign: 'right' }}>{route.name}</span>
                                         </div>
+                                        {travelDate && (
+                                            <div className="summary-item">
+                                                <span>Travel Date</span>
+                                                <span style={{ color: isValidTravelDate(travelDate, route.id) ? 'var(--green)' : '#ef4444' }}>
+                                                    {new Date(travelDate + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+                                                </span>
+                                            </div>
+                                        )}
                                         <div className="summary-item">
                                             <span>Trip Type</span>
                                             <span style={{ color: isReturnTrip ? 'var(--gold)' : '#94a3b8' }}>
