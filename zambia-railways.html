@@ -1050,6 +1050,37 @@
             }
             return schedule ? schedule.departureTime : '—';
         }
+        
+        // Get the day offset for a station (how many days after train origin departure)
+        function getStationDayOffset(station, direction) {
+            const schedule = trainSchedule[direction];
+            if (schedule && schedule.stationTimes && schedule.stationTimes[station]) {
+                return schedule.stationTimes[station].dayOffset || 0;
+            }
+            return 0;
+        }
+        
+        // Calculate the actual boarding date for a station based on train origin departure
+        // trainOriginDate: the date the train departs from its origin (e.g., Friday for southbound)
+        // station: the boarding station
+        // direction: 'northbound' or 'southbound'
+        function getStationBoardingDate(trainOriginDate, station, direction) {
+            const dayOffset = getStationDayOffset(station, direction);
+            const boardingDate = new Date(trainOriginDate);
+            boardingDate.setDate(boardingDate.getDate() + dayOffset);
+            return boardingDate;
+        }
+        
+        // Get the train origin departure date from a station's boarding date
+        // boardingDate: the date the user wants to board at their station
+        // station: the boarding station
+        // direction: 'northbound' or 'southbound'
+        function getTrainOriginDate(boardingDate, station, direction) {
+            const dayOffset = getStationDayOffset(station, direction);
+            const originDate = new Date(boardingDate);
+            originDate.setDate(originDate.getDate() - dayOffset);
+            return originDate;
+        }
 
         // Prices in ZMW (Zambian Kwacha)
         const prices = {
@@ -1097,7 +1128,8 @@
                 date.setHours(12, 0, 0, 0); // Set to noon to avoid timezone edge cases
                 const isPast = date < today;
                 const isToday = date.getTime() === today.getTime();
-                const isAvailable = direction && !isPast && isValidDepartureDay(date, direction);
+                // Pass the fromStation to check valid boarding days for that specific station
+                const isAvailable = direction && !isPast && isValidDepartureDay(date, direction, from);
                 const isSelected = selectedDate && date.toDateString() === selectedDate.toDateString();
                 
                 let classes = ['cal-day', 'current-month'];
@@ -1185,20 +1217,56 @@
             return toNorthIdx > fromNorthIdx ? 'northbound' : 'southbound';
         }
 
-        // Check if a date is a valid departure day for the route
-        function isValidDepartureDay(date, direction) {
+        // Check if a date is a valid boarding day for the user's station
+        // This accounts for multi-day journeys where intermediate stations have different boarding days
+        function isValidDepartureDay(date, direction, fromStation = null) {
             if (!direction) return true;
-            // Use the date object directly - it's already a Date instance
-            const dayOfWeek = date.getDay();
-            return dayOfWeek === trainSchedule[direction].departureDay;
+            
+            const schedule = trainSchedule[direction];
+            
+            // If no station specified, check against train origin departure day
+            if (!fromStation) {
+                const dayOfWeek = date.getDay();
+                return dayOfWeek === schedule.departureDay;
+            }
+            
+            // Get the day offset for the boarding station
+            const dayOffset = getStationDayOffset(fromStation, direction);
+            
+            // Calculate what day of week the train would need to depart from origin
+            // for the user to board on this date at their station
+            const trainOriginDate = getTrainOriginDate(date, fromStation, direction);
+            const originDayOfWeek = trainOriginDate.getDay();
+            
+            // Check if the train origin departure day matches the schedule
+            return originDayOfWeek === schedule.departureDay;
         }
 
-        // Get next valid departure date
+        // Get next valid departure date (from train origin)
         function getNextValidDeparture(direction) {
             if (!direction) return null;
             const today = new Date();
             const targetDay = trainSchedule[direction].departureDay;
             const daysUntil = (targetDay - today.getDay() + 7) % 7;
+            const nextDate = new Date(today);
+            nextDate.setDate(today.getDate() + (daysUntil === 0 ? 7 : daysUntil));
+            return nextDate;
+        }
+        
+        // Get next valid boarding date for a specific station
+        function getNextValidBoardingDate(station, direction) {
+            if (!direction) return null;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const schedule = trainSchedule[direction];
+            const dayOffset = getStationDayOffset(station, direction);
+            
+            // Calculate what day of week the user can board at this station
+            const boardingDayOfWeek = (schedule.departureDay + dayOffset) % 7;
+            
+            // Find the next occurrence of that day
+            const daysUntil = (boardingDayOfWeek - today.getDay() + 7) % 7;
             const nextDate = new Date(today);
             nextDate.setDate(today.getDate() + (daysUntil === 0 ? 7 : daysUntil));
             return nextDate;
@@ -1225,34 +1293,47 @@
             }
             
             const schedule = trainSchedule[direction];
+            const fromStationName = stationCodes[from]?.name || from;
             const toStationName = stationCodes[to]?.name || to;
+            const fromDepartureTime = getStationDepartureTime(from, direction);
+            const toArrivalTime = schedule.stationTimes[to]?.arrival || schedule.arrivalTime;
+            const fromDayOffset = getStationDayOffset(from, direction);
+            const toDayOffset = getStationDayOffset(to, direction);
             
-            // Calculate arrival date based on departure date
-            function getArrivalDateStr(departureDate) {
-                const arrivalDate = new Date(departureDate);
-                arrivalDate.setDate(arrivalDate.getDate() + schedule.daysToArrival);
+            // Get day names for boarding and arrival
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const boardingDayOfWeek = (schedule.departureDay + fromDayOffset) % 7;
+            const arrivalDayOfWeek = (schedule.departureDay + toDayOffset) % 7;
+            const boardingDayName = dayNames[boardingDayOfWeek];
+            const arrivalDayName = dayNames[arrivalDayOfWeek];
+            
+            // Calculate arrival date based on boarding date at user's station
+            function getArrivalDateStr(boardingDate) {
+                const daysToDestination = toDayOffset - fromDayOffset;
+                const arrivalDate = new Date(boardingDate);
+                arrivalDate.setDate(arrivalDate.getDate() + daysToDestination);
                 return arrivalDate.toLocaleDateString('en-ZM', { weekday: 'long', day: 'numeric', month: 'short' });
             }
             
             if (!date) {
                 hint.style.display = 'block';
                 hint.className = 'schedule-hint info';
-                hint.innerHTML = `<i class="bi bi-calendar-check"></i> Departs from <strong>${schedule.departureCity}</strong> on ${schedule.departureDayName}s at ${schedule.departureTime}, arrives at <strong>${toStationName}</strong> on ${schedule.arrivalDay} at ${schedule.arrivalTime}`;
+                hint.innerHTML = `<i class="bi bi-calendar-check"></i> Board at <strong>${fromStationName}</strong> on ${boardingDayName}s at ${fromDepartureTime}, arrives at <strong>${toStationName}</strong> on ${arrivalDayName} at ${toArrivalTime}`;
                 return;
             }
             
-            if (isValidDepartureDay(date, direction)) {
-                const arrivalDateStr = getArrivalDateStr(new Date(date));
+            if (isValidDepartureDay(new Date(date + 'T00:00:00'), direction, from)) {
+                const arrivalDateStr = getArrivalDateStr(new Date(date + 'T00:00:00'));
                 hint.style.display = 'block';
                 hint.className = 'schedule-hint valid';
-                hint.innerHTML = `<i class="bi bi-check-circle"></i> Departs from <strong>${schedule.departureCity}</strong> on ${schedule.departureDayName} at ${schedule.departureTime}, arrives at <strong>${toStationName}</strong> on ${arrivalDateStr} at ${schedule.arrivalTime}`;
+                hint.innerHTML = `<i class="bi bi-check-circle"></i> Board at <strong>${fromStationName}</strong> at ${fromDepartureTime}, arrives at <strong>${toStationName}</strong> on ${arrivalDateStr} at ${toArrivalTime}`;
             } else {
-                const nextValid = getNextValidDeparture(direction);
+                const nextValid = getNextValidBoardingDate(from, direction);
                 const nextDateStr = nextValid.toLocaleDateString('en-ZM', { weekday: 'long', day: 'numeric', month: 'short' });
                 const arrivalDateStr = getArrivalDateStr(nextValid);
                 hint.style.display = 'block';
                 hint.className = 'schedule-hint warning';
-                hint.innerHTML = `<i class="bi bi-exclamation-triangle"></i> No service on this day. Next departure from <strong>${schedule.departureCity}</strong>: ${nextDateStr} at ${schedule.departureTime}, arrives at <strong>${toStationName}</strong> on ${arrivalDateStr} at ${schedule.arrivalTime}`;
+                hint.innerHTML = `<i class="bi bi-exclamation-triangle"></i> No service on this day. Next boarding at <strong>${fromStationName}</strong>: ${nextDateStr} at ${fromDepartureTime}, arrives at <strong>${toStationName}</strong> on ${arrivalDateStr} at ${toArrivalTime}`;
             }
         }
 
