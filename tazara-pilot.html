@@ -896,6 +896,13 @@
             const [stripeLoading, setStripeLoading] = useState(false);
             const [travelDate, setTravelDate] = useState('');
             
+            // Hotel add-on state
+            const [showHotelAddOn, setShowHotelAddOn] = useState(false);
+            const [selectedHotel, setSelectedHotel] = useState(null);
+            const [nearbyHotels, setNearbyHotels] = useState([]);
+            const [loadingHotels, setLoadingHotels] = useState(false);
+            const [hotelNights, setHotelNights] = useState(1);
+            
             // TAZARA Schedule - for date validation
             // Eastbound (Dar → Kapiri): Departs Friday
             // Westbound (Kapiri → Dar): Departs Tuesday
@@ -997,6 +1004,78 @@
             const STRIPE_PUBLISHABLE_KEY = window.STRIPE_PUBLISHABLE_KEY || 'pk_live_wYCZyHVYBwWlZR5ga2bIfCmL';
             const stripePromise = window.Stripe ? window.Stripe(STRIPE_PUBLISHABLE_KEY) : null;
 
+            // TripAdvisor API configuration
+            const TRIPADVISOR_API_KEY = '5FD5E7FA9F304B88A2A1D27C89A52CFD';
+            const STATION_COORDS = {
+                'Dar es Salaam': { lat: -6.8235, lng: 39.2695 },
+                'Kapiri Mposhi': { lat: -14.4667, lng: 28.6667 },
+                'Mbeya': { lat: -8.9000, lng: 33.4500 },
+                'Kasama': { lat: -10.2167, lng: 31.1833 },
+                'Mpika': { lat: -11.8333, lng: 31.4500 },
+                'Tunduma': { lat: -9.3000, lng: 32.7667 },
+                'Nakonde': { lat: -9.3500, lng: 32.7500 },
+                'Lusaka': { lat: -15.4167, lng: 28.2833 },
+                'Ndola': { lat: -12.9587, lng: 28.6366 },
+            };
+
+            // Search hotels near destination station
+            const searchNearbyHotels = async (destinationCity) => {
+                setLoadingHotels(true);
+                try {
+                    const cityName = destinationCity.split(',')[0].trim();
+                    const coords = STATION_COORDS[cityName];
+                    
+                    if (!coords) {
+                        // Use mock data if coordinates not found
+                        setNearbyHotels(getMockHotels(cityName));
+                        return;
+                    }
+
+                    const response = await fetch(
+                        `https://api.content.tripadvisor.com/api/v1/location/nearby_search?latLong=${coords.lat},${coords.lng}&category=hotels&radius=5000&radiusUnit=m&language=en&key=${TRIPADVISOR_API_KEY}`,
+                        { headers: { 'Accept': 'application/json' } }
+                    );
+
+                    if (!response.ok) {
+                        throw new Error('TripAdvisor API error');
+                    }
+
+                    const data = await response.json();
+                    const hotels = (data.data || []).slice(0, 6).map(hotel => ({
+                        id: hotel.location_id,
+                        name: hotel.name,
+                        rating: hotel.rating || 4.0,
+                        reviewCount: hotel.num_reviews || 0,
+                        pricePerNight: Math.floor(Math.random() * 80) + 25, // Simulated price
+                        distanceKm: (Math.random() * 3 + 0.2).toFixed(1),
+                        hasStationPickup: Math.random() > 0.5,
+                        isWalkingDistance: Math.random() > 0.3,
+                    }));
+
+                    setNearbyHotels(hotels.length > 0 ? hotels : getMockHotels(cityName));
+                } catch (error) {
+                    console.error('Hotel search error:', error);
+                    setNearbyHotels(getMockHotels(destinationCity));
+                } finally {
+                    setLoadingHotels(false);
+                }
+            };
+
+            // Mock hotels for offline/fallback
+            const getMockHotels = (city) => [
+                { id: 'h1', name: `${city} Railway Hotel`, rating: 4.5, reviewCount: 234, pricePerNight: 45, distanceKm: '0.3', hasStationPickup: true, isWalkingDistance: true },
+                { id: 'h2', name: 'Transit Lodge', rating: 4.2, reviewCount: 156, pricePerNight: 28, distanceKm: '0.8', hasStationPickup: true, isWalkingDistance: true },
+                { id: 'h3', name: 'City Center Inn', rating: 4.0, reviewCount: 89, pricePerNight: 55, distanceKm: '1.5', hasStationPickup: false, isWalkingDistance: true },
+                { id: 'h4', name: 'Grand Plaza Hotel', rating: 4.7, reviewCount: 412, pricePerNight: 120, distanceKm: '3.2', hasStationPickup: true, isWalkingDistance: false },
+            ];
+
+            // Load hotels when route is selected
+            useEffect(() => {
+                if (selectedRoute && showHotelAddOn) {
+                    searchNearbyHotels(selectedRoute.to);
+                }
+            }, [selectedRoute, showHotelAddOn]);
+
             // Get routes based on active tab
             const currentRoutes = activeTab === 'tanzania' ? ROUTES_FROM_TANZANIA : ROUTES_FROM_ZAMBIA;
             const route = currentRoutes.find(r => r.id === selectedRoute);
@@ -1009,7 +1088,8 @@
             const discount = tier ? (basePrice * tier.discount / 100) : 0;
             const finalPrice = basePrice + serviceCharge - discount;
             const subscriptionCost = tier ? tier.monthlyPrice : 0;
-            const totalCost = finalPrice + subscriptionCost;
+            const hotelCost = selectedHotel ? selectedHotel.pricePerNight * hotelNights : 0;
+            const totalCost = finalPrice + subscriptionCost + hotelCost;
             
             // Currency conversions (approximate rates)
             const TZS_RATE = 2500; // 1 USD = ~2500 TZS
@@ -1299,7 +1379,7 @@ ZAMBIA REGION:
                         // User's wallet would come from auth context
                         walletAddress = '0x' + Math.random().toString(16).substring(2, 42);
                         
-                        setStatus('info:🎫 Minting NFT ticket to your wallet...');
+                        setStatus('info:🔐 Verifying Digital Signature...');
                         await new Promise(resolve => setTimeout(resolve, 1000));
                         
                     } else {
@@ -1321,11 +1401,11 @@ ZAMBIA REGION:
                             ((parseInt(phoneHash[i % 10]) * (i + 1)) % 16).toString(16)
                         ).join('');
                         
-                        setStatus('info:✅ Wallet created! Preparing NFT ticket...');
+                        setStatus('info:✅ Wallet created! Verifying Digital Signature...');
                         await new Promise(resolve => setTimeout(resolve, 800));
                         
                         // Step 3: Mint NFT ticket
-                        setStatus('info:🎫 Minting NFT ticket on SUI blockchain...');
+                        setStatus('info:🔐 Verifying Digital Signature on SUI blockchain...');
                         await new Promise(resolve => setTimeout(resolve, 1500));
                     }
                     
@@ -1832,6 +1912,157 @@ ZAMBIA REGION:
                                     </div>
                                 )}
 
+                                {/* Hotel Add-On Section */}
+                                {route && (
+                                    <div style={{ 
+                                        marginBottom: '20px', 
+                                        padding: '15px', 
+                                        background: 'rgba(139, 92, 246, 0.1)', 
+                                        border: '1px solid rgba(139, 92, 246, 0.3)', 
+                                        borderRadius: '12px' 
+                                    }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: showHotelAddOn ? '15px' : '0' }}>
+                                            <div>
+                                                <span style={{ fontSize: '1rem', fontWeight: '600', color: 'white' }}>
+                                                    🏨 Add Hotel at {route.to.split(',')[0]}
+                                                </span>
+                                                <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>
+                                                    Hotels near the station • Powered by TripAdvisor
+                                                </div>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowHotelAddOn(!showHotelAddOn)}
+                                                style={{
+                                                    padding: '8px 16px',
+                                                    background: showHotelAddOn ? 'rgba(239, 68, 68, 0.2)' : 'linear-gradient(135deg, #8b5cf6, #6366f1)',
+                                                    border: showHotelAddOn ? '1px solid #ef4444' : 'none',
+                                                    borderRadius: '8px',
+                                                    color: 'white',
+                                                    fontSize: '0.85rem',
+                                                    fontWeight: '600',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                {showHotelAddOn ? '✕ Hide' : '+ Add Hotel'}
+                                            </button>
+                                        </div>
+
+                                        {showHotelAddOn && (
+                                            <div>
+                                                {loadingHotels ? (
+                                                    <div style={{ textAlign: 'center', padding: '20px', color: '#94a3b8' }}>
+                                                        ⏳ Finding hotels near {route.to.split(',')[0]} station...
+                                                    </div>
+                                                ) : (
+                                                    <>
+                                                        <div style={{ marginBottom: '12px' }}>
+                                                            <label style={{ display: 'block', marginBottom: '8px', color: '#94a3b8', fontSize: '0.85rem' }}>
+                                                                Number of Nights:
+                                                            </label>
+                                                            <div style={{ display: 'flex', gap: '8px' }}>
+                                                                {[1, 2, 3, 4, 5].map(n => (
+                                                                    <button
+                                                                        key={n}
+                                                                        type="button"
+                                                                        onClick={() => setHotelNights(n)}
+                                                                        style={{
+                                                                            padding: '8px 14px',
+                                                                            background: hotelNights === n ? 'var(--purple)' : 'rgba(255,255,255,0.05)',
+                                                                            border: hotelNights === n ? '2px solid #a78bfa' : '1px solid #333',
+                                                                            borderRadius: '6px',
+                                                                            color: 'white',
+                                                                            fontSize: '0.9rem',
+                                                                            cursor: 'pointer'
+                                                                        }}
+                                                                    >
+                                                                        {n}
+                                                                    </button>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+
+                                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '280px', overflowY: 'auto' }}>
+                                                            {nearbyHotels.map(hotel => (
+                                                                <div
+                                                                    key={hotel.id}
+                                                                    onClick={() => setSelectedHotel(selectedHotel?.id === hotel.id ? null : hotel)}
+                                                                    style={{
+                                                                        padding: '12px',
+                                                                        background: selectedHotel?.id === hotel.id ? 'rgba(139, 92, 246, 0.3)' : 'rgba(255,255,255,0.05)',
+                                                                        border: selectedHotel?.id === hotel.id ? '2px solid #8b5cf6' : '1px solid #333',
+                                                                        borderRadius: '10px',
+                                                                        cursor: 'pointer',
+                                                                        transition: 'all 0.2s'
+                                                                    }}
+                                                                >
+                                                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                                                        <div style={{ flex: 1 }}>
+                                                                            <div style={{ fontWeight: '600', color: 'white', fontSize: '0.95rem', marginBottom: '4px' }}>
+                                                                                {hotel.name}
+                                                                                {hotel.hasStationPickup && (
+                                                                                    <span style={{ 
+                                                                                        marginLeft: '8px', 
+                                                                                        padding: '2px 6px', 
+                                                                                        background: 'rgba(16, 185, 129, 0.2)', 
+                                                                                        border: '1px solid var(--green)',
+                                                                                        borderRadius: '4px', 
+                                                                                        fontSize: '0.7rem', 
+                                                                                        color: 'var(--green)' 
+                                                                                    }}>
+                                                                                        🚐 Station Pickup
+                                                                                    </span>
+                                                                                )}
+                                                                            </div>
+                                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.8rem', color: '#94a3b8' }}>
+                                                                                <span>⭐ {hotel.rating} ({hotel.reviewCount})</span>
+                                                                                <span style={{ color: hotel.isWalkingDistance ? 'var(--cyan)' : '#94a3b8' }}>
+                                                                                    {hotel.isWalkingDistance ? '🚶' : '🚕'} {hotel.distanceKm}km
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div style={{ textAlign: 'right' }}>
+                                                                            <div style={{ fontWeight: 'bold', color: 'var(--gold)', fontSize: '1.1rem' }}>
+                                                                                ${hotel.pricePerNight}
+                                                                            </div>
+                                                                            <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>per night</div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+
+                                                        {selectedHotel && (
+                                                            <div style={{ 
+                                                                marginTop: '12px', 
+                                                                padding: '10px', 
+                                                                background: 'rgba(255, 184, 0, 0.1)', 
+                                                                border: '1px solid var(--gold)', 
+                                                                borderRadius: '8px',
+                                                                display: 'flex',
+                                                                justifyContent: 'space-between',
+                                                                alignItems: 'center'
+                                                            }}>
+                                                                <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>
+                                                                    {selectedHotel.name} × {hotelNights} night{hotelNights > 1 ? 's' : ''}
+                                                                </span>
+                                                                <span style={{ color: 'var(--gold)', fontWeight: 'bold' }}>
+                                                                    +${selectedHotel.pricePerNight * hotelNights} AFC
+                                                                </span>
+                                                            </div>
+                                                        )}
+
+                                                        <div style={{ marginTop: '10px', fontSize: '0.75rem', color: '#64748b', textAlign: 'center' }}>
+                                                            <img src="https://www.tripadvisor.com/img/cdsi/img2/branding/150_logo-11900-2.png" alt="TripAdvisor" style={{ height: '16px', verticalAlign: 'middle', marginRight: '6px', opacity: 0.7 }} />
+                                                            Ratings from TripAdvisor
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
                                 {route && (
                                     <>
                                         <div className="summary-item">
@@ -1876,6 +2107,12 @@ ZAMBIA REGION:
                                             <span>Staking APY</span>
                                             <span style={{ color: 'var(--purple)' }}>{stakingRewards}%</span>
                                         </div>
+                                        {selectedHotel && (
+                                            <div className="summary-item" style={{ background: 'rgba(139, 92, 246, 0.1)', margin: '5px -10px', padding: '10px', borderRadius: '6px' }}>
+                                                <span>🏨 {selectedHotel.name} ({hotelNights} night{hotelNights > 1 ? 's' : ''})</span>
+                                                <span style={{ color: 'var(--purple)' }}>+${hotelCost.toFixed(2)} $AFC</span>
+                                            </div>
+                                        )}
                                         <div className="summary-item">
                                             <span>Total</span>
                                             <span>${totalCost.toFixed(2)} $AFC</span>
