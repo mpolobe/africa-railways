@@ -1733,24 +1733,76 @@ ZAMBIA REGION:
                                 
                                 <div style={{ marginBottom: '20px' }}>
                                     <label style={{ display: 'block', marginBottom: '8px', color: '#94a3b8' }}>
+                                        <i className="fas fa-users" style={{ marginRight: '8px' }}></i>
                                         Number of Passengers
                                     </label>
-                                    <input 
-                                        type="number" 
-                                        value={passengers} 
-                                        onChange={(e) => setPassengers(Math.max(1, parseInt(e.target.value) || 1))}
-                                        min="1"
-                                        max="10"
-                                        style={{
-                                            width: '100%',
-                                            padding: '12px',
-                                            background: 'rgba(255, 255, 255, 0.05)',
-                                            border: '1px solid #333',
-                                            borderRadius: '8px',
-                                            color: 'white',
-                                            fontSize: '1rem'
-                                        }}
-                                    />
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <button
+                                            type="button"
+                                            onClick={() => setPassengers(Math.max(1, passengers - 1))}
+                                            disabled={passengers <= 1}
+                                            style={{
+                                                width: '44px',
+                                                height: '44px',
+                                                background: passengers <= 1 ? 'rgba(255,255,255,0.05)' : 'rgba(239, 68, 68, 0.2)',
+                                                border: passengers <= 1 ? '1px solid #333' : '1px solid #ef4444',
+                                                borderRadius: '8px',
+                                                color: passengers <= 1 ? '#666' : '#ef4444',
+                                                fontSize: '1.2rem',
+                                                cursor: passengers <= 1 ? 'not-allowed' : 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                            }}
+                                        >
+                                            −
+                                        </button>
+                                        <input 
+                                            type="number" 
+                                            value={passengers} 
+                                            onChange={(e) => {
+                                                const val = parseInt(e.target.value);
+                                                if (!isNaN(val) && val >= 1 && val <= 10) {
+                                                    setPassengers(val);
+                                                } else if (e.target.value === '') {
+                                                    setPassengers(1);
+                                                }
+                                            }}
+                                            min="1"
+                                            max="10"
+                                            style={{
+                                                flex: 1,
+                                                padding: '12px',
+                                                background: 'rgba(255, 255, 255, 0.05)',
+                                                border: '1px solid #333',
+                                                borderRadius: '8px',
+                                                color: 'white',
+                                                fontSize: '1.2rem',
+                                                textAlign: 'center',
+                                                fontWeight: '600'
+                                            }}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setPassengers(Math.min(10, passengers + 1))}
+                                            disabled={passengers >= 10}
+                                            style={{
+                                                width: '44px',
+                                                height: '44px',
+                                                background: passengers >= 10 ? 'rgba(255,255,255,0.05)' : 'rgba(16, 185, 129, 0.2)',
+                                                border: passengers >= 10 ? '1px solid #333' : '1px solid var(--green)',
+                                                borderRadius: '8px',
+                                                color: passengers >= 10 ? '#666' : 'var(--green)',
+                                                fontSize: '1.2rem',
+                                                cursor: passengers >= 10 ? 'not-allowed' : 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                            }}
+                                        >
+                                            +
+                                        </button>
+                                    </div>
                                 </div>
 
                                 {/* Phone Number for non-logged-in users */}
