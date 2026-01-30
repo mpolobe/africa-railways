@@ -541,6 +541,246 @@
                 right: 16px;
             }
         }
+        
+        /* Notification Settings Styles */
+        .notification-plans {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .plan-card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 24px;
+            border: 2px solid #1e293b;
+            position: relative;
+            transition: all 0.3s;
+        }
+        .plan-card:hover {
+            border-color: #334155;
+        }
+        .plan-card.popular {
+            border-color: var(--gold);
+        }
+        .plan-card.current {
+            border-color: var(--green);
+            background: rgba(16, 185, 129, 0.05);
+        }
+        .plan-badge {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .plan-badge.popular {
+            background: var(--gold);
+            color: var(--navy);
+        }
+        .plan-badge.current {
+            background: var(--green);
+            color: #fff;
+        }
+        .plan-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .plan-price {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+        .plan-price span {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #64748b;
+        }
+        .plan-features {
+            margin: 20px 0;
+            list-style: none;
+        }
+        .plan-features li {
+            padding: 8px 0;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .plan-features li i {
+            color: var(--green);
+        }
+        .plan-features li.disabled {
+            color: #475569;
+        }
+        .plan-features li.disabled i {
+            color: #475569;
+        }
+        .btn-plan {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-plan.primary {
+            background: linear-gradient(135deg, var(--gold), #ff9500);
+            border: none;
+            color: var(--navy);
+        }
+        .btn-plan.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 184, 0, 0.3);
+        }
+        .btn-plan.secondary {
+            background: transparent;
+            border: 1px solid #334155;
+            color: #94a3b8;
+        }
+        .btn-plan.current {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--green);
+            color: var(--green);
+            cursor: default;
+        }
+        .notification-prefs {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #1e293b;
+        }
+        .pref-section {
+            margin-bottom: 24px;
+        }
+        .pref-section:last-child {
+            margin-bottom: 0;
+        }
+        .pref-section h4 {
+            color: #fff;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .pref-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid #1e293b;
+        }
+        .pref-item:last-child {
+            border-bottom: none;
+        }
+        .pref-info h5 {
+            color: #fff;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+        .pref-info p {
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 28px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #334155;
+            border-radius: 28px;
+            transition: 0.3s;
+        }
+        .toggle-slider::before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background: #fff;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--green);
+        }
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(22px);
+        }
+        .toggle-switch input:disabled + .toggle-slider {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .premium-badge {
+            background: linear-gradient(135deg, var(--gold), #ff9500);
+            color: var(--navy);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+        .station-alerts {
+            margin-top: 20px;
+        }
+        .station-alert-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0f172a;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .station-alert-item .station-name {
+            font-weight: 600;
+        }
+        .station-alert-item .station-types {
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+        .btn-remove-alert {
+            background: rgba(239, 68, 68, 0.2);
+            border: none;
+            color: #ef4444;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .btn-add-station {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 2px dashed #334155;
+            border-radius: 10px;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-add-station:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
     </style>
 </head>
 <body>
@@ -609,6 +849,7 @@
                 <button class="tab active" onclick="showTab('tickets')"><i class="bi bi-ticket-perforated"></i> Tickets</button>
                 <button class="tab" onclick="showTab('nfts')"><i class="bi bi-image"></i> NFT Souvenirs</button>
                 <button class="tab" onclick="showTab('wallet')"><i class="bi bi-wallet2"></i> Wallet</button>
+                <button class="tab" onclick="showTab('notifications')"><i class="bi bi-bell"></i> Notifications</button>
             </div>
 
             <div id="ticketsTab" class="tab-content active">
@@ -623,6 +864,166 @@
                 <div class="wallet-section">
                     <h3><i class="bi bi-wallet2"></i> Your Wallet</h3>
                     <div id="walletContent"></div>
+                </div>
+            </div>
+
+            <div id="notificationsTab" class="tab-content">
+                <!-- Subscription Plans -->
+                <h3 style="margin-bottom: 20px; color: #fff;"><i class="bi bi-bell"></i> Notification Plans</h3>
+                <div class="notification-plans" id="notificationPlans">
+                    <!-- Free Plan -->
+                    <div class="plan-card" id="plan-free">
+                        <div class="plan-name">Free</div>
+                        <div class="plan-price">$0 <span>/month</span></div>
+                        <ul class="plan-features">
+                            <li><i class="bi bi-check-circle-fill"></i> In-app notifications</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Delay alerts (30 min before)</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Booking confirmations</li>
+                            <li class="disabled"><i class="bi bi-x-circle"></i> Email notifications</li>
+                            <li class="disabled"><i class="bi bi-x-circle"></i> SMS alerts</li>
+                            <li class="disabled"><i class="bi bi-x-circle"></i> Custom station alerts</li>
+                        </ul>
+                        <button class="btn-plan current" id="btn-plan-free">Current Plan</button>
+                    </div>
+                    
+                    <!-- Standard Plan -->
+                    <div class="plan-card popular" id="plan-standard">
+                        <span class="plan-badge popular">Most Popular</span>
+                        <div class="plan-name">Standard</div>
+                        <div class="plan-price">$2 <span>/month</span></div>
+                        <ul class="plan-features">
+                            <li><i class="bi bi-check-circle-fill"></i> In-app notifications</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Real-time delay alerts</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Email notifications</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Push notifications</li>
+                            <li class="disabled"><i class="bi bi-x-circle"></i> SMS alerts</li>
+                            <li class="disabled"><i class="bi bi-x-circle"></i> Custom station alerts</li>
+                        </ul>
+                        <button class="btn-plan primary" onclick="upgradePlan('standard')">Upgrade to Standard</button>
+                    </div>
+                    
+                    <!-- Premium Plan -->
+                    <div class="plan-card" id="plan-premium">
+                        <div class="plan-name">Premium</div>
+                        <div class="plan-price">$5 <span>/month</span></div>
+                        <ul class="plan-features">
+                            <li><i class="bi bi-check-circle-fill"></i> All Standard features</li>
+                            <li><i class="bi bi-check-circle-fill"></i> SMS alerts</li>
+                            <li><i class="bi bi-check-circle-fill"></i> WhatsApp notifications</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Custom station alerts</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Priority boarding alerts</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Price drop notifications</li>
+                        </ul>
+                        <button class="btn-plan primary" onclick="upgradePlan('premium')">Upgrade to Premium</button>
+                    </div>
+                </div>
+                
+                <!-- Notification Preferences -->
+                <div class="notification-prefs">
+                    <div class="pref-section">
+                        <h4><i class="bi bi-sliders"></i> Notification Channels</h4>
+                        <div class="pref-item">
+                            <div class="pref-info">
+                                <h5>In-App Notifications</h5>
+                                <p>Receive alerts within the app</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="pref-in-app" checked onchange="updatePreference('in_app', this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="pref-item">
+                            <div class="pref-info">
+                                <h5>Email Notifications</h5>
+                                <p>Get updates via email</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="pref-email" onchange="updatePreference('email', this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="pref-item">
+                            <div class="pref-info">
+                                <h5>Push Notifications</h5>
+                                <p>Browser push notifications</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="pref-push" onchange="updatePreference('push', this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="pref-item">
+                            <div class="pref-info">
+                                <h5>SMS Alerts <span class="premium-badge">PREMIUM</span></h5>
+                                <p>Text message alerts for urgent updates</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="pref-sms" disabled onchange="updatePreference('sms', this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="pref-section">
+                        <h4><i class="bi bi-megaphone"></i> Alert Types</h4>
+                        <div class="pref-item">
+                            <div class="pref-info">
+                                <h5>Train Delays</h5>
+                                <p>Get notified when your train is delayed</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="pref-delays" checked onchange="updatePreference('delays', this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="pref-item">
+                            <div class="pref-info">
+                                <h5>Arrival Notifications</h5>
+                                <p>Know when trains arrive at your station</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="pref-arrivals" checked onchange="updatePreference('arrivals', this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="pref-item">
+                            <div class="pref-info">
+                                <h5>Booking Confirmations</h5>
+                                <p>Confirmation when you book tickets</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="pref-bookings" checked onchange="updatePreference('bookings', this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="pref-item">
+                            <div class="pref-info">
+                                <h5>Price Alerts <span class="premium-badge">PREMIUM</span></h5>
+                                <p>Get notified when fares drop on your routes</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="pref-prices" disabled onchange="updatePreference('prices', this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="pref-section">
+                        <h4><i class="bi bi-geo-alt"></i> Custom Station Alerts <span class="premium-badge">PREMIUM</span></h4>
+                        <p style="color: #64748b; font-size: 0.85rem; margin-bottom: 16px;">Track specific stations and get notified about arrivals, delays, and announcements.</p>
+                        <div class="station-alerts" id="stationAlerts">
+                            <div class="station-alert-item" style="opacity: 0.5;">
+                                <div>
+                                    <div class="station-name">Dar es Salaam Central</div>
+                                    <div class="station-types">Delays, Arrivals</div>
+                                </div>
+                                <button class="btn-remove-alert" disabled>Remove</button>
+                            </div>
+                        </div>
+                        <button class="btn-add-station" id="btnAddStation" onclick="addStationAlert()" disabled>
+                            <i class="bi bi-plus-lg"></i> Add Station Alert (Premium Only)
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -716,6 +1117,7 @@
             document.getElementById('userEmail').textContent = currentUser.email || currentUser.phone || '';
             
             await loadUserData();
+            await loadNotificationSettings();
         }
 
         async function loadUserData() {
@@ -833,6 +1235,149 @@
 
         async function connectWallet() {
             alert('Wallet connection coming soon! For now, your wallet is auto-generated when you sign in with phone OTP.');
+        }
+
+        // Notification System
+        let userNotificationTier = 'free';
+        let userNotificationPrefs = {
+            in_app: true,
+            email: false,
+            push: false,
+            sms: false,
+            delays: true,
+            arrivals: true,
+            bookings: true,
+            prices: false
+        };
+        
+        async function loadNotificationSettings() {
+            if (!supabaseClient || !currentUser) return;
+            
+            const { data: userData } = await supabaseClient
+                .from('users')
+                .select('notification_tier, notification_preferences')
+                .eq('id', currentUser.id)
+                .single();
+            
+            if (userData) {
+                userNotificationTier = userData.notification_tier || 'free';
+                if (userData.notification_preferences) {
+                    userNotificationPrefs = { ...userNotificationPrefs, ...userData.notification_preferences };
+                }
+                updateNotificationUI();
+            }
+        }
+        
+        function updateNotificationUI() {
+            // Update plan cards
+            document.querySelectorAll('.plan-card').forEach(card => {
+                card.classList.remove('current');
+                const btn = card.querySelector('.btn-plan');
+                if (btn) {
+                    btn.classList.remove('current');
+                    btn.textContent = card.id === 'plan-free' ? 'Downgrade' : 'Upgrade';
+                    btn.classList.add('primary');
+                }
+            });
+            
+            const currentPlanCard = document.getElementById(`plan-${userNotificationTier}`);
+            if (currentPlanCard) {
+                currentPlanCard.classList.add('current');
+                const btn = currentPlanCard.querySelector('.btn-plan');
+                if (btn) {
+                    btn.classList.remove('primary');
+                    btn.classList.add('current');
+                    btn.textContent = 'Current Plan';
+                    btn.onclick = null;
+                }
+                
+                // Add current badge
+                let badge = currentPlanCard.querySelector('.plan-badge.current');
+                if (!badge && userNotificationTier !== 'free') {
+                    badge = document.createElement('span');
+                    badge.className = 'plan-badge current';
+                    badge.textContent = 'Current';
+                    currentPlanCard.appendChild(badge);
+                }
+            }
+            
+            // Update toggles based on preferences
+            Object.keys(userNotificationPrefs).forEach(key => {
+                const toggle = document.getElementById(`pref-${key.replace('_', '-')}`);
+                if (toggle) {
+                    toggle.checked = userNotificationPrefs[key];
+                }
+            });
+            
+            // Enable/disable premium features based on tier
+            const isPremium = userNotificationTier === 'premium';
+            const isStandardOrHigher = userNotificationTier === 'standard' || isPremium;
+            
+            // Email and push for standard+
+            document.getElementById('pref-email').disabled = !isStandardOrHigher;
+            document.getElementById('pref-push').disabled = !isStandardOrHigher;
+            
+            // SMS and prices for premium only
+            document.getElementById('pref-sms').disabled = !isPremium;
+            document.getElementById('pref-prices').disabled = !isPremium;
+            
+            // Station alerts for premium only
+            document.getElementById('btnAddStation').disabled = !isPremium;
+            if (isPremium) {
+                document.getElementById('btnAddStation').textContent = '+ Add Station Alert';
+                document.querySelectorAll('.station-alert-item').forEach(item => {
+                    item.style.opacity = '1';
+                    const btn = item.querySelector('.btn-remove-alert');
+                    if (btn) btn.disabled = false;
+                });
+            }
+        }
+        
+        async function updatePreference(key, value) {
+            userNotificationPrefs[key] = value;
+            
+            if (supabaseClient && currentUser) {
+                await supabaseClient
+                    .from('users')
+                    .update({ notification_preferences: userNotificationPrefs })
+                    .eq('id', currentUser.id);
+            }
+        }
+        
+        async function upgradePlan(plan) {
+            // Redirect to Stripe checkout
+            window.location.href = `/api/checkout?plan=${plan}&user_id=${currentUser.id}`;
+        }
+        
+        function addStationAlert() {
+            if (userNotificationTier !== 'premium') {
+                alert('Custom station alerts are a Premium feature. Upgrade to Premium to unlock!');
+                return;
+            }
+            // Open station selection modal (simplified for now)
+            const station = prompt('Enter station name (e.g., Lusaka Central, Dar es Salaam):');
+            if (station) {
+                const alertsContainer = document.getElementById('stationAlerts');
+                const newAlert = document.createElement('div');
+                newAlert.className = 'station-alert-item';
+                newAlert.innerHTML = `
+                    <div>
+                        <div class="station-name">${station}</div>
+                        <div class="station-types">Delays, Arrivals</div>
+                    </div>
+                    <button class="btn-remove-alert" onclick="this.parentElement.remove()">Remove</button>
+                `;
+                alertsContainer.appendChild(newAlert);
+                
+                // Save to database
+                if (supabaseClient && currentUser) {
+                    supabaseClient.from('user_station_alerts').insert({
+                        user_id: currentUser.id,
+                        station_code: station.toLowerCase().replace(/\s+/g, '-'),
+                        alert_types: ['delay', 'arrival']
+                    });
+                }
+            }
         }
 
         // AI Chat Agent Functions

@@ -1,10 +1,16 @@
 -- Notification System Schema for Africa Railways
 -- This adds notification tiers, preferences, and logging to the existing Supabase database
 
+-- Add wallet columns for multi-chain support (AFC on SUI, SENT/AFRC on Polygon)
+ALTER TABLE users ADD COLUMN IF NOT EXISTS afc_address TEXT; -- SUI blockchain - auto-generated
+ALTER TABLE users ADD COLUMN IF NOT EXISTS afrc_address TEXT; -- Polygon blockchain - user editable
+ALTER TABLE users ADD COLUMN IF NOT EXISTS sent_address TEXT; -- Polygon blockchain - user editable
+
 -- Add notification columns to existing users table
 ALTER TABLE users ADD COLUMN IF NOT EXISTS notification_tier TEXT DEFAULT 'free' CHECK (notification_tier IN ('free', 'standard', 'premium', 'business'));
 ALTER TABLE users ADD COLUMN IF NOT EXISTS notification_preferences JSONB DEFAULT '{"in_app": true, "email": false, "sms": false, "push": false, "whatsapp": false}';
 ALTER TABLE users ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS stripe_subscription_id TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_status TEXT DEFAULT 'inactive' CHECK (subscription_status IN ('inactive', 'active', 'canceled', 'past_due'));
 ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_ends_at TIMESTAMPTZ;
 
