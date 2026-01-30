@@ -2306,20 +2306,35 @@
         // Check for payment redirect on page load
         handlePaymentRedirect();
         
-        // Prefill phone number from saved wallet data
-        (function prefillPhoneFromWallet() {
+        // Prefill phone number from saved wallet data or Supabase session
+        (async function prefillPhoneFromWallet() {
+            const phoneInput = document.getElementById('phoneNumber');
+            if (!phoneInput || phoneInput.value) return;
+            
+            // First try localStorage wallet data
             const savedWallet = localStorage.getItem('africa_railways_wallet');
             if (savedWallet) {
                 try {
                     const walletData = JSON.parse(savedWallet);
                     if (walletData.phone) {
-                        const phoneInput = document.getElementById('phoneNumber');
-                        if (phoneInput && !phoneInput.value) {
-                            phoneInput.value = walletData.phone;
-                        }
+                        phoneInput.value = walletData.phone;
+                        return;
                     }
                 } catch (e) {
                     console.warn('Could not parse wallet data:', e);
+                }
+            }
+            
+            // Then try Supabase session
+            if (typeof supabase !== 'undefined' && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
+                try {
+                    const client = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+                    const { data: { session } } = await client.auth.getSession();
+                    if (session?.user?.phone) {
+                        phoneInput.value = session.user.phone;
+                    }
+                } catch (e) {
+                    console.warn('Could not get Supabase session:', e);
                 }
             }
         })();

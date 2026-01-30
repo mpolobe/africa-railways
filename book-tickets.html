@@ -1200,15 +1200,26 @@
                 }
             }, []);
             
-            // Save wallet connection
+            // Save wallet connection - preserve phone number
             useEffect(() => {
                 if (walletConnected && connectedAddress) {
+                    // Get existing wallet data to preserve phone
+                    const existingWallet = localStorage.getItem('africa_railways_wallet');
+                    let existingPhone = null;
+                    if (existingWallet) {
+                        try {
+                            const parsed = JSON.parse(existingWallet);
+                            existingPhone = parsed.phone;
+                        } catch (e) {}
+                    }
+                    
                     localStorage.setItem('africa_railways_wallet', JSON.stringify({
                         address: connectedAddress,
-                        type: walletType
+                        type: walletType,
+                        phone: phoneNumber || existingPhone
                     }));
                 }
-            }, [walletConnected, connectedAddress, walletType]);
+            }, [walletConnected, connectedAddress, walletType, phoneNumber]);
 
             // Detect user's location via IP address
             useEffect(() => {

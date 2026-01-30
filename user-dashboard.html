@@ -1125,17 +1125,62 @@
             const email = currentUser.email;
             const phone = currentUser.phone;
             
+            // Also check localStorage for phone number from wallet login
+            let walletPhone = null;
+            try {
+                const savedWallet = localStorage.getItem('africa_railways_wallet');
+                if (savedWallet) {
+                    const walletData = JSON.parse(savedWallet);
+                    walletPhone = walletData.phone;
+                }
+            } catch (e) {
+                console.warn('Could not parse wallet data:', e);
+            }
+            
             // Load tickets - match by user_id, email, or phone
             let ticketsQuery = supabaseClient.from('bookings').select('*');
             const conditions = [`user_id.eq.${userId}`];
             if (email) conditions.push(`passenger_email.eq.${email}`);
             if (phone) conditions.push(`passenger_phone.eq.${phone}`);
+            if (walletPhone && walletPhone !== phone) conditions.push(`passenger_phone.eq.${walletPhone}`);
             
-            const { data: tickets } = await ticketsQuery.or(conditions.join(',')).order('created_at', { ascending: false });
+            const { data: tickets, error: ticketsError } = await ticketsQuery.or(conditions.join(',')).order('created_at', { ascending: false });
             
-            // Load NFT souvenirs
-            const { data: nfts } = await supabaseClient.from('nft_souvenirs').select('*')
-                .or(`booking_id.in.(${(tickets || []).map(t => t.id).join(',') || 'null'})`);
+            if (ticketsError) {
+                console.error('Error loading tickets:', ticketsError);
+            }
+            
+            // Load NFT souvenirs - only query if we have ticket IDs
+            let nfts = [];
+            const ticketIds = (tickets || []).map(t => t.id).filter(id => id);
+            if (ticketIds.length > 0) {
+                const { data: nftData, error: nftsError } = await supabaseClient
+                    .from('nft_souvenirs')
+                    .select('*')
+                    .in('booking_id', ticketIds);
+                
+                if (nftsError) {
+                    console.error('Error loading NFTs:', nftsError);
+                } else {
+                    nfts = nftData || [];
+                }
+            }
+            
+            // Also try to load NFTs by user_id directly
+            const { data: userNfts, error: userNftsError } = await supabaseClient
+                .from('nft_souvenirs')
+                .select('*')
+                .eq('user_id', userId);
+            
+            if (!userNftsError && userNfts) {
+                // Merge NFTs, avoiding duplicates
+                const existingIds = new Set(nfts.map(n => n.id));
+                userNfts.forEach(n => {
+                    if (!existingIds.has(n.id)) {
+                        nfts.push(n);
+                    }
+                });
+            }
             
             // Load wallet info from users table
             const { data: userData } = await supabaseClient.from('users').select('wallet_address').eq('id', userId).single();

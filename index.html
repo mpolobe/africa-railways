@@ -291,9 +291,9 @@
         .nav-links a, .nav-links .dropdown-toggle { color: var(--white); text-decoration: none; font-size: 0.85rem; transition: 0.3s; font-weight: 500; }
         .nav-links a:hover { color: var(--gold); }
         .nav-item { position: relative; }
-        .dropdown { position: relative; }
+        .dropdown { position: relative; z-index: 200; }
         .dropdown-toggle { cursor: pointer; display: flex; align-items: center; gap: 5px; }
-        .dropdown-menu { position: absolute; top: 100%; left: 0; background: var(--surface); border: 1px solid #333; border-radius: 8px; padding: 10px 0; min-width: 200px; display: none; margin-top: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        .dropdown-menu { position: absolute; top: 100%; left: 0; background: var(--surface); border: 1px solid #333; border-radius: 8px; padding: 10px 0; min-width: 200px; display: none; margin-top: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); z-index: 1000; }
         .dropdown:hover .dropdown-menu { display: block; }
         .dropdown-menu a { display: block; padding: 12px 20px; color: var(--white); font-size: 0.85rem; transition: 0.2s; }
         .dropdown-menu a:hover { background: rgba(255,184,0,0.1); color: var(--gold); }
