@@ -2203,16 +2203,28 @@
                 // OTP verified - save phone number
                 const wallet = JSON.parse(localStorage.getItem('africa_railways_wallet') || '{}');
                 wallet.phone = pendingAccountPhone;
-                localStorage.setItem('africa_railways_wallet', JSON.stringify(wallet));
                 
                 // Update in Supabase if available
-                if (supabaseClient && wallet.userId) {
+                if (supabaseClient) {
                     try {
-                        await supabaseClient.from('users').update({ phone: pendingAccountPhone }).eq('id', wallet.userId);
+                        // Use upsert_user RPC to create or update user with new phone
+                        const { data, error } = await supabaseClient.rpc('upsert_user', {
+                            p_phone: pendingAccountPhone,
+                            p_wallet_address: wallet.address,
+                            p_auth_provider: wallet.provider || 'phone'
+                        });
+                        if (!error && data) {
+                            wallet.userId = data.id;
+                            console.log('Phone updated in database, user ID:', data.id);
+                        } else if (error) {
+                            console.warn('Failed to update phone in database:', error);
+                        }
                     } catch (dbErr) {
                         console.warn('Failed to update phone in database:', dbErr);
                     }
                 }
+                
+                localStorage.setItem('africa_railways_wallet', JSON.stringify(wallet));
                 
                 // Reset UI
                 document.getElementById('phoneOtpVerify').style.display = 'none';
@@ -2302,21 +2314,40 @@
                 wallet.afrcAddress = value || null;
             }
             
-            localStorage.setItem('africa_railways_wallet', JSON.stringify(wallet));
-            
             // Sync to Supabase if available
-            if (supabaseClient && wallet.userId) {
+            if (supabaseClient && wallet.address) {
                 try {
-                    const updateData = {};
-                    if (field === 'email') updateData.email = value || null;
-                    if (field === 'sent') updateData.sent_address = value || null;
-                    if (field === 'afrc') updateData.afrc_address = value || null;
-                    
-                    await supabaseClient.from('users').update(updateData).eq('id', wallet.userId);
+                    if (wallet.userId) {
+                        // Update existing user
+                        const updateData = {};
+                        if (field === 'email') updateData.email = value || null;
+                        if (field === 'sent') updateData.sent_address = value || null;
+                        if (field === 'afrc') updateData.afrc_address = value || null;
+                        
+                        await supabaseClient.from('users').update(updateData).eq('id', wallet.userId);
+                    } else if (wallet.phone || wallet.email) {
+                        // Try to upsert user if no userId but have phone/email
+                        const { data, error } = await supabaseClient.rpc('upsert_user', {
+                            p_phone: wallet.phone || null,
+                            p_wallet_address: wallet.address,
+                            p_auth_provider: wallet.provider || 'phone'
+                        });
+                        if (!error && data) {
+                            wallet.userId = data.id;
+                            // Now update the specific field
+                            const updateData = {};
+                            if (field === 'email') updateData.email = value || null;
+                            if (field === 'sent') updateData.sent_address = value || null;
+                            if (field === 'afrc') updateData.afrc_address = value || null;
+                            await supabaseClient.from('users').update(updateData).eq('id', data.id);
+                        }
+                    }
                 } catch (dbErr) {
                     console.warn('Failed to update ' + field + ' in database:', dbErr);
                 }
             }
+            
+            localStorage.setItem('africa_railways_wallet', JSON.stringify(wallet));
             
             // Update display
             cancelEditField(field);
