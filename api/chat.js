@@ -64,9 +64,13 @@ export default async function handler(req, res) {
     });
     
     if (!response.ok) {
-      const error = await response.text();
-      console.error('OpenAI error:', error);
-      return res.status(500).json({ error: 'AI service error' });
+      const errorText = await response.text();
+      console.error('OpenAI error:', response.status, errorText);
+      return res.status(500).json({ 
+        error: 'AI service error', 
+        status: response.status,
+        details: process.env.NODE_ENV === 'development' ? errorText : undefined
+      });
     }
     
     // Set up SSE streaming
