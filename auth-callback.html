@@ -158,8 +158,10 @@
                 
                 if (session) {
                     // Success! Create wallet and store session
+                    const suiAddress = generateWalletAddress(session.user);
                     const wallet = {
-                        address: generateWalletAddress(session.user),
+                        address: suiAddress,
+                        afcAddress: suiAddress, // AFC is on SUI, use same address
                         provider: session.user.app_metadata?.provider || 'oauth',
                         email: session.user.email,
                         userId: session.user.id,

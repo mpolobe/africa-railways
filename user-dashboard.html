@@ -256,11 +256,78 @@
             margin: 0 auto 20px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* Enhanced Navigation */
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--gold);
+        }
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+        .hamburger-line {
+            width: 25px;
+            height: 2px;
+            background: #fff;
+            transition: 0.3s;
+        }
+        @media (max-width: 768px) {
+            .hamburger { display: flex; }
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(10,14,26,0.98);
+                flex-direction: column;
+                padding: 20px;
+                border-bottom: 1px solid #222;
+            }
+            .nav-links.active { display: flex; }
+            .nav-user { display: none !important; }
+            .nav-user.mobile { display: flex !important; flex-direction: column; gap: 10px; padding: 15px 0; border-top: 1px solid #222; margin-top: 10px; }
+        }
     </style>
 </head>
 <body>
     <nav>
-        <a href="/" class="logo">🚂 Africa Railways</a>
+        <a href="/" class="logo" style="display: flex; align-items: center; gap: 8px;">
+            <img src="https://fuchsia-written-horse-361.mypinata.cloud/ipfs/bafkreibvzr6ea3qyqbhghcxxzlm5afl5lct6od3pgvfn6vnx4j7so4mrb4" alt="Africa Railways" style="height: 50px; width: auto; border-radius: 6px;">
+            <span>Africa <span style="color:var(--cyan)">Railways</span></span>
+        </a>
+        
+        <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+        
+        <ul class="nav-links" id="navLinks">
+            <li><a href="/">Home</a></li>
+            <li><a href="/book-tickets.html">🎫 Book Tickets</a></li>
+            <li><a href="/track-trains.html">🗺️ Live Map</a></li>
+            <li><a href="/my-tickets.html">My Tickets</a></li>
+            <li><a href="/user-dashboard.html" class="active">Dashboard</a></li>
+        </ul>
+        
         <div class="nav-user" id="navUser" style="display: none;">
             <div class="user-info">
                 <div class="user-name" id="userName">User</div>
@@ -336,6 +403,12 @@
         const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '';
         let supabaseClient = null;
         let currentUser = null;
+        
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
 
         async function init() {
             if (!SUPABASE_ANON_KEY) {

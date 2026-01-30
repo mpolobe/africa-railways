@@ -951,21 +951,14 @@
                     <span>🔗</span> Linked Wallet Addresses
                 </h3>
                 
-                <!-- AFC Address (SUI) -->
+                <!-- AFC Address (SUI) - Auto-generated, same as main wallet -->
                 <div style="margin-bottom: 15px;">
                     <label style="display: block; color: #64748b; font-size: 0.8rem; margin-bottom: 5px;">$AFC ADDRESS (SUI)</label>
                     <div id="afcDisplay" style="display: flex; align-items: center; gap: 10px;">
-                        <p id="walletMenuAFC" style="color: #8b5cf6; font-family: monospace; font-size: 0.8rem; flex: 1; margin: 0; word-break: break-all;">Not linked</p>
-                        <button onclick="editAccountField('afc')" style="background: rgba(139,92,246,0.2); border: 1px solid #8b5cf6; border-radius: 6px; color: #8b5cf6; padding: 6px 12px; cursor: pointer; font-size: 0.8rem;">Link</button>
+                        <p id="walletMenuAFC" style="color: #8b5cf6; font-family: monospace; font-size: 0.8rem; flex: 1; margin: 0; word-break: break-all;">-</p>
+                        <span style="background: rgba(139,92,246,0.2); color: #8b5cf6; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem;">Auto</span>
                     </div>
-                    <div id="afcEdit" style="display: none;">
-                        <div style="display: flex; gap: 8px;">
-                            <input type="text" id="afcInput" placeholder="0x..." style="flex: 1; padding: 10px; background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: white; font-size: 0.85rem; font-family: monospace;">
-                            <button onclick="saveAccountField('afc')" style="background: #8b5cf6; border: none; border-radius: 6px; color: white; padding: 10px 16px; cursor: pointer; font-weight: 600;">Save</button>
-                            <button onclick="cancelEditField('afc')" style="background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: #94a3b8; padding: 10px 12px; cursor: pointer;">✕</button>
-                        </div>
-                        <p style="color: #64748b; font-size: 0.75rem; margin-top: 6px;">Enter your SUI wallet address for $AFC tokens</p>
-                    </div>
+                    <p style="color: #64748b; font-size: 0.7rem; margin-top: 4px;">Same as your SUI wallet address</p>
                 </div>
                 
                 <!-- SENT Address -->
@@ -1970,18 +1963,18 @@
             }
             
             // Update linked wallet addresses
-            document.getElementById('walletMenuAFC').textContent = wallet.afcAddress ? 
-                wallet.afcAddress.slice(0, 8) + '...' + wallet.afcAddress.slice(-6) : 'Not linked';
+            // AFC address is same as SUI wallet (auto-generated)
+            const afcAddr = wallet.afcAddress || wallet.address;
+            document.getElementById('walletMenuAFC').textContent = afcAddr ? 
+                afcAddr.slice(0, 8) + '...' + afcAddr.slice(-6) : '-';
             document.getElementById('walletMenuSENT').textContent = wallet.sentAddress ? 
                 wallet.sentAddress.slice(0, 8) + '...' + wallet.sentAddress.slice(-6) : 'Not linked';
             document.getElementById('walletMenuAFRC').textContent = wallet.afrcAddress ? 
                 wallet.afrcAddress.slice(0, 8) + '...' + wallet.afrcAddress.slice(-6) : 'Not linked';
             
             // Update link button text based on whether address is set
-            const afcBtn = document.querySelector('#afcDisplay button');
             const sentBtn = document.querySelector('#sentDisplay button');
             const afrcBtn = document.querySelector('#afrcDisplay button');
-            if (afcBtn) afcBtn.textContent = wallet.afcAddress ? 'Edit' : 'Link';
             if (sentBtn) sentBtn.textContent = wallet.sentAddress ? 'Edit' : 'Link';
             if (afrcBtn) afrcBtn.textContent = wallet.afrcAddress ? 'Edit' : 'Link';
             
@@ -2059,12 +2052,6 @@
                     alert('Please enter a valid email address');
                     return;
                 }
-            } else if (field === 'afc') {
-                // SUI address validation (0x + 64 hex chars = 66 total)
-                if (value && (!value.startsWith('0x') || value.length !== 66)) {
-                    alert('Please enter a valid SUI wallet address (0x... format, 66 characters)');
-                    return;
-                }
             } else if (['sent', 'afrc'].includes(field)) {
                 // Ethereum/Polygon address validation
                 if (value && (!value.startsWith('0x') || value.length !== 42)) {
@@ -2080,8 +2067,6 @@
                 wallet.phone = value || null;
             } else if (field === 'email') {
                 wallet.email = value || null;
-            } else if (field === 'afc') {
-                wallet.afcAddress = value || null;
             } else if (field === 'sent') {
                 wallet.sentAddress = value || null;
             } else if (field === 'afrc') {
@@ -2278,9 +2263,10 @@
                 // Use wallet from API response or generate locally
                 const walletAddress = result.wallet || (await generatePhoneWallet(phone)).address;
                 
-                // Save session
+                // Save session with AFC address (AFC is on SUI)
                 localStorage.setItem('africa_railways_wallet', JSON.stringify({
                     address: walletAddress,
+                    afcAddress: walletAddress, // AFC is on SUI, use same address
                     phone: phone,
                     provider: 'phone',
                     createdAt: new Date().toISOString()
