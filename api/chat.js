@@ -66,10 +66,24 @@ export default async function handler(req, res) {
     if (!response.ok) {
       const errorText = await response.text();
       console.error('OpenAI error:', response.status, errorText);
+      
+      // Handle specific error codes
+      if (response.status === 429) {
+        return res.status(503).json({ 
+          error: 'AI assistant is temporarily unavailable. Please try again in a moment.',
+          code: 'RATE_LIMITED'
+        });
+      }
+      if (response.status === 401) {
+        return res.status(503).json({ 
+          error: 'AI service configuration error. Please contact support.',
+          code: 'AUTH_ERROR'
+        });
+      }
+      
       return res.status(500).json({ 
         error: 'AI service error', 
-        status: response.status,
-        details: process.env.NODE_ENV === 'development' ? errorText : undefined
+        status: response.status
       });
     }
     
