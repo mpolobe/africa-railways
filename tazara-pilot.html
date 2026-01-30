@@ -600,7 +600,7 @@
     </footer>
 
     <script type="text/babel">
-        const { useState } = React;
+        const { useState, useEffect } = React;
         
         // Supabase configuration
         const SUPABASE_URL = window.SUPABASE_URL || 'https://llvprbmrnjvamjzavmhg.supabase.co';
@@ -962,7 +962,7 @@
             // Get schedule hint for selected route and date
             const getScheduleHint = () => {
                 if (!selectedRoute) return null;
-                const direction = getRouteDirection(selectedRoute.id);
+                const direction = getRouteDirection(selectedRoute);
                 if (!direction) return null;
                 
                 const schedule = tazaraSchedule[direction];
@@ -974,7 +974,7 @@
                     };
                 }
                 
-                if (isValidTravelDate(travelDate, selectedRoute.id)) {
+                if (isValidTravelDate(travelDate, selectedRoute)) {
                     const departDate = new Date(travelDate + 'T00:00:00');
                     const arrivalDate = new Date(departDate);
                     arrivalDate.setDate(arrivalDate.getDate() + schedule.daysToArrival);
@@ -1069,16 +1069,16 @@
                 { id: 'h4', name: 'Grand Plaza Hotel', rating: 4.7, reviewCount: 412, pricePerNight: 120, distanceKm: '3.2', hasStationPickup: true, isWalkingDistance: false },
             ];
 
-            // Load hotels when route is selected
-            useEffect(() => {
-                if (selectedRoute && showHotelAddOn) {
-                    searchNearbyHotels(selectedRoute.to);
-                }
-            }, [selectedRoute, showHotelAddOn]);
-
             // Get routes based on active tab
             const currentRoutes = activeTab === 'tanzania' ? ROUTES_FROM_TANZANIA : ROUTES_FROM_ZAMBIA;
             const route = currentRoutes.find(r => r.id === selectedRoute);
+
+            // Load hotels when route is selected
+            useEffect(() => {
+                if (route && showHotelAddOn) {
+                    searchNearbyHotels(route.to);
+                }
+            }, [selectedRoute, showHotelAddOn, activeTab]);
             const tier = SUBSCRIPTION_TIERS.find(t => t.id === selectedTier);
             
             // Calculate price (1.8x for return trip = 10% discount on round trip)
@@ -1337,8 +1337,8 @@ ZAMBIA REGION:
                 }
                 
                 // Warn about invalid travel date (train doesn't run on that day)
-                if (!isValidTravelDate(travelDate, selectedRoute.id)) {
-                    const direction = getRouteDirection(selectedRoute.id);
+                if (!isValidTravelDate(travelDate, selectedRoute)) {
+                    const direction = getRouteDirection(selectedRoute);
                     const schedule = tazaraSchedule[direction];
                     setStatus(`error:Train only departs on ${schedule.departureDayName}s. Please select a valid date.`);
                     return;
@@ -1774,12 +1774,12 @@ ZAMBIA REGION:
                                         style={{
                                             width: '100%',
                                             padding: '12px',
-                                            background: travelDate && !isValidTravelDate(travelDate, selectedRoute?.id) 
+                                            background: travelDate && !isValidTravelDate(travelDate, selectedRoute) 
                                                 ? 'rgba(239, 68, 68, 0.1)' 
                                                 : travelDate 
                                                     ? 'rgba(16, 185, 129, 0.1)' 
                                                     : 'rgba(255, 255, 255, 0.05)',
-                                            border: travelDate && !isValidTravelDate(travelDate, selectedRoute?.id)
+                                            border: travelDate && !isValidTravelDate(travelDate, selectedRoute)
                                                 ? '1px solid #ef4444'
                                                 : travelDate 
                                                     ? '1px solid var(--green)' 

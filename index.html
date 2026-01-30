@@ -251,6 +251,10 @@
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.9; transform: scale(1.02); }
         }
+        @keyframes flash {
+            0% { background: rgba(16, 185, 129, 0.3); }
+            100% { background: transparent; }
+        }
         .airdrop-btn {
             display: inline-flex;
             align-items: center;
@@ -882,30 +886,129 @@
 
     <!-- Wallet Menu Modal -->
     <div class="zklogin-modal" id="walletMenuModal">
-        <div class="zklogin-modal-content" style="position: relative; max-width: 400px;">
+        <div class="zklogin-modal-content" style="position: relative; max-width: 480px; max-height: 90vh; overflow-y: auto;">
             <button class="zklogin-close" onclick="closeWalletMenu()">&times;</button>
             <h2 style="margin-bottom: 20px;">👤 My Account</h2>
             
+            <!-- Account Info Section -->
             <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                <!-- SUI Wallet Address (Primary - Read Only) -->
                 <div style="margin-bottom: 15px;">
-                    <label style="display: block; color: #64748b; font-size: 0.8rem; margin-bottom: 5px;">WALLET ADDRESS</label>
-                    <p id="walletMenuAddress" style="color: var(--gold); font-family: monospace; font-size: 0.9rem; word-break: break-all;">-</p>
+                    <label style="display: block; color: #64748b; font-size: 0.8rem; margin-bottom: 5px;">SUI WALLET ADDRESS</label>
+                    <p id="walletMenuAddress" style="color: var(--gold); font-family: monospace; font-size: 0.85rem; word-break: break-all;">-</p>
                 </div>
+                
+                <!-- Balance -->
                 <div style="margin-bottom: 15px;">
-                    <label style="display: block; color: #64748b; font-size: 0.8rem; margin-bottom: 5px;">PHONE NUMBER</label>
-                    <p id="walletMenuPhone" style="color: #fff; font-size: 0.95rem;">-</p>
-                </div>
-                <div>
                     <label style="display: block; color: #64748b; font-size: 0.8rem; margin-bottom: 5px;">BALANCE</label>
                     <p id="walletMenuBalance" style="color: var(--cyan); font-size: 1.2rem; font-weight: 700;">Loading...</p>
                 </div>
             </div>
             
+            <!-- Editable Contact Info Section -->
+            <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                <h3 style="color: var(--gold); font-size: 0.9rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                    <span>📱</span> Contact Information
+                </h3>
+                
+                <!-- Phone Number (Editable) -->
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; color: #64748b; font-size: 0.8rem; margin-bottom: 5px;">PHONE NUMBER</label>
+                    <div id="phoneDisplay" style="display: flex; align-items: center; gap: 10px;">
+                        <p id="walletMenuPhone" style="color: #fff; font-size: 0.95rem; flex: 1; margin: 0;">-</p>
+                        <button onclick="editAccountField('phone')" style="background: rgba(255,184,0,0.2); border: 1px solid var(--gold); border-radius: 6px; color: var(--gold); padding: 6px 12px; cursor: pointer; font-size: 0.8rem;">Edit</button>
+                    </div>
+                    <div id="phoneEdit" style="display: none;">
+                        <div style="display: flex; gap: 8px;">
+                            <input type="tel" id="phoneInput" placeholder="+260 97X XXX XXX" style="flex: 1; padding: 10px; background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: white; font-size: 0.95rem;">
+                            <button onclick="saveAccountField('phone')" style="background: var(--green); border: none; border-radius: 6px; color: white; padding: 10px 16px; cursor: pointer; font-weight: 600;">Save</button>
+                            <button onclick="cancelEditField('phone')" style="background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: #94a3b8; padding: 10px 12px; cursor: pointer;">✕</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Email Address (Read-only from OAuth, or editable if phone login) -->
+                <div style="margin-bottom: 0;">
+                    <label style="display: block; color: #64748b; font-size: 0.8rem; margin-bottom: 5px;">EMAIL ADDRESS</label>
+                    <div id="emailDisplay" style="display: flex; align-items: center; gap: 10px;">
+                        <p id="walletMenuEmail" style="color: #fff; font-size: 0.95rem; flex: 1; margin: 0;">Not set</p>
+                        <span id="emailVerifiedBadge" style="display: none; background: rgba(16,185,129,0.2); color: #10b981; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem;">✓ Verified</span>
+                        <button id="emailEditBtn" onclick="editAccountField('email')" style="display: none; background: rgba(255,184,0,0.2); border: 1px solid var(--gold); border-radius: 6px; color: var(--gold); padding: 6px 12px; cursor: pointer; font-size: 0.8rem;">Add</button>
+                    </div>
+                    <div id="emailEdit" style="display: none;">
+                        <div style="display: flex; gap: 8px;">
+                            <input type="email" id="emailInput" placeholder="your@email.com" style="flex: 1; padding: 10px; background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: white; font-size: 0.95rem;">
+                            <button onclick="saveAccountField('email')" style="background: var(--green); border: none; border-radius: 6px; color: white; padding: 10px 16px; cursor: pointer; font-weight: 600;">Save</button>
+                            <button onclick="cancelEditField('email')" style="background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: #94a3b8; padding: 10px 12px; cursor: pointer;">✕</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Linked Wallet Addresses Section -->
+            <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                <h3 style="color: var(--cyan); font-size: 0.9rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                    <span>🔗</span> Linked Wallet Addresses
+                </h3>
+                
+                <!-- AFC Address (SUI) -->
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; color: #64748b; font-size: 0.8rem; margin-bottom: 5px;">$AFC ADDRESS (SUI)</label>
+                    <div id="afcDisplay" style="display: flex; align-items: center; gap: 10px;">
+                        <p id="walletMenuAFC" style="color: #8b5cf6; font-family: monospace; font-size: 0.8rem; flex: 1; margin: 0; word-break: break-all;">Not linked</p>
+                        <button onclick="editAccountField('afc')" style="background: rgba(139,92,246,0.2); border: 1px solid #8b5cf6; border-radius: 6px; color: #8b5cf6; padding: 6px 12px; cursor: pointer; font-size: 0.8rem;">Link</button>
+                    </div>
+                    <div id="afcEdit" style="display: none;">
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="afcInput" placeholder="0x..." style="flex: 1; padding: 10px; background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: white; font-size: 0.85rem; font-family: monospace;">
+                            <button onclick="saveAccountField('afc')" style="background: #8b5cf6; border: none; border-radius: 6px; color: white; padding: 10px 16px; cursor: pointer; font-weight: 600;">Save</button>
+                            <button onclick="cancelEditField('afc')" style="background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: #94a3b8; padding: 10px 12px; cursor: pointer;">✕</button>
+                        </div>
+                        <p style="color: #64748b; font-size: 0.75rem; margin-top: 6px;">Enter your SUI wallet address for $AFC tokens</p>
+                    </div>
+                </div>
+                
+                <!-- SENT Address -->
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; color: #64748b; font-size: 0.8rem; margin-bottom: 5px;">$SENT ADDRESS (Polygon)</label>
+                    <div id="sentDisplay" style="display: flex; align-items: center; gap: 10px;">
+                        <p id="walletMenuSENT" style="color: #10b981; font-family: monospace; font-size: 0.8rem; flex: 1; margin: 0; word-break: break-all;">Not linked</p>
+                        <button onclick="editAccountField('sent')" style="background: rgba(16,185,129,0.2); border: 1px solid #10b981; border-radius: 6px; color: #10b981; padding: 6px 12px; cursor: pointer; font-size: 0.8rem;">Link</button>
+                    </div>
+                    <div id="sentEdit" style="display: none;">
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="sentInput" placeholder="0x..." style="flex: 1; padding: 10px; background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: white; font-size: 0.85rem; font-family: monospace;">
+                            <button onclick="saveAccountField('sent')" style="background: #10b981; border: none; border-radius: 6px; color: white; padding: 10px 16px; cursor: pointer; font-weight: 600;">Save</button>
+                            <button onclick="cancelEditField('sent')" style="background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: #94a3b8; padding: 10px 12px; cursor: pointer;">✕</button>
+                        </div>
+                        <p style="color: #64748b; font-size: 0.75rem; margin-top: 6px;">Enter your Polygon wallet address for $SENT tokens</p>
+                    </div>
+                </div>
+                
+                <!-- AFRC Address -->
+                <div style="margin-bottom: 0;">
+                    <label style="display: block; color: #64748b; font-size: 0.8rem; margin-bottom: 5px;">$AFRC ADDRESS (Polygon)</label>
+                    <div id="afrcDisplay" style="display: flex; align-items: center; gap: 10px;">
+                        <p id="walletMenuAFRC" style="color: var(--gold); font-family: monospace; font-size: 0.8rem; flex: 1; margin: 0; word-break: break-all;">Not linked</p>
+                        <button onclick="editAccountField('afrc')" style="background: rgba(255,184,0,0.2); border: 1px solid var(--gold); border-radius: 6px; color: var(--gold); padding: 6px 12px; cursor: pointer; font-size: 0.8rem;">Link</button>
+                    </div>
+                    <div id="afrcEdit" style="display: none;">
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="afrcInput" placeholder="0x..." style="flex: 1; padding: 10px; background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: white; font-size: 0.85rem; font-family: monospace;">
+                            <button onclick="saveAccountField('afrc')" style="background: var(--gold); border: none; border-radius: 6px; color: #0a0e1a; padding: 10px 16px; cursor: pointer; font-weight: 600;">Save</button>
+                            <button onclick="cancelEditField('afrc')" style="background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: #94a3b8; padding: 10px 12px; cursor: pointer;">✕</button>
+                        </div>
+                        <p style="color: #64748b; font-size: 0.75rem; margin-top: 6px;">Enter your Polygon wallet address for $AFRC governance tokens</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <a href="/book-tickets.html" style="display: block; padding: 12px 20px; background: rgba(255,184,0,0.1); border: 1px solid var(--gold); border-radius: 8px; color: var(--gold); text-decoration: none; text-align: center; font-weight: 600;">
                     🎫 Book Tickets
                 </a>
-                <a href="/dashboard.html" style="display: block; padding: 12px 20px; background: rgba(255,255,255,0.05); border: 1px solid #333; border-radius: 8px; color: #fff; text-decoration: none; text-align: center; font-weight: 600;">
+                <a href="/user-dashboard.html" style="display: block; padding: 12px 20px; background: rgba(255,255,255,0.05); border: 1px solid #333; border-radius: 8px; color: #fff; text-decoration: none; text-align: center; font-weight: 600;">
                     📊 My Dashboard
                 </a>
                 <button onclick="signOut()" style="padding: 12px 20px; background: rgba(239,68,68,0.1); border: 1px solid #ef4444; border-radius: 8px; color: #ef4444; cursor: pointer; font-weight: 600; font-size: 1rem;">
@@ -1843,6 +1946,45 @@
             document.getElementById('walletMenuAddress').textContent = wallet.address.slice(0, 10) + '...' + wallet.address.slice(-8);
             document.getElementById('walletMenuPhone').textContent = wallet.phone || 'Not set';
             
+            // Update email display
+            const emailDisplay = document.getElementById('walletMenuEmail');
+            const emailVerifiedBadge = document.getElementById('emailVerifiedBadge');
+            const emailEditBtn = document.getElementById('emailEditBtn');
+            
+            if (wallet.email) {
+                emailDisplay.textContent = wallet.email;
+                // Show verified badge if logged in via OAuth (Google/Facebook)
+                if (wallet.provider === 'google' || wallet.provider === 'facebook' || wallet.provider === 'oauth') {
+                    emailVerifiedBadge.style.display = 'inline';
+                    emailEditBtn.style.display = 'none';
+                } else {
+                    emailVerifiedBadge.style.display = 'none';
+                    emailEditBtn.style.display = 'inline';
+                    emailEditBtn.textContent = 'Edit';
+                }
+            } else {
+                emailDisplay.textContent = 'Not set';
+                emailVerifiedBadge.style.display = 'none';
+                emailEditBtn.style.display = 'inline';
+                emailEditBtn.textContent = 'Add';
+            }
+            
+            // Update linked wallet addresses
+            document.getElementById('walletMenuAFC').textContent = wallet.afcAddress ? 
+                wallet.afcAddress.slice(0, 8) + '...' + wallet.afcAddress.slice(-6) : 'Not linked';
+            document.getElementById('walletMenuSENT').textContent = wallet.sentAddress ? 
+                wallet.sentAddress.slice(0, 8) + '...' + wallet.sentAddress.slice(-6) : 'Not linked';
+            document.getElementById('walletMenuAFRC').textContent = wallet.afrcAddress ? 
+                wallet.afrcAddress.slice(0, 8) + '...' + wallet.afrcAddress.slice(-6) : 'Not linked';
+            
+            // Update link button text based on whether address is set
+            const afcBtn = document.querySelector('#afcDisplay button');
+            const sentBtn = document.querySelector('#sentDisplay button');
+            const afrcBtn = document.querySelector('#afrcDisplay button');
+            if (afcBtn) afcBtn.textContent = wallet.afcAddress ? 'Edit' : 'Link';
+            if (sentBtn) sentBtn.textContent = wallet.sentAddress ? 'Edit' : 'Link';
+            if (afrcBtn) afrcBtn.textContent = wallet.afrcAddress ? 'Edit' : 'Link';
+            
             // Update balance display in menu
             const balanceDisplay = document.getElementById('walletMenuBalance');
             if (balanceDisplay) {
@@ -1856,6 +1998,109 @@
         
         function closeWalletMenu() {
             document.getElementById('walletMenuModal').classList.remove('active');
+            // Reset any open edit fields
+            ['phone', 'email', 'afc', 'sent', 'afrc'].forEach(field => {
+                cancelEditField(field);
+            });
+        }
+        
+        function editAccountField(field) {
+            const displayEl = document.getElementById(field + 'Display');
+            const editEl = document.getElementById(field + 'Edit');
+            const inputEl = document.getElementById(field + 'Input');
+            
+            if (displayEl && editEl) {
+                displayEl.style.display = 'none';
+                editEl.style.display = 'block';
+                
+                // Pre-fill with current value
+                const wallet = JSON.parse(localStorage.getItem('africa_railways_wallet') || '{}');
+                if (field === 'phone') {
+                    inputEl.value = wallet.phone || '';
+                } else if (field === 'email') {
+                    inputEl.value = wallet.email || '';
+                } else if (field === 'afc') {
+                    inputEl.value = wallet.afcAddress || '';
+                } else if (field === 'sent') {
+                    inputEl.value = wallet.sentAddress || '';
+                } else if (field === 'afrc') {
+                    inputEl.value = wallet.afrcAddress || '';
+                }
+                
+                inputEl.focus();
+            }
+        }
+        
+        function cancelEditField(field) {
+            const displayEl = document.getElementById(field + 'Display');
+            const editEl = document.getElementById(field + 'Edit');
+            
+            if (displayEl && editEl) {
+                displayEl.style.display = 'flex';
+                editEl.style.display = 'none';
+            }
+        }
+        
+        function saveAccountField(field) {
+            const inputEl = document.getElementById(field + 'Input');
+            const value = inputEl.value.trim();
+            
+            // Validation
+            if (field === 'phone') {
+                // Basic phone validation - at least 9 digits
+                const digits = value.replace(/\D/g, '');
+                if (value && digits.length < 9) {
+                    alert('Please enter a valid phone number with at least 9 digits');
+                    return;
+                }
+            } else if (field === 'email') {
+                // Basic email validation
+                if (value && !value.includes('@')) {
+                    alert('Please enter a valid email address');
+                    return;
+                }
+            } else if (field === 'afc') {
+                // SUI address validation (0x + 64 hex chars = 66 total)
+                if (value && (!value.startsWith('0x') || value.length !== 66)) {
+                    alert('Please enter a valid SUI wallet address (0x... format, 66 characters)');
+                    return;
+                }
+            } else if (['sent', 'afrc'].includes(field)) {
+                // Ethereum/Polygon address validation
+                if (value && (!value.startsWith('0x') || value.length !== 42)) {
+                    alert('Please enter a valid Polygon wallet address (0x... format, 42 characters)');
+                    return;
+                }
+            }
+            
+            // Save to wallet
+            const wallet = JSON.parse(localStorage.getItem('africa_railways_wallet') || '{}');
+            
+            if (field === 'phone') {
+                wallet.phone = value || null;
+            } else if (field === 'email') {
+                wallet.email = value || null;
+            } else if (field === 'afc') {
+                wallet.afcAddress = value || null;
+            } else if (field === 'sent') {
+                wallet.sentAddress = value || null;
+            } else if (field === 'afrc') {
+                wallet.afrcAddress = value || null;
+            }
+            
+            localStorage.setItem('africa_railways_wallet', JSON.stringify(wallet));
+            
+            // Update display
+            cancelEditField(field);
+            openWalletMenu(); // Refresh the modal to show updated values
+            
+            // Show success feedback
+            const displayEl = document.getElementById(field + 'Display');
+            if (displayEl) {
+                displayEl.style.animation = 'none';
+                displayEl.offsetHeight; // Trigger reflow
+                displayEl.style.animation = 'flash 0.5s ease';
+            }
         }
         
         function signOut() {
