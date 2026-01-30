@@ -1265,14 +1265,20 @@ ZAMBIA REGION:
                 setStatus('info:Wallet disconnected');
             };
             
-            // Check for existing wallet connection on load
+            // Check for existing wallet connection on load and prefill phone number
             React.useEffect(() => {
                 const savedWallet = localStorage.getItem('africa_railways_wallet');
                 if (savedWallet) {
-                    const { address, type } = JSON.parse(savedWallet);
+                    const walletData = JSON.parse(savedWallet);
+                    const { address, type, phone } = walletData;
                     setConnectedAddress(address);
                     setWalletType(type);
                     setWalletConnected(true);
+                    
+                    // Prefill phone number if available from wallet
+                    if (phone) {
+                        setPhoneNumber(phone);
+                    }
                 }
             }, []);
             

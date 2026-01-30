@@ -2305,6 +2305,24 @@
         
         // Check for payment redirect on page load
         handlePaymentRedirect();
+        
+        // Prefill phone number from saved wallet data
+        (function prefillPhoneFromWallet() {
+            const savedWallet = localStorage.getItem('africa_railways_wallet');
+            if (savedWallet) {
+                try {
+                    const walletData = JSON.parse(savedWallet);
+                    if (walletData.phone) {
+                        const phoneInput = document.getElementById('phoneNumber');
+                        if (phoneInput && !phoneInput.value) {
+                            phoneInput.value = walletData.phone;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Could not parse wallet data:', e);
+                }
+            }
+        })();
     </script>
 </body>
 </html>
