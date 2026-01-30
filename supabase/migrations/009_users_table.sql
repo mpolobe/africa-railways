@@ -93,6 +93,7 @@ CREATE POLICY "Allow user creation" ON users
 -- ============================================
 
 -- Function to upsert user on login
+-- Matches by wallet_address (primary), phone, email, or auth_id to prevent duplicates
 CREATE OR REPLACE FUNCTION upsert_user(
     p_phone VARCHAR DEFAULT NULL,
     p_email VARCHAR DEFAULT NULL,
@@ -106,22 +107,33 @@ RETURNS users AS $$
 DECLARE
     v_user users;
 BEGIN
-    -- Try to find existing user by phone or email
+    -- Try to find existing user by wallet_address first (most reliable), then phone, email, or auth_id
     SELECT * INTO v_user FROM users 
-    WHERE (p_phone IS NOT NULL AND phone = p_phone)
+    WHERE (p_wallet_address IS NOT NULL AND wallet_address = p_wallet_address)
+       OR (p_phone IS NOT NULL AND phone = p_phone)
        OR (p_email IS NOT NULL AND email = p_email)
        OR (p_auth_id IS NOT NULL AND auth_id = p_auth_id)
+    ORDER BY 
+        -- Prioritize wallet_address match, then phone, then email, then auth_id
+        CASE WHEN wallet_address = p_wallet_address THEN 0
+             WHEN phone = p_phone THEN 1
+             WHEN email = p_email THEN 2
+             WHEN auth_id = p_auth_id THEN 3
+             ELSE 4 END
     LIMIT 1;
     
     IF v_user.id IS NOT NULL THEN
-        -- Update existing user
+        -- Update existing user - include phone to allow phone number changes
         UPDATE users SET
+            phone = COALESCE(p_phone, phone),
             email = COALESCE(p_email, email),
             full_name = COALESCE(p_full_name, full_name),
             country = COALESCE(p_country, country),
             wallet_address = COALESCE(p_wallet_address, wallet_address),
             afc_address = COALESCE(p_wallet_address, afc_address),
+            auth_provider = COALESCE(p_auth_provider, auth_provider),
             auth_id = COALESCE(p_auth_id, auth_id),
+            phone_verified = CASE WHEN p_phone IS NOT NULL AND p_phone != COALESCE(phone, '') THEN true ELSE phone_verified END,
             last_login_at = NOW(),
             updated_at = NOW()
         WHERE id = v_user.id
@@ -131,10 +143,11 @@ BEGIN
         INSERT INTO users (
             phone, email, full_name, country, 
             wallet_address, afc_address, auth_provider, auth_id,
-            last_login_at
+            phone_verified, last_login_at
         ) VALUES (
             p_phone, p_email, p_full_name, p_country,
             p_wallet_address, p_wallet_address, p_auth_provider, p_auth_id,
+            CASE WHEN p_phone IS NOT NULL THEN true ELSE false END,
             NOW()
         )
         RETURNING * INTO v_user;
