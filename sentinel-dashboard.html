@@ -3208,7 +3208,7 @@
         }
 
         // AI Chat configuration - uses backend proxy for security
-        const AI_CHAT_API_URL = '/api/ai/chat';
+        const AI_CHAT_API_URL = '/api/chat';
 
         let conversationHistory = [];
 
@@ -3218,49 +3218,92 @@
             
             if (!message) return;
             
-            // Add user message to chat
+            // Add user message to chat and conversation history
             addMessageToChat('user', message);
+            conversationHistory.push({ role: 'user', content: message });
             input.value = '';
             
             // Show typing indicator
             addTypingIndicator();
             
             try {
+                // Build messages array with sentinel context
+                const systemMessage = {
+                    role: 'system',
+                    content: 'You are the Sentinel Dashboard AI Assistant for Africa Railways operations control. Help operators with train monitoring, safety alerts, performance metrics, and operational decisions.'
+                };
+                
+                const messages = [systemMessage, ...conversationHistory];
+                
                 // Call backend AI chat endpoint
                 const response = await fetch(AI_CHAT_API_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        message: message,
-                        context: 'sentinel_dashboard'
-                    }),
+                    body: JSON.stringify({ messages }),
                 });
                 
-                const data = await response.json();
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || 'Failed to get AI response');
+                }
                 
-                // Remove typing indicator
+                // Handle SSE streaming response
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let assistantMessage = '';
+                let buffer = '';
+                
+                // Remove typing indicator and add placeholder for streaming response
                 removeTypingIndicator();
+                const messageDiv = addMessageToChat('ai', '', true); // true = return element for streaming
+                const textEl = messageDiv.querySelector('.ai-message-text');
                 
-                if (data.response) {
-                    // Add AI response
-                    addMessageToChat('ai', data.response);
-                } else if (data.error) {
-                    console.error('AI Chat error:', data.error);
-                    addMessageToChat('ai', `❌ ${data.error}`);
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || '';
+                    
+                    for (const line of lines) {
+                        const trimmed = line.trim();
+                        if (trimmed.startsWith('data:')) {
+                            const data = trimmed.slice(5).trim();
+                            if (data === '[DONE]') continue;
+                            try {
+                                const parsed = JSON.parse(data);
+                                if (parsed.delta) {
+                                    assistantMessage += parsed.delta;
+                                    textEl.textContent = assistantMessage;
+                                    // Auto-scroll
+                                    const chatMessages = document.getElementById('ai-chat-messages');
+                                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                                }
+                            } catch (e) {
+                                // Skip invalid JSON
+                            }
+                        }
+                    }
+                }
+                
+                // Add assistant response to conversation history
+                if (assistantMessage) {
+                    conversationHistory.push({ role: 'assistant', content: assistantMessage });
                 } else {
-                    addMessageToChat('ai', 'Sorry, I could not generate a response. Please try again.');
+                    textEl.textContent = 'Sorry, I could not generate a response. Please try again.';
                 }
                 
             } catch (error) {
                 removeTypingIndicator();
-                addMessageToChat('ai', '❌ Connection error. Please check your internet and try again.');
+                addMessageToChat('ai', `❌ ${error.message || 'Connection error. Please check your internet and try again.'}`);
                 console.error('AI chat error:', error);
             }
         }
 
-        function addMessageToChat(sender, message) {
+        function addMessageToChat(sender, message, returnElement = false) {
             const chatMessages = document.getElementById('ai-chat-messages');
             const messageDiv = document.createElement('div');
             messageDiv.className = `ai-message ai-message-${sender}`;
@@ -3279,6 +3322,10 @@
             
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            if (returnElement) {
+                return messageDiv;
+            }
         }
 
         function addTypingIndicator() {

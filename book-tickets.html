@@ -1272,6 +1272,38 @@
                 fetchRates();
             }, []);
 
+            // Initialize Expedia widget after component mounts
+            useEffect(() => {
+                // Give React time to render the widget container, then initialize Expedia
+                const initExpediaWidget = () => {
+                    if (window.eg && window.eg.widgets && typeof window.eg.widgets.init === 'function') {
+                        window.eg.widgets.init();
+                        console.log('Expedia widget initialized');
+                    } else if (window.EG && window.EG.widgets && typeof window.EG.widgets.init === 'function') {
+                        window.EG.widgets.init();
+                        console.log('Expedia widget initialized (EG)');
+                    } else {
+                        // Try to find and trigger the widget script
+                        const widgetElements = document.querySelectorAll('.eg-widget');
+                        if (widgetElements.length > 0) {
+                            // Dispatch a custom event that the Expedia script might listen for
+                            window.dispatchEvent(new Event('eg-widgets-ready'));
+                        }
+                    }
+                };
+                
+                // Delay to ensure DOM is fully rendered
+                const timer = setTimeout(initExpediaWidget, 500);
+                
+                // Also try when the script loads
+                const script = document.querySelector('.eg-widgets-script');
+                if (script) {
+                    script.addEventListener('load', initExpediaWidget);
+                }
+                
+                return () => clearTimeout(timer);
+            }, []);
+
             // Load station data only when needed (for advanced mode)
             useEffect(() => {
                 // Only load full data if in advanced mode
@@ -1935,13 +1967,61 @@ TX: ${ticketData.txDigest}
 
                             <div className="form-group">
                                 <label>Number of Passengers</label>
-                                <input 
-                                    type="number" 
-                                    value={passengers} 
-                                    onChange={(e) => setPassengers(Math.max(1, parseInt(e.target.value) || 1))}
-                                    min="1"
-                                    max="10"
-                                />
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <button 
+                                        type="button"
+                                        onClick={() => setPassengers(Math.max(1, passengers - 1))}
+                                        disabled={passengers <= 1}
+                                        style={{
+                                            width: '44px',
+                                            height: '44px',
+                                            borderRadius: '50%',
+                                            border: passengers <= 1 ? '1px solid #333' : '1px solid var(--gold)',
+                                            background: passengers <= 1 ? 'rgba(255,255,255,0.05)' : 'rgba(255,184,0,0.2)',
+                                            color: passengers <= 1 ? '#666' : 'var(--gold)',
+                                            fontSize: '1.5rem',
+                                            fontWeight: 'bold',
+                                            cursor: passengers <= 1 ? 'not-allowed' : 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            transition: 'all 0.2s ease'
+                                        }}
+                                    >
+                                        −
+                                    </button>
+                                    <span style={{
+                                        fontSize: '1.5rem',
+                                        fontWeight: 'bold',
+                                        color: '#fff',
+                                        minWidth: '50px',
+                                        textAlign: 'center'
+                                    }}>
+                                        {passengers}
+                                    </span>
+                                    <button 
+                                        type="button"
+                                        onClick={() => setPassengers(Math.min(10, passengers + 1))}
+                                        disabled={passengers >= 10}
+                                        style={{
+                                            width: '44px',
+                                            height: '44px',
+                                            borderRadius: '50%',
+                                            border: passengers >= 10 ? '1px solid #333' : '1px solid var(--gold)',
+                                            background: passengers >= 10 ? 'rgba(255,255,255,0.05)' : 'rgba(255,184,0,0.2)',
+                                            color: passengers >= 10 ? '#666' : 'var(--gold)',
+                                            fontSize: '1.5rem',
+                                            fontWeight: 'bold',
+                                            cursor: passengers >= 10 ? 'not-allowed' : 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            transition: 'all 0.2s ease'
+                                        }}
+                                    >
+                                        +
+                                    </button>
+                                </div>
                             </div>
 
                             {/* Phone Number for non-logged-in users */}
