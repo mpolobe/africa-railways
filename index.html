@@ -911,19 +911,37 @@
                     <span>📱</span> Contact Information
                 </h3>
                 
-                <!-- Phone Number (Editable) -->
+                <!-- Phone Number (Editable with OTP verification) -->
                 <div style="margin-bottom: 15px;">
                     <label style="display: block; color: #64748b; font-size: 0.8rem; margin-bottom: 5px;">PHONE NUMBER</label>
                     <div id="phoneDisplay" style="display: flex; align-items: center; gap: 10px;">
                         <p id="walletMenuPhone" style="color: #fff; font-size: 0.95rem; flex: 1; margin: 0;">-</p>
                         <button onclick="editAccountField('phone')" style="background: rgba(255,184,0,0.2); border: 1px solid var(--gold); border-radius: 6px; color: var(--gold); padding: 6px 12px; cursor: pointer; font-size: 0.8rem;">Edit</button>
                     </div>
+                    <!-- Step 1: Enter new phone number -->
                     <div id="phoneEdit" style="display: none;">
                         <div style="display: flex; gap: 8px;">
-                            <input type="tel" id="phoneInput" placeholder="+260 97X XXX XXX" style="flex: 1; padding: 10px; background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: white; font-size: 0.95rem;">
-                            <button onclick="saveAccountField('phone')" style="background: var(--green); border: none; border-radius: 6px; color: white; padding: 10px 16px; cursor: pointer; font-weight: 600;">Save</button>
+                            <input type="tel" id="accountPhoneInput" placeholder="+260 97X XXX XXX" style="flex: 1; padding: 10px; background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: white; font-size: 0.95rem;">
+                            <button onclick="sendAccountPhoneOTP()" id="sendPhoneOtpBtn" style="background: var(--gold); border: none; border-radius: 6px; color: #000; padding: 10px 16px; cursor: pointer; font-weight: 600;">Send OTP</button>
                             <button onclick="cancelEditField('phone')" style="background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: #94a3b8; padding: 10px 12px; cursor: pointer;">✕</button>
                         </div>
+                    </div>
+                    <!-- Step 2: Enter OTP to verify -->
+                    <div id="phoneOtpVerify" style="display: none;">
+                        <p style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 8px;">Enter the 6-digit code sent to <span id="phoneOtpSentTo" style="color: var(--gold);"></span></p>
+                        <div style="display: flex; gap: 6px; margin-bottom: 10px; justify-content: center;">
+                            <input type="text" maxlength="1" class="account-otp-digit" style="width: 40px; height: 48px; text-align: center; font-size: 1.2rem; background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: #fff;" oninput="accountOtpInputHandler(this, 0)">
+                            <input type="text" maxlength="1" class="account-otp-digit" style="width: 40px; height: 48px; text-align: center; font-size: 1.2rem; background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: #fff;" oninput="accountOtpInputHandler(this, 1)">
+                            <input type="text" maxlength="1" class="account-otp-digit" style="width: 40px; height: 48px; text-align: center; font-size: 1.2rem; background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: #fff;" oninput="accountOtpInputHandler(this, 2)">
+                            <input type="text" maxlength="1" class="account-otp-digit" style="width: 40px; height: 48px; text-align: center; font-size: 1.2rem; background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: #fff;" oninput="accountOtpInputHandler(this, 3)">
+                            <input type="text" maxlength="1" class="account-otp-digit" style="width: 40px; height: 48px; text-align: center; font-size: 1.2rem; background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: #fff;" oninput="accountOtpInputHandler(this, 4)">
+                            <input type="text" maxlength="1" class="account-otp-digit" style="width: 40px; height: 48px; text-align: center; font-size: 1.2rem; background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: #fff;" oninput="accountOtpInputHandler(this, 5)">
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button onclick="verifyAccountPhoneOTP()" id="verifyPhoneOtpBtn" style="flex: 1; background: var(--green); border: none; border-radius: 6px; color: white; padding: 10px 16px; cursor: pointer; font-weight: 600;">Verify & Save</button>
+                            <button onclick="cancelPhoneOtpVerify()" style="background: rgba(255,255,255,0.1); border: 1px solid #444; border-radius: 6px; color: #94a3b8; padding: 10px 12px; cursor: pointer;">✕</button>
+                        </div>
+                        <p style="color: #64748b; font-size: 0.75rem; margin-top: 8px; text-align: center;">Didn't receive code? <button onclick="resendAccountPhoneOTP()" style="background: none; border: none; color: var(--gold); cursor: pointer; font-size: 0.75rem;">Resend</button></p>
                     </div>
                 </div>
                 
@@ -2067,11 +2085,19 @@
         function editAccountField(field) {
             const displayEl = document.getElementById(field + 'Display');
             const editEl = document.getElementById(field + 'Edit');
-            const inputEl = document.getElementById(field + 'Input');
+            // Use different input ID for phone (accountPhoneInput) vs others
+            const inputEl = field === 'phone' 
+                ? document.getElementById('accountPhoneInput') 
+                : document.getElementById(field + 'Input');
             
             if (displayEl && editEl) {
                 displayEl.style.display = 'none';
                 editEl.style.display = 'block';
+                
+                // Hide OTP verify section if showing phone edit
+                if (field === 'phone') {
+                    document.getElementById('phoneOtpVerify').style.display = 'none';
+                }
                 
                 // Pre-fill with current value
                 const wallet = JSON.parse(localStorage.getItem('africa_railways_wallet') || '{}');
@@ -2091,6 +2117,135 @@
             }
         }
         
+        // Phone OTP verification for My Account
+        let pendingAccountPhone = null;
+        
+        async function sendAccountPhoneOTP() {
+            const phone = document.getElementById('accountPhoneInput').value.trim();
+            if (!phone || phone.replace(/\D/g, '').length < 9) {
+                alert('Please enter a valid phone number with at least 9 digits');
+                return;
+            }
+            
+            pendingAccountPhone = phone;
+            
+            const sendBtn = document.getElementById('sendPhoneOtpBtn');
+            const originalText = sendBtn.textContent;
+            sendBtn.textContent = 'Sending...';
+            sendBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/send-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: phone, method: 'sms' })
+                });
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.error || 'Failed to send OTP');
+                }
+                
+                // Show OTP input section
+                document.getElementById('phoneEdit').style.display = 'none';
+                document.getElementById('phoneOtpVerify').style.display = 'block';
+                document.getElementById('phoneOtpSentTo').textContent = phone;
+                
+                // Clear and focus first OTP input
+                document.querySelectorAll('.account-otp-digit').forEach(d => d.value = '');
+                document.querySelectorAll('.account-otp-digit')[0].focus();
+                
+            } catch (err) {
+                console.error('Account phone OTP send error:', err);
+                alert('Failed to send OTP: ' + err.message);
+            } finally {
+                sendBtn.textContent = originalText;
+                sendBtn.disabled = false;
+            }
+        }
+        
+        function accountOtpInputHandler(input, index) {
+            if (input.value.length === 1 && index < 5) {
+                document.querySelectorAll('.account-otp-digit')[index + 1].focus();
+            }
+        }
+        
+        async function verifyAccountPhoneOTP() {
+            const digits = document.querySelectorAll('.account-otp-digit');
+            let enteredOtp = '';
+            digits.forEach(d => enteredOtp += d.value);
+            
+            if (enteredOtp.length !== 6) {
+                alert('Please enter the 6-digit code');
+                return;
+            }
+            
+            const verifyBtn = document.getElementById('verifyPhoneOtpBtn');
+            const originalText = verifyBtn.textContent;
+            verifyBtn.textContent = 'Verifying...';
+            verifyBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/verify-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: pendingAccountPhone, code: enteredOtp })
+                });
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.error || 'Invalid OTP');
+                }
+                
+                // OTP verified - save phone number
+                const wallet = JSON.parse(localStorage.getItem('africa_railways_wallet') || '{}');
+                wallet.phone = pendingAccountPhone;
+                localStorage.setItem('africa_railways_wallet', JSON.stringify(wallet));
+                
+                // Update in Supabase if available
+                if (supabaseClient && wallet.userId) {
+                    try {
+                        await supabaseClient.from('users').update({ phone: pendingAccountPhone }).eq('id', wallet.userId);
+                    } catch (dbErr) {
+                        console.warn('Failed to update phone in database:', dbErr);
+                    }
+                }
+                
+                // Reset UI
+                document.getElementById('phoneOtpVerify').style.display = 'none';
+                document.getElementById('phoneDisplay').style.display = 'flex';
+                pendingAccountPhone = null;
+                
+                // Refresh wallet menu to show updated phone
+                openWalletMenu();
+                
+                alert('Phone number updated successfully!');
+                
+            } catch (err) {
+                console.error('Account phone OTP verify error:', err);
+                alert(err.message);
+                digits.forEach(d => d.value = '');
+                digits[0].focus();
+            } finally {
+                verifyBtn.textContent = originalText;
+                verifyBtn.disabled = false;
+            }
+        }
+        
+        function cancelPhoneOtpVerify() {
+            document.getElementById('phoneOtpVerify').style.display = 'none';
+            document.getElementById('phoneDisplay').style.display = 'flex';
+            pendingAccountPhone = null;
+        }
+        
+        async function resendAccountPhoneOTP() {
+            if (pendingAccountPhone) {
+                await sendAccountPhoneOTP();
+            }
+        }
+        
         function cancelEditField(field) {
             const displayEl = document.getElementById(field + 'Display');
             const editEl = document.getElementById(field + 'Edit');
@@ -2099,21 +2254,29 @@
                 displayEl.style.display = 'flex';
                 editEl.style.display = 'none';
             }
+            
+            // Also hide OTP verify section for phone
+            if (field === 'phone') {
+                const otpVerifyEl = document.getElementById('phoneOtpVerify');
+                if (otpVerifyEl) {
+                    otpVerifyEl.style.display = 'none';
+                }
+                pendingAccountPhone = null;
+            }
         }
         
-        function saveAccountField(field) {
+        async function saveAccountField(field) {
+            // Phone uses OTP verification flow, not this function
+            if (field === 'phone') {
+                console.warn('Phone should use OTP verification flow');
+                return;
+            }
+            
             const inputEl = document.getElementById(field + 'Input');
             const value = inputEl.value.trim();
             
             // Validation
-            if (field === 'phone') {
-                // Basic phone validation - at least 9 digits
-                const digits = value.replace(/\D/g, '');
-                if (value && digits.length < 9) {
-                    alert('Please enter a valid phone number with at least 9 digits');
-                    return;
-                }
-            } else if (field === 'email') {
+            if (field === 'email') {
                 // Basic email validation
                 if (value && !value.includes('@')) {
                     alert('Please enter a valid email address');
@@ -2130,9 +2293,7 @@
             // Save to wallet
             const wallet = JSON.parse(localStorage.getItem('africa_railways_wallet') || '{}');
             
-            if (field === 'phone') {
-                wallet.phone = value || null;
-            } else if (field === 'email') {
+            if (field === 'email') {
                 wallet.email = value || null;
             } else if (field === 'sent') {
                 wallet.sentAddress = value || null;
@@ -2141,6 +2302,20 @@
             }
             
             localStorage.setItem('africa_railways_wallet', JSON.stringify(wallet));
+            
+            // Sync to Supabase if available
+            if (supabaseClient && wallet.userId) {
+                try {
+                    const updateData = {};
+                    if (field === 'email') updateData.email = value || null;
+                    if (field === 'sent') updateData.sent_address = value || null;
+                    if (field === 'afrc') updateData.afrc_address = value || null;
+                    
+                    await supabaseClient.from('users').update(updateData).eq('id', wallet.userId);
+                } catch (dbErr) {
+                    console.warn('Failed to update ' + field + ' in database:', dbErr);
+                }
+            }
             
             // Update display
             cancelEditField(field);
