@@ -1855,10 +1855,43 @@
             checkExistingSession();
         });
         
-        function checkExistingSession() {
+        async function checkExistingSession() {
             const savedWallet = localStorage.getItem('africa_railways_wallet');
             if (savedWallet) {
-                const wallet = JSON.parse(savedWallet);
+                let wallet = JSON.parse(savedWallet);
+                
+                // Try to load latest user data from database
+                if (supabaseClient && (wallet.phone || wallet.userId)) {
+                    try {
+                        let query = supabaseClient.from('users').select('*');
+                        if (wallet.userId) {
+                            query = query.eq('id', wallet.userId);
+                        } else if (wallet.phone) {
+                            query = query.eq('phone', wallet.phone);
+                        }
+                        const { data: userData, error } = await query.single();
+                        
+                        if (!error && userData) {
+                            // Update local wallet with database values
+                            wallet = {
+                                ...wallet,
+                                userId: userData.id,
+                                address: userData.wallet_address || wallet.address,
+                                afcAddress: userData.afc_address || wallet.afcAddress,
+                                sentAddress: userData.sent_address || wallet.sentAddress,
+                                afrcAddress: userData.afrc_address || wallet.afrcAddress,
+                                fullName: userData.full_name || wallet.fullName,
+                                email: userData.email || wallet.email,
+                                country: userData.country || wallet.country
+                            };
+                            localStorage.setItem('africa_railways_wallet', JSON.stringify(wallet));
+                            console.log('User data loaded from database');
+                        }
+                    } catch (err) {
+                        console.warn('Failed to load user from database:', err);
+                    }
+                }
+                
                 updateWalletUI(wallet);
             }
         }
@@ -2297,12 +2330,33 @@
                 // Use wallet from API response or generate locally
                 const walletAddress = result.wallet || (await generatePhoneWallet(phone)).address;
                 
+                // Save/update user in database
+                let userData = null;
+                if (supabaseClient) {
+                    try {
+                        const { data, error } = await supabaseClient.rpc('upsert_user', {
+                            p_phone: phone,
+                            p_wallet_address: walletAddress,
+                            p_auth_provider: 'phone'
+                        });
+                        if (!error && data) {
+                            userData = data;
+                            console.log('User saved to database:', userData.id);
+                        }
+                    } catch (dbErr) {
+                        console.warn('Failed to save user to database:', dbErr);
+                    }
+                }
+                
                 // Save session with AFC address (AFC is on SUI)
                 localStorage.setItem('africa_railways_wallet', JSON.stringify({
                     address: walletAddress,
                     afcAddress: walletAddress, // AFC is on SUI, use same address
                     phone: phone,
                     provider: 'phone',
+                    userId: userData?.id || null,
+                    sentAddress: userData?.sent_address || null,
+                    afrcAddress: userData?.afrc_address || null,
                     createdAt: new Date().toISOString()
                 }));
                 

@@ -159,13 +159,37 @@
                 if (session) {
                     // Success! Create wallet and store session
                     const suiAddress = generateWalletAddress(session.user);
+                    const provider = session.user.app_metadata?.provider || 'oauth';
+                    const userName = session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email.split('@')[0];
+                    
+                    // Save/update user in database
+                    let userData = null;
+                    try {
+                        const { data, error: dbError } = await supabaseClient.rpc('upsert_user', {
+                            p_email: session.user.email,
+                            p_full_name: userName,
+                            p_wallet_address: suiAddress,
+                            p_auth_provider: provider,
+                            p_auth_id: session.user.id
+                        });
+                        if (!dbError && data) {
+                            userData = data;
+                            console.log('User saved to database:', userData.id);
+                        }
+                    } catch (dbErr) {
+                        console.warn('Failed to save user to database:', dbErr);
+                    }
+                    
                     const wallet = {
                         address: suiAddress,
                         afcAddress: suiAddress, // AFC is on SUI, use same address
-                        provider: session.user.app_metadata?.provider || 'oauth',
+                        provider: provider,
                         email: session.user.email,
-                        userId: session.user.id,
-                        name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email.split('@')[0]
+                        userId: userData?.id || session.user.id,
+                        authId: session.user.id,
+                        name: userName,
+                        sentAddress: userData?.sent_address || null,
+                        afrcAddress: userData?.afrc_address || null
                     };
                     
                     // Store wallet for main app
