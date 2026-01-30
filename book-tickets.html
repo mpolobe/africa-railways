@@ -31,6 +31,7 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
+    <script class="eg-widgets-script" src="https://creator.expediagroup.com/products/widgets/assets/eg-widgets.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -2307,6 +2308,27 @@ TX: ${ticketData.txDigest}
                                         </div>
                                     </div>
                                 )}
+
+                                {/* Expedia Travel Widget */}
+                                <div style={{ 
+                                    marginTop: '20px', 
+                                    padding: '15px', 
+                                    background: 'rgba(255,255,255,0.05)', 
+                                    borderRadius: '10px'
+                                }}>
+                                    <div style={{ color: '#94a3b8', fontSize: '0.85rem', marginBottom: '12px', textAlign: 'center' }}>
+                                        Need hotels or flights?
+                                    </div>
+                                    <div 
+                                        className="eg-widget" 
+                                        data-widget="search" 
+                                        data-program="us-expedia" 
+                                        data-lobs="stays,flights" 
+                                        data-network="pz" 
+                                        data-camref="1011l5AhBA" 
+                                        data-pubref=""
+                                    ></div>
+                                </div>
                             </div>
                         </div>
                     </div>
