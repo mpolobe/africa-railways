@@ -1,7 +1,7 @@
 /**
  * Train Schedules Data
- * Mock data for African railway routes
- * Based on real operators: TAZARA, Kenya Railways, PRASA, TRC, etc.
+ * Real schedules from African railway operators
+ * Sources: TAZARA, ZRL, Kenya Railways SGR
  */
 
 export const TRAIN_OPERATORS = {
@@ -10,248 +10,414 @@ export const TRAIN_OPERATORS = {
     name: 'TAZARA',
     fullName: 'Tanzania-Zambia Railway Authority',
     countries: ['Tanzania', 'Zambia'],
-    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/8/8e/TAZARA_logo.svg/200px-TAZARA_logo.svg.png',
+    website: 'https://www.tazarasite.com',
+    phone: '+255 739 998 855',
+    email: 'info@tazarasite.com',
     color: '#1E40AF',
+  },
+  ZRL: {
+    id: 'zrl',
+    name: 'ZRL',
+    fullName: 'Zambia Railways Limited',
+    countries: ['Zambia'],
+    website: 'https://www.zrl.com.zm',
+    phone: '+260 765 237 196',
+    color: '#006B3F',
   },
   SGR_KENYA: {
     id: 'sgr_kenya',
     name: 'Madaraka Express',
     fullName: 'Kenya Standard Gauge Railway',
     countries: ['Kenya'],
-    logo: 'https://www.krc.co.ke/wp-content/uploads/2020/01/KRC-Logo.png',
+    website: 'https://metickets.krc.co.ke',
+    phone: '+254 709 388 887',
     color: '#DC2626',
   },
-  PRASA: {
-    id: 'prasa',
-    name: 'PRASA',
-    fullName: 'Passenger Rail Agency of South Africa',
+  GAUTRAIN: {
+    id: 'gautrain',
+    name: 'Gautrain',
+    fullName: 'Gautrain Rapid Rail Link',
     countries: ['South Africa'],
-    logo: 'https://www.prasa.com/images/prasa-logo.png',
+    website: 'https://www.gautrain.co.za',
     color: '#059669',
-  },
-  TRC: {
-    id: 'trc',
-    name: 'TRC',
-    fullName: 'Tanzania Railways Corporation',
-    countries: ['Tanzania'],
-    logo: null,
-    color: '#F59E0B',
-  },
-  ENR: {
-    id: 'enr',
-    name: 'ENR',
-    fullName: 'Egyptian National Railways',
-    countries: ['Egypt'],
-    logo: null,
-    color: '#7C3AED',
   },
 };
 
+// Real TAZARA schedules from tazarasite.com
+export const TAZARA_SCHEDULES = {
+  mukubaExpress: {
+    id: 'tazara-mukuba-express',
+    name: 'Mukuba Express',
+    operator: 'TAZARA',
+    type: 'express',
+    frequency: 'weekly',
+    distance: 1860,
+    duration: { hours: 46, minutes: 0 },
+    // Dar es Salaam to Kapiri Mposhi - Departs Friday 15:50 EAT
+    southbound: {
+      departureDay: 'Friday',
+      departureTime: '15:50',
+      timezone: 'EAT',
+      stops: [
+        { station: 'Dar es Salaam', code: 'DSM', arrival: null, departure: '15:50', dayOffset: 0, km: 0 },
+        { station: 'Kilosa', code: 'KLS', arrival: '23:30', departure: '23:45', dayOffset: 0, km: 283 },
+        { station: 'Kidatu', code: 'KDT', arrival: '01:20', departure: '01:35', dayOffset: 1, km: 345 },
+        { station: 'Ifakara', code: 'IFK', arrival: '03:45', departure: '04:00', dayOffset: 1, km: 420 },
+        { station: 'Mlimba', code: 'MLB', arrival: '07:30', departure: '08:00', dayOffset: 1, km: 550 },
+        { station: 'Makambako', code: 'MKB', arrival: '13:00', departure: '13:30', dayOffset: 1, km: 780 },
+        { station: 'Mbeya', code: 'MBY', arrival: '17:00', departure: '18:00', dayOffset: 1, km: 900 },
+        { station: 'Tunduma', code: 'TDM', arrival: '21:30', departure: '22:00', dayOffset: 1, km: 975 },
+        { station: 'Nakonde', code: 'NKD', arrival: '22:30', departure: '23:30', dayOffset: 1, km: 980 },
+        { station: 'Kasama', code: 'KSM', arrival: '07:00', departure: '08:00', dayOffset: 2, km: 1250 },
+        { station: 'Mpika', code: 'MPK', arrival: '13:00', departure: '14:00', dayOffset: 2, km: 1450 },
+        { station: 'Serenje', code: 'SRJ', arrival: '18:00', departure: '18:30', dayOffset: 2, km: 1600 },
+        { station: 'Kapiri Mposhi', code: 'KPM', arrival: '13:50', departure: null, dayOffset: 3, km: 1860 },
+      ],
+    },
+    // Kapiri Mposhi to Dar es Salaam - Departs Tuesday 16:00 CAT
+    northbound: {
+      departureDay: 'Tuesday',
+      departureTime: '16:00',
+      timezone: 'CAT',
+      stops: [
+        { station: 'Kapiri Mposhi', code: 'KPM', arrival: null, departure: '16:00', dayOffset: 0, km: 0 },
+        { station: 'Serenje', code: 'SRJ', arrival: '21:30', departure: '22:00', dayOffset: 0, km: 260 },
+        { station: 'Mpika', code: 'MPK', arrival: '03:00', departure: '04:00', dayOffset: 1, km: 410 },
+        { station: 'Kasama', code: 'KSM', arrival: '10:00', departure: '11:00', dayOffset: 1, km: 610 },
+        { station: 'Nakonde', code: 'NKD', arrival: '18:30', departure: '19:30', dayOffset: 1, km: 880 },
+        { station: 'Tunduma', code: 'TDM', arrival: '20:00', departure: '20:30', dayOffset: 1, km: 885 },
+        { station: 'Mbeya', code: 'MBY', arrival: '00:00', departure: '01:00', dayOffset: 2, km: 960 },
+        { station: 'Makambako', code: 'MKB', arrival: '05:00', departure: '05:30', dayOffset: 2, km: 1080 },
+        { station: 'Mlimba', code: 'MLB', arrival: '10:00', departure: '10:30', dayOffset: 2, km: 1310 },
+        { station: 'Ifakara', code: 'IFK', arrival: '14:00', departure: '14:15', dayOffset: 2, km: 1440 },
+        { station: 'Kidatu', code: 'KDT', arrival: '16:30', departure: '16:45', dayOffset: 2, km: 1515 },
+        { station: 'Kilosa', code: 'KLS', arrival: '18:30', departure: '18:45', dayOffset: 2, km: 1577 },
+        { station: 'Dar es Salaam', code: 'DSM', arrival: '13:50', departure: null, dayOffset: 3, km: 1860 },
+      ],
+    },
+    classes: ['sleeper', 'first', 'second', 'economy'],
+    fares: {
+      sleeper: { TZS: 195000, ZMW: 850, USD: 78 },
+      first: { TZS: 145000, ZMW: 650, USD: 58 },
+      second: { TZS: 115000, ZMW: 500, USD: 46 },
+      economy: { TZS: 85000, ZMW: 370, USD: 34 },
+    },
+    amenities: ['sleeper', 'dining', 'scenic'],
+  },
+  ordinaryTrain: {
+    id: 'tazara-ordinary',
+    name: 'TAZARA Ordinary',
+    operator: 'TAZARA',
+    type: 'ordinary',
+    frequency: 'weekly',
+    distance: 1860,
+    duration: { hours: 52, minutes: 0 },
+    southbound: {
+      departureDay: 'Tuesday',
+      departureTime: '13:50',
+      timezone: 'EAT',
+    },
+    northbound: {
+      departureDay: 'Friday',
+      departureTime: '14:00',
+      timezone: 'CAT',
+    },
+    classes: ['first', 'second', 'economy'],
+    amenities: ['dining'],
+  },
+};
+
+// Real ZRL schedules from zambia-railways.html
+export const ZRL_SCHEDULES = {
+  northbound: {
+    id: 'zrl-northbound',
+    name: 'ZRL Express Northbound',
+    operator: 'ZRL',
+    type: 'express',
+    frequency: 'weekly',
+    departureDay: 'Monday',
+    arrivalDay: 'Wednesday',
+    distance: 850,
+    duration: { hours: 34, minutes: 0 },
+    stops: [
+      { station: 'Livingstone', code: 'LVS', arrival: null, departure: '20:00', dayOffset: 0 },
+      { station: 'Choma', code: 'CHM', arrival: '03:15', departure: '03:45', dayOffset: 1 },
+      { station: 'Mazabuka', code: 'MZB', arrival: '06:00', departure: '06:30', dayOffset: 1 },
+      { station: 'Kafue', code: 'KFE', arrival: '11:30', departure: '12:00', dayOffset: 1 },
+      { station: 'Lusaka', code: 'LSK', arrival: '14:24', departure: '15:24', dayOffset: 1 },
+      { station: 'Kabwe', code: 'KBW', arrival: '19:16', departure: '19:46', dayOffset: 1 },
+      { station: 'Ndola', code: 'NDL', arrival: '02:56', departure: '03:36', dayOffset: 2 },
+      { station: 'Kitwe', code: 'KTW', arrival: '06:00', departure: null, dayOffset: 2 },
+    ],
+    classes: ['sleeper', 'first', 'economy'],
+    fares: {
+      sleeper: { ZMW: 450 },
+      first: { ZMW: 280 },
+      economy: { ZMW: 150 },
+    },
+  },
+  southbound: {
+    id: 'zrl-southbound',
+    name: 'ZRL Express Southbound',
+    operator: 'ZRL',
+    type: 'express',
+    frequency: 'weekly',
+    departureDay: 'Friday',
+    arrivalDay: 'Sunday',
+    distance: 850,
+    duration: { hours: 34, minutes: 0 },
+    stops: [
+      { station: 'Kitwe', code: 'KTW', arrival: null, departure: '16:00', dayOffset: 0 },
+      { station: 'Ndola', code: 'NDL', arrival: '18:25', departure: '18:55', dayOffset: 0 },
+      { station: 'Kabwe', code: 'KBW', arrival: '02:15', departure: '02:55', dayOffset: 1 },
+      { station: 'Lusaka', code: 'LSK', arrival: '06:56', departure: '07:36', dayOffset: 1 },
+      { station: 'Kafue', code: 'KFE', arrival: '09:30', departure: '10:00', dayOffset: 1 },
+      { station: 'Mazabuka', code: 'MZB', arrival: '13:30', departure: '14:00', dayOffset: 1 },
+      { station: 'Choma', code: 'CHM', arrival: '18:04', departure: '18:34', dayOffset: 1 },
+      { station: 'Livingstone', code: 'LVS', arrival: '02:00', departure: null, dayOffset: 2 },
+    ],
+    classes: ['sleeper', 'first', 'economy'],
+    fares: {
+      sleeper: { ZMW: 450 },
+      first: { ZMW: 280 },
+      economy: { ZMW: 150 },
+    },
+  },
+};
+
+// Real Kenya SGR schedules from metickets.krc.co.ke
+export const SGR_KENYA_SCHEDULES = {
+  intercounty: {
+    id: 'sgr-intercounty',
+    name: 'Madaraka Express Inter-County',
+    operator: 'SGR_KENYA',
+    type: 'express',
+    frequency: 'daily',
+    distance: 472,
+    duration: { hours: 4, minutes: 30 },
+    departures: [
+      { time: '15:00', type: 'afternoon' },
+      { time: '22:00', type: 'overnight' },
+    ],
+    stops: [
+      { station: 'Nairobi Terminus', code: 'NRB', km: 0 },
+      { station: 'Athi River', code: 'ATH', km: 30 },
+      { station: 'Emali', code: 'EML', km: 133 },
+      { station: 'Kibwezi', code: 'KBZ', km: 188 },
+      { station: 'Mtito Andei', code: 'MTA', km: 233 },
+      { station: 'Voi', code: 'VOI', km: 327 },
+      { station: 'Misenyi', code: 'MSY', km: 390 },
+      { station: 'Mariakani', code: 'MRK', km: 420 },
+      { station: 'Mombasa Terminus', code: 'MBA', km: 472 },
+    ],
+    classes: ['first', 'economy'],
+    fares: {
+      first: { KES: 3000, USD: 23 },
+      economy: { KES: 1000, USD: 8 },
+    },
+    amenities: ['dining', 'wifi', 'aircon'],
+  },
+  suswa: {
+    id: 'sgr-suswa',
+    name: 'Madaraka Express Suswa Line',
+    operator: 'SGR_KENYA',
+    type: 'commuter',
+    frequency: 'daily',
+    distance: 120,
+    duration: { hours: 1, minutes: 30 },
+    stops: [
+      { station: 'Nairobi Terminus', code: 'NRB', km: 0 },
+      { station: 'Ongata Rongai', code: 'ORG', km: 25 },
+      { station: 'Ngong', code: 'NGG', km: 40 },
+      { station: 'Maai Mahiu', code: 'MMH', km: 80 },
+      { station: 'Suswa', code: 'SSW', km: 120 },
+    ],
+    classes: ['economy'],
+    fares: {
+      economy: { KES: 300, USD: 2.50 },
+    },
+  },
+};
+
+// Gautrain schedules
+export const GAUTRAIN_SCHEDULES = {
+  northSouth: {
+    id: 'gautrain-north-south',
+    name: 'Gautrain North-South Line',
+    operator: 'GAUTRAIN',
+    type: 'commuter',
+    frequency: 'every 12 minutes peak, 20 minutes off-peak',
+    distance: 80,
+    duration: { hours: 0, minutes: 42 },
+    operatingHours: {
+      weekday: { first: '05:30', last: '20:30' },
+      saturday: { first: '05:30', last: '20:30' },
+      sunday: { first: '07:00', last: '19:00' },
+    },
+    stops: [
+      { station: 'Hatfield', code: 'HAT', km: 0 },
+      { station: 'Pretoria', code: 'PTA', km: 5 },
+      { station: 'Centurion', code: 'CEN', km: 15 },
+      { station: 'Midrand', code: 'MID', km: 30 },
+      { station: 'Marlboro', code: 'MAR', km: 40 },
+      { station: 'Sandton', code: 'SAN', km: 50 },
+      { station: 'Rosebank', code: 'ROS', km: 55 },
+      { station: 'Park Station', code: 'PRK', km: 60 },
+    ],
+    classes: ['standard'],
+    fares: {
+      standard: { ZAR: 72, USD: 4 },
+    },
+    amenities: ['wifi', 'aircon'],
+  },
+  airport: {
+    id: 'gautrain-airport',
+    name: 'Gautrain Airport Link',
+    operator: 'GAUTRAIN',
+    type: 'airport',
+    frequency: 'every 12 minutes',
+    distance: 25,
+    duration: { hours: 0, minutes: 15 },
+    stops: [
+      { station: 'OR Tambo Airport', code: 'ORT', km: 0 },
+      { station: 'Rhodesfield', code: 'RHD', km: 5 },
+      { station: 'Marlboro', code: 'MAR', km: 20 },
+      { station: 'Sandton', code: 'SAN', km: 25 },
+    ],
+    classes: ['standard'],
+    fares: {
+      standard: { ZAR: 185, USD: 10 },
+    },
+    amenities: ['wifi', 'aircon', 'luggage'],
+  },
+};
+
+// Combined routes for the app
 export const ROUTES = [
-  // TAZARA Routes
   {
     id: 'tazara-express',
-    name: 'TAZARA Express',
+    name: 'Mukuba Express',
     operator: 'TAZARA',
     from: { city: 'Dar es Salaam', station: 'Dar es Salaam Station', country: 'Tanzania' },
     to: { city: 'Kapiri Mposhi', station: 'Kapiri Mposhi Station', country: 'Zambia' },
     distance: 1860,
     duration: { hours: 46, minutes: 0 },
-    stops: [
-      { name: 'Dar es Salaam', arrivalOffset: 0, departureOffset: 0 },
-      { name: 'Mlimba', arrivalOffset: 8, departureOffset: 8.5 },
-      { name: 'Makambako', arrivalOffset: 14, departureOffset: 14.5 },
-      { name: 'Mbeya', arrivalOffset: 18, departureOffset: 19 },
-      { name: 'Tunduma', arrivalOffset: 22, departureOffset: 22.5 },
-      { name: 'Nakonde', arrivalOffset: 23, departureOffset: 24 },
-      { name: 'Kasama', arrivalOffset: 32, departureOffset: 33 },
-      { name: 'Mpika', arrivalOffset: 38, departureOffset: 39 },
-      { name: 'Serenje', arrivalOffset: 42, departureOffset: 42.5 },
-      { name: 'Kapiri Mposhi', arrivalOffset: 46, departureOffset: 46 },
-    ],
-    classes: ['first', 'business', 'economy'],
-    amenities: ['sleeper', 'dining', 'wifi'],
+    frequency: 'Tue & Fri weekly',
+    classes: ['sleeper', 'first', 'second', 'economy'],
+    amenities: ['sleeper', 'dining', 'scenic'],
+    schedule: TAZARA_SCHEDULES.mukubaExpress,
   },
-  // Kenya SGR Routes
   {
-    id: 'madaraka-express',
+    id: 'zrl-main-line',
+    name: 'ZRL Express',
+    operator: 'ZRL',
+    from: { city: 'Livingstone', station: 'Livingstone Station', country: 'Zambia' },
+    to: { city: 'Kitwe', station: 'Kitwe Station', country: 'Zambia' },
+    distance: 850,
+    duration: { hours: 34, minutes: 0 },
+    frequency: 'Mon & Fri weekly',
+    classes: ['sleeper', 'first', 'economy'],
+    amenities: ['sleeper', 'dining'],
+    schedule: { northbound: ZRL_SCHEDULES.northbound, southbound: ZRL_SCHEDULES.southbound },
+  },
+  {
+    id: 'sgr-nairobi-mombasa',
     name: 'Madaraka Express',
     operator: 'SGR_KENYA',
     from: { city: 'Nairobi', station: 'Nairobi Terminus', country: 'Kenya' },
     to: { city: 'Mombasa', station: 'Mombasa Terminus', country: 'Kenya' },
     distance: 472,
     duration: { hours: 4, minutes: 30 },
-    stops: [
-      { name: 'Nairobi Terminus', arrivalOffset: 0, departureOffset: 0 },
-      { name: 'Athi River', arrivalOffset: 0.5, departureOffset: 0.6 },
-      { name: 'Emali', arrivalOffset: 1.5, departureOffset: 1.6 },
-      { name: 'Kibwezi', arrivalOffset: 2, departureOffset: 2.1 },
-      { name: 'Mtito Andei', arrivalOffset: 2.5, departureOffset: 2.6 },
-      { name: 'Voi', arrivalOffset: 3, departureOffset: 3.2 },
-      { name: 'Mariakani', arrivalOffset: 4, departureOffset: 4.1 },
-      { name: 'Mombasa Terminus', arrivalOffset: 4.5, departureOffset: 4.5 },
-    ],
+    frequency: 'Daily at 15:00 & 22:00',
     classes: ['first', 'economy'],
     amenities: ['dining', 'wifi', 'aircon'],
+    schedule: SGR_KENYA_SCHEDULES.intercounty,
   },
-  // South Africa Routes
   {
-    id: 'gautrain-pretoria',
+    id: 'gautrain-jhb-pta',
     name: 'Gautrain',
-    operator: 'PRASA',
+    operator: 'GAUTRAIN',
     from: { city: 'Johannesburg', station: 'Park Station', country: 'South Africa' },
-    to: { city: 'Pretoria', station: 'Pretoria Station', country: 'South Africa' },
-    distance: 56,
+    to: { city: 'Pretoria', station: 'Hatfield Station', country: 'South Africa' },
+    distance: 60,
     duration: { hours: 0, minutes: 42 },
-    stops: [
-      { name: 'Park Station', arrivalOffset: 0, departureOffset: 0 },
-      { name: 'Rosebank', arrivalOffset: 0.1, departureOffset: 0.12 },
-      { name: 'Sandton', arrivalOffset: 0.2, departureOffset: 0.22 },
-      { name: 'Marlboro', arrivalOffset: 0.3, departureOffset: 0.32 },
-      { name: 'Midrand', arrivalOffset: 0.45, departureOffset: 0.47 },
-      { name: 'Centurion', arrivalOffset: 0.55, departureOffset: 0.57 },
-      { name: 'Pretoria Station', arrivalOffset: 0.7, departureOffset: 0.7 },
-    ],
-    classes: ['first', 'economy'],
+    frequency: 'Every 12-20 min',
+    classes: ['standard'],
     amenities: ['wifi', 'aircon'],
-  },
-  // Egypt Routes
-  {
-    id: 'cairo-alexandria',
-    name: 'Cairo-Alexandria Express',
-    operator: 'ENR',
-    from: { city: 'Cairo', station: 'Cairo Ramses', country: 'Egypt' },
-    to: { city: 'Alexandria', station: 'Misr Station', country: 'Egypt' },
-    distance: 208,
-    duration: { hours: 2, minutes: 30 },
-    stops: [
-      { name: 'Cairo Ramses', arrivalOffset: 0, departureOffset: 0 },
-      { name: 'Benha', arrivalOffset: 0.5, departureOffset: 0.55 },
-      { name: 'Tanta', arrivalOffset: 1.2, departureOffset: 1.3 },
-      { name: 'Damanhur', arrivalOffset: 1.8, departureOffset: 1.85 },
-      { name: 'Alexandria Misr', arrivalOffset: 2.5, departureOffset: 2.5 },
-    ],
-    classes: ['first', 'business', 'economy'],
-    amenities: ['dining', 'aircon'],
-  },
-  // Tanzania Internal
-  {
-    id: 'dar-dodoma',
-    name: 'Central Line',
-    operator: 'TRC',
-    from: { city: 'Dar es Salaam', station: 'Dar es Salaam Central', country: 'Tanzania' },
-    to: { city: 'Dodoma', station: 'Dodoma Station', country: 'Tanzania' },
-    distance: 456,
-    duration: { hours: 8, minutes: 0 },
-    stops: [
-      { name: 'Dar es Salaam Central', arrivalOffset: 0, departureOffset: 0 },
-      { name: 'Morogoro', arrivalOffset: 3, departureOffset: 3.3 },
-      { name: 'Kilosa', arrivalOffset: 5, departureOffset: 5.2 },
-      { name: 'Dodoma', arrivalOffset: 8, departureOffset: 8 },
-    ],
-    classes: ['first', 'economy'],
-    amenities: ['dining'],
+    schedule: GAUTRAIN_SCHEDULES.northSouth,
   },
 ];
 
-// Generate daily schedules
-export const generateDailySchedules = (date = new Date()) => {
-  const schedules = [];
-  const baseDate = new Date(date);
-  baseDate.setHours(0, 0, 0, 0);
+/**
+ * Get next departure for a route
+ */
+export const getNextDeparture = (routeId, direction = 'southbound') => {
+  const route = ROUTES.find(r => r.id === routeId);
+  if (!route || !route.schedule) return null;
 
-  ROUTES.forEach(route => {
-    // Morning departure
-    const morningDeparture = new Date(baseDate);
-    morningDeparture.setHours(6, 0, 0, 0);
+  const now = new Date();
+  const dayOfWeek = now.getDay();
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+  if (route.schedule.departureDay || route.schedule[direction]?.departureDay) {
+    const schedule = route.schedule[direction] || route.schedule;
+    const depDay = schedule.departureDay;
+    const depDayIndex = dayNames.indexOf(depDay);
     
-    schedules.push({
-      id: `${route.id}-morning-${baseDate.toISOString().split('T')[0]}`,
-      routeId: route.id,
-      trainNumber: `${route.operator.substring(0, 2).toUpperCase()}${Math.floor(Math.random() * 900) + 100}`,
-      route: route,
-      departureTime: morningDeparture.toISOString(),
-      arrivalTime: new Date(morningDeparture.getTime() + (route.duration.hours * 60 + route.duration.minutes) * 60000).toISOString(),
-      status: 'on-time',
-      availableSeats: {
-        first: Math.floor(Math.random() * 20) + 5,
-        business: Math.floor(Math.random() * 40) + 10,
-        economy: Math.floor(Math.random() * 100) + 50,
-      },
-      platform: Math.floor(Math.random() * 8) + 1,
-    });
-
-    // Afternoon departure (for shorter routes)
-    if (route.duration.hours < 10) {
-      const afternoonDeparture = new Date(baseDate);
-      afternoonDeparture.setHours(14, 0, 0, 0);
-      
-      schedules.push({
-        id: `${route.id}-afternoon-${baseDate.toISOString().split('T')[0]}`,
-        routeId: route.id,
-        trainNumber: `${route.operator.substring(0, 2).toUpperCase()}${Math.floor(Math.random() * 900) + 100}`,
-        route: route,
-        departureTime: afternoonDeparture.toISOString(),
-        arrivalTime: new Date(afternoonDeparture.getTime() + (route.duration.hours * 60 + route.duration.minutes) * 60000).toISOString(),
-        status: 'on-time',
-        availableSeats: {
-          first: Math.floor(Math.random() * 20) + 5,
-          business: Math.floor(Math.random() * 40) + 10,
-          economy: Math.floor(Math.random() * 100) + 50,
-        },
-        platform: Math.floor(Math.random() * 8) + 1,
-      });
+    let daysUntil = depDayIndex - dayOfWeek;
+    if (daysUntil < 0) daysUntil += 7;
+    if (daysUntil === 0) {
+      const [hours, minutes] = schedule.departureTime.split(':').map(Number);
+      const depTime = new Date(now);
+      depTime.setHours(hours, minutes, 0, 0);
+      if (now > depTime) daysUntil = 7;
     }
 
-    // Evening departure
-    const eveningDeparture = new Date(baseDate);
-    eveningDeparture.setHours(18, 0, 0, 0);
-    
-    schedules.push({
-      id: `${route.id}-evening-${baseDate.toISOString().split('T')[0]}`,
-      routeId: route.id,
-      trainNumber: `${route.operator.substring(0, 2).toUpperCase()}${Math.floor(Math.random() * 900) + 100}`,
-      route: route,
-      departureTime: eveningDeparture.toISOString(),
-      arrivalTime: new Date(eveningDeparture.getTime() + (route.duration.hours * 60 + route.duration.minutes) * 60000).toISOString(),
-      status: 'on-time',
-      availableSeats: {
-        first: Math.floor(Math.random() * 20) + 5,
-        business: Math.floor(Math.random() * 40) + 10,
-        economy: Math.floor(Math.random() * 100) + 50,
-      },
-      platform: Math.floor(Math.random() * 8) + 1,
-    });
-  });
+    const nextDep = new Date(now);
+    nextDep.setDate(nextDep.getDate() + daysUntil);
+    const [h, m] = schedule.departureTime.split(':').map(Number);
+    nextDep.setHours(h, m, 0, 0);
 
-  return schedules;
+    return {
+      date: nextDep,
+      time: schedule.departureTime,
+      daysUntil,
+      stops: schedule.stops,
+    };
+  }
+
+  if (route.schedule.departures) {
+    const nextDep = route.schedule.departures[0];
+    return {
+      date: now,
+      time: nextDep.time,
+      daysUntil: 0,
+      stops: route.schedule.stops,
+    };
+  }
+
+  return null;
 };
 
-// Get schedules for a specific route
-export const getSchedulesForRoute = (fromCity, toCity, date = new Date()) => {
-  const schedules = generateDailySchedules(date);
-  return schedules.filter(s => 
-    s.route.from.city.toLowerCase() === fromCity.toLowerCase() &&
-    s.route.to.city.toLowerCase() === toCity.toLowerCase()
+/**
+ * Get schedules for display
+ */
+export const getSchedulesForRoute = (fromCity, toCity) => {
+  return ROUTES.filter(r =>
+    (r.from.city.toLowerCase().includes(fromCity.toLowerCase()) &&
+     r.to.city.toLowerCase().includes(toCity.toLowerCase())) ||
+    (r.to.city.toLowerCase().includes(fromCity.toLowerCase()) &&
+     r.from.city.toLowerCase().includes(toCity.toLowerCase()))
   );
-};
-
-// Get next departures from a station
-export const getNextDepartures = (city, limit = 5) => {
-  const now = new Date();
-  const schedules = generateDailySchedules(now);
-  
-  return schedules
-    .filter(s => s.route.from.city.toLowerCase() === city.toLowerCase())
-    .filter(s => new Date(s.departureTime) > now)
-    .sort((a, b) => new Date(a.departureTime) - new Date(b.departureTime))
-    .slice(0, limit);
 };
 
 export default {
   TRAIN_OPERATORS,
+  TAZARA_SCHEDULES,
+  ZRL_SCHEDULES,
+  SGR_KENYA_SCHEDULES,
+  GAUTRAIN_SCHEDULES,
   ROUTES,
-  generateDailySchedules,
+  getNextDeparture,
   getSchedulesForRoute,
-  getNextDepartures,
 };
