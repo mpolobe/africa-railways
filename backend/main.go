@@ -256,6 +256,9 @@ func main() {
 	// AFC Payment endpoints
 	RegisterAFCHandlers(mux)
 
+	// GTFS and Sensor endpoints
+	RegisterGTFSHandlers(mux)
+
 	log.Println("🛰️  Sentinel Engine Live on :" + port)
 	log.Println("📡 WebSocket endpoint: /ws")
 	log.Println("📩 Add event endpoint: /add-event")
@@ -271,5 +274,7 @@ func main() {
 	log.Println("🔐 Auth OTP API: /api/auth/*")
 	log.Println("💳 Payments API: /api/payments")
 	log.Println("🪙 AFC Payment API: /api/afc/*")
+	log.Println("📍 GTFS Sensor API: /api/sensor/log")
+	log.Println("🚂 GTFS Export API: /api/gtfs/*")
 	log.Fatal(http.ListenAndServe(":"+port, corsMiddleware(mux)))
 }
