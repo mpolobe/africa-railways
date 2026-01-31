@@ -23,9 +23,9 @@ const JourneyMapTicket = {
     }
 
     const cfg = {
-      width: options.width || 350,
-      height: options.height || 200,
-      padding: 30,
+      width: options.width || 380,
+      height: options.height || 220,
+      padding: 25,
       lineColor: journey.lineColor || '#FFB800',
       backgroundColor: options.backgroundColor || '#0a0e1a',
       textColor: options.textColor || '#ffffff',
@@ -198,13 +198,14 @@ const JourneyMapTicket = {
       }
     });
 
-    // Journey info at bottom
-    const infoY = cfg.height - 20;
+    // Journey info at bottom right (moved from left to make room for QR)
+    const infoY = cfg.height - 15;
     
     // Stops count
     const stopsInfo = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    stopsInfo.setAttribute('x', cfg.padding);
+    stopsInfo.setAttribute('x', cfg.width - cfg.padding);
     stopsInfo.setAttribute('y', infoY);
+    stopsInfo.setAttribute('text-anchor', 'end');
     stopsInfo.setAttribute('fill', cfg.textColor);
     stopsInfo.setAttribute('fill-opacity', '0.6');
     stopsInfo.setAttribute('font-family', "'Inter', sans-serif");
@@ -212,10 +213,10 @@ const JourneyMapTicket = {
     stopsInfo.textContent = `${stops.length} stops`;
     svg.appendChild(stopsInfo);
 
-    // QR code placeholder area
-    const qrSize = 40;
-    const qrX = cfg.width - cfg.padding - qrSize;
-    const qrY = cfg.height - cfg.padding - qrSize - 10;
+    // QR code placeholder area - positioned bottom left to avoid overlapping destination
+    const qrSize = 35;
+    const qrX = cfg.padding;
+    const qrY = cfg.height - qrSize - 8;
 
     const qrBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
     qrBg.setAttribute('x', qrX);
@@ -227,7 +228,7 @@ const JourneyMapTicket = {
     svg.appendChild(qrBg);
 
     // Simple QR pattern (placeholder)
-    this._drawQRPattern(svg, qrX + 4, qrY + 4, qrSize - 8);
+    this._drawQRPattern(svg, qrX + 3, qrY + 3, qrSize - 6);
 
     return svg;
   },
