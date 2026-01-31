@@ -936,16 +936,44 @@
             }
         }
 
-        /* Newsfeed Styles */
+        /* Facebook Feed Styles - Pinned below stats */
         .newsfeed-section {
-            margin-top: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
 
         .newsfeed-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .newsfeed-section .section-title {
+            color: #1877f2;
+            margin: 0;
+        }
+
+        /* Ticket Booking Notifications Section */
+        .ticket-notifications-section {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 16px;
             margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .ticket-notifications-section .section-title {
+            color: var(--gold);
+            margin: 0;
         }
 
         .newsfeed-tabs {
@@ -1591,7 +1619,7 @@
 
         <!-- Main Feed -->
         <div class="feed">
-            <!-- Stats Overview -->
+            <!-- Stats Overview - At Top -->
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-value" id="active-users">0</div>
@@ -1624,15 +1652,10 @@
                 </div>
             </div>
 
-            <!-- Activity Feed -->
-            <div id="activity-feed">
-                <!-- Activities will be inserted here -->
-            </div>
-
-            <!-- Newsfeed Section -->
-            <div class="newsfeed-section">
+            <!-- Facebook Feed Section - Below Stats -->
+            <div class="newsfeed-section" id="facebook-feed-section">
                 <div class="newsfeed-header">
-                    <h2 class="section-title">📰 Sentinel Network Feed</h2>
+                    <h2 class="section-title">📘 Facebook Feed</h2>
                     <div class="newsfeed-tabs">
                         <button class="tab-btn active" data-tab="all">All Posts</button>
                         <button class="tab-btn" data-tab="admin">Admin Only</button>
@@ -1660,7 +1683,7 @@
                     </div>
                 </div>
 
-                <!-- Posts Feed -->
+                <!-- Facebook Posts Feed -->
                 <div id="newsfeed-posts">
                     <!-- Posts will be inserted here -->
                 </div>
@@ -1670,6 +1693,17 @@
                     <button class="load-more-btn" id="load-more-btn" onclick="loadMorePosts()">
                         Load More Posts
                     </button>
+                </div>
+            </div>
+
+            <!-- Ticket Booking Notifications - Below Facebook Feed -->
+            <div class="ticket-notifications-section">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h2 class="section-title">🎫 Ticket Booking Notifications</h2>
+                    <span class="notification-badge" id="booking-count-badge" style="background: var(--gold); color: var(--dark); padding: 4px 12px; border-radius: 12px; font-weight: 600; font-size: 14px;">0 today</span>
+                </div>
+                <div id="activity-feed">
+                    <!-- Ticket booking activities will be inserted here -->
                 </div>
             </div>
         </div>
@@ -1773,6 +1807,8 @@
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/config.js"></script>
     
     <!-- Facebook SDK -->
     <script async defer crossorigin="anonymous" 
@@ -1803,6 +1839,117 @@
             } else {
                 console.log('⚠️ Not connected to Facebook');
             }
+        }
+
+        // Supabase Configuration
+        const SUPABASE_URL = window.SUPABASE_URL || 'https://llvprbmrnjvamjzavmhg.supabase.co';
+        const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '';
+        let supabaseClient = null;
+
+        function initSupabase() {
+            if (SUPABASE_ANON_KEY && typeof supabase !== 'undefined') {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('✅ Supabase client initialized');
+                return true;
+            }
+            console.warn('⚠️ Supabase not configured - using localStorage fallback');
+            return false;
+        }
+
+        // Fetch bookings from Supabase database
+        async function fetchBookingsFromDatabase() {
+            if (!supabaseClient) {
+                console.log('Supabase not available, using localStorage');
+                loadStoredBookings();
+                return;
+            }
+
+            try {
+                // Fetch recent bookings from last 24 hours
+                const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+                
+                const { data: bookings, error } = await supabaseClient
+                    .from('bookings')
+                    .select('*')
+                    .gte('created_at', twentyFourHoursAgo)
+                    .order('created_at', { ascending: false })
+                    .limit(50);
+
+                if (error) {
+                    console.error('Error fetching bookings:', error);
+                    loadStoredBookings(); // Fallback to localStorage
+                    return;
+                }
+
+                if (bookings && bookings.length > 0) {
+                    console.log(`✅ Loaded ${bookings.length} bookings from database`);
+                    
+                    // Update stats
+                    stats.bookings = bookings.length;
+                    document.getElementById('total-bookings').textContent = stats.bookings;
+                    
+                    // Calculate revenue
+                    const totalRevenue = bookings.reduce((sum, b) => sum + (parseFloat(b.amount) || 0), 0);
+                    stats.revenue = totalRevenue;
+                    document.getElementById('revenue').textContent = `$${totalRevenue.toLocaleString()}`;
+                    
+                    // Add bookings to activity feed
+                    bookings.slice(0, 10).forEach((booking, index) => {
+                        setTimeout(() => {
+                            addActivity({
+                                type: 'booking',
+                                user: booking.passenger_name || booking.passenger_email || 'Customer',
+                                content: `New booking: ${booking.origin || 'Origin'} → ${booking.destination || 'Destination'}`,
+                                timestamp: new Date(booking.created_at),
+                                stats: {
+                                    route: `${booking.origin || ''} → ${booking.destination || ''}`,
+                                    amount: booking.currency ? `${booking.currency} ${booking.amount}` : `$${booking.amount}`,
+                                    operator: booking.operator || 'ZRL'
+                                }
+                            });
+                        }, index * 150);
+                    });
+                } else {
+                    console.log('No recent bookings in database');
+                    loadStoredBookings(); // Fallback to localStorage
+                }
+            } catch (error) {
+                console.error('Database fetch error:', error);
+                loadStoredBookings(); // Fallback to localStorage
+            }
+        }
+
+        // Subscribe to real-time booking updates
+        function subscribeToBookings() {
+            if (!supabaseClient) return;
+
+            const channel = supabaseClient
+                .channel('bookings-changes')
+                .on('postgres_changes', 
+                    { event: 'INSERT', schema: 'public', table: 'bookings' },
+                    (payload) => {
+                        console.log('New booking received:', payload.new);
+                        const booking = payload.new;
+                        
+                        addActivity({
+                            type: 'booking',
+                            user: booking.passenger_name || booking.passenger_email || 'Customer',
+                            content: `New booking: ${booking.origin || 'Origin'} → ${booking.destination || 'Destination'}`,
+                            timestamp: new Date(booking.created_at),
+                            stats: {
+                                route: `${booking.origin || ''} → ${booking.destination || ''}`,
+                                amount: booking.currency ? `${booking.currency} ${booking.amount}` : `$${booking.amount}`,
+                                operator: booking.operator || 'ZRL'
+                            }
+                        });
+                        
+                        updateStats('bookings', 1);
+                        showToast(`New Booking: ${booking.origin} → ${booking.destination}`, 'success');
+                    }
+                )
+                .subscribe();
+
+            console.log('✅ Subscribed to real-time booking updates');
         }
 
         // WebSocket connection
@@ -2363,16 +2510,28 @@
         document.addEventListener('DOMContentLoaded', () => {
             initializeSentinels();
             
-            // Load stored bookings first
-            loadStoredBookings();
+            // Initialize Supabase and fetch bookings from database
+            const supabaseReady = initSupabase();
+            if (supabaseReady) {
+                // Fetch bookings from database (primary source)
+                fetchBookingsFromDatabase();
+                // Subscribe to real-time updates
+                subscribeToBookings();
+                // Periodically refresh from database
+                setInterval(fetchBookingsFromDatabase, 60000);
+            } else {
+                // Fallback to localStorage
+                loadStoredBookings();
+                setInterval(loadStoredBookings, 60000);
+            }
             
-            // Generate initial activities
-            for (let i = 0; i < 5; i++) {
+            // Generate initial activities (non-booking activities)
+            for (let i = 0; i < 3; i++) {
                 setTimeout(() => generateMockActivity(), i * 500);
             }
             
-            // Generate new activities periodically
-            setInterval(generateMockActivity, 8000);
+            // Generate new activities periodically (reduced frequency)
+            setInterval(generateMockActivity, 15000);
             
             // Connect WebSocket
             connectWebSocket();
@@ -2388,9 +2547,6 @@
             
             // Update notification count
             updateNotificationCount();
-            
-            // Periodically check for new bookings
-            setInterval(loadStoredBookings, 60000);
             
             // Update sentinel statuses periodically (simulate status changes)
             setInterval(() => {
@@ -3227,21 +3383,13 @@
             addTypingIndicator();
             
             try {
-                // Build messages array with sentinel context
-                const systemMessage = {
-                    role: 'system',
-                    content: 'You are the Sentinel Dashboard AI Assistant for Africa Railways operations control. Help operators with train monitoring, safety alerts, performance metrics, and operational decisions.'
-                };
-                
-                const messages = [systemMessage, ...conversationHistory];
-                
-                // Call backend AI chat endpoint
+                // Call backend AI chat endpoint (server handles system prompt)
                 const response = await fetch(AI_CHAT_API_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ messages }),
+                    body: JSON.stringify({ messages: conversationHistory }),
                 });
                 
                 if (!response.ok) {
@@ -3275,6 +3423,9 @@
                             if (data === '[DONE]') continue;
                             try {
                                 const parsed = JSON.parse(data);
+                                if (parsed.type === 'error') {
+                                    throw new Error(parsed.error || 'AI service error');
+                                }
                                 if (parsed.delta) {
                                     assistantMessage += parsed.delta;
                                     textEl.textContent = assistantMessage;
@@ -3283,6 +3434,9 @@
                                     chatMessages.scrollTop = chatMessages.scrollHeight;
                                 }
                             } catch (e) {
+                                if (e.message && e.message !== 'Unexpected end of JSON input') {
+                                    throw e; // Re-throw actual errors
+                                }
                                 // Skip invalid JSON
                             }
                         }

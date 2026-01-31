@@ -402,7 +402,14 @@ app.post('/api/chat', async (req, res) => {
     res.end();
   } catch (error) {
     console.error('Chat error:', error);
-    res.status(500).json({ error: error.message });
+    // Check if headers already sent (streaming started)
+    if (res.headersSent) {
+      // Send error as SSE event and close
+      res.write(`data: ${JSON.stringify({ type: 'error', error: error.message })}\n\n`);
+      res.end();
+    } else {
+      res.status(500).json({ error: error.message });
+    }
   }
 });
 
