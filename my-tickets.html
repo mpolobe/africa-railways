@@ -532,23 +532,59 @@
                 const phoneVariations = getPhoneVariations(phone);
                 console.log('Searching for phone variations:', phoneVariations);
                 
-                // Build OR conditions for all variations
-                const conditions = phoneVariations.map(p => `passenger_phone.eq.${p}`).join(',');
+                let tickets = [];
+                let searchError = null;
                 
-                // Search for tickets by phone number (all variations)
-                const { data: tickets, error } = await client
-                    .from('bookings')
-                    .select('*')
-                    .or(conditions)
-                    .order('created_at', { ascending: false });
-
-                if (error) {
-                    console.error('Search error:', error);
+                // Try primary search with .in() filter
+                try {
+                    const { data, error } = await client
+                        .from('bookings')
+                        .select('*')
+                        .in('passenger_phone', phoneVariations)
+                        .order('created_at', { ascending: false });
+                    
+                    if (!error && data) {
+                        tickets = data;
+                    } else {
+                        searchError = error;
+                        console.error('Primary search error:', error);
+                    }
+                } catch (e) {
+                    console.error('Primary search exception:', e);
+                    searchError = e;
+                }
+                
+                // If primary search failed or returned no results, try fallback with ilike
+                if (tickets.length === 0) {
+                    console.log('Trying fallback search with ilike...');
+                    const cleanedPhone = phone.replace(/\D/g, '');
+                    const lastDigits = cleanedPhone.slice(-9); // Last 9 digits
+                    
+                    try {
+                        const { data: fallbackData, error: fallbackError } = await client
+                            .from('bookings')
+                            .select('*')
+                            .ilike('passenger_phone', `%${lastDigits}%`)
+                            .order('created_at', { ascending: false });
+                        
+                        if (!fallbackError && fallbackData) {
+                            tickets = fallbackData;
+                            searchError = null; // Clear error if fallback succeeded
+                        } else if (fallbackError) {
+                            console.error('Fallback search error:', fallbackError);
+                        }
+                    } catch (e) {
+                        console.error('Fallback search exception:', e);
+                    }
+                }
+                
+                // If both searches failed, show error
+                if (tickets.length === 0 && searchError) {
                     showAlert('Failed to search tickets. Please try again.', 'error');
                     return;
                 }
 
-                if (!tickets || tickets.length === 0) {
+                if (tickets.length === 0) {
                     ticketsList.innerHTML = `
                         <div class="empty-state">
                             <i class="bi bi-ticket-perforated"></i>
