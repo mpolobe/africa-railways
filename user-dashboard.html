@@ -1535,7 +1535,74 @@
         }
 
         async function connectWallet() {
-            alert('Wallet connection coming soon! For now, your wallet is auto-generated when you sign in with phone OTP.');
+            if (!currentUser || !supabaseClient) {
+                alert('Please sign in first');
+                return;
+            }
+            
+            const container = document.getElementById('walletContent');
+            container.innerHTML = '<p style="color: #64748b;">Connecting wallet...</p>';
+            
+            try {
+                // First check if user already has a wallet in the database
+                const { data: userData, error } = await supabaseClient
+                    .from('users')
+                    .select('wallet_address, phone')
+                    .eq('auth_id', currentUser.id)
+                    .single();
+                
+                if (userData?.wallet_address) {
+                    // Wallet exists, display it
+                    renderWallet(userData.wallet_address);
+                    return;
+                }
+                
+                // No wallet yet - generate one from phone number
+                const phone = currentUser.phone || userData?.phone;
+                if (!phone) {
+                    container.innerHTML = `
+                        <p style="color: #f59e0b; margin: 20px 0;">Phone number required to generate wallet.</p>
+                        <p style="color: #64748b; font-size: 0.85rem;">Please sign in with phone OTP to auto-generate your wallet.</p>
+                    `;
+                    return;
+                }
+                
+                // Call upsert_user to create/update user with wallet
+                const { data: upsertData, error: upsertError } = await supabaseClient
+                    .rpc('upsert_user', {
+                        p_phone: phone,
+                        p_auth_id: currentUser.id,
+                        p_auth_provider: 'phone'
+                    });
+                
+                if (upsertError) {
+                    console.error('Wallet generation error:', upsertError);
+                    container.innerHTML = `
+                        <p style="color: #ef4444; margin: 20px 0;">Could not generate wallet. Please try again.</p>
+                        <button class="btn-connect" onclick="connectWallet()"><i class="bi bi-arrow-clockwise"></i> Retry</button>
+                    `;
+                    return;
+                }
+                
+                if (upsertData?.wallet_address) {
+                    renderWallet(upsertData.wallet_address);
+                } else {
+                    // Wallet generation happens server-side, reload user data
+                    const { data: refreshedUser } = await supabaseClient
+                        .from('users')
+                        .select('wallet_address')
+                        .eq('auth_id', currentUser.id)
+                        .single();
+                    
+                    renderWallet(refreshedUser?.wallet_address);
+                }
+            } catch (err) {
+                console.error('Connect wallet error:', err);
+                container.innerHTML = `
+                    <p style="color: #ef4444; margin: 20px 0;">Error connecting wallet. Please try again.</p>
+                    <button class="btn-connect" onclick="connectWallet()"><i class="bi bi-arrow-clockwise"></i> Retry</button>
+                `;
+            }
         }
 
         // Notification System
