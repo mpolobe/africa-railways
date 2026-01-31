@@ -6,11 +6,11 @@
 const TransitMapRenderer = {
   // Default configuration
   config: {
-    width: 800,
+    width: 950,
     height: 500,
     padding: 80,
-    paddingLeft: 100,
-    paddingRight: 120,
+    paddingLeft: 120,
+    paddingRight: 160,
     paddingTop: 80,
     paddingBottom: 80,
     stationRadius: 8,
