@@ -488,6 +488,14 @@
     <!-- Supabase SDK for database storage -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/js/config.js"></script>
+    
+    <!-- Transit Map Components for Journey Visualization -->
+    <script src="/js/geolocation-service.js"></script>
+    <script src="/js/railway-data-service.js"></script>
+    <script src="/js/transit-map-optimizer.js"></script>
+    <script src="/js/transit-map-renderer.js"></script>
+    <script src="/js/country-transit-map.js"></script>
+    <script src="/js/journey-map-ticket.js"></script>
 </head>
 <body>
     <div id="root"></div>
@@ -2304,6 +2312,23 @@ TX: ${ticketData.txDigest}
                                         </button>
                                         <div style={{ fontSize: '0.8rem', color: '#94a3b8', textAlign: 'center', marginTop: '8px' }}>
                                             NFT ID: {ticketData.nftId} • IPFS: {ticketData.ipfsHash?.slice(0, 12)}...
+                                        </div>
+                                        
+                                        {/* Journey Map Visualization */}
+                                        <div style={{ marginTop: '20px', padding: '15px', background: 'rgba(0,0,0,0.3)', borderRadius: '12px' }}>
+                                            <div style={{ color: 'var(--gold)', fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '10px' }}>
+                                                🗺️ Your Journey Map
+                                            </div>
+                                            <div id="journey-map-ticket" ref={(el) => {
+                                                if (el && ticketData && window.JourneyMapTicket) {
+                                                    window.JourneyMapTicket.generateFromBooking('journey-map-ticket', {
+                                                        fromStation: ticketData.from,
+                                                        toStation: ticketData.to,
+                                                        operator: ticketData.route?.split(' - ')[0] || 'TAZARA',
+                                                        countryCode: detectedCountry === 'Zambia' ? 'ZM' : detectedCountry === 'Tanzania' ? 'TZ' : 'ZA'
+                                                    });
+                                                }
+                                            }}></div>
                                         </div>
                                     </div>
                                 )}
