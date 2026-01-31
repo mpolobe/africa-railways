@@ -781,7 +781,80 @@
             border-color: var(--gold);
             color: var(--gold);
         }
+        
+        /* Transit Map Tab Styles */
+        .transit-map-container {
+            background: linear-gradient(135deg, #16203a 0%, #0a0e1a 100%);
+            border-radius: 16px;
+            border: 1px solid #333;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .transit-map-header {
+            background: linear-gradient(90deg, rgba(255,184,0,0.2), rgba(0,212,255,0.2));
+            padding: 15px 20px;
+            border-bottom: 1px solid #333;
+        }
+        .transit-map-header h3 {
+            margin: 0;
+            color: white;
+            font-size: 1.1rem;
+        }
+        .transit-map-header p {
+            margin: 5px 0 0;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+        .transit-map-body {
+            padding: 20px;
+        }
+        .journey-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+        .journey-detail-item {
+            text-align: center;
+        }
+        .journey-detail-item .label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .journey-detail-item .value {
+            font-size: 1rem;
+            color: white;
+            font-weight: 600;
+        }
+        .no-journey-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+        .no-journey-message i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+            color: #333;
+        }
+        .no-journey-message a {
+            color: var(--gold);
+            text-decoration: none;
+        }
     </style>
+    
+    <!-- Transit Map Components -->
+    <script src="/js/geolocation-service.js"></script>
+    <script src="/js/railway-data-service.js"></script>
+    <script src="/js/transit-map-optimizer.js"></script>
+    <script src="/js/transit-map-renderer.js"></script>
+    <script src="/js/country-transit-map.js"></script>
+    <script src="/js/journey-map-ticket.js"></script>
 </head>
 <body>
     <nav>
@@ -847,6 +920,7 @@
 
             <div class="tabs">
                 <button class="tab active" onclick="showTab('tickets')"><i class="bi bi-ticket-perforated"></i> Tickets</button>
+                <button class="tab" onclick="showTab('transitMap')"><i class="bi bi-map"></i> Journey Map</button>
                 <button class="tab" onclick="showTab('nfts')"><i class="bi bi-image"></i> NFT Souvenirs</button>
                 <button class="tab" onclick="showTab('wallet')"><i class="bi bi-wallet2"></i> Wallet</button>
                 <button class="tab" onclick="showTab('notifications')"><i class="bi bi-bell"></i> Notifications</button>
@@ -854,6 +928,52 @@
 
             <div id="ticketsTab" class="tab-content active">
                 <div id="ticketsList"></div>
+            </div>
+
+            <div id="transitMapTab" class="tab-content">
+                <div class="transit-map-container">
+                    <div class="transit-map-header">
+                        <h3><i class="bi bi-map"></i> Your Latest Journey</h3>
+                        <p id="journeySubtitle">View your route on the transit map</p>
+                    </div>
+                    <div class="transit-map-body">
+                        <div id="latestJourneyMap"></div>
+                        <div id="journeyDetails" class="journey-details" style="display: none;">
+                            <div class="journey-detail-item">
+                                <div class="label">From</div>
+                                <div class="value" id="journeyFrom">-</div>
+                            </div>
+                            <div class="journey-detail-item">
+                                <div class="label">To</div>
+                                <div class="value" id="journeyTo">-</div>
+                            </div>
+                            <div class="journey-detail-item">
+                                <div class="label">Date</div>
+                                <div class="value" id="journeyDate">-</div>
+                            </div>
+                            <div class="journey-detail-item">
+                                <div class="label">Operator</div>
+                                <div class="value" id="journeyOperator">-</div>
+                            </div>
+                        </div>
+                        <div id="noJourneyMessage" class="no-journey-message">
+                            <i class="bi bi-map"></i>
+                            <p>No recent journeys found</p>
+                            <p><a href="/book-tickets.html">Book your first ticket</a> to see your journey map here!</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Full Network Map -->
+                <div class="transit-map-container">
+                    <div class="transit-map-header">
+                        <h3><i class="bi bi-globe-africa"></i> Africa Railways Network</h3>
+                        <p>Explore rail networks across Africa</p>
+                    </div>
+                    <div class="transit-map-body">
+                        <div id="fullNetworkMap"></div>
+                    </div>
+                </div>
             </div>
 
             <div id="nftsTab" class="tab-content">
@@ -1193,6 +1313,7 @@
             renderTickets(tickets || []);
             renderNFTs(nfts || []);
             renderWallet(userData?.wallet_address);
+            renderJourneyMap(tickets || []);
         }
 
         function renderTickets(tickets) {
@@ -1251,6 +1372,117 @@
                     <p style="color: #64748b; margin: 20px 0;">No wallet connected yet. Connect a wallet to receive NFTs and AFRC tokens.</p>
                     <button class="btn-connect" onclick="connectWallet()"><i class="bi bi-wallet2"></i> Connect Wallet</button>
                 `;
+            }
+        }
+
+        // Render journey map based on latest ticket
+        async function renderJourneyMap(tickets) {
+            const mapContainer = document.getElementById('latestJourneyMap');
+            const detailsContainer = document.getElementById('journeyDetails');
+            const noJourneyMessage = document.getElementById('noJourneyMessage');
+            const journeySubtitle = document.getElementById('journeySubtitle');
+            
+            if (!tickets || tickets.length === 0) {
+                mapContainer.innerHTML = '';
+                detailsContainer.style.display = 'none';
+                noJourneyMessage.style.display = 'block';
+                return;
+            }
+            
+            // Get the latest ticket
+            const latestTicket = tickets[0];
+            
+            // Show journey details
+            noJourneyMessage.style.display = 'none';
+            detailsContainer.style.display = 'grid';
+            
+            document.getElementById('journeyFrom').textContent = latestTicket.from_station || '-';
+            document.getElementById('journeyTo').textContent = latestTicket.to_station || '-';
+            document.getElementById('journeyDate').textContent = latestTicket.travel_date ? new Date(latestTicket.travel_date).toLocaleDateString() : '-';
+            
+            // Determine operator from route
+            const operator = determineOperator(latestTicket.from_station, latestTicket.to_station);
+            document.getElementById('journeyOperator').textContent = operator;
+            journeySubtitle.textContent = `${latestTicket.from_station} → ${latestTicket.to_station}`;
+            
+            // Render journey map
+            if (window.JourneyMapTicket && window.RailwayDataService) {
+                try {
+                    const countryCode = getCountryCodeFromStations(latestTicket.from_station, latestTicket.to_station);
+                    await window.JourneyMapTicket.generateFromBooking('latestJourneyMap', {
+                        fromStation: latestTicket.from_station,
+                        toStation: latestTicket.to_station,
+                        operator: operator,
+                        countryCode: countryCode
+                    });
+                } catch (e) {
+                    console.error('Error rendering journey map:', e);
+                    mapContainer.innerHTML = '<p style="color: #64748b; text-align: center; padding: 40px;">Unable to load journey map</p>';
+                }
+            }
+            
+            // Also render the full network map
+            renderFullNetworkMap(countryCode || 'ZM');
+        }
+        
+        function determineOperator(from, to) {
+            const stations = [from?.toLowerCase(), to?.toLowerCase()].filter(Boolean);
+            
+            // TAZARA stations
+            const tazaraStations = ['dar es salaam', 'mbeya', 'tunduma', 'nakonde', 'kasama', 'mpika', 'serenje', 'kapiri mposhi', 'kapiri'];
+            if (stations.some(s => tazaraStations.some(t => s.includes(t)))) {
+                return 'TAZARA';
+            }
+            
+            // Zambia Railways stations
+            const zrlStations = ['lusaka', 'livingstone', 'kitwe', 'ndola', 'kabwe', 'choma', 'mazabuka', 'kafue'];
+            if (stations.some(s => zrlStations.some(z => s.includes(z)))) {
+                return 'Zambia Railways';
+            }
+            
+            // Kenya SGR
+            const kenyaStations = ['nairobi', 'mombasa', 'voi', 'mtito', 'emali', 'athi river'];
+            if (stations.some(s => kenyaStations.some(k => s.includes(k)))) {
+                return 'Kenya Railways';
+            }
+            
+            return 'Africa Railways';
+        }
+        
+        function getCountryCodeFromStations(from, to) {
+            const stations = [from?.toLowerCase(), to?.toLowerCase()].filter(Boolean);
+            
+            // Tanzania
+            if (stations.some(s => ['dar es salaam', 'mbeya', 'tunduma', 'dodoma', 'arusha'].some(t => s.includes(t)))) {
+                return 'TZ';
+            }
+            
+            // Zambia
+            if (stations.some(s => ['lusaka', 'livingstone', 'kitwe', 'ndola', 'kabwe', 'kapiri'].some(z => s.includes(z)))) {
+                return 'ZM';
+            }
+            
+            // Kenya
+            if (stations.some(s => ['nairobi', 'mombasa'].some(k => s.includes(k)))) {
+                return 'KE';
+            }
+            
+            // South Africa
+            if (stations.some(s => ['johannesburg', 'pretoria', 'sandton', 'cape town'].some(sa => s.includes(sa)))) {
+                return 'ZA';
+            }
+            
+            return 'ZM'; // Default to Zambia
+        }
+        
+        async function renderFullNetworkMap(countryCode) {
+            const container = document.getElementById('fullNetworkMap');
+            if (!container || !window.CountryTransitMap) return;
+            
+            try {
+                await window.CountryTransitMap.init('fullNetworkMap', { height: 400 });
+            } catch (e) {
+                console.error('Error rendering full network map:', e);
             }
         }
 
