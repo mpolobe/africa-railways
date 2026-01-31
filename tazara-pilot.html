@@ -496,9 +496,80 @@
     <!-- Supabase SDK for database storage -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/js/config.js"></script>
+    
+    <!-- Transit Map Components -->
+    <script src="/js/geolocation-service.js"></script>
+    <script src="/js/railway-data-service.js"></script>
+    <script src="/js/transit-map-optimizer.js"></script>
+    <script src="/js/transit-map-renderer.js"></script>
+    <script src="/js/country-transit-map.js"></script>
+    <script src="/js/journey-map-ticket.js"></script>
 </head>
 <body>
     <div id="root"></div>
+
+    <!-- TAZARA Route Map -->
+    <div class="tazara-map-section" style="max-width: 1400px; margin: 40px auto; padding: 0 20px;">
+        <div style="background: linear-gradient(135deg, #16203a 0%, #0a0e1a 100%); border-radius: 16px; border: 1px solid #333; overflow: hidden;">
+            <div style="background: linear-gradient(90deg, rgba(30,144,255,0.3), rgba(139,92,246,0.3)); padding: 15px 20px; border-bottom: 1px solid #333;">
+                <h2 style="color: white; margin: 0; font-size: 1.2rem;">
+                    <i class="fas fa-route"></i> TAZARA Railway Route Map
+                </h2>
+                <p style="color: #94a3b8; margin: 5px 0 0; font-size: 0.85rem;">
+                    1,860 km connecting Dar es Salaam (Tanzania) to Kapiri Mposhi (Zambia)
+                </p>
+            </div>
+            <div style="padding: 20px;">
+                <div id="tazara-transit-map"></div>
+                <div style="display: flex; justify-content: center; gap: 30px; margin-top: 15px; flex-wrap: wrap;">
+                    <span style="color: #94a3b8; font-size: 0.8rem;">
+                        <span style="display: inline-block; width: 20px; height: 4px; background: #1E90FF; border-radius: 2px; vertical-align: middle; margin-right: 8px;"></span>
+                        TAZARA Main Line
+                    </span>
+                    <span style="color: #94a3b8; font-size: 0.8rem;">
+                        🇹🇿 Tanzania (EAT) • 🇿🇲 Zambia (CAT)
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize TAZARA transit map
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.RailwayDataService && window.TransitMapRenderer && window.TransitMapOptimizer) {
+                // TAZARA network is already in RailwayDataService, but let's ensure full station list
+                const tazaraNetwork = {
+                    name: 'TAZARA Railway',
+                    lines: [
+                        {
+                            id: 'tazara-main',
+                            name: 'Dar es Salaam - Kapiri Mposhi',
+                            color: '#1E90FF',
+                            stations: [
+                                { id: 'dar', name: 'Dar es Salaam', lat: -6.8235, lng: 39.2695 },
+                                { id: 'ifakara', name: 'Ifakara', lat: -8.1333, lng: 36.6833 },
+                                { id: 'mlimba', name: 'Mlimba', lat: -8.8330, lng: 35.8170 },
+                                { id: 'makambako', name: 'Makambako', lat: -8.8500, lng: 34.8000 },
+                                { id: 'mbeya', name: 'Mbeya', lat: -8.9000, lng: 33.4500 },
+                                { id: 'tunduma', name: 'Tunduma (Border)', lat: -9.3000, lng: 32.7670 },
+                                { id: 'nakonde', name: 'Nakonde', lat: -9.3500, lng: 32.7500 },
+                                { id: 'kasama', name: 'Kasama', lat: -10.2167, lng: 31.1833 },
+                                { id: 'mpika', name: 'Mpika', lat: -11.8333, lng: 31.4500 },
+                                { id: 'serenje', name: 'Serenje', lat: -13.2333, lng: 30.2333 },
+                                { id: 'kapiri', name: 'Kapiri Mposhi', lat: -14.4500, lng: 28.6670 }
+                            ]
+                        }
+                    ]
+                };
+                
+                window.TransitMapRenderer.render('tazara-transit-map', tazaraNetwork, {
+                    height: 350,
+                    backgroundColor: '#0a0e1a'
+                });
+            }
+        });
+    </script>
 
     <!-- Train Schedule Section -->
     <div class="schedule-section" style="max-width: 1400px; margin: 40px auto; padding: 0 20px;">

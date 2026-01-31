@@ -595,6 +595,14 @@
     </style>
     <!-- Supabase SDK for database storage -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Transit Map Components -->
+    <script src="/js/geolocation-service.js"></script>
+    <script src="/js/railway-data-service.js"></script>
+    <script src="/js/transit-map-optimizer.js"></script>
+    <script src="/js/transit-map-renderer.js"></script>
+    <script src="/js/country-transit-map.js"></script>
+    <script src="/js/journey-map-ticket.js"></script>
 </head>
 <body>
     <nav>
@@ -618,6 +626,70 @@
             </div>
         </div>
     </div>
+
+    <!-- ZRL Network Map -->
+    <div class="container" style="margin-bottom: 30px;">
+        <div class="card" style="background: linear-gradient(135deg, #16203a 0%, #0a0e1a 100%); border: 1px solid #333; border-radius: 16px; overflow: hidden;">
+            <div class="card-header" style="background: rgba(0,107,63,0.3); border-bottom: 1px solid #333; padding: 15px 20px;">
+                <i class="bi bi-map"></i>
+                Zambia Railways Network Map
+            </div>
+            <div class="card-body" style="padding: 20px;">
+                <div id="zrl-transit-map"></div>
+                <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 15px; text-align: center;">
+                    <i class="bi bi-info-circle"></i> Click on any station to view details. Map shows ZRL's 1,273 km network.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize ZRL transit map on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.RailwayDataService && window.TransitMapRenderer && window.TransitMapOptimizer) {
+                // Add Zambia Railways network data
+                window.RailwayDataService.SAMPLE_NETWORKS.ZM = {
+                    name: 'Zambia Railways Limited',
+                    lines: [
+                        {
+                            id: 'main-line',
+                            name: 'Main Line (Livingstone - Copperbelt)',
+                            color: '#006B3F',
+                            stations: [
+                                { id: 'livingstone', name: 'Livingstone', lat: -17.8419, lng: 25.8544 },
+                                { id: 'choma', name: 'Choma', lat: -16.8089, lng: 26.9875 },
+                                { id: 'mazabuka', name: 'Mazabuka', lat: -15.8561, lng: 27.7483 },
+                                { id: 'kafue', name: 'Kafue', lat: -15.7697, lng: 28.1814 },
+                                { id: 'lusaka', name: 'Lusaka Central', lat: -15.4067, lng: 28.2871 },
+                                { id: 'kabwe', name: 'Kabwe', lat: -14.4469, lng: 28.4464 },
+                                { id: 'kapiri', name: 'Kapiri Mposhi', lat: -14.4500, lng: 28.6670 },
+                                { id: 'ndola', name: 'Ndola', lat: -12.9587, lng: 28.6366 },
+                                { id: 'kitwe', name: 'Kitwe', lat: -12.8024, lng: 28.2132 }
+                            ]
+                        }
+                    ]
+                };
+                
+                // Render the map
+                const networkData = window.RailwayDataService.SAMPLE_NETWORKS.ZM;
+                const optimizedData = window.TransitMapOptimizer.process(networkData);
+                window.TransitMapRenderer.render('zrl-transit-map', networkData, {
+                    height: 400,
+                    backgroundColor: '#0a0e1a'
+                });
+                
+                // Handle station clicks
+                document.getElementById('zrl-transit-map').addEventListener('stationSelected', function(e) {
+                    const station = e.detail;
+                    // Auto-select station in booking form
+                    const fromSelect = document.getElementById('fromStation');
+                    if (fromSelect) {
+                        fromSelect.value = station.id;
+                    }
+                });
+            }
+        });
+    </script>
 
     <div class="container">
         <div class="booking-grid">
