@@ -94,19 +94,31 @@ const TransitMapOptimizer = {
     const maxLng = Math.max(...lngs);
 
     // Normalize to 0-1 range, then scale to canvas
+    // Increased padding to prevent edge stations from being cut off
     const width = 800;
     const height = 500;
-    const padding = 60;
+    const paddingLeft = 100;   // Extra space for left labels
+    const paddingRight = 120;  // Extra space for right labels
+    const paddingTop = 80;     // Space for title and top labels
+    const paddingBottom = 80;  // Space for bottom labels
 
     nodes.forEach(node => {
       // Initial position based on geographic coordinates
-      let x = ((node.originalLng - minLng) / (maxLng - minLng || 1)) * (width - 2 * padding) + padding;
-      let y = ((maxLat - node.originalLat) / (maxLat - minLat || 1)) * (height - 2 * padding) + padding;
+      // Use asymmetric padding to accommodate labels on edges
+      const usableWidth = width - paddingLeft - paddingRight;
+      const usableHeight = height - paddingTop - paddingBottom;
+      
+      let x = ((node.originalLng - minLng) / (maxLng - minLng || 1)) * usableWidth + paddingLeft;
+      let y = ((maxLat - node.originalLat) / (maxLat - minLat || 1)) * usableHeight + paddingTop;
 
       // Snap to grid for cleaner appearance
       const gridSize = 40;
       x = Math.round(x / gridSize) * gridSize;
       y = Math.round(y / gridSize) * gridSize;
+      
+      // Ensure nodes stay within bounds
+      x = Math.max(paddingLeft, Math.min(width - paddingRight, x));
+      y = Math.max(paddingTop, Math.min(height - paddingBottom, y));
 
       node.x = x;
       node.y = y;

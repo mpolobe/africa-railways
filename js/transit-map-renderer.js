@@ -8,7 +8,11 @@ const TransitMapRenderer = {
   config: {
     width: 800,
     height: 500,
-    padding: 60,
+    padding: 80,
+    paddingLeft: 100,
+    paddingRight: 120,
+    paddingTop: 80,
+    paddingBottom: 80,
     stationRadius: 8,
     interchangeRadius: 12,
     lineWidth: 6,
@@ -237,9 +241,27 @@ const TransitMapRenderer = {
       stationGroup.appendChild(innerCircle);
     }
 
-    // Station label
+    // Station label - position based on location to avoid cutoff
     const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    label.setAttribute('x', node.x + radius + 5);
+    
+    // Determine label position: flip to left side if near right edge
+    const isNearRightEdge = node.x > cfg.width - 150;
+    const isNearLeftEdge = node.x < 120;
+    
+    if (isNearRightEdge) {
+      // Place label to the left of the station
+      label.setAttribute('x', node.x - radius - 5);
+      label.setAttribute('text-anchor', 'end');
+    } else if (isNearLeftEdge) {
+      // Place label to the right but ensure it's visible
+      label.setAttribute('x', node.x + radius + 5);
+      label.setAttribute('text-anchor', 'start');
+    } else {
+      // Default: label to the right
+      label.setAttribute('x', node.x + radius + 5);
+      label.setAttribute('text-anchor', 'start');
+    }
+    
     label.setAttribute('y', node.y + 4);
     label.setAttribute('fill', cfg.textColor);
     label.setAttribute('font-family', cfg.fontFamily);
