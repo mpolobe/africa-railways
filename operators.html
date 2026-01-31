@@ -782,8 +782,8 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         operatorId: document.getElementById('operatorId').value,
-                        name: document.getElementById('userName').value,
-                        email: document.getElementById('userEmail').value
+                        name: document.getElementById('formUserName').value,
+                        email: document.getElementById('formUserEmail').value
                     })
                 });
 
@@ -819,8 +819,8 @@
         function resetApiKeyForm() {
             document.getElementById('apiKeyResult').style.display = 'none';
             document.getElementById('operatorSelected').style.display = 'block';
-            document.getElementById('userName').value = '';
-            document.getElementById('userEmail').value = '';
+            document.getElementById('formUserName').value = '';
+            document.getElementById('formUserEmail').value = '';
         }
 
         // Load operators on page load
