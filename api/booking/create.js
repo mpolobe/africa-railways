@@ -1,10 +1,16 @@
 // Vercel Serverless Function - Complete Booking Flow
-// Handles: Wallet Creation, Payment Processing, NFT Minting, AFC Conversion
+// Handles: Wallet Creation, Payment Processing, NFT Minting, AFC Conversion, Database Storage
 
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
 import { SuiClient, getFullnodeUrl } from '@mysten/sui/client';
 import { Transaction } from '@mysten/sui/transactions';
+import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
+
+// Supabase Configuration
+const supabaseUrl = process.env.SUPABASE_URL || 'https://llvprbmrnjvamjzavmhg.supabase.co';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabase = supabaseServiceKey ? createClient(supabaseUrl, supabaseServiceKey) : null;
 
 // SUI Network Configuration
 const SUI_NETWORK = process.env.SUI_NETWORK || 'testnet';
@@ -177,8 +183,9 @@ export default async function handler(req, res) {
             }
         });
 
-        // Step 6: Store booking in database (localStorage simulation)
+        // Step 6: Store booking in Supabase database
         steps.push({ step: 'database_storage', status: 'started', timestamp: Date.now() });
+        
         const booking = {
             id: bookingRef,
             nftId,
@@ -205,10 +212,66 @@ export default async function handler(req, res) {
             createdAt: new Date().toISOString(),
             validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
         };
+
+        // Save to Supabase if configured
+        let dbSaveResult = { saved: false, reason: 'Supabase not configured' };
+        if (supabase) {
+            try {
+                const bookingRecord = {
+                    booking_ref: bookingRef,
+                    ticket_id: nftId,
+                    nft_id: objectId,
+                    passenger_name: req.body.passengerName || 'Guest',
+                    passenger_phone: phoneNumber,
+                    passenger_email: req.body.email || null,
+                    wallet_address: wallet.address,
+                    route: `${from} → ${to}`,
+                    from_station: from,
+                    to_station: to,
+                    travel_date: date,
+                    class: ticketClass || 'Economy',
+                    passengers: passengers || 1,
+                    is_return_trip: tripType === 'Return',
+                    base_price_usd: priceUsd || 25,
+                    total_price_usd: priceUsd || 25,
+                    total_price_afrc: afcConversion.afcAmount,
+                    local_currency: currency || 'USD',
+                    total_price_local: priceUsd || 25,
+                    payment_method: req.body.paymentMethod || 'card',
+                    payment_status: 'completed',
+                    payment_tx_hash: txDigest,
+                    booking_status: 'confirmed',
+                    metadata: {
+                        nft: { objectId, txDigest, ipfsHash },
+                        tripType: tripType || 'One Way',
+                        railway: req.body.railway || 'ZRL'
+                    }
+                };
+
+                const { data, error } = await supabase
+                    .from('bookings')
+                    .insert(bookingRecord)
+                    .select()
+                    .single();
+
+                if (error) {
+                    console.error('Supabase insert error:', error);
+                    dbSaveResult = { saved: false, reason: error.message };
+                } else {
+                    dbSaveResult = { saved: true, id: data.id };
+                    booking.dbId = data.id;
+                }
+            } catch (dbErr) {
+                console.error('Database save error:', dbErr);
+                dbSaveResult = { saved: false, reason: dbErr.message };
+            }
+        }
+
         steps.push({ 
             step: 'database_storage', 
-            status: 'completed', 
-            timestamp: Date.now()
+            status: dbSaveResult.saved ? 'completed' : 'skipped', 
+            timestamp: Date.now(),
+            data: dbSaveResult
         });
 
         const totalTime = Date.now() - startTime;

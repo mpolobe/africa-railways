@@ -2207,11 +2207,19 @@
                 // Update in Supabase if available
                 if (supabaseClient) {
                     try {
+                        // Get current auth user to include auth_id for proper matching
+                        const { data: authData } = await supabaseClient.auth.getUser();
+                        const authId = authData?.user?.id || null;
+                        const authEmail = authData?.user?.email || wallet.email || null;
+                        
                         // Use upsert_user RPC to create or update user with new phone
+                        // Include email and auth_id to properly match existing OAuth users
                         const { data, error } = await supabaseClient.rpc('upsert_user', {
                             p_phone: pendingAccountPhone,
+                            p_email: authEmail,
                             p_wallet_address: wallet.address,
-                            p_auth_provider: wallet.provider || 'phone'
+                            p_auth_provider: wallet.provider || 'phone',
+                            p_auth_id: authId
                         });
                         if (!error && data) {
                             wallet.userId = data.id;
@@ -2317,6 +2325,11 @@
             // Sync to Supabase if available
             if (supabaseClient && wallet.address) {
                 try {
+                    // Get current auth user for proper matching
+                    const { data: authData } = await supabaseClient.auth.getUser();
+                    const authId = authData?.user?.id || null;
+                    const authEmail = authData?.user?.email || wallet.email || null;
+                    
                     if (wallet.userId) {
                         // Update existing user
                         const updateData = {};
@@ -2325,12 +2338,14 @@
                         if (field === 'afrc') updateData.afrc_address = value || null;
                         
                         await supabaseClient.from('users').update(updateData).eq('id', wallet.userId);
-                    } else if (wallet.phone || wallet.email) {
-                        // Try to upsert user if no userId but have phone/email
+                    } else if (wallet.phone || wallet.email || authId) {
+                        // Try to upsert user if no userId but have phone/email/authId
                         const { data, error } = await supabaseClient.rpc('upsert_user', {
                             p_phone: wallet.phone || null,
+                            p_email: authEmail,
                             p_wallet_address: wallet.address,
-                            p_auth_provider: wallet.provider || 'phone'
+                            p_auth_provider: wallet.provider || 'phone',
+                            p_auth_id: authId
                         });
                         if (!error && data) {
                             wallet.userId = data.id;
