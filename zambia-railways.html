@@ -2288,6 +2288,59 @@
                 }
                 
                 console.log('Booking saved to Supabase:', data);
+                
+                // Also create NFT souvenir for the journey
+                try {
+                    const souvenirId = 'SOU-' + Date.now().toString(36).toUpperCase() + 
+                                      Math.random().toString(36).substring(2, 8).toUpperCase();
+                    
+                    const themes = {
+                        'Livingstone': 'Victoria Falls Majesty',
+                        'Lusaka': 'Capital City Pride',
+                        'Kitwe': 'Copperbelt Heritage',
+                        'Ndola': 'Industrial Heart',
+                        'Kabwe': 'Central Province Pride',
+                        'Choma': 'Southern Heritage',
+                        'Mazabuka': 'Sugar Belt Journey',
+                        'Kafue': 'River Crossing'
+                    };
+                    
+                    const nftSouvenir = {
+                        souvenir_id: souvenirId,
+                        booking_id: data.id,
+                        ticket_id: bookingData.bookingRef,
+                        wallet_address: localStorage.getItem('africa_railways_wallet') ? 
+                            JSON.parse(localStorage.getItem('africa_railways_wallet')).address : null,
+                        user_id: currentUserId,
+                        name: `${bookingData.from} → ${bookingData.to} Journey Souvenir`,
+                        description: `Commemorative NFT for your Zambia Railways journey from ${bookingData.from} to ${bookingData.to}`,
+                        image_url: `https://africarailways.com/api/nft-image/${souvenirId}`,
+                        theme: themes[bookingData.from.split(' ')[0]] || themes[bookingData.to.split(' ')[0]] || 'Zambia Railways Heritage',
+                        route: `${bookingData.from} → ${bookingData.to}`,
+                        travel_date: bookingData.travelDate,
+                        rarity: 'Unique',
+                        traits: [
+                            { trait_type: 'Route', value: `${bookingData.from} → ${bookingData.to}` },
+                            { trait_type: 'Class', value: bookingData.class },
+                            { trait_type: 'Date', value: bookingData.travelDate },
+                            { trait_type: 'Railway', value: 'ZRL' }
+                        ],
+                        mint_status: 'pending'
+                    };
+                    
+                    const { error: nftError } = await client
+                        .from('nft_souvenirs')
+                        .insert(nftSouvenir);
+                    
+                    if (nftError) {
+                        console.error('NFT souvenir insert error:', nftError);
+                    } else {
+                        console.log('NFT souvenir created:', souvenirId);
+                    }
+                } catch (nftErr) {
+                    console.error('Failed to create NFT souvenir:', nftErr);
+                }
+                
                 return data;
             } catch (error) {
                 console.error('Failed to save booking to database:', error);

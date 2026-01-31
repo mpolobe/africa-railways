@@ -260,12 +260,69 @@ export default async function handler(req, res) {
                 } else {
                     dbSaveResult = { saved: true, id: data.id };
                     booking.dbId = data.id;
+                    
+                    // Also create NFT souvenir record
+                    try {
+                        const souvenirId = 'SOU-' + Date.now().toString(36).toUpperCase() + 
+                                          crypto.randomBytes(3).toString('hex').toUpperCase();
+                        
+                        const nftSouvenir = {
+                            souvenir_id: souvenirId,
+                            booking_id: data.id,
+                            ticket_id: nftId,
+                            nft_token_id: objectId,
+                            wallet_address: wallet.address,
+                            user_id: req.body.userId || null,
+                            name: `${from} → ${to} Journey Souvenir`,
+                            description: `Commemorative NFT for your journey from ${from} to ${to} on ${date}`,
+                            image_url: `https://africarailways.com/api/nft-image/${souvenirId}`,
+                            ipfs_hash: ipfsHash,
+                            theme: getRouteTheme(from, to),
+                            route: `${from} → ${to}`,
+                            travel_date: date,
+                            rarity: 'Unique',
+                            traits: [
+                                { trait_type: 'Route', value: `${from} → ${to}` },
+                                { trait_type: 'Class', value: ticketClass || 'Economy' },
+                                { trait_type: 'Date', value: date },
+                                { trait_type: 'Railway', value: req.body.railway || 'ZRL' }
+                            ],
+                            mint_status: 'minted',
+                            mint_tx_hash: txDigest
+                        };
+                        
+                        const { error: nftError } = await supabase
+                            .from('nft_souvenirs')
+                            .insert(nftSouvenir);
+                        
+                        if (nftError) {
+                            console.error('NFT souvenir insert error:', nftError);
+                        } else {
+                            dbSaveResult.nftSaved = true;
+                            dbSaveResult.souvenirId = souvenirId;
+                        }
+                    } catch (nftErr) {
+                        console.error('NFT souvenir save error:', nftErr);
+                    }
                 }
             } catch (dbErr) {
                 console.error('Database save error:', dbErr);
                 dbSaveResult = { saved: false, reason: dbErr.message };
             }
         }
+
+// Helper function to get route theme
+function getRouteTheme(from, to) {
+    const themes = {
+        'Livingstone': 'Victoria Falls Majesty',
+        'Lusaka': 'Capital City Pride',
+        'Kitwe': 'Copperbelt Heritage',
+        'Ndola': 'Industrial Heart',
+        'Dar es Salaam': 'Swahili Coast Sunrise',
+        'Kapiri Mposhi': 'TAZARA Junction'
+    };
+    return themes[from] || themes[to] || 'African Railway Heritage';
+}
 
         steps.push({ 
             step: 'database_storage', 
