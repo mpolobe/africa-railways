@@ -529,7 +529,9 @@
                     .from('bookings')
                     .insert({
                         booking_ref: bookingData.bookingRef,
-                        passenger_name: 'Guest',
+                        user_id: bookingData.userId || null,
+                        passenger_name: bookingData.passengerName || 'Guest',
+                        passenger_email: bookingData.passengerEmail || null,
                         passenger_phone: bookingData.phone,
                         wallet_address: bookingData.wallet,
                         route: `${bookingData.from} → ${bookingData.to}`,
@@ -1092,12 +1094,44 @@
             const [loadingRates, setLoadingRates] = useState(true);
             const [detectedCountry, setDetectedCountry] = useState('');
             const [phoneNumber, setPhoneNumber] = useState('');
-            const [isLoggedIn, setIsLoggedIn] = useState(false); // Would be set by auth system
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
+            const [currentUser, setCurrentUser] = useState(null); // Supabase user object
             const [walletConnected, setWalletConnected] = useState(false);
             const [connectedAddress, setConnectedAddress] = useState('');
             const [showWalletModal, setShowWalletModal] = useState(false);
             const [walletType, setWalletType] = useState(''); // 'sui', 'zklogin', 'phone'
             const [ticketData, setTicketData] = useState(null); // For download
+            
+            // Check Supabase auth state on mount
+            useEffect(() => {
+                const checkAuth = async () => {
+                    const client = getSupabase();
+                    if (!client) return;
+                    
+                    try {
+                        const { data: { session } } = await client.auth.getSession();
+                        if (session?.user) {
+                            setIsLoggedIn(true);
+                            setCurrentUser(session.user);
+                            console.log('User logged in:', session.user.email);
+                        }
+                        
+                        // Listen for auth changes
+                        client.auth.onAuthStateChange((event, session) => {
+                            if (session?.user) {
+                                setIsLoggedIn(true);
+                                setCurrentUser(session.user);
+                            } else {
+                                setIsLoggedIn(false);
+                                setCurrentUser(null);
+                            }
+                        });
+                    } catch (e) {
+                        console.warn('Auth check failed:', e);
+                    }
+                };
+                checkAuth();
+            }, []);
             const [paymentMethod, setPaymentMethod] = useState('card'); // 'card', 'crypto', 'mobile'
             const [stripeLoading, setStripeLoading] = useState(false);
             
@@ -1661,9 +1695,12 @@ TX: ${ticketData.txDigest}
                     const walletMsg = `\n💳 Wallet: ${walletAddress.slice(0, 10)}...${walletAddress.slice(-6)}`;
                     setStatus(`success:✅ Booking confirmed! Reference: ${bookingRef}${walletMsg}${smsMsg}\n🎫 Your NFT ticket is ready for download!`);
                     
-                    // Save to Supabase database
+                    // Save to Supabase database - include user info if logged in
                     saveBookingToSupabase({
                         bookingRef,
+                        userId: currentUser?.id || null,
+                        passengerName: currentUser?.user_metadata?.full_name || currentUser?.email?.split('@')[0] || 'Guest',
+                        passengerEmail: currentUser?.email || null,
                         from: fromStation?.city || from,
                         to: toStation?.city || to,
                         travelDate: date,

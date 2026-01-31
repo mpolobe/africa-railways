@@ -1245,24 +1245,48 @@
             const email = currentUser.email;
             const phone = currentUser.phone;
             
-            // Also check localStorage for phone number from wallet login
+            // Also check localStorage for phone number and wallet from wallet login
             let walletPhone = null;
+            let walletAddress = null;
             try {
                 const savedWallet = localStorage.getItem('africa_railways_wallet');
                 if (savedWallet) {
                     const walletData = JSON.parse(savedWallet);
                     walletPhone = walletData.phone;
+                    walletAddress = walletData.address;
                 }
             } catch (e) {
                 console.warn('Could not parse wallet data:', e);
             }
             
-            // Load tickets - match by user_id, email, or phone
+            // Load tickets - match by multiple fields since bookings may be saved differently
+            // Try: user_id, passenger_email, email (in metadata), passenger_phone, wallet_address
             let ticketsQuery = supabaseClient.from('bookings').select('*');
-            const conditions = [`user_id.eq.${userId}`];
-            if (email) conditions.push(`passenger_email.eq.${email}`);
-            if (phone) conditions.push(`passenger_phone.eq.${phone}`);
-            if (walletPhone && walletPhone !== phone) conditions.push(`passenger_phone.eq.${walletPhone}`);
+            const conditions = [];
+            
+            // Always try user_id
+            conditions.push(`user_id.eq.${userId}`);
+            
+            // Try email variations
+            if (email) {
+                conditions.push(`passenger_email.eq.${email}`);
+                conditions.push(`passenger_email.ilike.${email}`);
+            }
+            
+            // Try phone variations
+            if (phone) {
+                conditions.push(`passenger_phone.eq.${phone}`);
+            }
+            if (walletPhone && walletPhone !== phone) {
+                conditions.push(`passenger_phone.eq.${walletPhone}`);
+            }
+            
+            // Try wallet address
+            if (walletAddress) {
+                conditions.push(`wallet_address.eq.${walletAddress}`);
+            }
+            
+            console.log('Loading tickets with conditions:', conditions);
             
             const { data: tickets, error: ticketsError } = await ticketsQuery.or(conditions.join(',')).order('created_at', { ascending: false });
             

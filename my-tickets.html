@@ -455,7 +455,7 @@
         }
 
         function formatPhone(phone) {
-            // Normalize phone number
+            // Normalize phone number - remove all non-digits
             let cleaned = phone.replace(/\D/g, '');
             if (cleaned.startsWith('0')) {
                 cleaned = '260' + cleaned.substring(1);
@@ -464,6 +464,42 @@
                 cleaned = '260' + cleaned;
             }
             return '+' + cleaned;
+        }
+        
+        function getPhoneVariations(phone) {
+            // Generate all possible variations of the phone number
+            let cleaned = phone.replace(/\D/g, '');
+            
+            // Remove leading zeros
+            while (cleaned.startsWith('0')) {
+                cleaned = cleaned.substring(1);
+            }
+            
+            // If starts with country code, extract local number
+            let localNumber = cleaned;
+            if (cleaned.startsWith('260')) {
+                localNumber = cleaned.substring(3);
+            } else if (cleaned.startsWith('254')) { // Kenya
+                localNumber = cleaned.substring(3);
+            } else if (cleaned.startsWith('255')) { // Tanzania
+                localNumber = cleaned.substring(3);
+            } else if (cleaned.startsWith('27')) { // South Africa
+                localNumber = cleaned.substring(2);
+            }
+            
+            // Generate variations
+            const variations = [
+                phone,                          // Original input
+                cleaned,                        // Just digits
+                '+' + cleaned,                  // With + prefix
+                '+260' + localNumber,           // Zambia format
+                '260' + localNumber,            // Without +
+                '0' + localNumber,              // Local format
+                localNumber                     // Just local number
+            ];
+            
+            // Remove duplicates and empty strings
+            return [...new Set(variations.filter(v => v && v.length >= 9))];
         }
 
         async function searchTickets(event) {
@@ -492,13 +528,18 @@
                     return;
                 }
 
-                const normalizedPhone = formatPhone(phone);
+                // Get all phone variations to search
+                const phoneVariations = getPhoneVariations(phone);
+                console.log('Searching for phone variations:', phoneVariations);
                 
-                // Search for tickets by phone number
+                // Build OR conditions for all variations
+                const conditions = phoneVariations.map(p => `passenger_phone.eq.${p}`).join(',');
+                
+                // Search for tickets by phone number (all variations)
                 const { data: tickets, error } = await client
                     .from('bookings')
                     .select('*')
-                    .or(`passenger_phone.eq.${normalizedPhone},passenger_phone.eq.${phone}`)
+                    .or(conditions)
                     .order('created_at', { ascending: false });
 
                 if (error) {

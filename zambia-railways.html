@@ -2231,11 +2231,26 @@
                     return null;
                 }
                 
+                // Get current user if logged in
+                let currentUserId = null;
+                let currentUserEmail = null;
+                try {
+                    const { data: { session } } = await client.auth.getSession();
+                    if (session?.user) {
+                        currentUserId = session.user.id;
+                        currentUserEmail = session.user.email;
+                    }
+                } catch (e) {
+                    console.warn('Could not get user session:', e);
+                }
+                
                 const { data, error } = await client
                     .from('bookings')
                     .insert({
                         booking_ref: bookingData.bookingRef,
+                        user_id: currentUserId,
                         passenger_name: bookingData.passengerName || 'Guest',
+                        passenger_email: currentUserEmail,
                         passenger_phone: bookingData.phone,
                         route: `${bookingData.from} → ${bookingData.to}`,
                         from_station: bookingData.from,
