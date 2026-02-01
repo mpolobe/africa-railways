@@ -1,0 +1,135 @@
+{
+  "templates": [
+    {
+      "name": "booking_confirmation",
+      "language": "en",
+      "category": "TRANSACTIONAL",
+      "components": [
+        {
+          "type": "HEADER",
+          "format": "TEXT",
+          "text": "🚆 Booking Confirmed"
+        },
+        {
+          "type": "BODY",
+          "text": "Hi {{1}},\n\nYour train ticket is confirmed!\n\n*Reference:* {{2}}\n*Route:* {{3}} → {{4}}\n*Date:* {{5}}\n*Class:* {{6}}\n*Passengers:* {{7}}\n*Total:* ${{8}}\n\nShow this message at the station.\n\nSafe travels!",
+          "example": {
+            "body_text": [["John", "AFC-ABC123", "Lusaka", "Livingstone", "15 Feb", "Economy", "2", "30"]]
+          }
+        },
+        {
+          "type": "FOOTER",
+          "text": "Africa Railways - africarailways.com"
+        }
+      ]
+    },
+    {
+      "name": "booking_reminder",
+      "language": "en",
+      "category": "TRANSACTIONAL",
+      "components": [
+        {
+          "type": "HEADER",
+          "format": "TEXT",
+          "text": "⏰ Travel Reminder"
+        },
+        {
+          "type": "BODY",
+          "text": "Hi {{1}},\n\nYour train departs tomorrow!\n\n*Reference:* {{2}}\n*Route:* {{3}} → {{4}}\n*Departure:* {{5}}\n\nArrive 30 minutes early.\n\nNeed help? Reply to this message.",
+          "example": {
+            "body_text": [["John", "AFC-ABC123", "Lusaka", "Livingstone", "06:00 AM"]]
+          }
+        },
+        {
+          "type": "FOOTER",
+          "text": "Africa Railways"
+        }
+      ]
+    },
+    {
+      "name": "payment_receipt",
+      "language": "en",
+      "category": "TRANSACTIONAL",
+      "components": [
+        {
+          "type": "HEADER",
+          "format": "TEXT",
+          "text": "💳 Payment Received"
+        },
+        {
+          "type": "BODY",
+          "text": "Payment confirmed!\n\n*Amount:* ${{1}}\n*Method:* {{2}}\n*Reference:* {{3}}\n*Date:* {{4}}\n\nYour e-ticket has been sent.",
+          "example": {
+            "body_text": [["30", "M-Pesa", "AFC-ABC123", "1 Feb 2026"]]
+          }
+        },
+        {
+          "type": "FOOTER",
+          "text": "Africa Railways"
+        }
+      ]
+    },
+    {
+      "name": "otp_verification",
+      "language": "en",
+      "category": "AUTHENTICATION",
+      "components": [
+        {
+          "type": "BODY",
+          "text": "🚂 *Africa Railways*\n\nYour verification code is: *{{1}}*\n\nThis code expires in 5 minutes.\n\nIf you didn't request this, please ignore.",
+          "example": {
+            "body_text": [["123456"]]
+          }
+        },
+        {
+          "type": "BUTTONS",
+          "buttons": [
+            {
+              "type": "URL",
+              "text": "Verify Now",
+              "url": "https://africarailways.com/verify?code={{1}}",
+              "example": ["123456"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "welcome_booking",
+      "language": "en",
+      "category": "MARKETING",
+      "components": [
+        {
+          "type": "HEADER",
+          "format": "TEXT",
+          "text": "🚆 Africa Railways"
+        },
+        {
+          "type": "BODY",
+          "text": "Welcome to Africa Railways!\n\nBook train tickets across Africa via WhatsApp:\n\n• TAZARA (Zambia-Tanzania)\n• Kenya Railways\n• Zambia Railways\n\nReply *BOOK* to start or *HELP* for assistance.",
+          "example": {}
+        },
+        {
+          "type": "BUTTONS",
+          "buttons": [
+            {
+              "type": "QUICK_REPLY",
+              "text": "Book Ticket"
+            },
+            {
+              "type": "QUICK_REPLY",
+              "text": "View Schedule"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "submission_notes": {
+    "business_name": "Africa Railways",
+    "phone_number": "+260966165444",
+    "phone_number_id": "947040551825655",
+    "use_case": "Train ticket booking and travel notifications for passengers across African railway networks",
+    "submission_url": "https://business.facebook.com/wa/manage/message-templates/"
+  }
+}
