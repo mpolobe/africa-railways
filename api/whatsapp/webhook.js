@@ -1,9 +1,10 @@
 /**
  * WhatsApp Business API Webhook
- * Receives incoming messages and routes to booking flow
+ * Receives incoming messages and routes to booking flow via Session_Manager
  */
 
 import { createClient } from '@supabase/supabase-js';
+import SessionManager from './Session_Manager.js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -13,10 +14,6 @@ const supabase = createClient(
 const WHATSAPP_PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || '947040551825655';
 const WHATSAPP_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN;
 const WHATSAPP_VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || 'africa_railways_verify_2026';
-
-// In-memory session store (use Redis/KV in production)
-const sessions = new Map();
-const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
 export default async function handler(req, res) {
   // CORS
@@ -64,8 +61,8 @@ export default async function handler(req, res) {
 
       console.log(`Received from ${from}: ${messageBody}`);
 
-      // Process message and get response
-      const response = await handleMessage(from, messageBody, messageType);
+      // Process message via Session Manager for booking flow
+      const response = await SessionManager.processMessage(from, messageBody);
 
       // Send response back via WhatsApp
       await sendWhatsAppMessage(from, response);
