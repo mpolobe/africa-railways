@@ -380,6 +380,71 @@
             color: var(--cyan);
         }
         
+        /* WhatsApp QR Code Banner */
+        .whatsapp-qr-banner {
+            background: linear-gradient(135deg, #075e54 0%, #128c7e 100%);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            border: 1px solid #25d366;
+        }
+        
+        .whatsapp-qr-content {
+            flex: 1;
+        }
+        
+        .whatsapp-qr-content h3 {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .whatsapp-qr-content p {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        
+        .whatsapp-qr-code {
+            background: white;
+            padding: 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .whatsapp-qr-code img {
+            width: 80px;
+            height: 80px;
+        }
+        
+        .whatsapp-qr-link {
+            background: #25d366;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        
+        .whatsapp-qr-link:hover {
+            background: #1da851;
+        }
+        
         @media (max-width: 768px) {
             .booking-grid {
                 grid-template-columns: 1fr;
@@ -393,6 +458,16 @@
                 flex-direction: column;
                 gap: 15px;
                 text-align: center;
+            }
+            
+            .whatsapp-qr-banner {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .whatsapp-qr-code img {
+                width: 100px;
+                height: 100px;
             }
         }
         
@@ -1768,6 +1843,27 @@ TX: ${ticketData.txDigest}
                                 <i className="fas fa-arrow-left"></i>
                                 Back
                             </a>
+                        </div>
+                    </div>
+                    
+                    {/* WhatsApp QR Code Banner */}
+                    <div className="whatsapp-qr-banner">
+                        <div className="whatsapp-qr-content">
+                            <h3>
+                                <i className="fab fa-whatsapp"></i>
+                                Book via WhatsApp
+                            </h3>
+                            <p>Scan QR or chat with us to book tickets instantly</p>
+                            <a href="https://wa.me/260966165444?text=book" className="whatsapp-qr-link" target="_blank" rel="noopener noreferrer">
+                                <i className="fab fa-whatsapp"></i>
+                                Chat Now: +260 966 165 444
+                            </a>
+                        </div>
+                        <div className="whatsapp-qr-code">
+                            <img 
+                                src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wa.me/260966165444?text=book" 
+                                alt="WhatsApp QR Code"
+                            />
                         </div>
                     </div>
                     
