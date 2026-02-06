@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"math"
 	"net/http"
 	"sync"
 	"time"
@@ -168,50 +167,38 @@ func sensorLogHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // processGPSForTrip detects trips from GPS data
-func processGPSForTrip(log SensorGPSLog) {
+func processGPSForTrip(gpsLog SensorGPSLog) {
 	detectedTripsMu.Lock()
 	defer detectedTripsMu.Unlock()
 
-	activeTrip, exists := detectedTrips[log.TrainID]
+	activeTrip, exists := detectedTrips[gpsLog.TrainID]
 
 	if !exists {
 		// Start a new trip
 		trip := &DetectedTrip{
-			ID:            fmt.Sprintf("trip-%s-%d", log.TrainID, time.Now().UnixNano()),
-			TrainID:       log.TrainID,
+			ID:            fmt.Sprintf("trip-%s-%d", gpsLog.TrainID, time.Now().UnixNano()),
+			TrainID:       gpsLog.TrainID,
 			StartTime:     time.Now(),
-			StartLat:      log.Lat,
-			StartLon:      log.Lon,
+			StartLat:      gpsLog.Lat,
+			StartLon:      gpsLog.Lon,
 			GPSPointCount: 1,
 			Status:        "active",
 		}
-		detectedTrips[log.TrainID] = trip
-		log.Printf("🚂 New trip detected: %s for train %s", trip.ID, log.TrainID)
+		detectedTrips[gpsLog.TrainID] = trip
+		log.Printf("New trip detected: %s for train %s", trip.ID, gpsLog.TrainID)
 		return
 	}
 
 	// Update existing trip
 	activeTrip.GPSPointCount++
-	activeTrip.EndLat = log.Lat
-	activeTrip.EndLon = log.Lon
+	activeTrip.EndLat = gpsLog.Lat
+	activeTrip.EndLon = gpsLog.Lon
 
 	// Calculate distance
-	dist := haversineDistance(activeTrip.StartLat, activeTrip.StartLon, log.Lat, log.Lon)
+	dist := haversineDistance(activeTrip.StartLat, activeTrip.StartLon, gpsLog.Lat, gpsLog.Lon)
 	activeTrip.DistanceKm = dist
 
 	// Check if trip should be completed (no movement for 10 minutes would be handled by a background job)
-}
-
-// haversineDistance calculates distance between two GPS points in km
-func haversineDistance(lat1, lon1, lat2, lon2 float64) float64 {
-	const R = 6371 // Earth's radius in km
-	dLat := (lat2 - lat1) * math.Pi / 180
-	dLon := (lon2 - lon1) * math.Pi / 180
-	a := math.Sin(dLat/2)*math.Sin(dLat/2) +
-		math.Cos(lat1*math.Pi/180)*math.Cos(lat2*math.Pi/180)*
-			math.Sin(dLon/2)*math.Sin(dLon/2)
-	c := 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
-	return R * c
 }
 
 // tripsHandler handles trip queries
